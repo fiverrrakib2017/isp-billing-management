@@ -91,8 +91,8 @@ ini_set('display_errors', 1);
                     <div class="dropdown d-none d-md-block me-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="font-size-16">
-                                <?php if (isset($_SESSION['username'])) {
-                                    echo $_SESSION['username'];
+                                <?php if (isset($_SESSION['fullname'])) {
+                                    echo $_SESSION['fullname'];
                                 } ?>
                             </span>
                         </button>
@@ -252,7 +252,7 @@ ini_set('display_errors', 1);
                                             </thead>
                                             <tbody id="customer-list">
                                                 <?php
-                                                $sql = "SELECT * FROM purchase WHERE status='1'";
+                                                $sql = "SELECT * FROM purchase ";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {

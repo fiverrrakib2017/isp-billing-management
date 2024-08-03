@@ -145,29 +145,39 @@ if (isset($_GET['clid'])) {
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th class="tm_width_5 tm_semi_bold tm_primary_color">Item Name</th>
+                                            <th class="tm_width_4 tm_semi_bold tm_primary_color">Item Name</th>
 
-                                            <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">Amount</th>
+                                            <th class="tm_width_2 tm_semi_bold tm_primary_color">Quantity</th>
+
+                                            <th class="tm_width_2 tm_semi_bold tm_primary_color">Amount</th>
+
+                                            <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">Total Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         
                                     <?php
-                                        $id = $lstid;
-                                        $allInvoiceData = $con->query("SELECT * FROM purchase_details WHERE invoice_id=$id ");
-                                        while ($invoiceItem = $allInvoiceData->fetch_array()) {
-                                            $invoice_item = $invoiceItem['items'];
-                                            $invoice_total = $invoiceItem['total'];
-                                            echo '
-                                            <tr class="tm_gray_bg">
-                                            <td class="tm_width_5">' . $invoice_item . '</td>
+        $id = $lstid;
+        $allInvoiceData = $con->query("SELECT pd.product_id, pd.qty, pd.value, pd.total, p.name FROM purchase_details pd JOIN products p ON pd.product_id = p.id WHERE pd.invoice_id =$id");
+        while ($invoiceItem = $allInvoiceData->fetch_array()) {
+            $name = $invoiceItem['name'];
+            $qty = $invoiceItem['qty'];
+            $amount = $invoiceItem['value'];
+            $total_amount = $invoiceItem['total'];
+            echo '
+            <tr class="tm_gray_bg">
+            <td class="tm_width_4">' . $name . '</td>
 
-                                            <td class="tm_width_2 tm_text_right"><b>' . $invoice_total . ' ৳</b></td>
-                                            </tr>
-                                            
-                                            
-                                            ';
-                                        }
+            <td class="tm_width_2 "><b>' . $qty . ' </b></td>
+
+            <td class="tm_width_2 "><b>' . $amount . ' ৳</b></td>
+
+            <td class="tm_width_2 tm_text_right"><b>' . $total_amount . ' ৳</b></td>
+            </tr>
+            
+            
+            ';
+        }
 
                                         ?>
                                     </tbody>
