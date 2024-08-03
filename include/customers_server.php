@@ -284,8 +284,9 @@ if(isset($_POST['area_id'])){
   
     if($result->num_rows > 0){
         echo '<option>---Select---</option>';
+        echo '<option value="all">All</option>';
         while($row = $result->fetch_assoc()){
-            echo '<option value="'.$row['id'].'">'.$row['username'].'</option>';
+            echo ' <option value="'.$row['id'].'">['.$row['id'].'] - '.$row['username'].' || '.$row['fullname'].', ('.$row['mobile'].')</option>';
         }
     } else {
         echo '<option>No Customers found</option>';
