@@ -206,7 +206,7 @@ if (isset($_SESSION['uid'])) {
                                             <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#supplierModal" >Add Supplier</button>
                                         </div>
                                         <div class="card-body">
-                                        <form id="form-data" action="include/purchase_server.php??add_invoice" method="post">
+                                        <form id="form-data" action="include/purchase_server.php?add_invoice" method="post">
                                             <div class="form-group mb-2">
                                                 <label>Product Name</label>
                                                 <select type="text" id="product_name"  class="form-control">
@@ -247,7 +247,7 @@ if (isset($_SESSION['uid'])) {
                                                         <tr>
                                                             <th class="text-center" colspan="2"></th>
                                                             <th class="text-left" colspan="3">
-                                                                Discount Amount <input  type="text" class="form-control discount_amount" name="discount_amount">
+                                                                Discount Amount <input  type="text" class="form-control discount_amount" name="discount_amount" value="00">
                                                             </th>
                                                         </tr>
                                                         <tr>
@@ -531,7 +531,7 @@ if (isset($_SESSION['uid'])) {
     <script src="assets/libs/metismenu/metisMenu.min.js"></script>
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
-    <script src="assets/libs/select2/js/select2.min.js"></script>
+    
     <!-- Required datatable js -->
     <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -554,7 +554,7 @@ if (isset($_SESSION['uid'])) {
     <script src="assets/js/pages/datatables.init.js"></script>
 
     <script src="assets/js/app.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
+    <script src="assets/libs/select2/js/select2.min.js"></script>
     <script type="text/javascript">
          $("#supplier_name").select2();
          $("#product_name").select2();
@@ -594,42 +594,42 @@ if (isset($_SESSION['uid'])) {
         }
         
         
-        //client Add
-        // $("#supplier_add").click(function() {
-        //     var fullname = $("#fullname").val();
-        //     var company = $("#company").val();
-        //     var mobile = $("#mobile").val();
-        //     var status_check = $("#status_check").val();
-        //     var email = $("#email").val();
-        //     var address = $("#address").val();
+        /*Supplier Add*/
+        $("#supplier_add").click(function() {
+            var fullname = $("#fullname").val();
+            var company = $("#company").val();
+            var mobile = $("#mobile").val();
+            var status_check = $("#status_check").val();
+            var email = $("#email").val();
+            var address = $("#address").val();
 
-        //     //alert(fullname.length);
-        //     if (fullname.length == 0) {
-        //         toastr.error("Full name required");
-        //     } else if (company.length == 0) {
-        //         toastr.error("Company name required");
-        //     } else if (mobile.length == 0) {
-        //         toastr.error("Mobile number required");
-        //     } else if (email.length == 0) {
-        //         toastr.error("Email required");
-        //     } else if (address.length == 0) {
-        //         toastr.error("Address required");
-        //     } else {
-        //         var formData = $("#supplier_form").serialize();
-        //         $.ajax({
-        //             type: "GET",
-        //             data: formData,
-        //             url: "include/supplier_data.php?add",
-        //             cache: false,
-        //             success: function() {
-        //                 toastr.success("Supplier Added Successfully");
-        //                 $("#supplierModal").modal('hide');
-        //                 getSupplierData();
-        //             }
-        //         });
-        //     }
+            //alert(fullname.length);
+            if (fullname.length == 0) {
+                toastr.error("Full name required");
+            } else if (company.length == 0) {
+                toastr.error("Company name required");
+            } else if (mobile.length == 0) {
+                toastr.error("Mobile number required");
+            } else if (email.length == 0) {
+                toastr.error("Email required");
+            } else if (address.length == 0) {
+                toastr.error("Address required");
+            } else {
+                var formData = $("#supplier_form").serialize();
+                $.ajax({
+                    type: "GET",
+                    data: formData,
+                    url: "include/supplier_data.php?add",
+                    cache: false,
+                    success: function() {
+                        toastr.success("Supplier Added Successfully");
+                        $("#supplierModal").modal('hide');
+                        getSupplierData();
+                    }
+                });
+            }
 
-        // });
+        });
 
 
 
@@ -685,52 +685,52 @@ if (isset($_SESSION['uid'])) {
         });
 
 
-        // $("#product_name").change(function() {
-        //     var itemId = $(this).val();
-        //     $.ajax({
-        //         url: "include/purchase_server.php?getSingleProductData",
-        //         method: 'GET',
-        //         data: {
-        //             id: itemId
-        //         },
-        //         success: function(response) {
-        //             /* যদি রেসপন্স JSON string হিসাবে আসে, তাহলে এটিকে JSON অবজেক্টে কনভার্ট করতে হবে*/
-        //             var product = typeof response === 'string' ? JSON.parse(response) : response;
+        $("#product_name").change(function() {
+            var itemId = $(this).val();
+            $.ajax({
+                url: "include/purchase_server.php?getSingleProductData",
+                method: 'GET',
+                data: {
+                    id: itemId
+                },
+                success: function(response) {
+                    /* যদি রেসপন্স JSON string হিসাবে আসে, তাহলে এটিকে JSON অবজেক্টে কনভার্ট করতে হবে*/
+                    var product = typeof response === 'string' ? JSON.parse(response) : response;
 
-        //             var product_exists = false;
-        //             /*Check if the product already exists in the table*/
-        //             $("#tableRow tr").each(function(){
-        //                 var existing_product_id = $(this).find('input[name="product_id[]"]').val();
-        //                 if (existing_product_id == product.id) {
-        //                     product_exists = true;
-        //                     return false; // break loop
-        //                 }
-        //             });
-        //             if (product_exists) {
-        //                 toastr.error("Product already added. Please increase the quantity.");
-        //                 return false;
-        //             }
+                    var product_exists = false;
+                    /*Check if the product already exists in the table*/
+                    $("#tableRow tr").each(function(){
+                        var existing_product_id = $(this).find('input[name="product_id[]"]').val();
+                        if (existing_product_id == product.id) {
+                            product_exists = true;
+                            return false; // break loop
+                        }
+                    });
+                    if (product_exists) {
+                        toastr.error("Product already added. Please increase the quantity.");
+                        return false;
+                    }
 
-        //             /* Create table row with product details*/
-        //             var row = '<tr>' +
-        //                 '<td><input type="hidden" name="product_id[]" value="'+ product.id +'">'+ product.name +'</td>' +
-        //                 '<td><input type="number" min="1" name="qty[]" value="1" class="form-control qty"></td>' +
-        //                 '<td><input readonly type="number" name="price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
-        //                 '<td><input readonly type="number" id="total_price" name="total_price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
-        //                 '<td><a class="btn-sm btn-danger" type="button" id="itemRow"><i class="mdi mdi-close"></i></a></td>' +
-        //                 '</tr>';
+                    /* Create table row with product details*/
+                    var row = '<tr>' +
+                        '<td><input type="hidden" name="product_id[]" value="'+ product.id +'">'+ product.name +'</td>' +
+                        '<td><input type="number" min="1" name="qty[]" value="1" class="form-control qty"></td>' +
+                        '<td><input readonly type="number" name="price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
+                        '<td><input readonly type="number" id="total_price" name="total_price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
+                        '<td><a class="btn-sm btn-danger" type="button" id="itemRow"><i class="mdi mdi-close"></i></a></td>' +
+                        '</tr>';
 
-        //             /*Append row to the table body*/ 
-        //             $('#tableRow').append(row);
-        //              calculateTotalAmount();
+                    /*Append row to the table body*/ 
+                    $('#tableRow').append(row);
+                     calculateTotalAmount();
 
-        //         },
-        //         error: function(xhr, status, error) {
-        //             /*handle the error response*/ 
-        //             console.log(error);
-        //         }
-        //     });
-        // });
+                },
+                error: function(xhr, status, error) {
+                    /*handle the error response*/ 
+                    console.log(error);
+                }
+            });
+        });
     
     /*Calculate total amount when quantity or price changes*/ 
     $(document).on('input', '.qty', function() {
@@ -774,22 +774,24 @@ if (isset($_SESSION['uid'])) {
        form.find('button[type="submit"]').prop('disabled',true).html(`Loading...`);
        var url = form.attr('action');
        var formData = form.serialize();
-          /** Use Ajax to send the  request **/
-          $.ajax({
-          type:'POST',
-          'url':url,
-          data: formData,
-          success: function (response) {
-             if (response.success==true) {
-                toastr.success(response.message);
-                   setTimeout(() => {
-                   location.reload();
-                }, 500);
-             }
-             if(response.success==false){
-                toastr.success(response.message);
-             }
-          },
+            /** Use Ajax to send the  request **/
+            $.ajax({
+            type:'POST',
+            'url':url,
+            data: formData,
+            dataType: 'json',
+            success: function (response) {
+                //var response = JSON.parse(response);
+                if (response.success) {
+                    toastr.success(response.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+
 
           error: function (xhr, status, error) {
              /** Handle  errors **/

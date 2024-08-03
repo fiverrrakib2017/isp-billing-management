@@ -197,12 +197,12 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     /*Begin transaction*/ 
-    $conn->begin_transaction();
+    $con->begin_transaction();
 
     try {
         // Insert data into `purchase` table
         $sql_purchase = "INSERT INTO purchase (usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt_purchase = $conn->prepare($sql_purchase);
+        $stmt_purchase = $con->prepare($sql_purchase);
         $stmt_purchase->bind_param("iisssssiss", $usr_id, $client_id, $date, $sub_total, $discount, $grand_total, $total_due, $total_paid, $note, $status);
 
         if (!$stmt_purchase->execute()) {
@@ -212,7 +212,7 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Insert data into `purchase_details` table
         $sql_details = "INSERT INTO purchase_details (invoice_id, product_id, qty, value, total) VALUES (?, ?, ?, ?, ?)";
-        $stmt_details = $conn->prepare($sql_details);
+        $stmt_details = $con->prepare($sql_details);
 
         for ($i = 0; $i < count($product_ids); $i++) {
             $stmt_details->bind_param("iiidd", $invoice_id, $product_ids[$i], $qtys[$i], $prices[$i], $total_prices[$i]);
@@ -222,18 +222,18 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Commit transaction
-        $conn->commit();
+        $con->commit();
 
         // Close statements
         $stmt_purchase->close();
         $stmt_details->close();
-        $conn->close();
+        $con->close();
 
         echo json_encode(['success' => true, 'message' => 'Purchase recorded successfully.']);
 
     } catch (Exception $e) {
         // Rollback transaction on error
-        $conn->rollback();
+        $con->rollback();
         echo json_encode(['success' => false, 'message' => 'Transaction failed: ' . $e->getMessage()]);
     }
 

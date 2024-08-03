@@ -563,9 +563,10 @@ function acctual_work($startdate, $enddate) {
                                             <thead>
                                                 <tr>
                                                     <th>Status</th> 
-                                                    <th>Ticket Start</th>
+                                                    <th>Created</th>
                                                     <th>Customer Name</th>
                                                     <th>Issues</th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody id="ticket-list">
@@ -648,6 +649,13 @@ function acctual_work($startdate, $enddate) {
                                                                 }
                                                             }
                                                             ?>
+                                                        </td>
+                                                        <td>
+                                                            
+                                                            <a class="btn-sm btn btn-success" href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
+                                                            </a>
+
+
                                                         </td>
                                                     </tr>
                                                 <?php } ?>

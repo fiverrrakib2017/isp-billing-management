@@ -34,85 +34,7 @@ function timeAgo($startdate) {
     return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
 }
 
-function get_complete_time( $endDate) {
-    /*Convert startdate to a timestamp*/ 
-    $startTimestamp = strtotime($endDate);
-    $currentTimestamp = time();
-    
-    /* Calculate the difference in seconds*/
-    $difference = $currentTimestamp - $startTimestamp;
 
-    /*Define time intervals*/ 
-    $units = [
-        'year' => 31536000,
-        'month' => 2592000,
-        'week' => 604800,
-        'day' => 86400,
-        'hour' => 3600,
-        'minute' => 60,
-        'second' => 1
-    ];
-
-    /*Check for each time unit*/ 
-    foreach ($units as $unit => $value) {
-        if ($difference >= $value) {
-            $time = floor($difference / $value);
-            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
-        }
-    }
-    /*If the difference is less than a second*/
-    return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
-
-    // /***Determine the appropriate time difference string***/ 
-    // if ($timeDifference < $minutes) {
-    //     $count = floor($timeDifference / $seconds);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' second' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $hours) {
-    //     $count = floor($timeDifference / $minutes);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' minute' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $days) {
-    //     $count = floor($timeDifference / $hours);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' hour' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $weeks) {
-    //     $count = floor($timeDifference / $days);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' day' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $months) {
-    //     $count = floor($timeDifference / $weeks);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' week' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $years) {
-    //     $count = floor($timeDifference / $months);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' month' . ($count !== 1 ? 's' : '') . ' ago';
-    // } else {
-    //     $count = floor($timeDifference / $years);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' year' . ($count !== 1 ? 's' : '') . ' ago';
-    // }
-}
-function acctual_work($startdate, $enddate) {
-    $startTimestamp = strtotime($startdate);
-    $endTimestamp = strtotime($enddate);
-    $time_difference = $endTimestamp - $startTimestamp;
-
-    // Define time periods in seconds
-    $units = [
-        'year' => 365 * 24 * 60 * 60,
-        'month' => 30 * 24 * 60 * 60,
-        'week' => 7 * 24 * 60 * 60,
-        'day' => 24 * 60 * 60,
-        'hour' => 60 * 60,
-        'minute' => 60,
-        'second' => 1,
-    ];
-
-    // Determine the appropriate time period
-    foreach ($units as $unit => $value) {
-        if ($time_difference >= $value) {
-            $count = floor($time_difference / $value);
-            return $count . ' ' . $unit . ($count > 1 ? 's' : '') . ' ';
-        }
-    }
-
-    return 'just now'; 
-}
 
 ?>
 <!doctype html>
@@ -356,7 +278,7 @@ function acctual_work($startdate, $enddate) {
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Status</th> 
-                                                    <th>Ticket Start</th>
+                                                    <th>Created</th>
                                                     <th>Customer Name</th>
                                                     <th>Pop/Area</th>
                                                     <th>Issues</th>
