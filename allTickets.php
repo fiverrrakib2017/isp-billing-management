@@ -204,8 +204,8 @@ function acctual_work($startdate, $enddate) {
                     <div class="dropdown d-none d-md-block me-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="font-size-16">
-                                <?php if (isset($_SESSION['username'])) {
-                                    echo $_SESSION['username'];
+                                <?php if (isset($_SESSION['fullname'])) {
+                                    echo $_SESSION['fullname'];
                                 } ?>
                             </span>
                         </button>
@@ -354,7 +354,6 @@ function acctual_work($startdate, $enddate) {
                                         <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                    <th>ID</th>
                                                     <th>Status</th> 
                                                     <th>Created</th>
                                                     <th>Customer Name</th>
@@ -382,7 +381,6 @@ function acctual_work($startdate, $enddate) {
                                                 ?>
 
                                                     <tr>
-                                                        <td><?php //echo $rows['id']; ?></td>
                                                         <td>
                                                             <?php 
                                                             $ticketType = $rows["ticket_type"];
