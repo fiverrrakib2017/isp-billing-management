@@ -86,8 +86,8 @@ if (isset($_SESSION['uid'])) {
                     <div class="dropdown d-none d-md-block me-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="font-size-16">
-                                <?php if (isset($_SESSION['username'])) {
-                                    echo $_SESSION['username'];
+                                <?php if (isset($_SESSION['fullname'])) {
+                                    echo $_SESSION['fullname'];
                                 } ?>
                             </span>
                         </button>
@@ -206,7 +206,7 @@ if (isset($_SESSION['uid'])) {
                                             <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#supplierModal" >Add Supplier</button>
                                         </div>
                                         <div class="card-body">
-                                        <form id="form-data" action="" method="post">
+                                        <form id="form-data" action="include/purchase_server.php??add_invoice" method="post">
                                             <div class="form-group mb-2">
                                                 <label>Product Name</label>
                                                 <select type="text" id="product_name"  class="form-control">
@@ -592,94 +592,44 @@ if (isset($_SESSION['uid'])) {
                 }
             });
         }
-        addInvoiceData()
-
-        function addInvoiceData() {
-            $("#submitBtn").click(function() {
-                var userId = $("#userId").val();
-                var discount = $("#discount").val();
-                var supplier = $("#supplier").val();
-                var refer_no = $("#refer_no").val();
-                var desc = $("#desc").val();
-                var item = $("#item").val();
-                var quantity = $("#quantity").val();
-                var value = $("#value").val();
-                var total = $("#total").val();
-                addInvoiceDataReq(discount, userId, supplier, refer_no, desc, item, quantity, value, total);
-            });
-        }
-        const addInvoiceDataReq = (discount, userId, supplier, refer_no, desc, item, quantity, value, total) => {
-            var addData = 0;
-            if (supplier.length == 0) {
-                toastr.error("Supplier name require");
-            } else if (item.length == 0) {
-                toastr.error("Item Must be require");
-            } else if (quantity.length == 0) {
-                toastr.error("Quantity require");
-            } else if (value.length == 0) {
-                toastr.error("Value require");
-            } else {
-                $.ajax({
-                    url: 'include/purchase_server.php',
-                    type: 'POST',
-                    data: {
-                        discount: discount,
-                        addData: addData,
-                        userId: userId,
-                        supplier: supplier,
-                        refer_no: refer_no,
-                        desc: desc,
-                        item: item,
-                        quantity: quantity,
-                        value: value,
-                        total: total
-                    },
-                    success: function(response) {
-
-                        $("#qty").val('');
-                        $("#value").val('');
-                        $("#total").val('');
-                        getAllData();
-                    }
-                });
-            }
-        }
+        
+        
         //client Add
-        $("#supplier_add").click(function() {
-            var fullname = $("#fullname").val();
-            var company = $("#company").val();
-            var mobile = $("#mobile").val();
-            var status_check = $("#status_check").val();
-            var email = $("#email").val();
-            var address = $("#address").val();
+        // $("#supplier_add").click(function() {
+        //     var fullname = $("#fullname").val();
+        //     var company = $("#company").val();
+        //     var mobile = $("#mobile").val();
+        //     var status_check = $("#status_check").val();
+        //     var email = $("#email").val();
+        //     var address = $("#address").val();
 
-            //alert(fullname.length);
-            if (fullname.length == 0) {
-                toastr.error("Full name required");
-            } else if (company.length == 0) {
-                toastr.error("Company name required");
-            } else if (mobile.length == 0) {
-                toastr.error("Mobile number required");
-            } else if (email.length == 0) {
-                toastr.error("Email required");
-            } else if (address.length == 0) {
-                toastr.error("Address required");
-            } else {
-                var formData = $("#supplier_form").serialize();
-                $.ajax({
-                    type: "GET",
-                    data: formData,
-                    url: "include/supplier_data.php?add",
-                    cache: false,
-                    success: function() {
-                        toastr.success("Supplier Added Successfully");
-                        $("#supplierModal").modal('hide');
-                        getSupplierData();
-                    }
-                });
-            }
+        //     //alert(fullname.length);
+        //     if (fullname.length == 0) {
+        //         toastr.error("Full name required");
+        //     } else if (company.length == 0) {
+        //         toastr.error("Company name required");
+        //     } else if (mobile.length == 0) {
+        //         toastr.error("Mobile number required");
+        //     } else if (email.length == 0) {
+        //         toastr.error("Email required");
+        //     } else if (address.length == 0) {
+        //         toastr.error("Address required");
+        //     } else {
+        //         var formData = $("#supplier_form").serialize();
+        //         $.ajax({
+        //             type: "GET",
+        //             data: formData,
+        //             url: "include/supplier_data.php?add",
+        //             cache: false,
+        //             success: function() {
+        //                 toastr.success("Supplier Added Successfully");
+        //                 $("#supplierModal").modal('hide');
+        //                 getSupplierData();
+        //             }
+        //         });
+        //     }
 
-        });
+        // });
 
 
 
@@ -729,61 +679,58 @@ if (isset($_SESSION['uid'])) {
                     success: function(response) {
                         toastr.success('Product Added');
                         $("#productModal").modal('hide');
-                        getProductData();
-                        //$("#customer-list").load("include/customers.php?list");
                     }
                 });
             }
         });
 
 
-        $("#product_name").change(function() {
-            var itemId = $(this).val();
-            $.ajax({
-                url: "include/purchase_server.php?getSingleProductData",
-                method: 'GET',
-                data: {
-                    id: itemId
-                },
-                success: function(response) {
-                    /* যদি রেসপন্স JSON string হিসাবে আসে, তাহলে এটিকে JSON অবজেক্টে কনভার্ট করতে হবে*/
-                    var product = typeof response === 'string' ? JSON.parse(response) : response;
+        // $("#product_name").change(function() {
+        //     var itemId = $(this).val();
+        //     $.ajax({
+        //         url: "include/purchase_server.php?getSingleProductData",
+        //         method: 'GET',
+        //         data: {
+        //             id: itemId
+        //         },
+        //         success: function(response) {
+        //             /* যদি রেসপন্স JSON string হিসাবে আসে, তাহলে এটিকে JSON অবজেক্টে কনভার্ট করতে হবে*/
+        //             var product = typeof response === 'string' ? JSON.parse(response) : response;
 
-                    console.log(product); 
-                    var product_exists = false;
-                    /*Check if the product already exists in the table*/
-                    $("#tableRow tr").each(function(){
-                        var existing_product_id = $(this).find('input[name="product_id[]"]').val();
-                        if (existing_product_id == product.id) {
-                            product_exists = true;
-                            return false; // break loop
-                        }
-                    });
-                    if (product_exists) {
-                        toastr.error("Product already added. Please increase the quantity.");
-                        return false;
-                    }
+        //             var product_exists = false;
+        //             /*Check if the product already exists in the table*/
+        //             $("#tableRow tr").each(function(){
+        //                 var existing_product_id = $(this).find('input[name="product_id[]"]').val();
+        //                 if (existing_product_id == product.id) {
+        //                     product_exists = true;
+        //                     return false; // break loop
+        //                 }
+        //             });
+        //             if (product_exists) {
+        //                 toastr.error("Product already added. Please increase the quantity.");
+        //                 return false;
+        //             }
 
-                    /* Create table row with product details*/
-                    var row = '<tr>' +
-                        '<td><input type="hidden" name="product_id[]" value="'+ product.id +'">'+ product.name +'</td>' +
-                        '<td><input type="number" min="1" name="qty[]" value="1" class="form-control qty"></td>' +
-                        '<td><input readonly type="number" name="price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
-                        '<td><input readonly type="number" id="total_price" name="total_price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
-                        '<td><a class="btn-sm btn-danger" type="button" id="itemRow"><i class="mdi mdi-close"></i></a></td>' +
-                        '</tr>';
+        //             /* Create table row with product details*/
+        //             var row = '<tr>' +
+        //                 '<td><input type="hidden" name="product_id[]" value="'+ product.id +'">'+ product.name +'</td>' +
+        //                 '<td><input type="number" min="1" name="qty[]" value="1" class="form-control qty"></td>' +
+        //                 '<td><input readonly type="number" name="price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
+        //                 '<td><input readonly type="number" id="total_price" name="total_price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
+        //                 '<td><a class="btn-sm btn-danger" type="button" id="itemRow"><i class="mdi mdi-close"></i></a></td>' +
+        //                 '</tr>';
 
-                    /*Append row to the table body*/ 
-                    $('#tableRow').append(row);
-                     calculateTotalAmount();
+        //             /*Append row to the table body*/ 
+        //             $('#tableRow').append(row);
+        //              calculateTotalAmount();
 
-                },
-                error: function(xhr, status, error) {
-                    /*handle the error response*/ 
-                    console.log(error);
-                }
-            });
-        });
+        //         },
+        //         error: function(xhr, status, error) {
+        //             /*handle the error response*/ 
+        //             console.log(error);
+        //         }
+        //     });
+        // });
     
     /*Calculate total amount when quantity or price changes*/ 
     $(document).on('input', '.qty', function() {
@@ -820,37 +767,52 @@ if (isset($_SESSION['uid'])) {
         calculateTotalAmount();
     });
 
+    $("form").submit(function(e){
+       e.preventDefault();
 
+       var form = $(this);
+       form.find('button[type="submit"]').prop('disabled',true).html(`Loading...`);
+       var url = form.attr('action');
+       var formData = form.serialize();
+          /** Use Ajax to send the  request **/
+          $.ajax({
+          type:'POST',
+          'url':url,
+          data: formData,
+          success: function (response) {
+             if (response.success==true) {
+                toastr.success(response.message);
+                   setTimeout(() => {
+                   location.reload();
+                }, 500);
+             }
+             if(response.success==false){
+                toastr.success(response.message);
+             }
+          },
 
-
-            //delete invoicce item script
-            function deleteInvItem(receviedId){
-                        var dataId=receviedId;
-                        $.ajax({
-                            url: "include/purchase_server.php?deleteInvItem",
-                            method: 'GET',
-                            data: {
-                                id: dataId
-                            },
-                            success: function(response) {
-                                if (response==1) {
-                                    toastr.success("Delete Successful");
-                                    getAllData(); 
-                                }else{
-                                    toastr.error('Something else');
-                                }
-                            
-                            },
-                            error: function(xhr, status, error) {
-                                // handle the error response
-                                console.log(error);
-                            }
-                        });
-
-                    }
-
-
-
+          error: function (xhr, status, error) {
+             /** Handle  errors **/
+             if (xhr.status === 400) {
+                toastr.error(xhr.responseJSON.message);
+                return false;
+             }
+             if (xhr.responseJSON && xhr.responseJSON.errors) {
+                var errors = xhr.responseJSON.errors;
+                Object.values(errors).forEach(function(errorMessage) {
+                   toastr.error(errorMessage);
+                });
+                return false;
+             }
+              else {
+                console.error(xhr.responseText);
+                toastr.error('Server Problem');
+             }
+          },complete: function() {
+             form.find('button[type="submit"]').prop('disabled',false).html('Create Now');
+          }
+       });
+    });
         
     </script>
 

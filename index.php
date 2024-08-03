@@ -5,6 +5,115 @@ include("include/db_connect.php");
 include("include/users_right.php");
 include("include/pop_security.php");
 
+function timeAgo($startdate) {
+    /*Convert startdate to a timestamp*/ 
+    $startTimestamp = strtotime($startdate);
+    $currentTimestamp = time();
+    
+    /* Calculate the difference in seconds*/
+    $difference = $currentTimestamp - $startTimestamp;
+
+    /*Define time intervals*/ 
+    $units = [
+        'year' => 31536000,
+        'month' => 2592000,
+        'week' => 604800,
+        'day' => 86400,
+        'hour' => 3600,
+        'minute' => 60,
+        'second' => 1
+    ];
+
+    /*Check for each time unit*/ 
+    foreach ($units as $unit => $value) {
+        if ($difference >= $value) {
+            $time = floor($difference / $value);
+            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
+        }
+    }
+    /*If the difference is less than a second*/
+    return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
+}
+
+function get_complete_time( $endDate) {
+    /*Convert startdate to a timestamp*/ 
+    $startTimestamp = strtotime($endDate);
+    $currentTimestamp = time();
+    
+    /* Calculate the difference in seconds*/
+    $difference = $currentTimestamp - $startTimestamp;
+
+    /*Define time intervals*/ 
+    $units = [
+        'year' => 31536000,
+        'month' => 2592000,
+        'week' => 604800,
+        'day' => 86400,
+        'hour' => 3600,
+        'minute' => 60,
+        'second' => 1
+    ];
+
+    /*Check for each time unit*/ 
+    foreach ($units as $unit => $value) {
+        if ($difference >= $value) {
+            $time = floor($difference / $value);
+            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
+        }
+    }
+    /*If the difference is less than a second*/
+    return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
+
+    // /***Determine the appropriate time difference string***/ 
+    // if ($timeDifference < $minutes) {
+    //     $count = floor($timeDifference / $seconds);
+    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' second' . ($count !== 1 ? 's' : '') . ' ago';
+    // } elseif ($timeDifference < $hours) {
+    //     $count = floor($timeDifference / $minutes);
+    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' minute' . ($count !== 1 ? 's' : '') . ' ago';
+    // } elseif ($timeDifference < $days) {
+    //     $count = floor($timeDifference / $hours);
+    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' hour' . ($count !== 1 ? 's' : '') . ' ago';
+    // } elseif ($timeDifference < $weeks) {
+    //     $count = floor($timeDifference / $days);
+    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' day' . ($count !== 1 ? 's' : '') . ' ago';
+    // } elseif ($timeDifference < $months) {
+    //     $count = floor($timeDifference / $weeks);
+    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' week' . ($count !== 1 ? 's' : '') . ' ago';
+    // } elseif ($timeDifference < $years) {
+    //     $count = floor($timeDifference / $months);
+    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' month' . ($count !== 1 ? 's' : '') . ' ago';
+    // } else {
+    //     $count = floor($timeDifference / $years);
+    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' year' . ($count !== 1 ? 's' : '') . ' ago';
+    // }
+}
+function acctual_work($startdate, $enddate) {
+    $startTimestamp = strtotime($startdate);
+    $endTimestamp = strtotime($enddate);
+    $time_difference = $endTimestamp - $startTimestamp;
+
+    // Define time periods in seconds
+    $units = [
+        'year' => 365 * 24 * 60 * 60,
+        'month' => 30 * 24 * 60 * 60,
+        'week' => 7 * 24 * 60 * 60,
+        'day' => 24 * 60 * 60,
+        'hour' => 60 * 60,
+        'minute' => 60,
+        'second' => 1,
+    ];
+
+    // Determine the appropriate time period
+    foreach ($units as $unit => $value) {
+        if ($time_difference >= $value) {
+            $count = floor($time_difference / $value);
+            return $count . ' ' . $unit . ($count > 1 ? 's' : '') . ' ';
+        }
+    }
+
+    return 'just now'; 
+}
 
 
 ?>
@@ -453,14 +562,15 @@ include("include/pop_security.php");
                                         <table id="tickets_table" class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>Complain Type</th>
-                                                    <th>Ticket Type</th>
-                                                    <th>Form Date</th>
+                                                    <th>Status</th> 
+                                                    <th>Ticket Start</th>
+                                                    <th>Customer Name</th>
+                                                    <th>Issues</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="ticket-list">
-                                                <?php
-                                                $sql = "SELECT * FROM ticket ORDER BY id DESC LIMIT 5";
+                                            <?php
+                                                $sql = "SELECT * FROM `ticket` ORDER BY id DESC limit 5";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
@@ -468,42 +578,77 @@ include("include/pop_security.php");
                                                 ?>
 
                                                     <tr>
-
+                                                       
                                                         <td>
-                            <?php
-                            $complain_typeId = $rows["complain_type"];
-                            $ticketsId = $rows["id"];
-                            if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                while ($rowss = $allCom->fetch_array()) {
-                                    $topicName = $rowss['topic_name'];
-                                    echo '<a href="tickets_edit.php?id=' . $ticketsId . '">' . $topicName . '</a>';
-                                }
-                            }
-                            ?>
-
+                                                            <?php 
+                                                            $ticketType = $rows["ticket_type"];
+                                                            
+                                                            if ($ticketType === "Complete"): ?>
+                                                                
+                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                                    <span class="badge bg-success">Completed</span>
+                                                                </a>
+                                                            <?php elseif ($ticketType === "Active"): ?>
+                                                                
+                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                                    <span class="badge bg-danger">Active</span>
+                                                                </a>
+                                                            <?php elseif ($ticketType === "Close"): ?>
+                                                                
+                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                                    <span class="badge bg-success">Close</span>
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $ticketType; ?></a>
+                                                            <?php endif; ?>
                                                         </td>
                                                         <td>
-                                                            <?php
-                                                            $ticketType = $rows['ticket_type'];
-                                                            if ($ticketType == "Active") {
-                                                                echo "<span class='badge bg-danger'>Active</span>";
-                                                            } else if ($ticketType == "Open") {
-                                                                echo "<span class='badge bg-info'>Open</span>";
-                                                            } else if ($ticketType == "New") {
-                                                                echo "<span class='badge bg-danger'>New</span>";
-                                                            } else if ($ticketType == "Complete") {
-                                                                echo "<span class='badge bg-success'>Complete</span>";
-                                                            }else if ($ticketType == "Close") {
-                                                                echo "<span class='badge bg-success'>Close</span>";
-                                                            }
-
+                                                            <?php 
+                                                             $startdate = $rows["startdate"];
+                                                             echo timeAgo($startdate); 
                                                             ?>
-
+                                                            
                                                         </td>
+                                                        <td>
+                                                        <?php 
+                                                            $customer_id= $rows['customer_id']; 
+                                                            $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
+                                                            while ($stmr = $customer->fetch_array()) {
+                                                                 $cstmrID = $stmr['id'];
+																 $username = $stmr['username'];
+																 $cstmr_fullname = $stmr['fullname'];
+                                                            }
+                                                        ?>
+														
+                                                            <?php 
+                                                            
+                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                                                            $chkc = $onlineusr->num_rows;
+                                                            if($chkc==1)
+                                                            {
+                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                                                            } else{
+                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
 
-                                                        <td><?php echo date("d F Y", strtotime($rows["startdate"])); ?></td>
-
-
+                                                            }
+                                                 
+                                                            
+                                                            ?>
+                                                        
+                                                        
+                                                        <a href="profile.php?clid=<?php echo $cstmrID; ?>" target="_blank"> <?php echo $cstmr_fullname; ?></a></td>
+                                                        
+                                                        </td>
+                                                        <td>
+                                                             <?php
+                                                            $complain_typeId = $rows["complain_type"];
+                                                            if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
+                                                                while ($rowss = $allCom->fetch_array()) {
+                                                                    echo $rowss['topic_name'];
+                                                                }
+                                                            }
+                                                            ?>
+                                                        </td>
                                                     </tr>
                                                 <?php } ?>
                                             </tbody>
