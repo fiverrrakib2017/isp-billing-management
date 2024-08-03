@@ -36,13 +36,13 @@ if (isset($_GET['getProductData'])) {
 
           $product_name = $rows["name"];
 
-          echo '<option value="' . $product_name . '">' . $product_name . '</option>';
+          echo '<option value="' . $id . '">' . $product_name . '</option>';
       }
   }
 }
 if (isset($_GET['getSingleProductData'])) {
    $id=$_GET['id'];
-   if ($ledgr = $con->query("SELECT * FROM products WHERE `name`='$id' ")) {
+   if ($ledgr = $con->query("SELECT * FROM products WHERE `id`='$id' ")) {
 
       while ($rows = $ledgr->fetch_array()) {
           echo json_encode($rows);
