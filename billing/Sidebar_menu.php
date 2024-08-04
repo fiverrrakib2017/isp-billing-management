@@ -16,6 +16,12 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="bill_collection.php" class="waves-effect">
+                                    <i class="mdi mdi mdi-battery-charging-90"></i>
+                                    <span> Bill Collection </span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="allTickets.php" class="waves-effect">
                                     <i class="mdi mdi-ticket-outline"></i>
                                     <span> List All Tickets</span>

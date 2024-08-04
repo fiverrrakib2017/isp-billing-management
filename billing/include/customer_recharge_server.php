@@ -11,7 +11,7 @@ if (isset($_POST['add_recharge_data'])) {
   $chrg_mnths = $_POST['month'];
   $package_purchase_price = $_POST['amount'];
   $pop_id = $_POST['pop_id'];
-  echo $recharge_by = $_SESSION['uid'];
+  $recharge_by = $_SESSION['uid'];
   $RefNo = $_POST['RefNo'];
   $tra_type = $_POST['tra_type'];
 

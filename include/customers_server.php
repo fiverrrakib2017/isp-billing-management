@@ -189,7 +189,7 @@ if (isset($_POST['addCustomerData'])) {
 
         //Update account recharge and transection
         $custID = $con->insert_id;
-        $recharge_by=$_SESSION['username'];
+        $recharge_by=isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
         $con->query("INSERT INTO customer_rechrg(customer_id, pop_id,months, sales_price, purchase_price,ref,rchrg_until,type,rchg_by,datetm) 
           VALUES('$custID','$pop','1','$package_sales_price','$package_purchase_price', 'On Connection', '$exp_date','1','$recharge_by',NOW())");
         echo 1;

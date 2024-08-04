@@ -20,7 +20,7 @@ function timeAgo($startdate) {
         'week' => 604800,
         'day' => 86400,
         'hour' => 3600,
-        'minute' => 60,
+        'min' => 60,
         'second' => 1
     ];
 
@@ -28,7 +28,7 @@ function timeAgo($startdate) {
     foreach ($units as $unit => $value) {
         if ($difference >= $value) {
             $time = floor($difference / $value);
-            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
+            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . '';
         }
     }
     /*If the difference is less than a second*/
@@ -358,15 +358,109 @@ function timeAgo($startdate) {
                             </div>
                         </div><!--end col -->
                     </div> <!-- end row-->
+					
+					<!-- New Row-->
+					 <div class="row">
+
+                    <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-brown me-0 float-end"><i class="fas fa-code-branch"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-success">
+                                                <?php
+                                                if ($onlinecstmr = $con->query("SELECT * FROM add_pop")) {
+                                                echo $onlinecstmr->num_rows;
+                                                }
+                                                ?>
+                                            </span>
+                                            POP/Branch
+											<br/>
+											<a href="pop_branch.php">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- End col -->
+
+                        <div class="col-md-6 col-xl-3">
+                            
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i class="fas fa-search-location"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-purple">
+                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM area_list")) {
+                                                        echo  $totalCustomer->num_rows;
+                                                    }
+
+                                                    ?>
+                                                </span>
+                                                Area
+												<br/>
+											<a href="pop_area.php">View</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                        </div> <!--End col -->
+
+
+                        
+                        
+
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <a href="customer_expire.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-success me-0 float-end"><i class="fas fa-money-bill-wave"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-danger">
+                                                    <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate")) {
+                                                        echo  $AllExcstmr->num_rows;
+                                                    }
+
+                                                    ?>
+                                                </span>
+                                                Revenew
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div> <!-- End col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-warning me-0 float-end"><i class="far fa-sticky-note"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-teal">
+                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket")) {
+                                                    echo  $dsblcstmr->num_rows;
+                                                }
+                                                ?>
+                                            </span>
+                                            Tickets
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!--end col -->
+                    </div> <!-- end row-->
 
 
                     <div class="row">
 
-                         <div class="col-md-7 grid-margin stretch-card">
+                         <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                <div class="table-responsive">
-                                        <table id="expire_customer_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <div >
+                                        <table  class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
                                                 <th>ID</th>
@@ -380,7 +474,7 @@ function timeAgo($startdate) {
                                             </thead>
                                             <tbody>
                                             <?php
-                                                $sql = "SELECT * FROM add_pop";
+                                                $sql = "SELECT * FROM add_pop LIMIT 5";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
@@ -466,7 +560,7 @@ function timeAgo($startdate) {
                             </div>
                         </div>
 
-                        <div class="col-xl-5">
+                        <div class="col-xl-6">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="row">
@@ -589,24 +683,86 @@ function timeAgo($startdate) {
 
                             <!------------ ------------->
 
-                            <div class="card">
+                         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            <!---------------------->
+                        </div>
+
+
+
+
+
+
+                    </div>
+                    <!-- end row -->
+                    
+
+
+                     <div class="row">
+					 <div class="col-md-6 grid-margin stretch-card">
+					 <div class="card">
                                 <div class="card-body">
-                                    						
+                                    	<h4 class="card-title mb-4">Ticket Statics 10 Days</h4>					
 									
 
                                          <div class="row text-center mt-4">
-                                            <div class="col-4">
-                                                <h5 class="mb-0 font-size-18">100</h5>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												
+												</h5>
                                                 <p class="text-muted text-truncate">Tickets</p>
                                             </div>
-                                            <div class="col-4">
-                                                <h5 class="mb-0 font-size-18">80</h5>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												
+												</h5>
                                                 <p class="text-muted text-truncate">Resolved</p>
                                             </div>
-                                            <div class="col-4">
-                                                <h5 class="mb-0 font-size-18">20</h5>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												</h5>
                                                 <p class="text-muted text-truncate">Pending</p>
                                             </div>
+											
+											<div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												</h5>
+                                                <p class="text-muted text-truncate danger">Closed</p>
+                                            </div>
+											
                                         </div>
 
                                         <div id="chart" dir="ltr"></div>
@@ -617,18 +773,10 @@ function timeAgo($startdate) {
 									
                                 </div>
                             </div>
-
-
-                            <!---------------------->
-                        </div>
-
-                    </div>
-                    <!-- end row -->
-                    
-
-
-                     <div class="row">
-                        <div class="col-md-12 grid-margin stretch-card">
+							</div>
+							
+							
+                        <div class="col-md-6 grid-margin stretch-card">
                         <div class="card">
                                     <div class="card-body">
 
@@ -694,7 +842,7 @@ function timeAgo($startdate) {
                                             <tbody>
                                                 <?php
                                                 //AND user_type='$auth_usr_type'
-                                                $sql = "SELECT * FROM customers ORDER BY id DESC LIMIT 10 ";
+                                                $sql = "SELECT * FROM customers ORDER BY id DESC LIMIT 5 ";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
@@ -785,7 +933,7 @@ function timeAgo($startdate) {
                                             <tbody>
                                                 <?php
                                                 //AND user_type='$auth_usr_type'
-                                                $sql = "SELECT * FROM customers WHERE expiredate<NOW() ORDER BY id DESC LIMIT 10 ";
+                                                $sql = "SELECT * FROM customers WHERE expiredate<NOW() ORDER BY id DESC LIMIT 5 ";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
@@ -855,6 +1003,72 @@ function timeAgo($startdate) {
 					
 					
 					<div class="row">
+					
+					<div class="col-md-12 grid-margin stretch-card">
+					 <div class="card">
+                                <div class="card-body">
+                                    	<h4 class="card-title mb-4">Yearly Customer Statics</h4>					
+									
+
+                                         <div class="row text-center mt-4">
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												
+												</h5>
+                                                <p class="text-muted text-truncate">Tickets</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												
+												</h5>
+                                                <p class="text-muted text-truncate">Resolved</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												</h5>
+                                                <p class="text-muted text-truncate">Pending</p>
+                                            </div>
+											
+											<div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												</h5>
+                                                <p class="text-muted text-truncate danger">Closed</p>
+                                            </div>
+											
+                                        </div>
+
+                                        <div id="chart_year" dir="ltr"></div>
+								
+                                </div>
+                            </div>
+							</div>
+							
+							
+							
+							
+							
+							
+							
                         <div class="col-md-12 stretch-card">
                             <div class="card">
                                 <div class="card-body">
@@ -1279,7 +1493,7 @@ $cronupdt = $con->query("SELECT * FROM cron");
                                                         <select id="ticket_assigned" class="form-select">
                                                             <option value="">Select</option>
                                                             <option value="Locale Team">Locale Team</option>
-                                                            <option value="Fiverr Team">Fiverr Team</option>
+                                                            <option value="Fiber Team">Fiber Team</option>
                                                             <option value="Rayhan Sir">Rayhan Sir</option>
                                                             <option value="SR Comunication">SR Comunication</option>
                                                             <option value="Ali Hossain">Ali Hossain</option>
@@ -1570,7 +1784,7 @@ $cronupdt = $con->query("SELECT * FROM cron");
     <script type="text/javascript">
 	
 	
-	var chart=new Chartist.Line("#simple-line-chart",{labels:["January","February","March","April","May","Jun","Julay","Auhust","September","October","November","December"],
+	var chart=new Chartist.Line("#simple-line-chart",{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
 		series:[
 		[<?php 
 		for($i=1; $i<13; $i++)
@@ -1610,7 +1824,7 @@ data:{columns:[
 // Date find from 5 days ago
 //echo $Fidayago = strtotime(date("d", strtotime("-5 day")));
 /**/
-		for($i=0; $i<5; $i++)
+		for($i=0; $i<9; $i++)
 			{
 				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
 				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%'");
@@ -1623,14 +1837,99 @@ data:{columns:[
 			
 ?>
 ],
-["Resolved",200,130,90,240,130,220],
-["Pending",250,200,160,300,250,250]],
+["Resolved",
+<?php 
+// Date find from 5 days ago
+
+		for($i=0; $i<9; $i++)
+			{
+				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
+				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Complete'");
+				echo $tktsql->num_rows;
+				echo ',';	
+			}
+			
+?>
+
+
+],
+["Pending",
+<?php 
+// Date find from 5 days ago
+
+		for($i=0; $i<9; $i++)
+			{
+				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
+				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
+				echo $tktsql->num_rows;
+				echo ',';	
+			}
+			
+?>
+
+
+]],
 type:"bar",colors:{Tickets:"#fb8c00",Resolved:"#3bc3e9",Pending:"#5468da"}}})},
 e.ChartC3=new a,e.ChartC3.Constructor=a}(window.jQuery),
 function(){"use strict";
 window.jQuery.ChartC3.init()}();
 
 
+///////////////// ####### Yearly Customer statics Chart Bar ######## //////////////////////
+!function(e){"use strict";function a(){}a.prototype.init=function(){c3.generate({bindto:"#chart_year",
+data:{columns:[
+["New Customer",
+<?php 
+
+		for($i=1; $i<13; $i++)
+			{
+				
+				$currentyrMnth = date("Y").'-0'.$i;
+				date("M-Y", strtotime(date("Y").'-'.$i));
+				$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+				$result = mysqli_query($con, $sql);
+				echo $countconn = mysqli_num_rows($result).',';
+			}
+			
+?>
+],
+["Expired",
+<?php 
+// Date find from 5 days ago
+
+		for($i=0; $i<11; $i++)
+			{
+				$currentyrMnth = date("Y").'-0'.$i;
+				date("M-Y", strtotime(date("Y").'-'.$i));
+				$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+				$result = mysqli_query($con, $sql);
+				echo $countconn = mysqli_num_rows($result).',';
+			}
+			
+?>
+
+
+],
+["Disabled",
+<?php 
+// Date find from 5 days ago
+
+		for($i=0; $i<11; $i++)
+			{
+				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
+				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
+				echo $tktsql->num_rows;
+				echo ',';	
+			}
+			
+?>
+
+
+]],
+type:"bar",colors:{Tickets:"#fb8c00",Resolved:"#3bc3e9",Pending:"#5468da"}}})},
+e.ChartC3=new a,e.ChartC3.Constructor=a}(window.jQuery),
+function(){"use strict";
+window.jQuery.ChartC3.init()}();
 
 
         $('#expire_customer_datatable').dataTable();

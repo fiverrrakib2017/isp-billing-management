@@ -42,6 +42,8 @@ if (isset($_GET["id"])) {
     <!-- App Css-->
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+ 
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> -->
     <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
 </head>
 
@@ -83,7 +85,7 @@ if (isset($_GET["id"])) {
                     </button>
 
                     <div class="d-none d-sm-block ms-2">
-                        <h4 class="page-title">Purchase Update</h4>
+                        <h4 class="page-title">Purchase</h4>
                     </div>
                 </div>
 
@@ -209,155 +211,79 @@ if (isset($_GET["id"])) {
             <div class="page-content">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="card ">
-                            <form id="saleForm">
-                                <div class="row mb-3 mt-1">
-                                    <div class="col-sm d-none">
-                                        <div class="form-group ">
-                                            <label>User Id</label>
-                                            <input id="userId" class="form-control" type="text" name="id" value="<?php if (isset($_SESSION['uid'])) {
-                                                                                                                        echo $_SESSION['uid'];
-                                                                                                                    } ?>">
+                        <div class="col-md-12">
+                            <div class="row ">
+                                <div class="col-md-7 m-auto">
+                                    <div class="card ">
+                                        <div class="card-header">
+                                            <button class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#productModal" >Add Product</button>
+                                            <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#supplierModal" >Add Supplier</button>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group ">
-                                            <label>Supplier Name</label>
-                                            <select class="form-select" name="supplier" id="supplier">
-
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-1 ">
-                                        <div class="form-group mt-3">
-                                            <button class="btn-sm btn btn-primary ml-0" type="button" data-bs-toggle="modal" data-bs-target="#supplierModal" style="margin-top:5px;"><i class="mdi mdi-account-plus"></i></button>
-                                        </div>
-
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group ">
-                                            <label>Refer No:</label>
-                                            <input class="form-control" type="text" name="refer_no" id="refer_no" placeholder="Type Your Refer No">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group ">
-                                            <label>Description:</label>
-                                            <input class="form-control" type="text" name="desc" id="desc" placeholder="Type Your Description">
-                                        </div>
-                                    </div>
-
-                                </div>
-
-
-
-
-                            </form>
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="card">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group mb-3">
-                                            <label for="">Item</label>
-                                            <select class="form-select" name="item" id="item">
-                                                <option value="">Select</option>
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <div class="form-group mt-4 mb-3">
-                                            <button class="btn-sm btn btn-primary ml-0" type="button" data-bs-toggle="modal" data-bs-target="#productModal" style="margin-top:5px;">+</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <label for="">Quantity</label>
-                                            <input type="number" class="form-control" name="quantity" id="quantity" min="1">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <label for="">Value</label>
-                                            <input type="text" class="form-control" name="value" id="value">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <label for="">Total</label>
-                                            <input type="text" class="form-control" name="total" id="total">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <button type="button" id="submitBtn" class="btn btn-success" style="margin-top: 22px;">Add</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12 ">
-                                    <!-- id="saleTable" -->
-                                        <div class="table-responsive "id="saleTable" >
-                                            <table class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                <thead>
-                                                    <tr>
-                                                        <th>No</th>
-                                                        <th>Item Name</th>
-                                                        <th>Quantity</th>
-                                                        <th>Value</th>
+                                        <div class="card-body">
+                                        <form id="form-data" action="include/purchase_server.php?add_invoice" method="post">
+                                            <div class="form-group mb-2">
+                                                <label>Product Name</label>
+                                                <select type="text" id="product_name"  class="form-control">
+                                                    <option>Select</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <label>Supplier Name</label>
+                                                <select type="text" id="supplier_name" name="supplier_id" class="form-control select2">
+                                                    <option>---Select---</option>
+                                                </select>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-bordered">
+                                                    <thead class="bg bg-info text-white">
+                                                        <th>Product List</th>
+                                                        <th>Qty</th>
+                                                        <th>Price</th>
                                                         <th>Total</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-    <?php 
-        if ($details = $con->query("SELECT * FROM purchase_details WHERE invoice_id =".$_GET['id'] ."")) {
-        while ($rows = $details->fetch_array()) {
-            echo '<pre>'; 
-
-            print_r($rows); 
-            echo '</pre>'; 
-            $items = $rows["items"];
-            $qty = $rows["qty"];
-            $value = $rows["value"];
-            $total_value  = $rows["total"];
-            $total += $total_value;
-            echo '<tr>
-            <td></td>
-            <td>' . $items . '</td>
-            <td>' . $qty . '</td>
-            <td>' . $value . '</td>
-            <td>' . $total_value  . '</td>
-            <td>
-            <button class="btn-sm btn btn-danger" onclick="deleteInvItem('.$id.')"><i class="fas fa-trash"></i></button>
-            </td>
-            </tr>';
-        }
-    }
-    ?>
-                                                </tbody>
-                                                <tbody>
-    
-    <tr>
-    
-    <td colspan="4"></td><td><b>Total: <?php echo $total; ?> </b></td>
-    <td><button type="button" onclick="processPayment(<?php echo $total; ?>)"  class="btn-sm btn btn-primary ">Payment</button></td>
-    
-    </tr>
-    
-                                                </tbody>
-                                            </table>
+                                                        <th></th>
+                                                    </thead>
+                                                    <tbody id="tableRow">
+                                                        
+                                                    </tbody>
+                                                    <tfoot class="">
+                                                        <tr>
+                                                            <th class="text-center" colspan="2"></th>
+                                                            <th class="text-left" colspan="3">
+                                                                Total Amount <input readonly class="form-control total_amount" name="total_amount" type="text">
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" colspan="2"></th>
+                                                            <th class="text-left" colspan="3">
+                                                                Paid Amount <input  type="text" class="form-control paid_amount" name="paid_amount" >
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" colspan="2"></th>
+                                                            <th class="text-left" colspan="3">
+                                                                Discount Amount <input  type="text" class="form-control discount_amount" name="discount_amount" value="00">
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" colspan="2"></th>
+                                                            <th class="text-left" colspan="3">
+                                                                Due Amount <input type="text" readonly class="form-control due_amount" name="due_amount" >
+                                                            </th>
+                                                        </tr>
+                                                    </tfoot>
+                                                    </table>
+                                                    <div class="form-group text-center">
+                                                    <button type="submit"  class="btn btn-success"><i class="fe fe-dollar"></i> Create Now</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
                 <!-- container-fluid -->
@@ -614,12 +540,13 @@ if (isset($_GET["id"])) {
         </div>
     </div>
     <!-- JAVASCRIPT -->
+   
     <script src="assets/libs/jquery/jquery.min.js"></script>
     <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="assets/libs/metismenu/metisMenu.min.js"></script>
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
-
+    
     <!-- Required datatable js -->
     <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -637,42 +564,17 @@ if (isset($_GET["id"])) {
     <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
     <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
     <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
-    <script src="assets/libs/select2/js/select2.min.js"></script>
+    
     <!-- Datatable init js -->
     <script src="assets/js/pages/datatables.init.js"></script>
 
     <script src="assets/js/app.js"></script>
-
+    <script src="assets/libs/select2/js/select2.min.js"></script>
     <script type="text/javascript">
-        $("#supplier").select2();
-        $("#item").select2();
-        //this  page calcualtion script
-        $('#quantity').change(calculate);
-        $('#value').keyup(calculate);
+         $("#supplier_name").select2();
+         $("#product_name").select2();
 
-        function calculate(e) {
-            $('#total').val($('#quantity').val() * $('#value').val());
-        }
-
-
-
-
-
-        getAllData();
-
-        function getAllData() {
-            $.ajax({
-                url: "include/purchase_server.php?show",
-                method: 'GET',
-                success: function(response) {
-                    $('#saleTable').html(response);
-                },
-                error: function(xhr, status, error) {
-                    // handle the error response
-                    console.log(error);
-                }
-            });
-        }
+    
         getSupplierData();
 
         function getSupplierData() {
@@ -681,7 +583,7 @@ if (isset($_GET["id"])) {
                 url: "include/purchase_server.php?getSupplierData",
                 method: 'GET',
                 success: function(response) {
-                    $('#supplier').html(response);
+                    $('#supplier_name').html(response);
                 },
                 error: function(xhr, status, error) {
                     // handle the error response
@@ -697,7 +599,7 @@ if (isset($_GET["id"])) {
                 url: "include/purchase_server.php?getProductData",
                 method: 'GET',
                 success: function(response) {
-                    $('#item').html(response);
+                    $('#product_name').html(response);
                 },
                 error: function(xhr, status, error) {
                     // handle the error response
@@ -705,59 +607,9 @@ if (isset($_GET["id"])) {
                 }
             });
         }
-        addInvoiceData()
-
-        function addInvoiceData() {
-            $("#submitBtn").click(function() {
-                var userId = $("#userId").val();
-                var discount = $("#discount").val();
-                var supplier = $("#supplier").val();
-                var refer_no = $("#refer_no").val();
-                var desc = $("#desc").val();
-                var item = $("#item").val();
-                var quantity = $("#quantity").val();
-                var value = $("#value").val();
-                var total = $("#total").val();
-                addInvoiceDataReq(discount, userId, supplier, refer_no, desc, item, quantity, value, total);
-            });
-        }
-        const addInvoiceDataReq = (discount, userId, supplier, refer_no, desc, item, quantity, value, total) => {
-            var addData = 0;
-            if (supplier.length == 0) {
-                toastr.error("Supplier name require");
-            } else if (item.length == 0) {
-                toastr.error("Item Must be require");
-            } else if (quantity.length == 0) {
-                toastr.error("Quantity require");
-            } else if (value.length == 0) {
-                toastr.error("Value require");
-            } else {
-                $.ajax({
-                    url: 'include/purchase_server.php',
-                    type: 'POST',
-                    data: {
-                        discount: discount,
-                        addData: addData,
-                        userId: userId,
-                        supplier: supplier,
-                        refer_no: refer_no,
-                        desc: desc,
-                        item: item,
-                        quantity: quantity,
-                        value: value,
-                        total: total
-                    },
-                    success: function(response) {
-
-                        $("#qty").val('');
-                        $("#value").val('');
-                        $("#total").val('');
-                        getAllData();
-                    }
-                });
-            }
-        }
-        //client Add
+        
+        
+        /*Supplier Add*/
         $("#supplier_add").click(function() {
             var fullname = $("#fullname").val();
             var company = $("#company").val();
@@ -842,17 +694,14 @@ if (isset($_GET["id"])) {
                     success: function(response) {
                         toastr.success('Product Added');
                         $("#productModal").modal('hide');
-                        getProductData();
-                        //$("#customer-list").load("include/customers.php?list");
                     }
                 });
             }
         });
 
 
-        //when product select then automatic insert qty and value 
-        $("#item").change(function() {
-            var itemId = $("#item").val();
+        $("#product_name").change(function() {
+            var itemId = $(this).val();
             $.ajax({
                 url: "include/purchase_server.php?getSingleProductData",
                 method: 'GET',
@@ -860,97 +709,128 @@ if (isset($_GET["id"])) {
                     id: itemId
                 },
                 success: function(response) {
-                    var data = JSON.parse(response);
-                    $("#quantity").val('1');
-                    $("#value").val(data.purchase_price);
-                    $("#total").val(data.purchase_price);
+                    /* যদি রেসপন্স JSON string হিসাবে আসে, তাহলে এটিকে JSON অবজেক্টে কনভার্ট করতে হবে*/
+                    var product = typeof response === 'string' ? JSON.parse(response) : response;
+
+                    var product_exists = false;
+                    /*Check if the product already exists in the table*/
+                    $("#tableRow tr").each(function(){
+                        var existing_product_id = $(this).find('input[name="product_id[]"]').val();
+                        if (existing_product_id == product.id) {
+                            product_exists = true;
+                            return false; // break loop
+                        }
+                    });
+                    if (product_exists) {
+                        toastr.error("Product already added. Please increase the quantity.");
+                        return false;
+                    }
+
+                    /* Create table row with product details*/
+                    var row = '<tr>' +
+                        '<td><input type="hidden" name="product_id[]" value="'+ product.id +'">'+ product.name +'</td>' +
+                        '<td><input type="number" min="1" name="qty[]" value="1" class="form-control qty"></td>' +
+                        '<td><input readonly type="number" name="price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
+                        '<td><input readonly type="number" id="total_price" name="total_price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
+                        '<td><a class="btn-sm btn-danger" type="button" id="itemRow"><i class="mdi mdi-close"></i></a></td>' +
+                        '</tr>';
+
+                    /*Append row to the table body*/ 
+                    $('#tableRow').append(row);
+                     calculateTotalAmount();
+
                 },
                 error: function(xhr, status, error) {
-                    // handle the error response
+                    /*handle the error response*/ 
                     console.log(error);
                 }
             });
         });
-
-
-
-            //delete invoicce item script
-            function deleteInvItem(receviedId){
-                        var dataId=receviedId;
-                        $.ajax({
-                            url: "include/purchase_server.php?deleteInvItem",
-                            method: 'GET',
-                            data: {
-                                id: dataId
-                            },
-                            success: function(response) {
-                                if (response==1) {
-                                    toastr.success("Delete Successful");
-                                    getAllData(); 
-                                }else{
-                                    toastr.error('Something else');
-                                }
-                            
-                            },
-                            error: function(xhr, status, error) {
-                                // handle the error response
-                                console.log(error);
-                            }
-                        });
-
-                    }
-
-
-
-        ////////////payment process///////////////
-        function processPayment(sabtotal) {
-            $("#paymentModal").modal('show');
-            $(".payment_sub_total").val(sabtotal);
-            $(".payment_grand_total").val(sabtotal);
-        }
-
-
-        $('.payment_sub_total').on('keyup', function() {
-            var sub_total = $('.payment_sub_total').val();
-            var payment_discount = $('.payment_discount').val();
-            var grand_total = $('.payment_grand_total').val(Number(sub_total - payment_discount));
+    
+    /*Calculate total amount when quantity or price changes*/ 
+    $(document).on('input', '.qty', function() {
+        var row = $(this).closest('tr');
+        var qty = $(this).val();
+        var price = row.find('input[name="price[]"]').val();
+        var total_price = qty * price;
+        row.find('input[name="total_price[]"]').val(total_price);
+        calculateTotalAmount();
+    });
+    /* Calculate total amount function*/
+    function calculateTotalAmount() {
+        var totalAmount = 0;
+        $('#tableRow tr').each(function() {
+            var total_price = $(this).find('input[name="total_price[]"]').val();
+            totalAmount += parseFloat(total_price);
         });
-        $('.payment_discount').on('keyup', function() {
-            var sub_total = $('.payment_sub_total').val();
-            var payment_discount = $('.payment_discount').val();
-            var grand_total = $('.payment_grand_total').val(Number(sub_total - payment_discount));
-        });
-        $('.payment_grand_total').on('keyup', function() {
-            var sub_total = $('.payment_sub_total').val();
-            var payment_discount = $('.payment_discount').val();
-            var grand_total = $('.payment_grand_total').val(Number(sub_total - payment_discount));
-        });
+        $('input[name="total_amount"]').val(totalAmount);
 
+        // Calculate Due Amount
+        var paidAmount = parseFloat($('input[name="paid_amount"]').val()) || 0;
+        var discountAmount = parseFloat($('input[name="discount_amount"]').val()) || 0;
+        var dueAmount = totalAmount - paidAmount - discountAmount;
+        $('input[name="due_amount"]').val(dueAmount);
+    }
+    /*Update Due Amount when Paid Amount or Discount changes*/ 
+    $(document).on('input', 'input[name="paid_amount"], input[name="discount_amount"]', function() {
+        calculateTotalAmount();
+    });
 
-        $("#payment_add").click(function() {
-            var PymntformData = $("#paymnt_process").serialize();
+    /* Remove row when the delete button is clicked*/
+    $(document).on('click', '#itemRow', function() {
+        $(this).closest('tr').remove();
+        calculateTotalAmount();
+    });
+
+    $("form").submit(function(e){
+       e.preventDefault();
+
+       var form = $(this);
+       form.find('button[type="submit"]').prop('disabled',true).html(`Loading...`);
+       var url = form.attr('action');
+       var formData = form.serialize();
+            /** Use Ajax to send the  request **/
             $.ajax({
-                type: "GET",
-                data: PymntformData,
-                url: "include/purchase_server.php?subTotal",
-                cache: false,
-                success: function(response) {
-
-                    if (response == 1) {
-                        toastr.success("Done Successfully");
-                        $("#paymentModal").modal('hide');
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else if (response == 2) {
-                        toastr.error("Over Payment Not allow");
-                    } else {
-                        toastr.error("Please Try Again");
-                    }
+            type:'POST',
+            'url':url,
+            data: formData,
+            dataType: 'json',
+            success: function (response) {
+                //var response = JSON.parse(response);
+                if (response.success) {
+                    toastr.success(response.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                } else {
+                    toastr.error(response.message);
                 }
-            });
+            },
 
-        });
+
+          error: function (xhr, status, error) {
+             /** Handle  errors **/
+             if (xhr.status === 400) {
+                toastr.error(xhr.responseJSON.message);
+                return false;
+             }
+             if (xhr.responseJSON && xhr.responseJSON.errors) {
+                var errors = xhr.responseJSON.errors;
+                Object.values(errors).forEach(function(errorMessage) {
+                   toastr.error(errorMessage);
+                });
+                return false;
+             }
+              else {
+                console.error(xhr.responseText);
+                toastr.error('Server Problem');
+             }
+          },complete: function() {
+             form.find('button[type="submit"]').prop('disabled',false).html('Create Now');
+          }
+       });
+    });
+        
     </script>
 
 </body>

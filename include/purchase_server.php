@@ -175,7 +175,7 @@ if (isset($_GET['deleteInvItem'])) {
 /* Set response header to JSON*/
 
 if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $usr_id = 1; 
+    $usr_id =isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
     $client_id = $_POST['supplier_id'];
     $date = date('Y-m-d'); 
     $sub_total = $_POST['total_amount'];
