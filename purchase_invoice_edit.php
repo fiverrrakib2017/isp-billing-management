@@ -85,7 +85,7 @@ if (isset($_GET["id"])) {
                     </button>
 
                     <div class="d-none d-sm-block ms-2">
-                        <h4 class="page-title">Purchase</h4>
+                        <h4 class="page-title">Purchase Invoice Edit</h4>
                     </div>
                 </div>
 
@@ -220,7 +220,8 @@ if (isset($_GET["id"])) {
                                             <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#supplierModal" >Add Supplier</button>
                                         </div>
                                         <div class="card-body">
-                                        <form id="form-data" action="include/purchase_server.php?add_invoice" method="post">
+                                        <form id="form-data" action="include/purchase_server.php?update_invoice=1&invoice_id=<?php echo $id; ?>" method="post">
+
                                             <div class="form-group mb-2">
                                                 <label>Product Name</label>
                                                 <select type="text" id="product_name"  class="form-control">
@@ -231,6 +232,15 @@ if (isset($_GET["id"])) {
                                                 <label>Supplier Name</label>
                                                 <select type="text" id="supplier_name" name="supplier_id" class="form-control select2">
                                                     <option>---Select---</option>
+                                                    <?php 
+                                        // if ($allSupplier = $con->query("SELECT * FROM suppliers  ")) {
+                                        //     while ($rowss = $allSupplier->fetch_array()) {
+                                        //         echo ' <option value="'.$rowss['id'].'">"'.$rowss['fullname'].'"</option>'; 
+                                                
+                                        //     }
+                                        // }
+                                                    
+                                                    ?>
                                                 </select>
                                             </div>
                                             <div class="row">
@@ -244,33 +254,80 @@ if (isset($_GET["id"])) {
                                                         <th></th>
                                                     </thead>
                                                     <tbody id="tableRow">
-                                                        
+                                                    
+                                                <?php
+                                                $sql = "SELECT * FROM `purchase_details` WHERE invoice_id=$id";
+                                                $result = mysqli_query($con, $sql);
+
+                                                while ($rows = mysqli_fetch_assoc($result)) {
+
+                                                ?>
+
+                    <tr>
+                        <td>
+                            <?php
+                                $product_id = $rows["product_id"];
+                                if ($allPD = $con->query("SELECT * FROM products WHERE id='$product_id' ")) {
+                                    while ($rowss = $allPD->fetch_array()) {
+                                        echo ' <input type="hidden" name="product_id[]" value="'.$rowss['id'].'">'; 
+                                        echo $rowss['name']; 
+                                    }
+                                }
+                            ?>
+                           
+
+                        </td>
+                        <td>
+                            <input type="number" min="1" name="qty[]" value="<?php echo $rows['qty']; ?>" class="form-control qty">
+                        </td>
+                        <td>
+                            <input readonly type="number" name="price[]" class="form-control" value="<?php echo $rows['value']; ?>">
+                        </td>
+                        <td>
+                            <input readonly type="number" id="total_price" name="total_price[]" class="form-control" value="<?php echo $rows['total']; ?>"></td>
+                        <td>
+                            <a class="btn-sm btn-danger" type="button" id="itemRow"><i class="mdi mdi-close"></i></a>
+                        </td>
+                        </tr>
+                                                <?php } ?>
+                                                   
                                                     </tbody>
                                                     <tfoot class="">
-                                                        <tr>
-                                                            <th class="text-center" colspan="2"></th>
-                                                            <th class="text-left" colspan="3">
-                                                                Total Amount <input readonly class="form-control total_amount" name="total_amount" type="text">
-                                                            </th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th class="text-center" colspan="2"></th>
-                                                            <th class="text-left" colspan="3">
-                                                                Paid Amount <input  type="text" class="form-control paid_amount" name="paid_amount" >
-                                                            </th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th class="text-center" colspan="2"></th>
-                                                            <th class="text-left" colspan="3">
-                                                                Discount Amount <input  type="text" class="form-control discount_amount" name="discount_amount" value="00">
-                                                            </th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th class="text-center" colspan="2"></th>
-                                                            <th class="text-left" colspan="3">
-                                                                Due Amount <input type="text" readonly class="form-control due_amount" name="due_amount" >
-                                                            </th>
-                                                        </tr>
+                                                    <?php
+                                                $sql = "SELECT * FROM `purchase` WHERE id=$id";
+                                                $result = mysqli_query($con, $sql);
+
+                                                while ($rows = mysqli_fetch_assoc($result)) {
+
+                                                ?>
+
+                                                <tr>
+                                                    <th class="text-center" colspan="2"></th>
+                                                    <th class="text-left" colspan="3">
+                                                        Total Amount <input readonly class="form-control total_amount" name="total_amount" type="text" value="<?php echo $rows['sub_total'] ?>">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-center" colspan="2"></th>
+                                                    <th class="text-left" colspan="3">
+                                                        Paid Amount <input  type="text" class="form-control paid_amount" name="paid_amount" value="<?php echo $rows['total_paid'] ?>">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-center" colspan="2"></th>
+                                                    <th class="text-left" colspan="3">
+                                                        Discount Amount <input  type="text" class="form-control discount_amount" name="discount_amount"  value="<?php echo $rows['discount'] ?? 0; ?>">
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="text-center" colspan="2"></th>
+                                                    <th class="text-left" colspan="3">
+                                                        Due Amount <input type="text" readonly class="form-control due_amount" name="due_amount"  value="<?php echo $rows['total_due'] ?? 0; ?>">
+                                                    </th>
+                                                </tr>
+                                                <?php } ?>
+                                                        
+
                                                     </tfoot>
                                                     </table>
                                                     <div class="form-group text-center">
@@ -578,12 +635,13 @@ if (isset($_GET["id"])) {
         getSupplierData();
 
         function getSupplierData() {
-
+            var supplier_id=<?php echo $client_id; ?>;
             $.ajax({
                 url: "include/purchase_server.php?getSupplierData",
                 method: 'GET',
                 success: function(response) {
                     $('#supplier_name').html(response);
+                    $('#supplier_name').val(supplier_id);
                 },
                 error: function(xhr, status, error) {
                     // handle the error response

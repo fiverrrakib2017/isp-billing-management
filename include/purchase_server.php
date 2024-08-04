@@ -238,6 +238,60 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
 }
+if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    $invoice_id = $_GET['invoice_id'];
+    $client_id = $_POST['supplier_id'];
+    $date = date('Y-m-d'); 
+    $discount = $_POST['discount_amount'] ? $_POST['discount_amount']:0 ;
+    $total_amount = $_POST['total_amount'] ;
+    $total_due = $_POST['due_amount'] ;
+    $total_paid = $_POST['paid_amount'];
+    $note = ''; 
+    $status = 'Pending'; 
+
+    if (!$_GET['invoice_id'] || !$_POST['supplier_id'] || !$_POST['total_amount'] || !$_POST['paid_amount'] || empty($_POST['product_id'])) {
+        echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
+        exit;
+    }
+    // Update purchase table
+    $updatePurchaseQuery = "UPDATE purchase SET 
+                                client_id = '$client_id', 
+                                date = '$date', 
+                                sub_total='$total_amount',
+                                discount = '$discount', 
+                                grand_total = '$total_amount',
+                                total_due = '$total_due', 
+                                total_paid = '$total_paid', 
+                                note = '$note', 
+                                status = '$status'
+                            WHERE id = '$invoice_id'";
+    
+    if ($con->query($updatePurchaseQuery)) {
+        // Delete previous purchase details for this invoice
+        $con->query("DELETE FROM purchase_details WHERE invoice_id = '$invoice_id'");
+
+        // Insert updated purchase details
+        $product_ids = $_POST['product_id'];
+        $quantities = $_POST['qty'];
+        $values = $_POST['price'];
+        $totals = $_POST['total_price'];
+
+        foreach ($product_ids as $index => $product_id) {
+            $qty = $quantities[$index];
+            $value = $values[$index];
+            $total = $totals[$index];
+
+            $insertDetailsQuery = "INSERT INTO purchase_details (invoice_id, product_id, qty, value, total) VALUES ('$invoice_id', '$product_id', '$qty', '$value', '$total')";
+
+            $con->query($insertDetailsQuery);
+        }
+
+        echo json_encode(['success' => true, 'message' => 'Invoice updated successfully.']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error updating invoice: ' . $con->error]);
+    }
+}
 
 
 
