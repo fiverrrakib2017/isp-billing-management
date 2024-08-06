@@ -194,106 +194,79 @@ if (isset($_SESSION['uid'])) {
         <div class="main-content">
             <div class="page-content">
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="card ">
-                            <form id="saleForm">
-                                <div class="row mb-3 mt-1">
-                                    <div class="col-sm d-none">
-                                        <div class="form-group ">
-                                            <label>User Id</label>
-                                            <input id="userId" class="form-control" type="text" name="id" value="<?php if (isset($_SESSION['uid'])) {
-                                                                                                                        echo $_SESSION['uid'];
-                                                                                                                    } ?>">
+                <div class="row">
+                        <div class="col-md-12">
+                            <div class="row ">
+                                <div class="col-md-7 m-auto">
+                                    <div class="card ">
+                                        <div class="card-header">
+                                            <button class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#productModal" >Add Product</button>
+                                            <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#supplierModal" >Add Supplier</button>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group ">
-                                            <label>Client</label>
-                                            <select class="form-select" name="client" id="client">
-
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-1 ">
-                                        <div class="form-group mt-3">
-                                            <button class="btn-sm btn btn-primary ml-0" type="button" data-bs-toggle="modal" data-bs-target="#clientModal" style="margin-top:5px;"><i class="mdi mdi-account-plus"></i></button>
-                                        </div>
-
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group ">
-                                            <label>Refer No:</label>
-                                            <input class="form-control" type="text" name="refer_no" id="refer_no" placeholder="Type Your Refer No">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group ">
-                                            <label>Description:</label>
-                                            <input class="form-control" type="text" name="desc" id="desc" placeholder="Type Your Description">
-                                        </div>
-                                    </div>
-
-                                </div>
-
-
-
-
-                            </form>
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="card">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="form-group mb-3">
-                                            <label for="">Item</label>
-                                            <select class="form-select" name="item" id="item">
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <div class="form-group mt-4 mb-3">
-                                            <button class="btn-sm btn btn-primary ml-0" type="button" data-bs-toggle="modal" data-bs-target="#productModal" style="margin-top:5px;">+</button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <label for="">Quantity</label>
-                                            <input type="number" class="form-control" name="quantity" id="quantity" min="1">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <label for="">Value</label>
-                                            <input type="text" class="form-control" name="value" id="value">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <label for="">Total</label>
-                                            <input type="text" class="form-control" name="total" id="total">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group mb-3">
-                                            <button type="button" id="submitBtn" class="btn btn-success" style="margin-top: 22px;">Add</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row  ">
-                                    <div class="col-md-12 ">
-                                        <div class="table-responsive " id="saleTable">
-
+                                        <div class="card-body">
+                                        <form id="form-data" action="include/purchase_server.php?add_invoice" method="post">
+                                            <div class="form-group mb-2">
+                                                <label>Product Name</label>
+                                                <select type="text" id="product_name"  class="form-control">
+                                                    <option>Select</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group mb-2">
+                                                <label>Client Name</label>
+                                                <select type="text" id="client_name" name="client_id" class="form-control select2">
+                                                    <option>---Select---</option>
+                                                </select>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-bordered">
+                                                    <thead class="bg bg-info text-white">
+                                                        <th>Product List</th>
+                                                        <th>Qty</th>
+                                                        <th>Price</th>
+                                                        <th>Total</th>
+                                                        <th></th>
+                                                    </thead>
+                                                    <tbody id="tableRow">
+                                                    </tbody>
+                                                    <tfoot class="">
+                                                        <tr>
+                                                            <th class="text-center" colspan="2"></th>
+                                                            <th class="text-left" colspan="3">
+                                                                Total Amount <input readonly class="form-control total_amount" name="total_amount" type="text">
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" colspan="2"></th>
+                                                            <th class="text-left" colspan="3">
+                                                                Paid Amount <input  type="text" class="form-control paid_amount" name="paid_amount" >
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" colspan="2"></th>
+                                                            <th class="text-left" colspan="3">
+                                                                Discount Amount <input  type="text" class="form-control discount_amount" name="discount_amount" value="00">
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="text-center" colspan="2"></th>
+                                                            <th class="text-left" colspan="3">
+                                                                Due Amount <input type="text" readonly class="form-control due_amount" name="due_amount" >
+                                                            </th>
+                                                        </tr>
+                                                    </tfoot>
+                                                    </table>
+                                                    <div class="form-group text-center">
+                                                    <button type="submit"  class="btn btn-success"><i class="fe fe-dollar"></i> Create Now</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
                 <!-- container-fluid -->
@@ -584,29 +557,13 @@ if (isset($_SESSION['uid'])) {
     <script src="assets/js/app.js"></script>
 
     <script type="text/javascript">
-        $("#client").select2();
-        $("#item").select2();
-        $('#quantity').change(calculate);
-        $('#value').keyup(calculate);
+        $("#client_name").select2();
+        $("#product_name").select2();
 
         function calculate(e) {
             $('#total').val($('#quantity').val() * $('#value').val());
         }
-        getAllData();
-
-        function getAllData() {
-            $.ajax({
-                url: "include/sale_server.php?show",
-                method: 'GET',
-                success: function(response) {
-                    $('#saleTable').html(response);
-                },
-                error: function(xhr, status, error) {
-                    // handle the error response
-                    console.log(error);
-                }
-            });
-        }
+        
         getClientData()
 
         function getClientData() {
@@ -615,7 +572,8 @@ if (isset($_SESSION['uid'])) {
                 url: "include/sale_server.php?getClientData",
                 method: 'GET',
                 success: function(response) {
-                    $('#client').html(response);
+                    $('#client_name').html(response);
+                   
                 },
                 error: function(xhr, status, error) {
                     // handle the error response
@@ -631,7 +589,7 @@ if (isset($_SESSION['uid'])) {
                 url: "include/purchase_server.php?getProductData",
                 method: 'GET',
                 success: function(response) {
-                    $('#item').html(response);
+                    $('#product_name').html(response);
                 },
                 error: function(xhr, status, error) {
                     // handle the error response
@@ -639,59 +597,7 @@ if (isset($_SESSION['uid'])) {
                 }
             });
         }
-        addInvoiceData()
-
-        function addInvoiceData() {
-            $("#submitBtn").click(function() {
-                var userId = $("#userId").val();
-                var discount = $("#discount").val();
-                var client = $("#client").val();
-                var refer_no = $("#refer_no").val();
-                var desc = $("#desc").val();
-                var item = $("#item").val();
-                var quantity = $("#quantity").val();
-                var value = $("#value").val();
-                var total = $("#total").val();
-                addInvoiceDataReq(discount, userId, client, refer_no, desc, item, quantity, value, total);
-            });
-        }
-        const addInvoiceDataReq = (discount, userId, client, refer_no, desc, item, quantity, value, total) => {
-            var addData = 0;
-            if (client.length == 0) {
-                toastr.error("Client name require");
-            } else if (item.length == 0) {
-                toastr.error("Item Must be require");
-            } else if (quantity.length == 0) {
-                toastr.error("Quantity require");
-            } else if (value.length == 0) {
-                toastr.error("Value require");
-            } else {
-                $.ajax({
-                    url: 'include/sale_server.php',
-                    type: 'POST',
-                    data: {
-                        discount: discount,
-                        addData: addData,
-                        userId: userId,
-                        client: client,
-                        refer_no: refer_no,
-                        desc: desc,
-                        item: item,
-                        quantity: quantity,
-                        value: value,
-                        total: total
-                    },
-                    success: function(response) {
-
-                        $("#qty").val('');
-                        $("#value").val('');
-                        $("#total").val('');
-                        getAllData();
-                        //console.log(response);
-                    }
-                });
-            }
-        }
+      
         //client Add
         $("#client_add").click(function() {
             var fullname = $("#fullname").val();
@@ -778,10 +684,9 @@ if (isset($_SESSION['uid'])) {
             }
         });
 
-
-        //when product select then automatic insert qty and value 
-        $("#item").change(function() {
-            var itemId = $("#item").val();
+        
+        $("#product_name").change(function() {
+            var itemId = $(this).val();
             $.ajax({
                 url: "include/purchase_server.php?getSingleProductData",
                 method: 'GET',
@@ -789,137 +694,82 @@ if (isset($_SESSION['uid'])) {
                     id: itemId
                 },
                 success: function(response) {
-                    var data = JSON.parse(response);
-                    $("#quantity").val('1');
-                    $("#value").val(data.purchase_price);
-                    $("#total").val(data.purchase_price);
-                },
-                error: function(xhr, status, error) {
-                    // handle the error response
-                    console.log(error);
-                }
-            });
-        });
+                    /* যদি রেসপন্স JSON string হিসাবে আসে, তাহলে এটিকে JSON অবজেক্টে কনভার্ট করতে হবে*/
+                    var product = typeof response === 'string' ? JSON.parse(response) : response;
 
-
-        //delete invoicce item script
-        function deleteInvItem(receviedId) {
-            var dataId = receviedId;
-            $.ajax({
-                url: "include/sale_server.php?deleteInvItem",
-                method: 'GET',
-                data: {
-                    id: dataId
-                },
-                success: function(response) {
-                    if (response == 1) {
-                        toastr.success("Delete Successful");
-                        getAllData();
-                    } else {
-                        toastr.error('Something else');
-                    }
-
-                },
-                error: function(xhr, status, error) {
-                    // handle the error response
-                    console.log(error);
-                }
-            });
-
-        }
-
-
-
-        ////////////////////////payment process/////////////////////////
-        function processPayment(sabtotal) {
-            $("#paymentModal").modal('show');
-            $("#payment_sub_total").val(sabtotal);
-            $("#payment_grand_total").val(sabtotal);
-        }
-
-
-
-        // $('#payment_discount').on('keyup', function() {
-        //     var sub_total = $('#payment_sub_total').val();
-        //     var payment_discount = $(this).val();
-        //     var grand_total = $('#payment_grand_total').val(Number(sub_total - payment_discount));
-
-        //     var total_paid = $('#payment_totalPaid').val(number(grand_total));
-        //     //setTimeout(function(){var balances = Number(grand_total - total_paid)}, 500);
-
-        //      $('#payment_totalDue').val(number(total_paid) - number($('#payment_grand_total').val()));
-
-        // });
-        // $('#payment_totalPaid').on('keyup',function(){
-        //     var grand_total = $('#payment_grand_total').val();
-        //     var total_paid = $('#payment_totalPaid').val();
-        //     var total_due = $('#payment_totalDue').val(Number(grand_total-total_paid));
-        // });
-        $('#payment_discount').on('keyup', function() {
-            var sub_total = parseFloat($('#payment_sub_total').val());
-            var payment_discount = parseFloat($(this).val());
-            var grand_total = sub_total - payment_discount;
-
-            $('#payment_grand_total').val(grand_total.toFixed(2));
-
-            var total_paid = parseFloat($('#payment_totalPaid').val());
-            var total_due = grand_total - total_paid;
-
-            $('#payment_totalDue').val(total_due.toFixed(2));
-        });
-
-        $('#payment_totalPaid').on('keyup', function() {
-            var grand_total = parseFloat($('#payment_grand_total').val());
-            var total_paid = parseFloat($(this).val());
-            var total_due = grand_total - total_paid;
-
-            $('#payment_totalDue').val(total_due.toFixed(2));
-        });
-
-
-
-
-
-
-        //Payment Process
-        $("#payment_add").click(function() {
-            var sub_total = $('#payment_sub_total').val();
-            var payment_discount = $('#payment_discount').val();
-            var payment_grand_total = $('#payment_grand_total').val();
-            var payment_totalPaid = $('#payment_totalPaid').val();
-            var payment_totalDue = $('#payment_totalDue').val();
-
-            if (payment_totalPaid.length === 0) {
-                toastr.error("Enter Paid Amount");
-            } else if (parseFloat(payment_totalPaid) > parseFloat(payment_totalDue)) {
-                toastr.error("Over Payment Not allowed");
-            } else {
-                $.ajax({
-                    type: "POST",
-                    data: {
-                        sub_total: sub_total,
-                        payment_discount: payment_discount,
-                        payment_grand_total: payment_grand_total,
-                        payment_totalPaid: payment_totalPaid,
-                        payment_totalDue: payment_totalDue,
-                        addPayment: 0
-                    },
-                    url: "include/sale_server.php",
-                    cache: false,
-                    success: function(response) {
-                        if (response == 1) {
-                            toastr.success("Done Successfully");
-                            $("#paymentModal").modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            toastr.error("Please Try Again");
+                    var product_exists = false;
+                    /*Check if the product already exists in the table*/
+                    $("#tableRow tr").each(function(){
+                        var existing_product_id = $(this).find('input[name="product_id[]"]').val();
+                        if (existing_product_id == product.id) {
+                            product_exists = true;
+                            return false; // break loop
                         }
+                    });
+                    if (product_exists) {
+                        toastr.error("Product already added. Please increase the quantity.");
+                        return false;
                     }
-                });
-            }
+
+                    /* Create table row with product details*/
+                    var row = '<tr>' +
+                        '<td><input type="hidden" name="product_id[]" value="'+ product.id +'">'+ product.name +'</td>' +
+                        '<td><input type="number" min="1" name="qty[]" value="1" class="form-control qty"></td>' +
+                        '<td><input readonly type="number" name="price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
+                        '<td><input readonly type="number" id="total_price" name="total_price[]" class="form-control" value="' + product.purchase_price + '"></td>' +
+                        '<td><a class="btn-sm btn-danger" type="button" id="itemRow"><i class="mdi mdi-close"></i></a></td>' +
+                        '</tr>';
+
+                    /*Append row to the table body*/ 
+                    $('#tableRow').append(row);
+                     calculateTotalAmount();
+
+                },
+                error: function(xhr, status, error) {
+                    /*handle the error response*/ 
+                    console.log(error);
+                }
+            });
         });
+    
+        /*Calculate total amount when quantity or price changes*/ 
+        $(document).on('input', '.qty', function() {
+            var row = $(this).closest('tr');
+            var qty = $(this).val();
+            var price = row.find('input[name="price[]"]').val();
+            var total_price = qty * price;
+            row.find('input[name="total_price[]"]').val(total_price);
+            calculateTotalAmount();
+        });
+        /* Calculate total amount function*/
+        function calculateTotalAmount() {
+            var totalAmount = 0;
+            $('#tableRow tr').each(function() {
+                var total_price = $(this).find('input[name="total_price[]"]').val();
+                totalAmount += parseFloat(total_price);
+            });
+            $('input[name="total_amount"]').val(totalAmount);
+
+            // Calculate Due Amount
+            var paidAmount = parseFloat($('input[name="paid_amount"]').val()) || 0;
+            var discountAmount = parseFloat($('input[name="discount_amount"]').val()) || 0;
+            var dueAmount = totalAmount - paidAmount - discountAmount;
+            $('input[name="due_amount"]').val(dueAmount);
+        }
+    /*Update Due Amount when Paid Amount or Discount changes*/ 
+        $(document).on('input', 'input[name="paid_amount"], input[name="discount_amount"]', function() {
+            calculateTotalAmount();
+        });
+
+        /* Remove row when the delete button is clicked*/
+        $(document).on('click', '#itemRow', function() {
+            $(this).closest('tr').remove();
+            calculateTotalAmount();
+        });
+
+
+
+
     </script>
 
 </body>
