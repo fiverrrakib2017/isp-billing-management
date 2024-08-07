@@ -438,7 +438,7 @@ function acctual_work($startdate, $enddate) {
                                                             ?>
                                                         
                                                         
-                                                        <a href="profile.php?clid=<?php echo $cstmrID; ?>" target="_blank"> <?php echo $cstmr_fullname; ?></a></td>
+                                                        <a href="profile.php?clid=<?php echo $cstmrID; ?>" target="_blank"> <?php echo $cstmr_fullname; ?></a> <br> (<?php echo $username; ?> ) </td>
                                                         
                                                         </td>
                                                         <td>
