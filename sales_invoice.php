@@ -91,8 +91,8 @@ ini_set('display_errors', 1);
                     <div class="dropdown d-none d-md-block me-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="font-size-16">
-                                <?php if (isset($_SESSION['username'])) {
-                                    echo $_SESSION['username'];
+                                <?php if (isset($_SESSION['fullname'])) {
+                                    echo $_SESSION['fullname'];
                                 } ?>
                             </span>
                         </button>
@@ -241,7 +241,6 @@ ini_set('display_errors', 1);
                                         <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                    <!-- <th>Check All <input type="checkbox" id="checkedAll" name="checkedAll" value="Bike"></th> -->
                                                     <th>Invoice id</th>
                                                     <th>Customer Name</th>
                                                     <th>Sub Total</th>
@@ -253,7 +252,7 @@ ini_set('display_errors', 1);
                                             </thead>
                                             <tbody id="customer-list">
                                                 <?php
-                                                $sql = "SELECT * FROM invoice WHERE status='1'";
+                                                $sql = "SELECT * FROM sales ";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {

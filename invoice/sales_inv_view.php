@@ -5,7 +5,7 @@ include "../include/db_connect.php";
 if (isset($_GET['clid'])) {
 
     $clid = $_GET['clid'];
-    if ($cstmr = $con->query("SELECT * FROM invoice WHERE id='$clid'")) {
+    if ($cstmr = $con->query("SELECT * FROM sales WHERE id='$clid'")) {
 
         while ($rows = $cstmr->fetch_array()) {
             $lstid = $rows["id"];
@@ -14,11 +14,15 @@ if (isset($_GET['clid'])) {
             $date = $rows["date"];
             $discount = $rows["discount"];
             $grand_total = $rows["grand_total"];
+            $total_paid = $rows["total_paid"];
+            $total_due = $rows["total_due"];
         }
     }
 }
 
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -31,7 +35,7 @@ if (isset($_GET['clid'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Laralink">
     <!-- Site Title -->
-    <title>Customer Billing Invoice</title>
+    <title>Sales Billing Invoice</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         .tm_invoice.tm_style1 .tm_logo img {
@@ -47,8 +51,7 @@ if (isset($_GET['clid'])) {
                 <div class="tm_invoice_in">
                     <div class="tm_invoice_head tm_mb20">
                         <div class="tm_invoice_left">
-                            <!-- Invoice Logo -->
-                            <div class="tm_logo"><h3>Internet Bill</h3><br> </div>
+                            <div class="tm_logo"><img src="../assets/images/it-fast.png" alt="Logo"><br> </div>
                         </div>
                         <div class="tm_invoice_right tm_text_right">
                             <div class="tm_primary_color tm_f50 tm_text_uppercase">Invoice</div>
@@ -57,20 +60,25 @@ if (isset($_GET['clid'])) {
                     <div class="tm_invoice_info tm_mb20">
                         <div class="tm_invoice_seperator tm_gray_bg"></div>
                         <div class="tm_invoice_info_list">
-                            <p class="tm_invoice_number tm_m0">Invoice No: <b class="tm_primary_color"><?php echo $lstid; ?> </b></p>
+                            <p class="tm_invoice_number tm_m0">Invoice No: <b class="tm_primary_color"><?php echo $lstid; ?></b></p>
                             <p class="tm_invoice_date tm_m0">Date: 
-                                    <?php
+                                <?php
                                     $date = $date;
                                     $formatted_date = date("d F Y", strtotime($date));
                                     echo $formatted_date;
-                                    ?>
+                                ?>                            
                             </p>
                         </div>
                     </div>
                     <div class="tm_invoice_head tm_mb10">
                         <div class="tm_invoice_left">
-                            <p class="tm_mb2 tm_f16"><b class="tm_primary_color tm_text_uppercase">Please Pay within short time</b></p>
-                            <p> </p>
+                            <p class="tm_mb2 tm_f16"><b class="tm_primary_color tm_text_uppercase">STAR COMMUNICATION</b></p>
+                            <p>
+                                Sarkar super market 2nd floor <br>Gouripur Bazar, Daudkandi, Cumilla <br>
+                                www.sr-communication.com <br>
+                                hello@sr-cummunication.com<br>
+                                01580-651309
+                            </p>
                         </div>
                         <div class="tm_invoice_right" style="width:69% !important">
                             <div class="tm_grid_row tm_col_2  tm_col_2_sm tm_invoice_table tm_round_border">
@@ -83,27 +91,27 @@ if (isset($_GET['clid'])) {
                                     <p class="tm_m0">Client Name:</p>
                                     <b class="tm_primary_color">
 
-                                        <?php
+                                    <?php
 
                                         $client_id = $client_id;
-                                        $allSupplierData = $con->query("SELECT * FROM clients WHERE id=$client_id ");
-                                        while ($supplier = $allSupplierData->fetch_array()) {
+                                        $allData = $con->query("SELECT * FROM clients WHERE id=$client_id ");
+                                        while ($supplier = $allData->fetch_array()) {
                                             echo $supplier['fullname'];
                                         }
 
-                                        ?>
-
+                                    ?>
                                     </b>
                                 </div>
 
 
                                 <div>
-                                    <p class="tm_m0">Supplier Create Date</p>
+                                    <p class="tm_m0">Create Date</p>
                                     <b class="tm_primary_color">
                                         <?php
-                                        $date = $date;
-                                        $formatted_date = date("d F Y", strtotime($date));
-                                        //echo $formatted_date; ?>
+                                            $date = $date;
+                                            $formatted_date = date("d F Y", strtotime($date));
+                                            echo $formatted_date; 
+                                        ?>
 
                                     </b>
                                 </div>
@@ -114,13 +122,12 @@ if (isset($_GET['clid'])) {
                                 <div>
                                     <p class="tm_m0">Address</p>
                                     <b class="tm_primary_color">
-
                                         <?php
-                                        $client_id = $client_id;
-                                        $allSupplierData = $con->query("SELECT * FROM clients WHERE id=$client_id ");
-                                        while ($supplier = $allSupplierData->fetch_array()) {
-                                            echo $supplier['address'];
-                                        }
+                                            $client_id = $client_id;
+                                            $allSupplierData = $con->query("SELECT * FROM clients WHERE id=$client_id ");
+                                            while ($supplier = $allSupplierData->fetch_array()) {
+                                                echo $supplier['address'];
+                                            }
 
                                         ?>
                                     </b>
@@ -138,36 +145,41 @@ if (isset($_GET['clid'])) {
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th class="tm_width_5 tm_semi_bold tm_primary_color">Item Name</th>
+                                            <th class="tm_width_4 tm_semi_bold tm_primary_color">Item Name</th>
 
-                                            <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">Amount</th>
+                                            <th class="tm_width_2 tm_semi_bold tm_primary_color">Quantity</th>
+
+                                            <th class="tm_width_2 tm_semi_bold tm_primary_color">Amount</th>
+
+                                            <th class="tm_width_2 tm_semi_bold tm_primary_color tm_text_right">Total Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php
-                                        $id = $lstid;
-                                        $allInvoiceData = $con->query("SELECT * FROM invoice_details WHERE invoice_id=$id ");
-                                        while ($invoiceItem = $allInvoiceData->fetch_array()) {
-                                            $invoice_item = $invoiceItem['items'];
-                                            $invoice_total = $invoiceItem['total'];
-                                            echo '
-                                            <tr class="tm_gray_bg">
-                                            <td class="tm_width_5">' . $invoice_item . '</td>
+                                        
+                                    <?php
+        $id = $lstid;
+        $allInvoiceData = $con->query("SELECT pd.product_id, pd.qty, pd.value, pd.total, p.name FROM sales_details pd JOIN products p ON pd.product_id = p.id WHERE pd.invoice_id =$id");
+        while ($invoiceItem = $allInvoiceData->fetch_array()) {
+            $name = $invoiceItem['name'];
+            $qty = $invoiceItem['qty'];
+            $amount = $invoiceItem['value'];
+            $total_amount = $invoiceItem['total'];
+            echo '
+            <tr class="tm_gray_bg">
+            <td class="tm_width_4">' . $name . '</td>
 
-                                            <td class="tm_width_2 tm_text_right"><b>' . $invoice_total . ' ৳</b></td>
-                                            </tr>
-                                            
-                                            
-                                            ';
-                                        }
+            <td class="tm_width_2 "><b>' . $qty . ' </b></td>
+
+            <td class="tm_width_2 "><b>' . $amount . ' ৳</b></td>
+
+            <td class="tm_width_2 tm_text_right"><b>' . $total_amount . ' ৳</b></td>
+            </tr>
+            
+            
+            ';
+        }
 
                                         ?>
-
-
-
-
-
-
                                     </tbody>
                                 </table>
                             </div>
@@ -179,83 +191,30 @@ if (isset($_GET['clid'])) {
                             <div class="tm_right_footer">
                                 <table>
                                     <tbody>
-
-
-                                        <?php
-
-                                        $id = $lstid;
-                                        $allInvoiceData = $con->query("SELECT * FROM invoice WHERE id=$id ");
-                                        while ($invoiceItem = $allInvoiceData->fetch_array()) {
-                                            $invoice_sub_total = $invoiceItem['sub_total'];
-                                            $invoice_discount = $invoiceItem['discount'];
-                                            $invoice_grand_total = $invoiceItem['grand_total'];
-
-                                           } 
-
-                                           // Clients old balance
-                                           /**/
-
-
-                                           if ($paidamt = $con->query("SELECT SUM(total_paid) AS PaidAmount FROM invoice WHERE client_id='$client_id' ")) {
-                                            while ($r_paid_rows = $paidamt->fetch_array()) {
-                                                $totalpaidamt = $r_paid_rows["PaidAmount"];
-                                            }
-                                            }
-                                        
-                                        if ($receivedAmt = $con->query("SELECT SUM(due_amount) AS DueAmountrcvd FROM invoice_dues WHERE client_id='$client_id' ")) {
-                                            while ($r_rec_amount_rows = $receivedAmt->fetch_array()) {
-                                                $totalReceived = $r_rec_amount_rows["DueAmountrcvd"];
-                                            }
-                                        }
-                                          $calculationPaidAmount = $totalpaidamt + $totalReceived;
-
-                                          // Clients total purchase
-
-                                          if ($dueamt = $con->query("SELECT SUM(grand_total) AS PurchAmt FROM invoice WHERE client_id='$client_id' ")) {
-                                            while ($durows = $dueamt->fetch_array()) {
-                                                $totaldueinvocie = $durows["PurchAmt"];
-                                            }
-                                        }
-
-                                           // // All Dues Balance Total
-                                            $AllDueBalance = $totaldueinvocie-$calculationPaidAmount;
-                                            
-
-
-
-
-
-
-
-                                            echo '
-                                            
-                                            <tr class="tm_border_top">
+                                        <tr class="tm_border_top">
                                             <td class="tm_width_3 tm_primary_color tm_border_none tm_bold">Sub Total</td>
-                                            <td class="tm_width_3 tm_success_color tm_text_right tm_border_none tm_bold">'.$invoice_sub_total.' ৳</td>
-                                        </tr>
-
-                                        
-                                        <tr class="tm_border_top">
-                                            <td class="tm_width_3 tm_primary_color tm_border_none tm_bold">Invoice Amount </td>
-                                            <td class="tm_width_3 tm_success_color tm_text_right tm_border_none tm_bold">'.$invoice_grand_total.' ৳</td>
+                                            <td class="tm_width_3 tm_success_color tm_text_right tm_border_none tm_bold"><?php echo $sub_total; ?> ৳</td>
                                         </tr>
 
                                         <tr class="tm_border_top">
-                                            <td class="tm_width_3 tm_border_top_0 tm_bold tm_f18 tm_white_color tm_accent_bg tm_radius_6_0_0_6">Total Due </td>
-                                            <td class="tm_width_3 tm_border_top_0 tm_bold tm_f18 tm_primary_color tm_text_right tm_white_color tm_accent_bg tm_radius_0_6_6_0">'.$AllDueBalance.'৳</td>
+                                            <td class="tm_width_3 tm_primary_color tm_border_none tm_bold">Discount</td>
+                                            <td class="tm_width_3 tm_success_color tm_text_right tm_border_none tm_bold"><?php echo $discount; ?> ৳</td>
+                                        </tr>
+                                        <tr class="tm_border_top">
+                                            <td class="tm_width_3 tm_primary_color tm_border_none tm_bold">Paid Amount</td>
+                                            <td class="tm_width_3 tm_success_color tm_text_right tm_border_none tm_bold"><?php echo $total_paid; ?> ৳</td>
+                                        </tr>
+                                        <tr class="tm_border_top">
+                                            <td class="tm_width_3 tm_primary_color tm_border_none tm_bold">Due Amount</td>
+                                            <td class="tm_width_3 tm_success_color tm_text_right tm_border_none tm_bold"><?php echo $total_due; ?> ৳</td>
+                                        </tr>
+
+                                        <tr class="tm_border_top">
+                                            <td class="tm_width_3 tm_border_top_0 tm_bold tm_f18 tm_white_color tm_accent_bg tm_radius_6_0_0_6">Grand Total </td>
+                                            <td class="tm_width_3 tm_border_top_0 tm_bold tm_f18 tm_primary_color tm_text_right tm_white_color tm_accent_bg tm_radius_0_6_6_0"><?php echo $grand_total; ?> ৳</td>
                                         </tr>
                                             
-                                            ';
-                                        
-
-
-
-
-
-
-
-                                        ?>
-
+                                            
 
 
 
@@ -269,7 +228,15 @@ if (isset($_GET['clid'])) {
                     </div>
                     <div class="tm_note tm_text_center tm_m0_md">
                         <p class="tm_m0" align=""><br> <br>Authorization signature and seal. &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
-                            System generated invoice
+                            Prepared By:
+                            <?php 
+                            session_start(); 
+                            if (isset($_SESSION['fullname'])) {
+                                echo $_SESSION['fullname'];
+                            }else{
+                                echo 'Rakib Mahmud'; 
+                            }
+                            ?>
                         </p>
                     </div><!-- .tm_note -->
                 </div>
