@@ -85,8 +85,8 @@ include "include/db_connect.php";
                         <div class="dropdown d-none d-md-block me-2">
                             <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="font-size-16">
-                                    <?php if (isset($_SESSION['fullname'])) {
-                                        echo $_SESSION['fullname'];
+                                    <?php if (isset($_SESSION['username'])) {
+                                        echo $_SESSION['username'];
                                     } ?>
                                 </span> 
                             </button>
@@ -232,56 +232,58 @@ include "include/db_connect.php";
                                  </div>
                               </div>
                               <div class="table-responsive">
-                                 <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                    <thead>
-                                       <tr >
-                                        <th>Customer Name</th>
-                                        <th>Recharged date</th>
-                                        <th>Months</th>
-                                        <th>Paid until</th>
-                                        <th>Amount</th>
-                                       </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php 
-                          $sql="SELECT * FROM customer_rechrg   ";
-                          $result=mysqli_query($con,$sql);
-
-                          while ($rows=mysqli_fetch_assoc($result)) {
-
-                           ?>
-
-                           <tr>
-
-<td>
-    <?php 
-    $getCstmrId= $rows["customer_id"]; 
-     if ($allCom = $con -> query("SELECT * FROM customers WHERE id='$getCstmrId' ")){
-           while ($rowss=$allCom->fetch_array()) {
-              $customerName= $rowss['fullname'];
-            echo '<a href="profile.php?clid='.$getCstmrId.'">'.$customerName.'</a>';
-           }
-        } 
-    ?>
+                              <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+    <thead>
+        <tr>
+            <th>Customer Name</th>
+            <th>Recharged Date</th>
+            <th>Months</th>
+            <th>Paid Until</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        // Get the month parameter from the URL
+        $month = $_GET['month']; // Format: YYYY-MM
         
-    </td>
-    <td>
-    <?php 
-    $recharge_date_time= $rows['datetm'];
-    $dateTm= new DateTime($recharge_date_time);
-    echo $dateTm->format("H:i A, d-M-Y");
-    ?> 
-    </td>
+        // Prepare the SQL query
+        $sql = "SELECT * FROM customer_rechrg WHERE DATE_FORMAT(datetm, '%Y-%m') = '$month'";
+        $result = mysqli_query($con, $sql);
 
-<td><?php echo $rows["months"]; ?></td>
-<td><?php echo $rows["rchrg_until"]; ?></td>
-<td><?php echo $rows["amount"]; ?></td>
+        // Loop through the results
+        while ($rows = mysqli_fetch_assoc($result)) {
+            $getCstmrId = $rows["customer_id"];
+            $customerName = '';
 
-</tr>
-                       <?php } ?>
+            // Fetch customer name from the customers table
+            $customerQuery = "SELECT fullname FROM customers WHERE id='$getCstmrId'";
+            $customerResult = mysqli_query($con, $customerQuery);
+            if ($customerRow = mysqli_fetch_assoc($customerResult)) {
+                $customerName = $customerRow['fullname'];
+            }
+        ?>
+        <tr>
+            <td>
+                <a href="profile.php?clid=<?php echo $getCstmrId; ?>">
+                    <?php echo $customerName; ?>
+                </a>
+            </td>
+            <td>
+                <?php 
+                $recharge_date_time = $rows['datetm'];
+                $dateTm = new DateTime($recharge_date_time);
+                echo $dateTm->format("H:i A, d-M-Y");
+                ?> 
+            </td>
+            <td><?php echo $rows["months"]; ?></td>
+            <td><?php echo $rows["rchrg_until"]; ?></td>
+            <td><?php echo $rows["sales_price"]; ?></td>
+        </tr>
+        <?php } ?>
+    </tbody>
+</table>
 
-                                    </tbody>
-                                 </table>
                               </div>
                            </div>
                         </div>

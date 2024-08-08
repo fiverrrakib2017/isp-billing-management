@@ -70,7 +70,7 @@ include "include/db_connect.php";
                         </button>
 
                         <div class="d-none d-sm-block ms-2">
-                            <h4 class="page-title">Customer Payment</h4>
+                            <h4 class="page-title">Bill Collection</h4>
                         </div>
                     </div>
 
@@ -209,7 +209,7 @@ include "include/db_connect.php";
                                     <i class="mdi mdi-home text-muted hover-cursor"></i>
                                     <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
                                     </p>
-                                    <p class="text-primary mb-0 hover-cursor">Customers Payment</p>
+                                    <p class="text-primary mb-0 hover-cursor">Bill Collection</p>
                                  </div>
                               </div>
                               <br>
@@ -232,57 +232,45 @@ include "include/db_connect.php";
                                  </div>
                               </div>
                               <div class="table-responsive">
-                                 <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                    <thead>
-                                       <tr >
-                                        <th>Customer Name</th>
-                                        <th>Recharged date</th>
-                                        <th>Months</th>
-                                        <th>Paid until</th>
-                                        <th>Amount</th>
-                                       </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php 
-                                        $id=$_SESSION['uid']; 
-                          $sql="SELECT * FROM customer_rechrg where rchg_by	=$id  ";
-                          $result=mysqli_query($con,$sql);
+                              <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+    <thead>
+        <tr>
+            <th>Recharged Date</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php 
+        $id = $_SESSION['uid']; 
+        $sql = "
+            SELECT DATE(datetm) AS recharge_date, SUM(sales_price) AS total_collection 
+            FROM customer_rechrg 
+            WHERE rchg_by = $id 
+            GROUP BY DATE(datetm) 
+            ORDER BY recharge_date DESC";
+        $result = mysqli_query($con, $sql);
 
-                          while ($rows=mysqli_fetch_assoc($result)) {
+        while ($rows = mysqli_fetch_assoc($result)) {
+            // Extract year and month from the recharge_date
+            $recharge_date = $rows['recharge_date'];
+            $yearMonth = date("Y-m", strtotime($recharge_date)); 
+        ?>
+        <tr>
+            <td>
+                <a href="monthly_recharge.php?month=<?php echo $yearMonth; ?>">
+                    <?php 
+                    $dateTm = new DateTime($recharge_date);
+                    echo $dateTm->format("d-M-Y");
+                    ?>
+                </a>
+            </td>
+            <td><?php echo $rows["total_collection"]; ?></td>
+        </tr>
+        <?php } ?>
+    </tbody>
+</table>
 
-                           ?>
 
-                           <tr>
-
-<td>
-    <?php 
-    $getCstmrId= $rows["customer_id"]; 
-     if ($allCom = $con -> query("SELECT * FROM customers WHERE id='$getCstmrId' ")){
-           while ($rowss=$allCom->fetch_array()) {
-              $customerName= $rowss['fullname'];
-            echo '<a href="profile.php?clid='.$getCstmrId.'">'.$customerName.'</a>';
-           }
-        } 
-    ?>
-        
-    </td>
-    <td>
-    <?php 
-    $recharge_date_time= $rows['datetm'];
-    $dateTm= new DateTime($recharge_date_time);
-    echo $dateTm->format("H:i A, d-M-Y");
-    ?> 
-    </td>
-
-<td><?php echo $rows["months"]; ?></td>
-<td><?php echo $rows["rchrg_until"]; ?></td>
-<td><?php echo $rows["amount"]; ?></td>
-
-</tr>
-                       <?php } ?>
-
-                                    </tbody>
-                                 </table>
                               </div>
                            </div>
                         </div>
@@ -399,37 +387,6 @@ include "include/db_connect.php";
 
         <script src="assets/js/app.js"></script>
         <script type="text/javascript" src="assets/js/js-fluid-meter.js"></script>
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-       <script type="text/javascript">
-    $(document).ready(function(){
-        $("#area_table").DataTable();
-        $("#area-list").load("include/add_area.php?list");
-        $.ajax({
-            type: "GET",
-            url: "include/add_area.php?list",
-            cache: false,
-            success: function(areaList) {
-                $("#area-list").html(areaList);
-            }
-        });
-   $("#add_area").click(function(){
-      var formData=$("#form-area").serialize();
-         $.ajax({
-         type:"GET",
-         data:formData,
-         url:"include/add_area.php?add",
-         cache:false,
-         success: function() {
-                Swal.fire(
-                      'Success!',
-                      'Data Insert Success!',
-                      'success'
-                        )
-                  $("#area-list").load("include/add_area.php?list");
-                }
-      });
-   });
-    });   
-</script>
+        
     </body>
 </html>
