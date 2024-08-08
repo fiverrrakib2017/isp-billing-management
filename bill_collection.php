@@ -70,7 +70,7 @@ include "include/db_connect.php";
                         </button>
 
                         <div class="d-none d-sm-block ms-2">
-                            <h4 class="page-title">Monthly Recharge</h4>
+                            <h4 class="page-title">Bill Collection</h4>
                         </div>
                     </div>
 
@@ -209,7 +209,7 @@ include "include/db_connect.php";
                                     <i class="mdi mdi-home text-muted hover-cursor"></i>
                                     <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
                                     </p>
-                                    <p class="text-primary mb-0 hover-cursor">Monthly Recharge</p>
+                                    <p class="text-primary mb-0 hover-cursor">Bill Collection</p>
                                  </div>
                               </div>
                               <br>
@@ -235,54 +235,39 @@ include "include/db_connect.php";
                               <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
     <thead>
         <tr>
-            <th>Customer Name</th>
             <th>Recharged Date</th>
-            <th>Months</th>
-            <th>Paid Until</th>
             <th>Amount</th>
         </tr>
     </thead>
     <tbody>
         <?php 
-        // Get the month parameter from the URL
-        $month = $_GET['month']; // Format: YYYY-MM
-        
-        // Prepare the SQL query
-        $sql = "SELECT * FROM customer_rechrg WHERE DATE_FORMAT(datetm, '%Y-%m') = '$month'";
+        $sql = "
+            SELECT DATE(datetm) AS recharge_date, SUM(sales_price) AS total_collection 
+            FROM customer_rechrg 
+            GROUP BY DATE(datetm) 
+            ORDER BY recharge_date DESC";
         $result = mysqli_query($con, $sql);
 
-        // Loop through the results
         while ($rows = mysqli_fetch_assoc($result)) {
-            $getCstmrId = $rows["customer_id"];
-            $customerName = '';
-
-            // Fetch customer name from the customers table
-            $customerQuery = "SELECT fullname FROM customers WHERE id='$getCstmrId'";
-            $customerResult = mysqli_query($con, $customerQuery);
-            if ($customerRow = mysqli_fetch_assoc($customerResult)) {
-                $customerName = $customerRow['fullname'];
-            }
+            // Extract year and month from the recharge_date
+            $recharge_date = $rows['recharge_date'];
+            $yearMonth = date("Y-m", strtotime($recharge_date)); 
         ?>
         <tr>
             <td>
-                <a href="profile.php?clid=<?php echo $getCstmrId; ?>">
-                    <?php echo $customerName; ?>
+                <a href="monthly_recharge.php?month=<?php echo $yearMonth; ?>">
+                    <?php 
+                    $dateTm = new DateTime($recharge_date);
+                    echo $dateTm->format("d-M-Y");
+                    ?>
                 </a>
             </td>
-            <td>
-                <?php 
-                $recharge_date_time = $rows['datetm'];
-                $dateTm = new DateTime($recharge_date_time);
-                echo $dateTm->format("H:i A, d-M-Y");
-                ?> 
-            </td>
-            <td><?php echo $rows["months"]; ?></td>
-            <td><?php echo $rows["rchrg_until"]; ?></td>
-            <td><?php echo $rows["sales_price"]; ?></td>
+            <td><?php echo $rows["total_collection"]; ?></td>
         </tr>
         <?php } ?>
     </tbody>
 </table>
+
 
                               </div>
                            </div>
@@ -400,5 +385,6 @@ include "include/db_connect.php";
 
         <script src="assets/js/app.js"></script>
         <script type="text/javascript" src="assets/js/js-fluid-meter.js"></script>
+        
     </body>
 </html>
