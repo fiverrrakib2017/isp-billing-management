@@ -166,7 +166,7 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
           $product_id = $row['product_id'];
           $old_qty = $row['qty'];
           /* Revert stock changes */
-          $con->query("UPDATE products SET stock = stock + $old_qty WHERE id = $product_id");
+          $con->query("UPDATE products SET store = store + $old_qty WHERE id = $product_id");
       }
 
       /* Delete old details */
@@ -186,7 +186,7 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
           }
 
           /* Adjust stock */
-          $con->query("UPDATE products SET stock = stock - $qty WHERE id = $product_id");
+          $con->query("UPDATE products SET store = store - $qty WHERE id = $product_id");
       }
 
       /* Commit transaction */
