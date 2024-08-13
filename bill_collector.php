@@ -11,25 +11,27 @@ include "include/db_connect.php";
 <html lang="en">
     <head>
     
-        <meta charset="utf-8">
-        <title>FAST-ISP-BILLING-SOFTWARE</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-        <meta content="Themesbrand" name="author">
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
-        <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
-        <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
-        <!-- C3 Chart css -->
-        <link href="assets/libs/c3/c3.min.css" rel="stylesheet" type="text/css">
-    
-        <!-- Bootstrap Css -->
-        <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
-        <!-- Icons Css -->
-        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
-        <!-- App Css-->
-        <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-    
+    <meta charset="utf-8">
+    <title>FAST-ISP-BILLING-SOFTWARE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
+    <meta content="Themesbrand" name="author">
+
+
+    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
+    <!-- C3 Chart css -->
+    <link href="assets/libs/c3/c3.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap Css -->
+    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
+    <!-- Icons Css -->
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
+    <!-- App Css-->
+    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
+    <link href="assets/css/custom.css" id="app-style" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+    <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
     </head>
 
     <body data-sidebar="dark">
@@ -223,6 +225,9 @@ include "include/db_connect.php";
             <div class="row">
                      <div class="col-md-12 stretch-card">
                         <div class="card">
+                            <div class="card-header">
+                                <button type="submit" name="bill_button" class="btn-sm btn btn-primary">Bill Collection</button>
+                            </div>
                            <div class="card-body">
                               <span class="card-title"></span>
                               <div class="col-md-6 float-md-right grid-margin-sm-0">
@@ -235,6 +240,7 @@ include "include/db_connect.php";
                               <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
     <thead>
         <tr>
+            <th></th>
             <th>Recharged Date</th>
             <th>Amount</th>
             <th>Collect By</th>
@@ -243,10 +249,11 @@ include "include/db_connect.php";
     <tbody>
     <?php 
 $sql = "
-    SELECT DATE(cr.datetm) AS recharge_date, SUM(cr.sales_price) AS total_collection, u.fullname AS recharge_by_name 
+    SELECT u.id, DATE(cr.datetm) AS recharge_date, SUM(cr.sales_price) AS total_collection, u.fullname AS recharge_by_name 
     FROM customer_rechrg cr
     JOIN users u ON cr.rchg_by = u.id
-    GROUP BY DATE(cr.datetm), u.fullname
+    WHERE cr.status = '0'
+    GROUP BY u.id, DATE(cr.datetm), u.fullname
     ORDER BY recharge_date DESC";
 $result = mysqli_query($con, $sql);
 
@@ -256,6 +263,9 @@ while ($rows = mysqli_fetch_assoc($result)) {
     $yearMonth = date("Y-m", strtotime($recharge_date)); 
 ?>
 <tr>
+    <td>
+        <input type="checkbox"  data-id="<?php echo $rows['id']; ?>" data-collection_date="<?php echo $rows['recharge_date']; ?>">
+    </td>
     <td>
         <a href="monthly_recharge.php?month=<?php echo $yearMonth; ?>">
             <?php 
@@ -298,6 +308,51 @@ while ($rows = mysqli_fetch_assoc($result)) {
     </footer>
 
 </div>
+
+
+
+<div class="modal fade bs-example-modal-lg" id="bill_modal" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content col-md-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    <span class="mdi mdi-account-check mdi-18px"></span> &nbsp;Bill Collect
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="include/bill_collection_server.php?add_collection" method="POST" enctype="multipart/form-data">
+                    <div class="form-group mb-2 d-none">
+                        <input name="user_id" id="user_id" class="form-control" type="text" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Collection Date</label>
+                        <input type="text"  name="collection_date" id="collection_date" class="form-control" readonly>
+                    </div> 
+                    <div class="form-group mb-2">
+                        <label>Total Amount</label>
+                        <input name="total_amount" id="total_amount" placeholder="Enter Amount" class="form-control" type="text" readonly>
+                    </div>              
+                    <div class="form-group mb-2">
+                        <label>Received Amount</label>
+                        <input name="received_amount" id="received_amount" placeholder="Enter Amount" class="form-control" type="text" required>
+                    </div>              
+                    <div class="form-group mb-2">
+                        <label>Remarks</label>
+                        <input name="note" id="note" placeholder="Enter Remarks" class="form-control" type="text" >
+                    </div>              
+                                 
+                    <div class="modal-footer ">
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- end main content-->
         
         </div>
@@ -353,42 +408,117 @@ while ($rows = mysqli_fetch_assoc($result)) {
 
         <!-- Right bar overlay-->
         <div class="rightbar-overlay"></div>
-        
+      
         
         <!-- JAVASCRIPT -->
-        <script src="assets/libs/jquery/jquery.min.js"></script>
-        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-        <script src="assets/libs/simplebar/simplebar.min.js"></script>
-        <script src="assets/libs/node-waves/waves.min.js"></script>
-        
-        
-        <!-- Peity chart-->
-        <script src="assets/libs/peity/jquery.peity.min.js"></script>
-        
-        <!--C3 Chart-->
-        <script src="assets/libs/d3/d3.min.js"></script>
-        <script src="assets/libs/c3/c3.min.js"></script> 
-        <script src="assets/libs/jquery-knob/jquery.knob.min.js"></script>
-        
-        <script src="assets/js/pages/dashboard.init.js"></script>
-        
-        <script src="assets/js/app.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
 
-        <!-- Required datatable js -->
-        <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-        
-        <!-- Responsive examples -->
-        <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <!-- Required datatable js -->
+    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Buttons examples -->
+    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="assets/libs/jszip/jszip.min.js"></script>
+    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+    <!-- Responsive examples -->
+    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="js/toastr/toastr.min.js"></script>
+    <script src="js/toastr/toastr.init.js"></script>
+    <!-- Datatable init js -->
+    <script src="assets/js/pages/datatables.init.js"></script>
 
-        <!-- Datatable init js -->
-        <script src="assets/js/pages/datatables.init.js"></script> 
+    <script src="assets/js/app.js"></script>
+    <script src="assets/libs/select2/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+             // Only allow one checkbox to be selected
+            $('#datatable input[type="checkbox"]').on('click', function() {
+                if ($(this).is(':checked')) {
+                    $('#datatable input[type="checkbox"]').not(this).prop('checked', false);
+                }
+            });
 
-        <script src="assets/js/app.js"></script>
-        <script type="text/javascript" src="assets/js/js-fluid-meter.js"></script>
-        
+            // When the bill button is clicked
+            $("button[name='bill_button']").click(function(){
+                 var select_id = [];
+                var totalAmount = '';
+                var collectionDate=[]
+                $('#datatable input[type="checkbox"]:checked').each(function() {
+                    select_id.push($(this).data('id'));
+                    collectionDate.push($(this).data('collection_date'));
+
+                    // Get the row's data from the table
+                    var row = $(this).closest('tr');
+                    console.log(row); 
+                    totalAmount = row.find('td:eq(2)').text().trim(); // Adjust index if needed
+                    //collectionDate = row.find('td:eq(4)').text().trim(); // Adjust index if needed
+                    // Format date if necessary
+                });
+                // Set the values in the modal's form fields
+                $('#total_amount').val(totalAmount);
+                $("input[name='collection_date']").val(collectionDate);
+                $("input[name='user_id']").val(select_id);
+
+                if (select_id.length > 0) {
+                    $("#bill_modal").modal('show');
+                } else {
+                    toastr.error("Please Select Checkbox");
+                }
+            });
+             /** Store The data from the database table **/
+            $('#bill_modal form').submit(function(e){
+                e.preventDefault();
+
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = form.serialize();
+                /** Use Ajax to send the delete request **/
+                $.ajax({
+                type:'POST',
+                'url':url,
+                data: formData,
+                dataType:'json',
+                success: function (response) {
+                    /* Check if the request was successful*/
+                    if (response.success) {
+                        /*Hide the modal*/ 
+                        $('#bill_modal').modal('hide'); 
+                        /*Reset the form*/ 
+                        $('#bill_modal form')[0].reset();
+                        /* Show success message*/
+                        toastr.success(response.message); 
+
+                        /*Reload the page after a short delay*/ 
+                        setTimeout(() => {
+                            location.reload();
+                        }, 500);
+                    }
+                },
+
+
+                error: function (xhr, status, error) {
+                    /** Handle  errors **/
+                    if (xhr.status === 422) {
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            toastr.error(value[0]); 
+                        });
+                    }
+                }
+                });
+            });
+        });
+
+    </script>
     </body>
 </html>
