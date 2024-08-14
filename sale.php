@@ -713,7 +713,7 @@ if (isset($_SESSION['uid'])) {
                     var row = '<tr>' +
                         '<td><input type="hidden" name="product_id[]" value="'+ product.id +'">'+ product.name +'</td>' +
                         '<td><input type="number" min="1" name="qty[]" value="1" class="form-control qty"></td>' +
-                        '<td><input readonly type="number" name="price[]" class="form-control" value="' + product.sale_price + '"></td>' +
+                        '<td><input type="number" name="price[]" class="form-control price" value="' + product.sale_price + '"></td>' +
                         '<td><input readonly type="number" id="total_price" name="total_price[]" class="form-control" value="' + product.sale_price + '"></td>' +
                         '<td><a class="btn-sm btn-danger" type="button" id="itemRow"><i class="mdi mdi-close"></i></a></td>' +
                         '</tr>';
@@ -730,11 +730,10 @@ if (isset($_SESSION['uid'])) {
             });
         });
     
-        /*Calculate total amount when quantity or price changes*/ 
-        $(document).on('input', '.qty', function() {
+        $(document).on('input', '.qty, .price', function() {
             var row = $(this).closest('tr');
-            var qty = $(this).val();
-            var price = row.find('input[name="price[]"]').val();
+            var qty = row.find('input[name="qty[]"]').val(); 
+            var price = row.find('input[name="price[]"]').val(); 
             var total_price = qty * price;
             row.find('input[name="total_price[]"]').val(total_price);
             calculateTotalAmount();
@@ -764,6 +763,8 @@ if (isset($_SESSION['uid'])) {
             $(this).closest('tr').remove();
             calculateTotalAmount();
         });
+
+        
         $("form").submit(function(e){
        e.preventDefault();
 
