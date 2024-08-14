@@ -2,7 +2,6 @@
  include("db_connect.php");
     session_start();
     /*ADD BILL Collection By User*/
-
 	if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_collection'])) {
         
     
@@ -52,4 +51,99 @@
             echo "Error: " . mysqli_error($con);
         }
     }
-    
+    /*Show Bill Collection Filter Data*/
+    // if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['show_data_filter'])) {
+    //     $user_id = $_GET['user_id'];
+    //     $sql = "SELECT u.id, DATE(cr.datetm) AS recharge_date, SUM(cr.sales_price) AS total_collection, u.fullname AS recharge_by_name  FROM customer_rechrg cr JOIN users u ON cr.rchg_by = u.id  WHERE cr.status = '0'";
+
+    //     if ($user_id) {
+    //         $sql .= " AND u.id = '$user_id'";
+    //     }
+
+    //     $sql .= " GROUP BY u.id, DATE(cr.datetm), u.fullname
+    //             ORDER BY recharge_date DESC";
+
+    //     $result = mysqli_query($con, $sql);
+
+    //     while ($rows = mysqli_fetch_assoc($result)) {
+    //         $recharge_date = $rows['recharge_date'];
+    //         $yearMonth = date("Y-m", strtotime($recharge_date)); 
+
+    //         echo "<tr>
+    //                 <td>
+    //                     <input type='checkbox' data-id='" . $rows['id'] . "' data-collection_date='" . $rows['recharge_date'] . "'>
+    //                 </td>
+    //                 <td>
+    //                     <a href='monthly_recharge.php?month=" . $yearMonth . "'>" . (new DateTime($recharge_date))->format("d-M-Y") . "</a>
+    //                 </td>
+    //                 <td>" . $rows['total_collection'] . "</td>
+    //                 <td>" . $rows['recharge_by_name'] . "</td>
+    //             </tr>";
+    //     }
+    // }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['show_data_filter'])) {
+        $user_id = $_GET['user_id'];
+        $page = isset($_GET['page']) ? $_GET['page'] : 1;
+        $limit = 10; 
+        $offset = ($page - 1) * $limit;
+
+        $sql = "
+            SELECT u.id, DATE(cr.datetm) AS recharge_date, SUM(cr.sales_price) AS total_collection, u.fullname AS recharge_by_name 
+            FROM customer_rechrg cr
+            JOIN users u ON cr.rchg_by = u.id
+            WHERE cr.status = '0'";
+
+        if ($user_id) {
+            $sql .= " AND u.id = '$user_id'";
+        }
+
+        $sql .= " GROUP BY u.id, DATE(cr.datetm), u.fullname
+                ORDER BY recharge_date DESC
+                LIMIT $limit OFFSET $offset";
+
+        $result = mysqli_query($con, $sql);
+
+        /* Fetch the total number of records for pagination*/
+        $totalSql = "
+            SELECT COUNT(*) as total 
+            FROM (
+                SELECT u.id, DATE(cr.datetm) AS recharge_date, SUM(cr.sales_price) AS total_collection, u.fullname AS recharge_by_name 
+                FROM customer_rechrg cr
+                JOIN users u ON cr.rchg_by = u.id
+                WHERE cr.status = '0'";
+
+        if ($user_id) {
+            $totalSql .= " AND u.id = '$user_id'";
+        }
+
+        $totalSql .= " GROUP BY u.id, DATE(cr.datetm), u.fullname
+                    ) as count_table";
+
+        $totalResult = mysqli_query($con, $totalSql);
+        $totalRows = mysqli_fetch_assoc($totalResult)['total'];
+        $totalPages = ceil($totalRows / $limit);
+
+        $tableData = '';
+        while ($rows = mysqli_fetch_assoc($result)) {
+            $recharge_date = $rows['recharge_date'];
+            $yearMonth = date("Y-m", strtotime($recharge_date)); 
+
+            $tableData .= "<tr>
+                <td><input type='checkbox' data-id='" . $rows['id'] . "' data-collection_date='" . $rows['recharge_date'] . "'></td>
+                <td><a href='monthly_recharge.php?month=" . $yearMonth . "'>" . (new DateTime($recharge_date))->format("d-M-Y") . "</a></td>
+                <td>" . $rows['total_collection'] . "</td>
+                <td>" . $rows['recharge_by_name'] . "</td>
+            </tr>";
+        }
+
+        // Generate pagination links
+        $pagination = '';
+        for ($i = 1; $i <= $totalPages; $i++) {
+            $pagination .= "<a href='#' class='pagination-link' data-page='$i'>$i</a> ";
+        }
+
+        echo json_encode(['tableData' => $tableData, 'pagination' => $pagination]);
+    }
+
+?>

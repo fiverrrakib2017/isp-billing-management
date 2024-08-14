@@ -127,7 +127,7 @@
                                     <li><a href="customers_payment.php">Customer Payment</a></li>
                                     <li><a href="recharge_filter.php">Recharge Filter</a></li>
                                     <li><a href="bill_collection.php">Bill Collection</a></li>
-                                    <li><a href="bill_collector.php">Bill Collector</a></li>
+                                    <li><a href="cash_collection.php">Cash Collection</a></li>
                                     <li><a href="mobile_banking.php">Mobile Banking Log</a></li>
                                     <li><a href="bkash_search.php">bKash Search</a></li>
                                 </ul>
