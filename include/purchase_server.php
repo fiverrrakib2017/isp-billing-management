@@ -175,32 +175,31 @@ if (isset($_GET['deleteInvItem'])) {
 /* Set response header to JSON*/
 
 if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $usr_id =isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
-    $client_id = $_POST['supplier_id'];
+    $usr_id = isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
+    $client_id = $_POST['supplier_id'] ?? null;
     $date = date('Y-m-d'); 
-    $sub_total = $_POST['total_amount'];
-    $discount = $_POST['discount_amount'];
-    $grand_total = $_POST['total_amount'] - $_POST['discount_amount'];
-    $total_due = $_POST['due_amount'];
-    $total_paid = $_POST['paid_amount'];
+    $sub_total = $_POST['total_amount'] ?? null;
+    $discount = $_POST['discount_amount'] ?? 0; 
+    $grand_total = $sub_total - $discount;
+    $total_due = $_POST['due_amount'] ?? null;
+    $total_paid = $_POST['paid_amount'] ?? null;
     $note = ''; 
     $status = 'Pending'; 
 
-    $product_ids = $_POST['product_id'];
-    $qtys = $_POST['qty'];
-    $prices = $_POST['price'];
-    $total_prices = $_POST['total_price'];
+    $product_ids = $_POST['product_id'] ?? [];
+    $qtys = $_POST['qty'] ?? [];
+    $prices = $_POST['price'] ?? [];
+    $total_prices = $_POST['total_price'] ?? [];
 
-    if (!$client_id || !$sub_total || !$total_paid || !$total_due || empty($product_ids)) {
+    if (is_null($client_id) || is_null($sub_total) || is_null($total_paid) || is_null($total_due) || empty($product_ids)) {
         echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
         exit;
     }
-
     /*Begin transaction*/ 
     $con->begin_transaction();
 
     try {
-        // Insert data into `purchase` table
+        /* Insert data into `purchase` table*/
         $sql_purchase = "INSERT INTO purchase (usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt_purchase = $con->prepare($sql_purchase);
         $stmt_purchase->bind_param("iisssssiss", $usr_id, $client_id, $date, $sub_total, $discount, $grand_total, $total_due, $total_paid, $note, $status);
@@ -208,9 +207,10 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!$stmt_purchase->execute()) {
             throw new Exception('Error inserting purchase data.');
         }
-        $invoice_id = $stmt_purchase->insert_id; // Get the ID of the inserted purchase
+        /*Get the ID of the inserted purchase*/ 
+        $invoice_id = $stmt_purchase->insert_id; 
 
-        // Insert data into `purchase_details` table
+        /*Insert data into `purchase_details` table*/ 
         $sql_details = "INSERT INTO purchase_details (invoice_id, product_id, qty, value, total) VALUES (?, ?, ?, ?, ?)";
         $stmt_details = $con->prepare($sql_details);
 
@@ -221,10 +221,10 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        // Commit transaction
+        /* Commit transaction*/
         $con->commit();
 
-        // Close statements
+        /* Close statements*/
         $stmt_purchase->close();
         $stmt_details->close();
         $con->close();
@@ -232,7 +232,7 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode(['success' => true, 'message' => 'Purchase recorded successfully.']);
 
     } catch (Exception $e) {
-        // Rollback transaction on error
+        /* Rollback transaction on error*/
         $con->rollback();
         echo json_encode(['success' => false, 'message' => 'Transaction failed: ' . $e->getMessage()]);
     }
@@ -241,20 +241,20 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $invoice_id = $_GET['invoice_id'];
-    $client_id = $_POST['supplier_id'];
+    $client_id = $_POST['supplier_id'] ?? null;
     $date = date('Y-m-d'); 
     $discount = $_POST['discount_amount'] ? $_POST['discount_amount']:0 ;
-    $total_amount = $_POST['total_amount'] ;
-    $total_due = $_POST['due_amount'] ;
-    $total_paid = $_POST['paid_amount'];
+    $total_amount = $_POST['total_amount'] ?? null;
+    $total_due = $_POST['due_amount'] ?? null;
+    $total_paid = $_POST['paid_amount'] ?? null;
     $note = ''; 
     $status = 'Pending'; 
 
-    if (!$_GET['invoice_id'] || !$_POST['supplier_id'] || !$_POST['total_amount'] || !$_POST['paid_amount'] || empty($_POST['product_id'])) {
+    if (is_null($_GET['invoice_id']) || is_null($_POST['supplier_id']) || is_null($_POST['total_amount']) || is_null($_POST['paid_amount']) || empty($_POST['product_id'])) {
         echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
         exit;
     }
-    // Update purchase table
+    /*Update purchase table*/ 
     $updatePurchaseQuery = "UPDATE purchase SET 
                                 client_id = '$client_id', 
                                 date = '$date', 
@@ -268,14 +268,15 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
                             WHERE id = '$invoice_id'";
     
     if ($con->query($updatePurchaseQuery)) {
-        // Delete previous purchase details for this invoice
+        /*Delete previous purchase details for this invoice*/ 
         $con->query("DELETE FROM purchase_details WHERE invoice_id = '$invoice_id'");
 
-        // Insert updated purchase details
-        $product_ids = $_POST['product_id'];
-        $quantities = $_POST['qty'];
-        $values = $_POST['price'];
-        $totals = $_POST['total_price'];
+        /* Insert updated purchase details*/
+        $product_ids = $_POST['product_id'] ?? [];
+        $quantities = $_POST['qty'] ?? [];
+        $values = $_POST['price'] ?? [];
+        $totals = $_POST['total_price'] ?? [];
+
 
         foreach ($product_ids as $index => $product_id) {
             $qty = $quantities[$index];
