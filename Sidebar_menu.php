@@ -112,6 +112,7 @@
                                     <li><a href="category.php">Category</a></li>
                                     <li><a href="brand.php">Brand</a></li>
                                     <li><a href="client.php">Client </a></li>
+                                    <li><a href="store.php">Store</a></li>
                                     <li><a href="supplier.php">Supplier</a></li>
                                 </ul>
                             </li>
