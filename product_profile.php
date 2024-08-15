@@ -101,8 +101,8 @@ if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
                         <div class="dropdown d-none d-md-block me-2">
                             <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="font-size-16">
-                                    <?php if (isset($_SESSION['username'])) {
-                                        echo $_SESSION['username'];
+                                    <?php if (isset($_SESSION['fullname'])) {
+                                        echo $_SESSION['fullname'];
                                     } ?>
                                 </span> 
                             </button>
@@ -218,7 +218,7 @@ if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
            <div class="row gutters-sm">
                             <div class="col-md-4 mb-3">
                                 <div class="card">
-                                        <img class="img-fluid" src="https://www.samvadplus.com/wp-content/uploads/2020/11/Rakul-Preet-Singh.jpg">
+                                        <img class="img-fluid" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSkdGbj-QrUuNqhXP7DtY3-t8yD6H1Tk4uFg&s">
                                 </div>
                                 <div class="card mt-3">
                                     <div class="card-title text-center mt-1">
@@ -243,19 +243,18 @@ if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
                                         <hr>
                                         <div class="row">
                                             <div class="col-sm-3">
-                                                <h6 class="mb-0">Description:</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                                <?php echo $desc; ?>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-sm-3">
                                                 <h6 class="mb-0">Category</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <?php echo $category; ?>
+                                                <?php 
+                                                
+                                                if ($categories = $con->query("SELECT * FROM product_cat WHERE id= '$category' ")) {
+                                                    while($row = $categories->fetch_array()){
+                                                        echo $row['name'];
+                                                    }
+                                                }
+                                                
+                                                ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -264,7 +263,13 @@ if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
                                                 <h6 class="mb-0">Brand</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <?php echo $brand; ?>
+                                                <?php 
+                                                if ($brands = $con->query("SELECT * FROM product_brand WHERE id= '$brand' ")) {
+                                                    while($row = $brands->fetch_array()){
+                                                        echo $row['name'];
+                                                    }
+                                                }
+                                                ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -273,7 +278,13 @@ if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
                                                 <h6 class="mb-0">Purchase Account No:</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <?php echo $p_ac; ?>
+                                                <?php 
+                 if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE id='$p_ac'")) {
+                    while ($rowssb = $ledgrsubitm->fetch_array()) {
+                        echo $rowssb['item_name'];
+                    }
+                }
+                                            ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -283,7 +294,13 @@ if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
                                                 <h6 class="mb-0">Sales Account:</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                              <?php echo $sales_ac; ?>
+                                              <?php 
+                                              if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE id='$sales_ac'")) {
+                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                    echo $rowssb['item_name'];
+                                                }
+                                            }
+                                               ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -310,7 +327,14 @@ if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
                                                 <h6 class="mb-0">Store</h6>
                                             </div>
                                             <div class="col-sm-9 text-secondary">
-                                                <?php echo $store; ?>
+                                                <?php
+                                                if ($allstore = $con->query("SELECT `name` FROM store WHERE id='$store'")) {
+                                                    while ($rowssb = $allstore->fetch_array()) {
+                                                        echo $rowssb['name'];
+                                                    }
+                                                }
+                                                
+                                                ?>
                                             </div>
                                         </div>
                                         <hr>
@@ -324,60 +348,7 @@ if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
                                 </div>
 
 
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h4 class="card-title">Hoverable Table</h4>
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>User</th>
-                                                        <th>Product</th>
-                                                        <th>Sale</th>
-                                                        <th>Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Jacob</td>
-                                                        <td>Photoshop</td>
-                                                        <td class="text-danger"> 28.76% <i
-                                                                class="mdi mdi-arrow-down"></i></td>
-                                                        <td><label class="badge badge-danger">Pending</label></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Messsy</td>
-                                                        <td>Flash</td>
-                                                        <td class="text-danger"> 21.06% <i
-                                                                class="mdi mdi-arrow-down"></i></td>
-                                                        <td><label class="badge badge-warning">In progress</label></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>John</td>
-                                                        <td>Premier</td>
-                                                        <td class="text-danger"> 35.00% <i
-                                                                class="mdi mdi-arrow-down"></i></td>
-                                                        <td><label class="badge badge-info">Fixed</label></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Peter</td>
-                                                        <td>After effects</td>
-                                                        <td class="text-success"> 82.00% <i
-                                                                class="mdi mdi-arrow-up"></i></td>
-                                                        <td><label class="badge badge-success">Completed</label></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Dave</td>
-                                                        <td>53275535</td>
-                                                        <td class="text-success"> 98.05% <i
-                                                                class="mdi mdi-arrow-up"></i></td>
-                                                        <td><label class="badge badge-warning">In progress</label></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                               
 
                             </div>
                         </div>
