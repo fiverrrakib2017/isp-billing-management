@@ -212,8 +212,8 @@ include("include/pop_security.php");
                         <br>
                      </div>
                      <div class="d-flex justify-content-between align-items-end flex-wrap">
-                        <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</button>
-                        <!-- <a href="create_product.php" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</a> -->
+                        <!-- <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</button> -->
+                        <a href="create_product.php" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</a>
                      </div>
                      <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                      aria-labelledby="exampleModalLabel" aria-hidden="true" id="addModal">
@@ -380,11 +380,8 @@ include("include/pop_security.php");
                                        <tr>
                                           <th>ID</th>
                                           <th>Product Name</th>
-                                          <th>Description</th>
                                           <th>Category</th>
                                           <th>Brand</th>
-                                          <th>Purchase A/C</th>
-                                          <th>Sales A/C</th>
                                           <th>Purchase Price</th>
                                           <th>Sale Price</th>
                                           <th>Store</th>
@@ -405,19 +402,44 @@ include("include/pop_security.php");
                            <tr>
         <td><?php echo $rows['id']; ?></td>
         <td><a href="product_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $rows['name']; ?></a></td>
-        <td><?php echo $rows['description']; ?></td>
-        <td><?php echo $rows['category']; ?></td>
-        <td><?php echo $rows['brand']; ?></td>
-        <td><?php echo $rows['purchase_ac']; ?></td>
-        <td><?php echo $rows['sales_ac']; ?></td>
+        <td>
+            <?php 
+            $categoryId= $rows['category']; 
+            if ($categories = $con->query("SELECT * FROM product_cat WHERE id= '$categoryId' ")) {
+                while($row = $categories->fetch_array()){
+                    echo $row['name'];
+                }
+            }
+            ?>
+        </td>
+        <td>
+        <?php 
+            $brandId= $rows['brand']; 
+            if ($brands = $con->query("SELECT * FROM product_brand WHERE id= '$brandId' ")) {
+                while($row = $brands->fetch_array()){
+                    echo $row['name'];
+                }
+            }
+            ?>
+        </td>
         <td><?php echo $rows['purchase_price']; ?></td>
         <td><?php echo $rows['sale_price']; ?></td>
-        <td><?php echo $rows['store']; ?></td>
+        <td>
+        <?php 
+            $storeid= $rows['store']; 
+            if ($stores = $con->query("SELECT * FROM store WHERE id= '$storeid' ")) {
+                while($row = $stores->fetch_array()){
+                    echo $row['name'];
+                }
+            }
+            ?> 
+            
+        </td>
        <td style="text-align:right">
-        <a class="btn btn-info" href="product_profile_edit.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-        <a class="btn btn-success" href="product_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
+        <a class="btn-sm btn btn-info" href="product_profile_edit.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
+        <a class="btn-sm btn btn-success" href="product_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
         </a>
-        <a onclick=" return confirm('Are You Sure');" class="btn btn-danger" href="product_delete.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-trash"></i>
+        <a onclick=" return confirm('Are You Sure');" class="btn-sm btn btn-danger" href="product_delete.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-trash"></i>
         </a>
 
         </td>

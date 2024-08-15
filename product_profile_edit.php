@@ -1,28 +1,28 @@
-
-<?Php
-include "include/db_connect.php";
+<?php
 include("include/security_token.php");
-include("include/pop_security.php");
-
 include("include/users_right.php");
-if(isset($_GET['id'])){
-    $userId=$_GET['id'];
-    if($product=$con->query("SELECT * FROM products WHERE id='$userId'")){
-        while($rows=$product->fetch_array()){
-            $id=$rows["id"];
-        $pd_name=$rows["name"];
-        $desc = $rows["description"];
-        $category = $rows["category"];
-        $brand=$rows["brand"];
-        $p_ac = $rows["purchase_ac"];
-        $sales_ac = $rows["sales_ac"];
-        $p_price = $rows["purchase_price"];
-        $s_price = $rows["sale_price"];
-        $store = $rows["store"];
+include "include/db_connect.php";
+include "include/pop_security.php";
+
+if (isset($_GET['id'])) {
+    $userId = $_GET['id'];
+
+    if ($product = $con->query("SELECT * FROM products WHERE id='$userId'")) {
+        while ($rows = $product->fetch_array()) {
+            $id = $rows["id"];
+            $pd_name = $rows["name"];
+            $category = $rows["category"];
+            $brand = $rows["brand"];
+            $p_ac = $rows["purchase_ac"];
+            $sales_ac = $rows["sales_ac"];
+            $p_price = $rows["purchase_price"];
+            $s_price = $rows["sale_price"];
+            $store = $rows["store"];
+            $note = $rows["note"];
         }
-        
     }
 }
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -34,7 +34,7 @@ if(isset($_GET['id'])){
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
         <meta content="Themesbrand" name="author">
         <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
+        <!-- <link rel="shortcut icon" href="assets/images/favicon.ico"> -->
         <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
         <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
         <!-- C3 Chart css -->
@@ -46,7 +46,8 @@ if(isset($_GET['id'])){
         <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
         <!-- App Css-->
         <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-    
+    	<link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+        <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
     </head>
 
     <body data-sidebar="dark">
@@ -58,7 +59,7 @@ if(isset($_GET['id'])){
         <!-- Begin page -->
         <div id="layout-wrapper">
         
-             <header id="page-topbar">
+            <header id="page-topbar">
                 <div class="navbar-header">
                     <div class="d-flex">
                         <!-- LOGO -->
@@ -87,7 +88,7 @@ if(isset($_GET['id'])){
                         </button>
 
                         <div class="d-none d-sm-block ms-2">
-                            <h4 class="page-title">Product Update</h4>
+                            <h4 class="page-title">Product/Store</h4>
                         </div>
                     </div>
 
@@ -102,8 +103,8 @@ if(isset($_GET['id'])){
                         <div class="dropdown d-none d-md-block me-2">
                             <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="font-size-16">
-                                    <?php if (isset($_SESSION['username'])) {
-                                        echo $_SESSION['username'];
+                                    <?php if (isset($_SESSION['fullname'])) {
+                                        echo $_SESSION['fullname'];
                                     } ?>
                                 </span> 
                             </button>
@@ -196,6 +197,8 @@ if(isset($_GET['id'])){
                     </div>
                 </div>
             </header>
+
+
         
             <!-- ========== Left Sidebar Start ========== -->
             <div class="vertical-menu">
@@ -216,137 +219,197 @@ if(isset($_GET['id'])){
 
     <div class="page-content">
         <div class="container-fluid">
-           <div class="row">
-                <div class="container">
-                    <div class="col-md-6 m-auto">
-                    <div id="alertMsg" class="alert alert-success p-2 mt-3" style="width: 400px; display:none;">
-                     <i class="mdi mdi-check-circle"></i>
-                     <strong class="mx-2">Success!</strong> Update Data 
+            <div class="row">
+                <div class="col-md-12 grid-margin">
+                    <div class="d-flex justify-content-between flex-wrap">
+                        <div class="d-flex align-items-end flex-wrap">
+                            <div class="mr-md-3 mr-xl-5">
+
+
+                                <div class="d-flex">
+                                    <i class="mdi mdi-home text-muted hover-cursor"></i>
+                                    <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
+                                    </p>
+                                    <p class="text-primary mb-0 hover-cursor">Product/Update</p>
+                                </div>
+
+
+                            </div>
+                            <br>
+
+
+                        </div>
                     </div>
                 </div>
-                </div>
             </div>
-            <div class="row">
-                <div class="container">
-                    <form id="update_product">
-                    <div>
-                        <div class="card">
-                            <div class="card-body">
 
-                                <form class="form-sample">
 
+
+
+
+
+
+                    <div class="row">
+                        <div class="col-md-12 stretch-card">
+                            <div class="card">
+                            <form action="include/product_server.php?update_product" id="productUpdateForm" enctype="multipart/form-data" method="post">
+                            <input type="hidden" name="product_id" id="product_id" value="<?php echo $id; ?>">
+                                <div class="card-body">
                                     <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group  d-none">
-                                                <label>ID</label>
-                                                <input type="text" class="form-control" id="id" name="id"
-                                                    value="<?php echo $id; ?>" />
-                                            </div>
-                                            <div class="form-group ">
-                                                <label>Product Name</label>
-                                                <input id="form" type="text" class="form-control" id="pdname" name="pdname"
-                                                    value="<?php echo $pd_name; ?>" />
+                                        <div class="col">
+                                            <!-- Product Name -->
+                                            <div class="form-group mb-4">
+                                                <label for="product_name">Product Name</label>
+                                                <input type="text" class="form-control" name="product_name" id="product_name" value="<?php echo $pd_name; ?>" placeholder="Enter Product Name" required>
                                             </div>
                                         </div>
+                                        <div class="col">
+                                           <!-- Brand -->
+                                            <div class="form-group mb-4">
+                                                <label for="brand_id">Brand</label>
+                                                <select id="brand_id" class="form-select" name="brand" required>
+                                                    <option value="">---Select---</option>
+                                                    <?php 
+                                                        if ($brands = $con->query("SELECT * FROM product_brand")) {
+                                                            while($row = $brands->fetch_array()){
+                                                                $selected = ($row['id'] == $brand) ? 'selected' : '';
 
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Description</label>
-                                                <input id="form" class="form-control" type="text" name="desc" value="<?php echo $desc; ?>"/>
-
+                                                                echo '<option value="'.$row['id'].'" '.$selected.'>'.$row['name'].'</option>';
+                                                            }
+                                                        }
+                                                    ?>
+                                                </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Category</label>
-                                                    <select id="form" class="form-select"
-                                                        name="category">
-                                                        <option value="<?php echo $category; ?>"><?php echo $category; ?></option>
-                                                        <option value="leptop">Leptop</option>
-                                                        <option value="computer">Computer</option>
-                                                        <option value="leptop">Leptop</option>
-                                                        <option value="mobile">Mobile</option>
+                                        <div class="col">
+                                            <div class="form-group mb-4">
+                                                <label for="">Category</label>
+                                                <select id="category" class="form-select" name="category" required>
+                                                <option value="">---Select---</option>
+                                                <?php 
+                                                    if ($categories = $con->query("SELECT * FROM product_cat")) {
+                                                        while($row = $categories->fetch_array()){
+                                                            $selected = ($row['id'] == $category) ? 'selected' : '';
+                                                            echo '<option value="'.$row['id'].'" '.$selected.'>'.$row['name'].'</option>';
+                                                        }
+                                                    }
+                                                ?>
+                                                        
+
                                                     </select>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="col-md-6">
-                                        <div class="form-group">
-                                             <label>Brand</label>
-                                                <select id="form" class="form-select"
-                                                    name="brand">
-                                                    <option value="<?php echo $brand; ?>">
-                                                    <?php echo $brand; ?>
-                                                    </option>
-                                                    <option>IPhone 6s</option>
-                                                    <option>Samsung</option>
-                                                    <option>HP</option>
-                                                    <option>Apple</option>
-                                                </select>
+                                
 
-                                            </div>
+                                <div class="row">
+
+                                    <div class="col">
+                                        <div class="form-group mb-4">
+                                            <label>Purchase A/C</label>
+                                            <select id="purchase_ac" type="text" class="form-control"name="purchase_ac" required>
+            <?php
+                if ($ledgr = $con->query("SELECT * FROM ledger WHERE `mstr_ledger_id`=2")) {
+                    echo '<option value="">Select</option>';
+                    while ($rowsitm = $ledgr->fetch_array()) {
+                        $ldgritmsID = $rowsitm["id"];
+                        $ledger_name = $rowsitm["ledger_name"];
+                        echo '<optgroup label="' . $ledger_name . '">';
+                        if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+                            while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                $selected = ($rowssb['id'] == $p_ac) ? 'selected' : '';
+                                echo '<option value="' . $rowssb['id'] . '" '.$selected.'>' . $rowssb['item_name'] . '</option>';
+                            }
+                        }
+                        echo '</optgroup>';
+                    }
+                }
+            ?>
+                                            </select>
                                         </div>
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Purchase Account:</label>
-                                                <input id="form" type="text" class="form-control"
-                                                    name="purchase_ac" value="<?php echo $p_ac; ?>" />
-                                            </div>
+                                    </div>            
+                                    <div class="col">
+                                        <div class="form-group mb-4">
+                                            <label>Sales Account</label>
+                                            <select type="text" id="sales_ac" class="form-control" name="sales_ac" required>
+                <?php
+                    if ($ledgr = $con->query("SELECT * FROM ledger WHERE `mstr_ledger_id`=1")) {
+                        echo '<option value="">Select</option>';
+                        while ($rowsitm = $ledgr->fetch_array()) {
+                            $ldgritmsID = $rowsitm["id"];
+                            $ledger_name = $rowsitm["ledger_name"];
+                            echo '<optgroup label="' . $ledger_name . '">';
+                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+                                while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                    $selected = ($rowssb['id'] == $sales_ac) ? 'selected' : '';
+                                    echo '<option value="' . $rowssb['id'] . '" '.$selected.'>' . $rowssb['item_name'] . '</option>';
+                                }
+                            }
+                            echo '</optgroup>';
+                        }
+                    }
+                ?>
+                                            </select>
                                         </div>
-
-
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Sale Account no.</label>
-                                                <input id="form" type="text" class="form-control" name="sales_ac"
-                                                    value="<?php echo $sales_ac; ?>" />
-
-                                            </div>
+                                    </div>            
+                                    <div class="col">
+                                        <div class="form-group mb-4">
+                                            <label for="">Purchase Price</label>
+                                            <input type="number" class="form-control" id="p_price" name="p_price" value="<?php echo $p_price; ?>" placeholder="Enter Purchase Price" required/>
                                         </div>
+                                    </div>            
+                                    
+                                </div>
 
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Email</label>
-                                                <input id="form" type="text" class="form-control" name="purchase_price"
-                                                    value="<?php echo $p_price; ?>" />
 
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Sale Price:</label>
-                                                <input id="form" class="form-control" type="text" name="sale_price" value="<?php echo $s_price; ?>">
+                                
 
-                                            </div>
-                                        </div>
 
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Store</label>
-                                                <input id="form" type="text" class="form-control" name="store" value="<?php echo $store; ?>">
-                                            </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group mb-4">
+                                            <label for="">Sale's Price</label>
+                                            <input type="number" class="form-control" id="s_price" name="s_price" value="<?php echo $s_price; ?>" placeholder="Enter Sale's Price" required/>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Photo</label>
-                                                <input id="product_image" type="file" class="form-control" name="product_image">
-                                                <img width="80px" height="50px" src="https://s3images.zee5.com/wp-content/uploads/sites/7/2021/12/Untitled-design-15.jpg">
-                                            </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group mb-4">
+                                            <label for="">Store</label>
+                                            <select id="store" class="form-select" name="store">
+                                                <option value="">---Select---</option>
+                                                <?php 
+                                                    if ($stores = $con->query("SELECT * FROM store")) {
+                                                        while($row = $stores->fetch_array()){
+                                                            $selected = ($row['id'] == $store) ? 'selected' : '';
+                                                            echo '<option value="'.$row['id'].'" '.$selected.'>'.$row['name'].'</option>';
+                                                        }
+                                                    }
+                                                ?>
+                                                        
+
+                                                    </select>       
                                         </div>
-                                    </div><br>
-                                    <button type="button" id="update_button" class="btn btn-info">Update Product</button>
-                                    <a href="product.php" type="button" class="btn btn-danger">Back</a>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group mb-4">
+                                            <label for="">Remarks</label>
+                                            <input type="text" class="form-control" id="note"  name="note" placeholder="Enter Your Note" value="<?php echo $note; ?>"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                </div>
+                                <div class="card-footer">
+                                    <button type="button" onclick="history.back();" class="btn btn-danger">Back</button>
+                                    <button type="submit" class=" btn btn-success">Add Now</button>
+                                </div>
                                 </form>
                             </div>
                         </div>
-                    </div>
-                </form>
- 
-                </div>
-            </div>
-         </div>
-      </div>
+                    </div> 
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
@@ -424,58 +487,70 @@ if(isset($_GET['id'])){
         <div class="rightbar-overlay"></div>
         
         
-        <!-- JAVASCRIPT -->
-        <script src="assets/libs/jquery/jquery.min.js"></script>
-        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-        <script src="assets/libs/simplebar/simplebar.min.js"></script>
-        <script src="assets/libs/node-waves/waves.min.js"></script>
+    <!-- JAVASCRIPT -->
+    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
 
-        <!-- Required datatable js -->
-        <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-        <!-- Buttons examples -->
-        <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-        <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-        <script src="assets/libs/jszip/jszip.min.js"></script>
-        <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
-        <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
-        <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-        <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-        <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-        <!-- Responsive examples -->
-        <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-        <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
+    <!-- Required datatable js -->
+    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Buttons examples -->
+    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="assets/libs/jszip/jszip.min.js"></script>
+    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+    <!-- Responsive examples -->
+    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
     <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
-        <!-- Datatable init js -->
-        <script src="assets/js/pages/datatables.init.js"></script> 
+    <!-- Datatable init js -->
+    <script src="assets/js/pages/datatables.init.js"></script> 
 
-        <script src="assets/js/app.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/libs/select2/js/select2.min.js"></script>
+    <script type="text/javascript">
+       $("#brand_id").select2();
+       $("#category").select2();
+       $("#sales_ac").select2();
+       $("#purchase_ac").select2();
+       
+    /** Store The data from the database table **/
+        $(document).ready(function(){
+            $('#productUpdateForm').on('submit', function(e){
+                e.preventDefault();
 
+                var formData = new FormData(this);
 
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script type="text/javascript">
-    $(document).ready(function(){
-       $("#update_button").click(function(e){
-           e.preventDefault();
-           var formData=$("#update_product").serialize();
-           $.ajax({
-            type:"GET",
-            url:"include/product.php?update",
-            data:formData,
-            cache:false,
-            success:function(){
-                 Swal.fire(
-                      'Success!',
-                      'Data Update Success!',
-                      'success'
-                    )
-                }
-           });
-       });
-    });
-</script>
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        var result = JSON.parse(response);
+                        if (result.success) {
+                            toastr.success(result.message);
+                        } else {
+                            toastr.error(result.message);
+                        }
+                    },
+                    error: function() {
+                        toastr.error("Error occurred during the request.");
+                    }
+                });
+            });
+        });
+ 
+    </script>
 
     </body>
 </html>
