@@ -83,8 +83,8 @@ include("include/pop_security.php");
                         <div class="dropdown d-none d-md-block me-2">
                             <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="font-size-16">
-                                    <?php if (isset($_SESSION['username'])) {
-                                        echo $_SESSION['username'];
+                                    <?php if (isset($_SESSION['fullname'])) {
+                                        echo $_SESSION['fullname'];
                                     } ?>
                                 </span> 
                             </button>
@@ -213,6 +213,7 @@ include("include/pop_security.php");
                      </div>
                      <div class="d-flex justify-content-between align-items-end flex-wrap">
                         <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</button>
+                        <!-- <a href="create_product.php" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</a> -->
                      </div>
                      <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
                      aria-labelledby="exampleModalLabel" aria-hidden="true" id="addModal">
