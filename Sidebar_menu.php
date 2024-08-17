@@ -20,6 +20,7 @@
                                     <li><a href="bulk_payment.php">Bulk Recharge</a></li>
                                     <li><a href="active_cstmr_list.php">Active Customer List</a></li>
                                     <li><a href="customer_expire.php">Expired Customer List</a></li>
+                                  
 
                                     <li>
                                         <a href="con_request.php">Connection Request 
@@ -40,6 +41,7 @@
                                     </li>
                                     <li><a href="customer_dues.php">Customer Dues/Unpaid</a></li>
                                     <li><a href="customer_recharge.php">Customer Recharge</a></li>
+                                    <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
                                     <li><a href="package_add.php">Customer Packages</a></li>
                                     <li><a href="pwdmissmatch.php">Password missmatch</a></li>
                                     <li><a href="customer_import.php">Import</a></li>
