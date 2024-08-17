@@ -70,7 +70,7 @@ include "include/db_connect.php";
                         </button>
 
                         <div class="d-none d-sm-block ms-2">
-                            <h4 class="page-title">Monthly Recharge</h4>
+                            <h4 class="page-title">Daily Recharge</h4>
                         </div>
                     </div>
 
@@ -209,7 +209,7 @@ include "include/db_connect.php";
                                     <i class="mdi mdi-home text-muted hover-cursor"></i>
                                     <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
                                     </p>
-                                    <p class="text-primary mb-0 hover-cursor">Monthly Recharge</p>
+                                    <p class="text-primary mb-0 hover-cursor">Daily Recharge</p>
                                  </div>
                               </div>
                               <br>
@@ -243,45 +243,52 @@ include "include/db_connect.php";
         </tr>
     </thead>
     <tbody>
-        <?php 
-        // Get the month parameter from the URL
-        $date = $_GET['date']; // Format: YYYY-MM-d
-        
-        // Prepare the SQL query
+    <?php 
+    /* Get the date and user_id parameters from the URL*/
+    $date = $_GET['date']; // Format: YYYY-MM-d
+    $user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+
+    /* Prepare the SQL query based on whether user_id is provided*/
+    if ($user_id) {
+        $sql = "SELECT * FROM customer_rechrg WHERE DATE_FORMAT(datetm, '%Y-%m-%d') = '$date' AND rchg_by = $user_id";
+    } else {
         $sql = "SELECT * FROM customer_rechrg WHERE DATE_FORMAT(datetm, '%Y-%m-%d') = '$date'";
-        $result = mysqli_query($con, $sql);
+    }
 
-        // Loop through the results
-        while ($rows = mysqli_fetch_assoc($result)) {
-            $getCstmrId = $rows["customer_id"];
-            $customerName = '';
+    $result = mysqli_query($con, $sql);
 
-            // Fetch customer name from the customers table
-            $customerQuery = "SELECT fullname FROM customers WHERE id='$getCstmrId'";
-            $customerResult = mysqli_query($con, $customerQuery);
-            if ($customerRow = mysqli_fetch_assoc($customerResult)) {
-                $customerName = $customerRow['fullname'];
-            }
-        ?>
-        <tr>
-            <td>
-                <a href="profile.php?clid=<?php echo $getCstmrId; ?>">
-                    <?php echo $customerName; ?>
-                </a>
-            </td>
-            <td>
-                <?php 
-                $recharge_date_time = $rows['datetm'];
-                $dateTm = new DateTime($recharge_date_time);
-                echo $dateTm->format("H:i A, d-M-Y");
-                ?> 
-            </td>
-            <td><?php echo $rows["months"]; ?></td>
-            <td><?php echo $rows["rchrg_until"]; ?></td>
-            <td><?php echo $rows["sales_price"]; ?></td>
-        </tr>
-        <?php } ?>
-    </tbody>
+    // Loop through the results
+    while ($rows = mysqli_fetch_assoc($result)) {
+        $getCstmrId = $rows["customer_id"];
+        $customerName = '';
+
+        // Fetch customer name from the customers table
+        $customerQuery = "SELECT fullname FROM customers WHERE id='$getCstmrId'";
+        $customerResult = mysqli_query($con, $customerQuery);
+        if ($customerRow = mysqli_fetch_assoc($customerResult)) {
+            $customerName = $customerRow['fullname'];
+        }
+    ?>
+    <tr>
+        <td>
+            <a href="profile.php?clid=<?php echo $getCstmrId; ?>">
+                <?php echo $customerName; ?>
+            </a>
+        </td>
+        <td>
+            <?php 
+            $recharge_date_time = $rows['datetm'];
+            $dateTm = new DateTime($recharge_date_time);
+            echo $dateTm->format("H:i A, d-M-Y");
+            ?> 
+        </td>
+        <td><?php echo $rows["months"]; ?></td>
+        <td><?php echo $rows["rchrg_until"]; ?></td>
+        <td><?php echo $rows["sales_price"]; ?></td>
+    </tr>
+    <?php } ?>
+</tbody>
+
 </table>
 
                               </div>

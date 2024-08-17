@@ -263,18 +263,13 @@ include "include/db_connect.php";
             <th>Recharged Date</th>
             <th>Collect By</th>
             <th>Amount</th>
+            <th></th>
             
         </tr>
     </thead>
     <tbody id="tableBody">
     <?php 
-$sql = "
-    SELECT u.id, DATE(cr.datetm) AS recharge_date, SUM(cr.sales_price) AS total_collection, u.fullname AS recharge_by_name 
-    FROM customer_rechrg cr
-    JOIN users u ON cr.rchg_by = u.id
-    WHERE cr.status = '0'
-    GROUP BY u.id, DATE(cr.datetm), u.fullname
-    ORDER BY recharge_date DESC";
+$sql = "SELECT u.id, DATE(cr.datetm) AS recharge_date, SUM(cr.sales_price) AS total_collection, u.fullname AS recharge_by_name  FROM customer_rechrg cr JOIN users u ON cr.rchg_by = u.id WHERE cr.status = '0' GROUP BY u.id, DATE(cr.datetm), u.fullname ORDER BY recharge_date DESC";
 $result = mysqli_query($con, $sql);
 
 while ($rows = mysqli_fetch_assoc($result)) {
@@ -287,7 +282,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
         <input type="checkbox"  data-id="<?php echo $rows['id']; ?>" data-collection_date="<?php echo $rows['recharge_date']; ?>">
     </td>
     <td>
-        <a href="daily_recharge.php?date=<?php echo $yearMonth; ?>">
+        <a href="daily_recharge.php?date=<?php echo $yearMonth; ?>&user_id=<?php echo $rows['id'];?>">
             <?php 
             $dateTm = new DateTime($recharge_date);
             echo $dateTm->format("d-M-Y");
@@ -296,7 +291,9 @@ while ($rows = mysqli_fetch_assoc($result)) {
     </td>
     <td><?php echo $rows["recharge_by_name"]; ?></td>
     <td><?php echo $rows["total_collection"]; ?></td>
-    
+    <td>
+        <a   href="daily_recharge.php?date=<?php echo $yearMonth; ?>&user_id=<?php echo $rows['id'];?>" class="btn-sm btn btn-success"><i class="fas fa-eye"></i> </a>
+    </td>
 </tr>
 <?php } ?>
 

@@ -245,34 +245,32 @@ include "include/db_connect.php";
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Cashed Collected From</th>
+                                        <th>Cashed Received  By</th>
                                         <th>Collection Date</th>
                                         <th>Total Amount</th>
                                         <th>Received Amount</th>
                                         <th>Remarks</th>
-                                        <th>Collect From</th>
-                                        <th>Collect To</th>
+                                        <th></th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody">
                                     <?php 
-                                    $sql = "
-                                        SELECT cc.id, cc.collection_date, cc.amount, cc.received_amount, cc.note, 
-                                            u.fullname AS user_name, uploader.fullname AS uploader_name
-                                        FROM cash_collection cc
-                                        LEFT JOIN users u ON cc.user_id = u.id
-                                        LEFT JOIN users uploader ON cc.uploader_info = uploader.id
-                                        ORDER BY cc.id DESC";
+                                    $sql = "SELECT cc.id, cc.collection_date, cc.amount, cc.received_amount, cc.note, u.id AS USERID, u.fullname AS user_name, uploader.fullname AS uploader_name FROM cash_collection cc LEFT JOIN users u ON cc.user_id = u.id LEFT JOIN users uploader ON cc.uploader_info = uploader.id ORDER BY cc.id DESC";
 
                                     $result = mysqli_query($con, $sql);
 
                                     while ($rows = mysqli_fetch_assoc($result)) {
                                         $collection_date = $rows['collection_date'];
-                                        $yearMonth = date("Y-m", strtotime($collection_date)); 
+                                        $yearMonth = date("Y-m-d", strtotime($collection_date)); 
                                     ?>
                                     <tr>
                                     <td><?php echo $rows['id']; ?></td>
+                                    <td><?php echo $rows["user_name"]; ?></td>
+                                    <td><?php echo $rows["uploader_name"]; ?></td>
                                         <td>
-                                            <a href="#">
+                                            <a href="daily_recharge.php?date=<?php echo $yearMonth; ?>&user_id=<?php echo $rows['USERID'];?>">
                                                 <?php 
                                                 $dateTm = new DateTime($collection_date);
                                                 echo $dateTm->format("d-M-Y");
@@ -282,8 +280,10 @@ include "include/db_connect.php";
                                         <td><?php echo $rows["amount"]; ?></td>
                                         <td><?php echo $rows["received_amount"]; ?></td>
                                         <td><?php echo $rows["note"]; ?></td>
-                                        <td><?php echo $rows["user_name"]; ?></td>
-                                        <td><?php echo $rows["uploader_name"]; ?></td>
+                                        <td>
+                                        <a  href="daily_recharge.php?date=<?php echo $yearMonth; ?>&user_id=<?php echo $rows['USERID'];?>" class="btn-sm btn btn-success"><i class="fas fa-eye"></i> </a>
+                                        </td>
+                                       
                                     </tr>
                                     <?php } ?>
                                 </tbody>
