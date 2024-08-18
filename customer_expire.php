@@ -222,6 +222,9 @@ include("include/users_right.php");
                                 </div>
                                 <div class="d-flex justify-content-between align-items-end flex-wrap">
                                     <button data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" id="addBtn" style="margin-bottom: 12px;">&nbsp;&nbsp;New customer</button>
+
+                                   
+
                                 </div>
 
                                 <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
@@ -394,6 +397,7 @@ include("include/users_right.php");
                     <div class="row">
                         <div class="col-md-12 stretch-card">
                             <div class="card">
+                               
                                 <div class="card-body">
                                     <div class="col-md-6 float-md-right grid-margin-sm-0">
                                         <div class="form-group">
@@ -404,11 +408,11 @@ include("include/users_right.php");
                                         <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                    <!-- <th>Check All <input type="checkbox" id="checkedAll" name="checkedAll" value="Bike"></th> -->
 													<th><input type="checkbox" id="checkedAll" name="checkedAll"> All</th>
                                                     <th>ID</th>
                                                     <th>Name</th>
                                                     <th>Package</th>
+                                                    <th>Expired Date</th>
                                                     <th>Expired Date</th>
                                                     <th>User Name</th>
                                                     <th>Mobile no.</th>
@@ -462,11 +466,6 @@ include("include/users_right.php");
                                                             <?php
 
                                                             echo  $rows["package_name"];
-                                                            // if ($allData = $con->query("SELECT * FROM radgroupcheck WHERE id='$packageId'")) {
-                                                            //     while ($packageName = $allData->fetch_array()) {
-                                                            //         echo  $packageName['groupname'];
-                                                            //     }
-                                                            // }
 
                                                             ?>
 
@@ -483,6 +482,7 @@ include("include/users_right.php");
                                                             }
                                                             ?>
                                                         </td>
+                                                        <td><?php echo $rows["expiredate"]; ?></td>
                                                         <td><?php echo $rows["username"]; ?></td>
                                                         <td><?php echo $rows["mobile"]; ?></td>
                                                         <td>
@@ -520,6 +520,9 @@ include("include/users_right.php");
                                             </tbody>
                                         </table>
                                     </div>
+                                </div>
+                                <div class="card-footer" style="text-align: right;">
+                                    <button class="btn btn-success" id="export_to_excel" >Export To Excel</button>
                                 </div>
                             </div>
                         </div>
@@ -646,12 +649,36 @@ include("include/users_right.php");
     <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
     <!-- Datatable init js -->
     <script src="assets/js/pages/datatables.init.js"></script>
-
     <script src="assets/js/app.js"></script>
     <script type="text/javascript">
 	
 	$(document).ready(function() {
-		
+            $(document).on('click','#export_to_excel',function(){
+                    let csvContent = "data:text/csv;charset=utf-8,";
+                
+                // Add header row
+                csvContent += [
+                    'ID', 'Name', 'Package', 'Expired Date', 'User Name', 'Mobile no.', 'POP/Branch', 'Area/Location'
+                ].join(",") + "\n";
+                
+                // Add data rows
+                $('#customers_table tbody tr').each(function() {
+                    let row = [];
+                    $(this).find('td').each(function() {
+                        row.push($(this).text().trim());
+                    });
+                    csvContent += row.join(",") + "\n";
+                });
+
+                // Create a link element and simulate click to download the CSV file
+                let encodedUri = encodeURI(csvContent);
+                let link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "customers.csv");
+                document.body.appendChild(link); // Required for Firefox
+                link.click();
+                document.body.removeChild(link);
+            });
 			
             $("#checkedAll").change(function() {
                 if (this.checked) {
