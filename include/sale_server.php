@@ -53,18 +53,18 @@ if (isset($_POST['addReceivedPayment'])) {
     $usr_id = isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
     $client_id = $_POST['client_id']?? null;
     $date = date('Y-m-d');
-    $sub_total = $_POST['total_amount']?? null;
-    $discount = $_POST['discount_amount']?? 0; 
+    $sub_total = $_POST['table_total_amount']?? null;
+    $discount = $_POST['table_discount_amount']?? 0; 
     $grand_total = $sub_total - $discount;
-    $total_due = $_POST['due_amount'] ?? null;
-    $total_paid = $_POST['paid_amount'] ?? null;
-    $note = '';
+    $total_due = $_POST['table_due_amount'] ?? null;
+    $total_paid = $_POST['table_paid_amount'] ?? null;
+    $note = $_POST['note']??'';
     $status = 'Pending';
 
-    $product_ids = $_POST['product_id']?? [];
-    $qtys = $_POST['qty']?? [];
-    $prices = $_POST['price']?? [];
-    $total_prices = $_POST['total_price']?? [];
+    $product_ids = $_POST['table_product_id']?? [];
+    $qtys = $_POST['table_qty']?? [];
+    $prices = $_POST['table_price']?? [];
+    $total_prices = $_POST['table_total_price']?? [];
 
     if (is_null($client_id) || is_null($sub_total) || is_null($total_paid) || is_null($total_due) || empty($product_ids)) {
         echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
