@@ -130,18 +130,18 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
   $usr_id = isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
   $client_id = $_POST['client_id']?? null;
   $date = date('Y-m-d'); 
-  $sub_total = $_POST['total_amount']?? null;
-  $discount = $_POST['discount_amount']?? null;
+  $sub_total = $_POST['table_total_amount']?? null;
+  $discount = $_POST['table_discount_amount']?? null;
   $grand_total = $sub_total - $discount;
-  $total_due = $_POST['due_amount']?? null;
-  $total_paid = $_POST['paid_amount']?? null;
-  $note = ''; 
-  $status = 'Pending'; 
+  $total_due = $_POST['table_due_amount']?? null;
+  $total_paid = $_POST['table_paid_amount']?? null;
+  $note = $_POST['note']??'';
+  $status =$_POST['table_status'] ?? 0; 
 
-    $product_ids = $_POST['product_id']?? [];
-    $qtys = $_POST['qty']?? [];
-    $prices = $_POST['price']?? [];
-    $total_prices = $_POST['total_price']?? [];
+    $product_ids = $_POST['table_product_id']?? [];
+    $qtys = $_POST['table_qty']?? [];
+    $prices = $_POST['table_price']?? [];
+    $total_prices = $_POST['table_total_price']?? [];
 
   
     if (is_null($client_id) || is_null($sub_total) || is_null($total_paid) || is_null($total_due) || empty($product_ids)) {
@@ -161,14 +161,6 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
           throw new Exception('Error updating Sales data.');
       }
 
-      /* Fetch existing details to adjust stock */
-      $old_details = $con->query("SELECT * FROM sales_details WHERE invoice_id = $invoice_id");
-      while ($row = $old_details->fetch_assoc()) {
-          $product_id = $row['product_id'];
-          $old_qty = $row['qty'];
-          /* Revert stock changes */
-          $con->query("UPDATE products SET store = store + $old_qty WHERE id = $product_id");
-      }
 
       /* Delete old details */
       $con->query("DELETE FROM sales_details WHERE invoice_id = $invoice_id");

@@ -16,6 +16,7 @@ if (isset($_GET["clid"])) {
             $total_due = $rows['total_due'];
             $total_paid = $rows['total_paid'];
             $note = $rows['note'];
+            $status = $rows['status'];
         }
     }
 }
@@ -42,6 +43,7 @@ if (isset($_GET["clid"])) {
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
     <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
+   
 </head>
 
 <body data-sidebar="dark">
@@ -207,7 +209,7 @@ if (isset($_GET["clid"])) {
         <div class="main-content">
             <div class="page-content">
                 <div class="container-fluid">
-                    <form id="form-data" action="include/sale_server.php?add_invoice" method="post">
+                    <form id="form-data" action="include/sale_server.php?update_invoice=1&invoice_id=<?php echo $id; ?>" method="post">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card shadow-sm mb-4">
@@ -230,7 +232,7 @@ if (isset($_GET["clid"])) {
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="note" class="form-label">Note:</label>
-                                                    <input class="form-control" type="text" placeholder="Notes" id="note" name="note">
+                                                    <input class="form-control" type="text" placeholder="Notes" id="note" name="note" value="<?php echo $note; ?>">
                                                 </div>
                                             </div>
                                             <div class="col">
@@ -297,36 +299,84 @@ if (isset($_GET["clid"])) {
                                     <th></th>
                                 </thead>
                                 <tbody id="tableRow">
+                                <?php
+                                    $sql = "SELECT * FROM `sales_details` WHERE invoice_id=$id";
+                                    $result = mysqli_query($con, $sql);
+
+                                    while ($rows = mysqli_fetch_assoc($result)) {
+
+                                    ?>
+
+                                <tr>
+                                    <td>
+                                        <?php
+                                            $product_id = $rows["product_id"];
+                                            if ($allPD = $con->query("SELECT * FROM products WHERE id='$product_id' ")) {
+                                                while ($rowss = $allPD->fetch_array()) {
+                                                    echo ' <input type="hidden" name="table_product_id[]" value="'.$rowss['id'].'">'; 
+                                                    echo $rowss['name']; 
+                                                }
+                                            }
+                                        ?>
+                                    
+
+                                    </td>
+                                    <td>
+                                        <input readonly type="number" min="1" name="table_qty[]" value="<?php echo $rows['qty']; ?>" class="form-control table_qty">
+                                    </td>
+                                    <td>
+                                        <input readonly type="number" name="table_price[]" class="form-control table_price" value="<?php echo $rows['value']; ?>">
+                                    </td>
+                                    <td>
+                                        <input readonly type="number" id="table_total_price" name="table_total_price[]" class="form-control" value="<?php echo $rows['total']; ?>"></td>
+                                
+                                    <td><button class="btn btn-danger btn-sm removeRow">Remove</button></td>
+                                
+                                    </tr>
+                                <?php } ?>
+
+
                                 </tbody>
                                 <tfoot class="">
                                     <tr>
                                         <th class="text-center" colspan="3"></th>
                                         <th class="text-left" colspan="4">
-                                            Total Amount <input readonly class="form-control table_total_amount" name="table_total_amount" type="text">
+                                            Total Amount <input readonly class="form-control table_total_amount" name="table_total_amount" value="<?php echo $sub_total;?>" type="text">
                                         </th>
                                     </tr>
                                     <tr>
                                         <th class="text-center" colspan="3"></th>
                                         <th class="text-left" colspan="4">
-                                            Paid Amount <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" >
+                                            Paid Amount <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" value="<?php echo $total_paid;?>">
                                         </th>
                                     </tr>
                                     <tr>
                                         <th class="text-center" colspan="3"></th>
                                         <th class="text-left" colspan="4">
-                                            Discount Amount <input  type="text" class="form-control table_discount_amount" name="table_discount_amount" value="00">
+                                            Discount Amount <input  type="text" class="form-control table_discount_amount" name="table_discount_amount" value="<?php echo $discount; ?>">
                                         </th>
                                     </tr>
                                     <tr>
                                         <th class="text-center" colspan="3"></th>
                                         <th class="text-left" colspan="4">
-                                            Due Amount <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" >
+                                            Due Amount <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" value="<?php echo $total_due; ?>">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-center" colspan="3"></th>
+                                        <th class="text-left" colspan="4">
+                                            Status <select type="text"  class="form-select table_status" name="table_status" >
+                                                <option value="">---Select---</option>
+                                                <option value="0" <?php echo ($status == 0) ? 'selected' : ''; ?>>Draft</option>
+                                                <option value="1" <?php echo ($status == 1) ? 'selected' : ''; ?>>Completed</option>
+                                                <option value="2" <?php echo ($status == 2) ? 'selected' : ''; ?>>Print Invoice</option>
+                                            </select>
                                         </th>
                                     </tr>
                                 </tfoot>
                                 </table>
                                 <div class="form-group text-center">
-                                <button type="submit"  class="btn btn-success"><i class="fe fe-dollar"></i> Create Now</button>
+                                <button type="submit"  class="btn btn-success"><i class="fe fe-dollar"></i> Update Now</button>
                                 </div>
                             </div>
                         </div>
@@ -355,6 +405,7 @@ if (isset($_GET["clid"])) {
         </div>
         <!-- end main content-->
     </div>
+    <?php include 'modal/product_modal.php'; ?>
     <!-- END layout-wrapper -->
     <!-- Right Sidebar -->
     <div class="right-bar">
@@ -426,9 +477,11 @@ if (isset($_GET["clid"])) {
     <script src="assets/js/pages/datatables.init.js"></script>
     <script src="assets/libs/select2/js/select2.min.js"></script>
     <script src="assets/js/app.js"></script>
+    <script src="modal/product_modal.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-          //$("#product_name").select2(); 
+            
+
           var selectedProductId = null;
             getProductData();
             function getProductData() {
@@ -448,12 +501,13 @@ if (isset($_GET["clid"])) {
             getClientData()
 
             function getClientData() {
-
+                var client_id=<?php echo $client_id; ?>;
                 $.ajax({
                     url: "include/sale_server.php?getClientData",
                     method: 'GET',
                     success: function(response) {
                         $('#client_name').html(response);
+                        $('#client_name').val(client_id);
                     
                     },
                     error: function(xhr, status, error) {
@@ -569,6 +623,7 @@ if (isset($_GET["clid"])) {
                     data: formData,
                     dataType: 'json',
                     success:function(response){
+                        
                         if (response.success) {
                             toastr.success(response.message);
                             setTimeout(() => {
@@ -604,7 +659,7 @@ if (isset($_GET["clid"])) {
 
         });
 
-
+       
 
     </script>
 
