@@ -28,6 +28,7 @@ include("include/pop_security.php");
         <!-- App Css-->
         <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
       <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+      <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
     </head>
 
     <body data-sidebar="dark">
@@ -212,156 +213,9 @@ include("include/pop_security.php");
                         <br>
                      </div>
                      <div class="d-flex justify-content-between align-items-end flex-wrap">
-                        <!-- <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</button> -->
-                        <a href="create_product.php" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</a>
+                         <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"data-bs-toggle="modal" data-bs-target="#addproductModal" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</button> 
+                        <!-- <a href="create_product.php" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New Product</a> -->
                      </div>
-                     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog"
-                     aria-labelledby="exampleModalLabel" aria-hidden="true" id="addModal">
-                     <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content col-md-10">
-                           <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel"><span
-                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Product</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                           </div>
-                           <div>
-                              <!--Product form start-->
-                              <form id="prduct_form">
-                                 <div>
-                                    <div class="card">
-                                       <div class="card-body">
-                              <form class="form-sample">
-                              <div class="row">
-                              <div class="col-md-6">
-                              <div class="form-group ">
-                              <label>Product Name</label>
-                              <input id="pdname" type="text"
-                                 class="form-control"
-                                 name="pdname"
-                                 placeholder="Enter Your Product Name" />
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group ">
-                              <label>Description</label>
-                              <input id="desc" type="text"
-                                 class="form-control"
-                                 name="desc"
-                                 placeholder="Enter Description" />
-                              </div>
-                              </div>  
-                              <div class="col-md-6">
-                                 <div class="form-group">
-                                    <label>Category</label>
-                                       <select id="category" class="form-select"
-                                          name="category">
-                                               <?php 
-                                    if ($category = $con-> query("SELECT * FROM product_cat")) {
-                                        while($rows= $category->fetch_array()){
-
-                                          $id=$rows["id"];
-                                           
-                                            $name = $rows["name"];
-                                            
-                                            echo '<option value='.$name.'>'.$name.'</option>';
-                                        }
-                                    }
-                                    
-                                    ?>
-                                          
-
-                                       </select>
-                                 </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Brand</label>
-                              <select id="brand" class="form-select"
-                                 name="brand">
-                                 <?php 
-                                    if ($category = $con-> query("SELECT * FROM product_brand")) {
-                                        while($rows= $category->fetch_array()){
-
-                                          $id=$rows["id"];
-                                           
-                                            $name = $rows["name"];
-                                            
-                                            echo '<option value='.$name.'>'.$name.'</option>';
-                                        }
-                                    }
-                                    
-                                    ?>
-
-                              </select>
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group ">
-                              <label>Purchase A/C</label>
-                              <input id="purchase_ac" type="text"
-                                 class="form-control"
-                                 name="purchase_ac"
-                                 placeholder="Enter Purchase A/C" />
-                              </div>
-                              </div> 
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Sales Account</label>
-                              <input type="text" id="sales_ac" 
-                                 class="form-control"
-                                 name="sales_ac"
-                                 placeholder="Enter Your Sales A/C" />
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Purchase Price</label>
-                              <input id="purchase_price" type="text"
-                                 class="form-control"
-                                 name="purchase_price"
-                                 placeholder="Enter Purchase Price" />
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Sales Price</label>
-                              <input id="sale_price" type="text"
-                                 class="form-control "
-                                 name="sale_price"
-                                 placeholder="Enter Sales Price" />
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Store</label>
-                              <input id="store" type="text"
-                                 class="form-control "
-                                 name="store" placeholder="Store" />
-                              </div>
-                              </div>
-                                <div class="col-md-6">
-                                  <div class="form-group">
-                                  <label>Product Image</label>
-                                  <input id="store" type="file"
-                                     class="form-control "
-                                     name="uploadPhoto" />
-                                  </div>
-                                </div>
-                              </div>
-                              </form>
-                              </div>
-                              </div>
-                              </div>
-                              <!--Product form end-->
-                              </form>
-                           </div>
-                           <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                              <button type="button" class="btn btn-primary" id="product_add">Add Product</button>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
                   </div>
                </div>
             </div>
@@ -477,6 +331,212 @@ include("include/pop_security.php");
 <!-- end main content-->
         
         </div>
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" id="addproductModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content col-md-10">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span
+                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="card">
+                    <form action="#" id="productForm" enctype="multipart/form-data">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Product Name</label>
+                                        <input type="text"  class="form-control" name="product_name" id="product_name" placeholder="Enter Product Name" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Brand</label>
+                                        <select id="brand_id" class="form-select"
+                                            name="brand" required style="width: 100%;">
+                                            <option value="">---Select---</option>
+                                            <?php 
+                                                if ($category = $con-> query("SELECT * FROM product_brand")) {
+                                                    while($rows= $category->fetch_array()){
+
+                                                    $id=$rows["id"];
+                                                    
+                                                        $name = $rows["name"];
+                                                        
+                                                        echo '<option value='.$id.'>'.$name.'</option>';
+                                                    }
+                                                }
+                                                
+                                                ?>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Category</label>
+                                        <select id="category" class="form-select" name="category" style="width: 100%;" required>
+                                        <option value="">---Select---</option>
+                                        <?php 
+                                            if ($category = $con-> query("SELECT * FROM product_cat")) {
+                                                while($rows= $category->fetch_array()){
+
+                                                $id=$rows["id"];
+                                                
+                                                    $name = $rows["name"];
+                                                    
+                                                    echo '<option value='.$id.'>'.$name.'</option>';
+                                                }
+                                            }
+                                            
+                                            ?>
+                                                
+
+                                            </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        
+
+                            <div class="row">
+
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label>Purchase A/C</label>
+                                        <select id="purchase_ac" type="text" class="form-control"name="purchase_ac" required style="width: 100%;">
+                                        <?php
+                                    if ($ledgr = $con->query("SELECT * FROM ledger Where `mstr_ledger_id`=2")) {
+                                        echo '<option value="">Select</option>';
+
+                                        while ($rowsitm = $ledgr->fetch_array()) {
+                                            $ldgritmsID = $rowsitm["id"];
+                                            $ledger_name = $rowsitm["ledger_name"];
+
+                                            echo '<optgroup label="' . $ledger_name . '">';
+
+
+                                            // Sub Ledger items list
+                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+
+
+                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                    $sub_ldgrid = $rowssb["id"];
+                                                    $ldgr_items = $rowssb["item_name"];
+
+                                                    echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                                }
+                                            }
+
+
+
+                                            echo '</optgroup>';
+                                        }
+                                    }
+                                    ?>
+                                        </select>
+                                    </div>
+                                </div>            
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label>Sales Account</label>
+                                        <select type="text" id="sales_ac" class="form-control" name="sales_ac" required style="width: 100%;">
+                                    <?php
+                                    if ($ledgr = $con->query("SELECT * FROM ledger Where `mstr_ledger_id`=1")) {
+                                        echo '<option value="">Select</option>';
+
+                                        while ($rowsitm = $ledgr->fetch_array()) {
+                                            $ldgritmsID = $rowsitm["id"];
+                                            $ledger_name = $rowsitm["ledger_name"];
+
+                                            echo '<optgroup label="' . $ledger_name . '">';
+
+
+                                            // Sub Ledger items list
+                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+
+
+                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                    $sub_ldgrid = $rowssb["id"];
+                                                    $ldgr_items = $rowssb["item_name"];
+
+                                                    echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                                }
+                                            }
+
+
+
+                                            echo '</optgroup>';
+                                        }
+                                    }
+                                    ?>
+                                        </select>
+                                    </div>
+                                </div>            
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Purchase Price</label>
+                                        <input type="number" class="form-control" id="p_price"  name="p_price" placeholder="Enter Your Price" required/>
+                                    </div>
+                                </div>            
+                                
+                            </div>
+
+
+                            
+
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Sale's Price</label>
+                                        <input type="number" class="form-control" id="s_price"  name="s_price" placeholder="Enter Your Sale's Price" required/>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Store</label>
+                                        <select id="store" class="form-select" name="store" style="width: 100%;">
+                                            <option value="">---Select---</option>
+                                            <?php 
+                                                if ($store = $con-> query("SELECT * FROM store")) {
+                                                    while($rows= $store->fetch_array()){
+
+                                                        $id=$rows["id"];
+                                                    
+                                                        $name = $rows["name"];
+                                                        
+                                                        echo '<option value='.$id.'>'.$name.'</option>';
+                                                    }
+                                                }
+                                                
+                                                ?>
+                                                    
+
+                                                </select>       
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Remarks</label>
+                                        <input type="text" class="form-control" id="note"  name="note" placeholder="Enter Your Note" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <div class="card-footer">
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-danger">Close</button>
+                            <button type="submit" id="addProductBtn" class=" btn btn-success">Add Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
         <!-- END layout-wrapper -->
 
         <!-- Right Sidebar -->
@@ -553,71 +613,67 @@ include("include/pop_security.php");
         <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
         <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
         <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
-    <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
+        <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
+        <script src="assets/libs/select2/js/select2.min.js"></script>
         <!-- Datatable init js -->
         <script src="assets/js/pages/datatables.init.js"></script> 
 
         <script src="assets/js/app.js"></script>
         
         <script type="text/javascript">
-         $(document).ready(function() {
-
-            $("#porduct_table").DataTable();
-             //add customer
-             $("#product_add").click(function() {
-                var pdname=$("#pdname").val();
-                var desc=$("#desc").val();
-                var category=$("#category").val();
-                var brand=$("#brand").val();
-                var purchase_ac=$("#purchase_ac").val();
-                var sales_ac=$("#sales_ac").val();
-                var purchase_price=$("#purchase_price").val();
-                var sale_price=$("#sale_price").val();
-                var store=$("#store").val();
-         
-                 
-         
-                 if (pdname.length==0) {
-                    toastr.error('Product Name is required');
-                 }else if(desc.length==0){
-                    toastr.error('Description is required');
-                 }else if(category.length==0){
-                    toastr.error('Category is required');
-                 }else if(brand.length==0){
-                    toastr.error('Brand is required');
-                 }else if(purchase_ac.length==0){
-                    toastr.error('Purchase A/C number required');
-                 }else if(sales_ac.length==0){
-                    toastr.error('Sale A/C number required');
-                 }else if(purchase_price.length==0){
-                    toastr.error('Purchase Price required');
-                 }else if(sale_price.length==0){
-                    toastr.error('Sale Price number required');
-                 }else if(store.length==0){
-                    toastr.error('Store required');
-                 }else{
+         $(document).ready(function(){
+            $('#addproductModal').on('shown.bs.modal', function () {
+                // Check if select2 is already initialized
+                if (!$('#brand_id').hasClass("select2-hidden-accessible")) {
+                    $("#brand_id").select2({
+                        dropdownParent: $('#addproductModal')
+                    });
+                }
+                if (!$('#category').hasClass("select2-hidden-accessible")) {
+                    $("#category").select2({
+                        dropdownParent: $('#addproductModal')
+                    });
+                }
+                if (!$('#sales_ac').hasClass("select2-hidden-accessible")) {
+                    $("#sales_ac").select2({
+                        dropdownParent: $('#addproductModal')
+                    });
+                }
+                if (!$('#purchase_ac').hasClass("select2-hidden-accessible")) {
+                    $("#purchase_ac").select2({
+                        dropdownParent: $('#addproductModal')
+                    });
+                }
+            });
+            $(document).on('click','#addProductBtn',function(e){
+                e.preventDefault();
+                var formData = $("#productForm").serialize(); 
+                $.ajax({
+                    url:'include/product_server.php?add_product',
+                    type: 'POST',
+                    data: formData,
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                    processData: true,
+                    success: function(response) {
                     
-                    var productData = $("#prduct_form").serialize();
-                    alert(productData);
-                    $.ajax({
-                     type: "GET",
-                      url: "include/product.php?add",
-                     data: productData,
-                     cache: false,
-                     success: function(response) {
-                         toastr.success('Product Added');
-                        $("#addModal").modal('hide');
-                        
-                        //$("#customer-list").load("include/customers.php?list");
-                     }
-                 });
-                 }
-                 
-         
-         
-             });
+                        var result = JSON.parse(response);
+                        if (result.success) {
+                            toastr.success(result.message);
+                            $('#productForm')[0].reset(); 
+                            $("#addproductModal").modal('hide');
+                            setTimeout(() => {
+                                location.reload(); 
+                            }, 500);
+                        } else {
+                            toastr.error(result.message);
+                        }
+                    },
+                    error: function() {
+                        toastr.error("Error occurred during the request.");
+                    }
+                });
+            });
          });
-         //delete Button
              
       </script>
     </body>

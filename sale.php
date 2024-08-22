@@ -29,24 +29,7 @@ if (isset($_SESSION['uid'])) {
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
     <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
-    <style type="text/css">
-        /* div#sub_ledgr_table_length {
-            display: none;
-        } */
-
-        /* div#sub_ledgr_table_filter {
-         display: none;
-         } */
-        /* .row {
-            margin-left: 0px !important;
-            margin-right: 0px !important;
-        }
-
-        .vl {
-            border-bottom: 6px solid green;
-            height: 500px;
-        } */
-    </style>
+   
 </head>
 
 <body data-sidebar="dark">
@@ -328,6 +311,17 @@ if (isset($_SESSION['uid'])) {
                                             Due Amount <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" >
                                         </th>
                                     </tr>
+                                    <tr>
+                                        <th class="text-center" colspan="3"></th>
+                                        <th class="text-left" colspan="4">
+                                            Status <select type="text"  class="form-select table_status" name="table_status" >
+                                                <option value="">---Select---</option>
+                                                <option value="0">Draf</option>
+                                                <option value="1">Completed</option>
+                                                <option value="2">Print Invoice</option>
+                                            </select>
+                                        </th>
+                                    </tr>
                                 </tfoot>
                                 </table>
                                 <div class="form-group text-center">
@@ -359,6 +353,212 @@ if (isset($_SESSION['uid'])) {
             </footer>
         </div>
         <!-- end main content-->
+    </div>
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" id="addproductModal">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content col-md-10">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span
+                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <div class="card">
+                    <form action="#" id="productForm" enctype="multipart/form-data">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Product Name</label>
+                                        <input type="text"  class="form-control" name="product_name" id="product_name" placeholder="Enter Product Name" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Brand</label>
+                                        <select id="brand_id" class="form-select"
+                                            name="brand" required style="width: 100%;">
+                                            <option value="">---Select---</option>
+                                            <?php 
+                                                if ($category = $con-> query("SELECT * FROM product_brand")) {
+                                                    while($rows= $category->fetch_array()){
+
+                                                    $id=$rows["id"];
+                                                    
+                                                        $name = $rows["name"];
+                                                        
+                                                        echo '<option value='.$id.'>'.$name.'</option>';
+                                                    }
+                                                }
+                                                
+                                                ?>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Category</label>
+                                        <select id="category" class="form-select" name="category" style="width: 100%;" required>
+                                        <option value="">---Select---</option>
+                                        <?php 
+                                            if ($category = $con-> query("SELECT * FROM product_cat")) {
+                                                while($rows= $category->fetch_array()){
+
+                                                $id=$rows["id"];
+                                                
+                                                    $name = $rows["name"];
+                                                    
+                                                    echo '<option value='.$id.'>'.$name.'</option>';
+                                                }
+                                            }
+                                            
+                                            ?>
+                                                
+
+                                            </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        
+
+                            <div class="row">
+
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label>Purchase A/C</label>
+                                        <select id="purchase_ac" type="text" class="form-control"name="purchase_ac" required style="width: 100%;">
+                                        <?php
+                                    if ($ledgr = $con->query("SELECT * FROM ledger Where `mstr_ledger_id`=2")) {
+                                        echo '<option value="">Select</option>';
+
+                                        while ($rowsitm = $ledgr->fetch_array()) {
+                                            $ldgritmsID = $rowsitm["id"];
+                                            $ledger_name = $rowsitm["ledger_name"];
+
+                                            echo '<optgroup label="' . $ledger_name . '">';
+
+
+                                            // Sub Ledger items list
+                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+
+
+                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                    $sub_ldgrid = $rowssb["id"];
+                                                    $ldgr_items = $rowssb["item_name"];
+
+                                                    echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                                }
+                                            }
+
+
+
+                                            echo '</optgroup>';
+                                        }
+                                    }
+                                    ?>
+                                        </select>
+                                    </div>
+                                </div>            
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label>Sales Account</label>
+                                        <select type="text" id="sales_ac" class="form-control" name="sales_ac" required style="width: 100%;">
+                                    <?php
+                                    if ($ledgr = $con->query("SELECT * FROM ledger Where `mstr_ledger_id`=1")) {
+                                        echo '<option value="">Select</option>';
+
+                                        while ($rowsitm = $ledgr->fetch_array()) {
+                                            $ldgritmsID = $rowsitm["id"];
+                                            $ledger_name = $rowsitm["ledger_name"];
+
+                                            echo '<optgroup label="' . $ledger_name . '">';
+
+
+                                            // Sub Ledger items list
+                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+
+
+                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                    $sub_ldgrid = $rowssb["id"];
+                                                    $ldgr_items = $rowssb["item_name"];
+
+                                                    echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                                }
+                                            }
+
+
+
+                                            echo '</optgroup>';
+                                        }
+                                    }
+                                    ?>
+                                        </select>
+                                    </div>
+                                </div>            
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Purchase Price</label>
+                                        <input type="number" class="form-control" id="p_price"  name="p_price" placeholder="Enter Your Price" required/>
+                                    </div>
+                                </div>            
+                                
+                            </div>
+
+
+                            
+
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Sale's Price</label>
+                                        <input type="number" class="form-control" id="s_price"  name="s_price" placeholder="Enter Your Sale's Price" required/>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Store</label>
+                                        <select id="store" class="form-select" name="store" style="width: 100%;">
+                                            <option value="">---Select---</option>
+                                            <?php 
+                                                if ($store = $con-> query("SELECT * FROM store")) {
+                                                    while($rows= $store->fetch_array()){
+
+                                                        $id=$rows["id"];
+                                                    
+                                                        $name = $rows["name"];
+                                                        
+                                                        echo '<option value='.$id.'>'.$name.'</option>';
+                                                    }
+                                                }
+                                                
+                                                ?>
+                                                    
+
+                                                </select>       
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Remarks</label>
+                                        <input type="text" class="form-control" id="note"  name="note" placeholder="Enter Your Note" />
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <div class="card-footer">
+                            <button type="button" data-bs-dismiss="modal" class="btn btn-danger">Close</button>
+                            <button type="submit" id="addProductBtn" class=" btn btn-success">Add Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- END layout-wrapper -->
     <!-- Right Sidebar -->
@@ -433,7 +633,30 @@ if (isset($_SESSION['uid'])) {
     <script src="assets/js/app.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-          //$("#product_name").select2();  
+            $('#addproductModal').on('shown.bs.modal', function () {
+                // Check if select2 is already initialized
+                if (!$('#brand_id').hasClass("select2-hidden-accessible")) {
+                    $("#brand_id").select2({
+                        dropdownParent: $('#addproductModal')
+                    });
+                }
+                if (!$('#category').hasClass("select2-hidden-accessible")) {
+                    $("#category").select2({
+                        dropdownParent: $('#addproductModal')
+                    });
+                }
+                if (!$('#sales_ac').hasClass("select2-hidden-accessible")) {
+                    $("#sales_ac").select2({
+                        dropdownParent: $('#addproductModal')
+                    });
+                }
+                if (!$('#purchase_ac').hasClass("select2-hidden-accessible")) {
+                    $("#purchase_ac").select2({
+                        dropdownParent: $('#addproductModal')
+                    });
+                }
+            });
+
           var selectedProductId = null;
             getProductData();
             function getProductData() {
@@ -574,6 +797,7 @@ if (isset($_SESSION['uid'])) {
                     data: formData,
                     dataType: 'json',
                     success:function(response){
+                        
                         if (response.success) {
                             toastr.success(response.message);
                             setTimeout(() => {
@@ -609,7 +833,32 @@ if (isset($_SESSION['uid'])) {
 
         });
 
-
+        $(document).on('click','#addProductBtn',function(e){
+            e.preventDefault();
+            var formData = $("#productForm").serialize(); 
+            $.ajax({
+                url:'include/product_server.php?add_product',
+                type: 'POST',
+                data: formData,
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                processData: true,
+                success: function(response) {
+                   
+                    var result = JSON.parse(response);
+                    if (result.success) {
+                        toastr.success(result.message);
+                        $('#productForm')[0].reset(); 
+                        $("#addproductModal").modal('hide');
+                        getProductData(); 
+                    } else {
+                        toastr.error(result.message);
+                    }
+                },
+                error: function() {
+                    toastr.error("Error occurred during the request.");
+                }
+            });
+        });
 
     </script>
 

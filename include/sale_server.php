@@ -59,7 +59,7 @@ if (isset($_POST['addReceivedPayment'])) {
     $total_due = $_POST['table_due_amount'] ?? null;
     $total_paid = $_POST['table_paid_amount'] ?? null;
     $note = $_POST['note']??'';
-    $status = 'Pending';
+    $status =$_POST['table_status']??'0';
 
     $product_ids = $_POST['table_product_id']?? [];
     $qtys = $_POST['table_qty']?? [];
@@ -199,3 +199,4 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
       echo json_encode(['success' => false, 'message' => $e->getMessage()]);
   }
 }
+

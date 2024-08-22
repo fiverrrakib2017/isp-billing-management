@@ -256,7 +256,7 @@ include "include/pop_security.php";
                                                             
                                                                 $name = $rows["name"];
                                                                 
-                                                                echo '<option value='.$name.'>'.$name.'</option>';
+                                                                echo '<option value='.$id.'>'.$name.'</option>';
                                                             }
                                                         }
                                                         
@@ -278,7 +278,7 @@ include "include/pop_security.php";
                                                         
                                                             $name = $rows["name"];
                                                             
-                                                            echo '<option value='.$name.'>'.$name.'</option>';
+                                                            echo '<option value='.$id.'>'.$name.'</option>';
                                                         }
                                                     }
                                                     

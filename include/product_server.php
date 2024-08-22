@@ -11,11 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
     $store = $_POST['store'];
     $note = $_POST['note'];
 
+    // Debugging: Check what is received in POST
+    //print_r($_POST); exit;
+
     /* Prepare an SQL statement*/
     $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`, `purchase_price`, `sale_price`, `store`,`note`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     /* Bind parameters*/
-    $stmt->bind_param("ssssssss", $name, $category, $brand, $purchase_ac, $sales_ac, $purchase_price, $sale_price, $store,$note);
+    $stmt->bind_param("siiiiiiis", $name, $category, $brand, $purchase_ac, $sales_ac, $purchase_price, $sale_price, $store, $note);
 
     /* Execute the statement*/
     if ($stmt->execute()) {
@@ -32,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
     echo json_encode($response);
     exit;
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['update_product'])) {
     
