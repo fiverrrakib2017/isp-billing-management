@@ -522,6 +522,7 @@ include("include/users_right.php");
                                     </div>
                                 </div>
                                 <div class="card-footer" style="text-align: right;">
+                                    <button class="btn btn-primary" id="send_message_btn" >Send Message</button>
                                     <button class="btn btn-success" id="export_to_excel" >Export To Excel</button>
                                 </div>
                             </div>
@@ -621,6 +622,46 @@ include("include/users_right.php");
             </div>
         </div>
     </div>
+     <!-- Modal for Send Message -->
+     <div class="modal fade bs-example-modal-lg" id="sendMessageModal" tabindex="-1" role="dialog"
+               aria-labelledby="exampleModalLabel" aria-hidden="true">
+               <div class="modal-dialog " role="document">
+                  <div class="modal-content col-md-12">
+                     <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><span
+                           class="mdi mdi-account-check mdi-18px"></span> &nbsp;Send Message</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <form id="paymentForm"  method="POST">
+                           
+                           <div class="form-group mb-2">
+                              <label>Message Template</label>
+                              <select class="form-select" name="message_template" >
+                                <option>---Select---</option>
+                                <?php 
+                                    if ($allCstmr=$con->query("SELECT * FROM message_template WHERE user_type=1")) {
+                                    while ($rows=$allCstmr->fetch_array()) {
+                                        echo '<option value='.$rows['id'].'>'.$rows['template_name'].'</option>';
+                                    }
+                                }
+
+                                    ?>
+                            </select>
+                           </div>
+                           <div class="form-group mb-2">
+                              <label>Message</label>
+                              <textarea id="message" rows="5" placeholder="Enter Your Message" class="form-control"></textarea>
+                           </div>
+                           <div class="modal-footer ">
+                              <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                              <button type="submit" class="btn btn-success">Send Message</button>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+            </div>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
@@ -681,31 +722,39 @@ include("include/users_right.php");
             });
 			
             $("#checkedAll").change(function() {
-                if (this.checked) {
-                    $(".checkSingle").each(function() {
-                        this.checked = true;
-                    })
-                } else {
-                    $(".checkSingle").each(function() {
-                        this.checked = false;
-                    })
-                }
+                $(".checkSingle").prop('checked', $(this).prop("checked"));
             });
-
-            $(".checkSingle").click(function() {
-                if ($(this).is(":checked")) {
-                    var isAllChecked = 0;
-                    $(".checkSingle").each(function() {
-                        if (!this.checked)
-                            isAllChecked = 1;
-                    })
-                    if (isAllChecked == 0) {
-                        $("#checkedAll").prop("checked", true);
-                    }
+            $(".checkSingle").change(function() {
+                if ($(".checkSingle:checked").length == $(".checkSingle").length) {
+                    $("#checkedAll").prop("checked", true);
                 } else {
                     $("#checkedAll").prop("checked", false);
                 }
             });
+            $("#send_message_btn").click(function() {
+                var selectedCustomers = [];
+                $(".checkSingle:checked").each(function() {
+                    selectedCustomers.push($(this).val());
+                });
+                console.log(selectedCustomers); 
+                $('#sendMessageModal').modal('show'); 
+
+            });
+            $('select[name="message_template"]').on('change', function() {
+                var name=$(this).val();
+                var currentMsgTemp="0";
+                $.ajax({
+                    type:'POST',
+                    data:{name:name,currentMsgTemp:currentMsgTemp},
+                    url:'include/message.php',
+                    success:function(response){
+                        console.log(response);
+                        $("#message").val(response);
+                    }
+                });
+            });
+           
+            
 			});
 			
 			
