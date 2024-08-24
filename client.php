@@ -68,7 +68,7 @@ include "include/pop_security.php";
                         </button>
 
                         <div class="d-none d-sm-block ms-2">
-                            <h4 class="page-title">Store</h4>
+                            <h4 class="page-title">Client</h4>
                         </div>
                     </div>
 
@@ -541,7 +541,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
         }
     });
 
-       /** Store The data from the database table **/
+       /** Client The data from the database table **/
 	  $('#addModal form').submit(function(e){
 		e.preventDefault();
 
