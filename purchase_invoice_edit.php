@@ -83,7 +83,7 @@ if (isset($_GET["id"])) {
                     </button>
 
                     <div class="d-none d-sm-block ms-2">
-                        <h4 class="page-title">Sale</h4>
+                        <h4 class="page-title">Purchase Update</h4>
                     </div>
                 </div>
 

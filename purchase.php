@@ -66,7 +66,7 @@ include("include/pop_security.php");
                     </button>
 
                     <div class="d-none d-sm-block ms-2">
-                        <h4 class="page-title">Sale</h4>
+                        <h4 class="page-title">Purchase</h4>
                     </div>
                 </div>
 
