@@ -603,6 +603,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
                     $('#editModal').modal('show');
                     $('#editModal input[name="id"]').val(jsonResponse.data.id);
                     $('#editModal input[name="fullname"]').val(jsonResponse.data.fullname);
+                    $('#editModal input[name="company"]').val(jsonResponse.data.company);
                     $('#editModal input[name="phone_number"]').val(jsonResponse.data.mobile);
                     $('#editModal input[name="email"]').val(jsonResponse.data.email);
                     $('#editModal input[name="address"]').val(jsonResponse.data.address);

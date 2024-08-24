@@ -1,10 +1,10 @@
-<?php 
+<?php
 include("include/security_token.php");
-include "include/db_connect.php";
 include("include/users_right.php");
-include("include/pop_security.php");
-?>
+include "include/db_connect.php";
+include "include/pop_security.php";
 
+?>
 <!doctype html>
 <html lang="en">
     <head>
@@ -15,7 +15,7 @@ include("include/pop_security.php");
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
         <meta content="Themesbrand" name="author">
         <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
+        <!-- <link rel="shortcut icon" href="assets/images/favicon.ico"> -->
         <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
         <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
         <!-- C3 Chart css -->
@@ -27,7 +27,7 @@ include("include/pop_security.php");
         <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
         <!-- App Css-->
         <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+    	<link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
     </head>
 
     <body data-sidebar="dark">
@@ -83,8 +83,8 @@ include("include/pop_security.php");
                         <div class="dropdown d-none d-md-block me-2">
                             <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="font-size-16">
-                                    <?php if (isset($_SESSION['username'])) {
-                                        echo $_SESSION['username'];
+                                    <?php if (isset($_SESSION['fullname'])) {
+                                        echo $_SESSION['fullname'];
                                     } ?>
                                 </span> 
                             </button>
@@ -186,7 +186,7 @@ include("include/pop_security.php");
                 <div data-simplebar class="h-100">
 
                     <!--- Sidemenu -->
-                    <?php include 'Sidebar_menu.php'; ?>
+                     <?php include 'Sidebar_menu.php'; ?>
                     <!-- Sidebar -->
                 </div>
             </div>
@@ -200,124 +200,142 @@ include("include/pop_security.php");
     <div class="page-content">
         <div class="container-fluid">
            <div class="row">
-                        <div class="col-md-12 grid-margin">
-                            <div class="d-flex justify-content-between flex-wrap">
-                                <div class="d-flex align-items-end flex-wrap">
-                                    <div class="mr-md-3 mr-xl-5">
+                <div class="col-md-12 grid-margin">
+                    <div class="d-flex justify-content-between flex-wrap">
+                        <div class="d-flex align-items-end flex-wrap">
+                            <div class="mr-md-3 mr-xl-5">
 
 
-                                        <div class="d-flex">
-                                            <i class="mdi mdi-home text-muted hover-cursor"></i>
-                                            <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
-                                            </p>
-                                            <p class="text-primary mb-0 hover-cursor">Supplier</p>
-                                        </div>
-
-
-                                    </div>
-                                    <br>
-
-
+                                <div class="d-flex">
+                                    <i class="mdi mdi-home text-muted hover-cursor"></i>
+                                    <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
+                                    </p>
+                                    <p class="text-primary mb-0 hover-cursor">Supplier</p>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-end flex-wrap">
-                                    <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"
-                                 data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" style="margin-bottom: 12px;">&nbsp;&nbsp;&nbsp;New
-                              Supplier</button>
-                          </div>
+
+
                             </div>
+                            <br>
+
+
                         </div>
+                        <div class="d-flex justify-content-between align-items-end flex-wrap">
+                            <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"
+                            data-bs-toggle="modal" data-bs-target="#addModal" style="margin-bottom: 12px;">&nbsp;&nbsp;New
+                        Supplier</button>
                     </div>
+                    </div>
+                </div>
+            </div>
 
 
 
 
 
 
-                    <div class="modal fade bs-example-modal-lg" id="client-add-popup" tabindex="-1" role="dialog"
-                     aria-labelledby="exampleModalLabel" aria-hidden="true" >
-                     <div class="modal-dialog modal-lg" role="document">
-                        <div class="modal-content col-md-10">
+                <div class="modal fade bs-example-modal-lg" id="addModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                     <div class="modal-dialog " role="document">
+                        <div class="modal-content col-md-12">
                            <div class="modal-header">
                               <h5 class="modal-title" id="exampleModalLabel"><span
-                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Supplier</h5>
+                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Client</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                            </div>
-                           <div>
-                              <!--supplier form start-->
-                              <form id="supplier_form">
-                                 <div>
-                                    <div class="card">
-                                       <div class="card-body">
-                              <form class="form-sample">
-                              <div class="row">
-                              <div class="col-md-6">
-                              <div class="form-group ">
-                              <label>Full Name</label>
-                              <input id="fullname" type="text"
-                                 class="form-control "
-                                 name="fullname"
-                                 placeholder="Enter Your Fullname" />
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Company</label>
-                              <input id="company" type="text"
-                                 class="form-control "
-                                 name="company"
-                                 placeholder="Enter Company Name" />
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Status</label>
-                              <select id="" name="status" class="form-control ">
-                                 <option value="1">Active</option>
-                                 <option value="0">Disable</option>
-                                 <option value="2">Expired</option>
-                              </select>
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Mobile no.</label>
-                              <input id="mobile" type="text"
-                                 class="form-control "
-                                 name="mobile"
-                                 placeholder="Enter Your Mobile Number" />
-                              </div>
-                              </div>
+						   <div class="modal-body">
+							  <form action="include/supplier_backend.php" method="POST" enctype="multipart/form-data">
+									<div class="form-group mb-2 d-none">
+										<input name="add_supplier_data" class="form-control" type="text" >
+									</div>
+									<div class="form-group mb-2">
+										<label>Fullname</label>
+										<input name="fullname" placeholder="Enter Fullname" class="form-control" type="text" >
+									</div>
+									<div class="form-group mb-2">
+										<label>Company</label>
+										<input name="company" placeholder="Enter Company" class="form-control" type="text" >
+									</div>
+                                    <div class="form-group mb-2">
+                                        <label for="">Phone Number</label>
+                                        <input class="form-control" type="text" name="phone_number" id="phone_number" placeholder="Type Phone Number"/>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label for="">Email</label>
+                                        <input class="form-control" type="email" name="email" id="email" placeholder="Type Your Email"/>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label for="">Address</label>
+                                        <input class="form-control" type="text" name="address" id="address" placeholder="Type Your Address"/>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label for="">Status</label>
+                                        <select class="form-control" type="text" name="status">
+                                            <option value="">---Select---</option>
+                                            <option value="1">Active</option>
+                                            <option value="0">Expire</option>
+                                        </select>
+                                    </div>
+									              
+									<div class="modal-footer ">
+										<button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+										<button type="submit" class="btn btn-success">Save Changes</button>
+									</div>
+								</form>
+							</div>
+                        </div>
+                     </div>
+                  </div>
 
-                              <div class="col-md-6">
-                              <div class="form-group">
-                              <label>Email</label>
-                              <input id="email" type="email"
-                                 class="form-control "
-                                 name="email" placeholder="Enter Your Email" />
-                              </div>
-                              </div>
-                              <div class="col-md-6">
-                                 <div class="from-group">
-                                    <label>Address</label>
-                              <input id="address" type="text"
-                                 class="form-control "
-                                 name="address"
-                                 placeholder="Enter Your Addres" />
-                                 </div>
-                              </div>
-                              </div>
-                              </form>
-                              </div>
-                              </div>
-                              </div>
-                              <!--Customer form end-->
-                              </form>
+
+				 <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
+                     aria-labelledby="exampleModalLabel" aria-hidden="true">
+                     <div class="modal-dialog " role="document">
+                        <div class="modal-content col-md-12">
+                           <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel"><span
+                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Supplier</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                            </div>
-                           <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary"
-                                 data-bs-dismiss="modal">Close</button>
-                              <button type="button" class="btn btn-primary" id="supplier_add">Add Supplier</button>
-                           </div>
+						   <div class="modal-body">
+                           <form action="include/supplier_backend.php?update_supplier_data=true" method="POST" enctype="multipart/form-data">
+									<div class="form-group mb-2 d-none">
+										<input name="id" class="form-control" type="text" >
+									</div>
+									<div class="form-group mb-2">
+										<label>Fullname</label>
+										<input name="fullname" placeholder="Enter Fullname" class="form-control" type="text" >
+									</div>
+									<div class="form-group mb-2">
+										<label>Company</label>
+										<input name="company" placeholder="Enter Company" class="form-control" type="text" >
+									</div>
+                                    <div class="form-group mb-2">
+                                        <label for="">Phone Number</label>
+                                        <input class="form-control" type="text" name="phone_number" id="phone_number" placeholder="Type Phone Number"/>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label for="">Email</label>
+                                        <input class="form-control" type="email" name="email" id="email" placeholder="Type Your Email"/>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label for="">Address</label>
+                                        <input class="form-control" type="text" name="address" id="address" placeholder="Type Your Address"/>
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label for="">Status</label>
+                                        <select class="form-control" type="text" name="status" >
+                                            <option value="">---Select---</option>
+                                            <option value="1">Active</option>
+                                            <option value="0">Expire</option>
+                                        </select>
+                                    </div>
+									              
+									<div class="modal-footer ">
+										<button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+										<button type="submit" class="btn btn-success">Save Changes</button>
+									</div>
+								</form>
+							</div>
                         </div>
                      </div>
                   </div>
@@ -327,67 +345,60 @@ include("include/pop_security.php");
 
 
 
-
-                    <div class="row mt-1">
+                    <div class="row">
                         <div class="col-md-12 stretch-card">
                             <div class="card">
                                 <div class="card-body">
+                                    <span class="card-title"></span>
+
+
                                     <div class="col-md-6 float-md-right grid-margin-sm-0">
+
+
+
                                     </div>
 
 
                                     <div class="table-responsive">
                                         <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
-                                               <tr>
-                                                  <th>ID</th>
-		                                          <th>Full Name</th>
-		                                          <th>Company</th>
-                                                  <th>Status</th>
-		                                          <th>Mobile</th>
-		                                          <th>Email</th>
-		                                          <th></th>
-                                               </tr>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Full Name</th>
+                                                    <th>Company</th>
+                                                    <th>Mobile</th>
+                                                    <th>Email</th>
+                                                    <th></th>
+                                                </tr>
                                             </thead>
-                                            <tbody id="supplier_list">
-                                         <?php 
+                                            <tbody>
+                                            <?php
 
-                          $sql="SELECT * FROM suppliers";
-                          $result=mysqli_query($con,$sql);
+$sql = "SELECT * FROM suppliers";
+$result = mysqli_query($con, $sql);
 
-                          while ($rows=mysqli_fetch_assoc($result)) {
+while ($rows = mysqli_fetch_assoc($result)) {
 
-                           ?>
+?>
 
-                           <tr>
+    <tr>
         <td><?php echo $rows['id']; ?></td>
         <td><a href="supplier_profile.php?clid=<?php echo $rows['id']; ?>"><?php echo $rows["fullname"]; ?></a></td>
         <td><?php echo $rows["company"]; ?></td>
-        <td>
-        <?php 
-        $status=$rows["status"];
-        if ($status==1) {
-            echo '<span class="badge bg-success">Active</span>';
-        }else if($status==2){
-           echo '<span class="badge bg-danger">In Active</span>';  
-        }
-
-         ?>
-
-        </td>
         <td><?php echo $rows["mobile"]; ?></td>
         <td><?php echo $rows['email']; ?></td>
-       <td style="text-align:right">
-        <a class="btn btn-info" href="supplier_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-        <a class="btn btn-success" href="supplier_profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
-        </a>
-        <a onclick=" return confirm('Are You Sure');" class="btn btn-danger" href="supplier_delete.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-trash"></i>
-        </a>
+        <td style="text-align:right">
+            <button type="button" class="btn btn-info edit-btn" data-id="<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></button>
+
+            <a class="btn btn-success" href="supplier_profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
+            </a>
+            <button class="btn btn-danger delete-btn" data-id="<?php echo $rows['id']; ?>"><i class="fas fa-trash"></i>
+            </button>
 
         </td>
-        </tr>
-                       <?php } ?>
-                                    </tbody>
+    </tr>
+<?php } ?>
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -471,86 +482,238 @@ include("include/pop_security.php");
         <div class="rightbar-overlay"></div>
         
         
-        <!-- JAVASCRIPT -->
-        <script src="assets/libs/jquery/jquery.min.js"></script>
-        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-        <script src="assets/libs/simplebar/simplebar.min.js"></script>
-        <script src="assets/libs/node-waves/waves.min.js"></script>
+    <!-- JAVASCRIPT -->
+    <script src="assets/libs/jquery/jquery.min.js"></script>
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="assets/libs/node-waves/waves.min.js"></script>
 
-        <!-- Required datatable js -->
-        <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-        <!-- Buttons examples -->
-        <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-        <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-        <script src="assets/libs/jszip/jszip.min.js"></script>
-        <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
-        <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
-        <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-        <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-        <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-        <!-- Responsive examples -->
-        <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-        <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
+    <!-- Required datatable js -->
+    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Buttons examples -->
+    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="assets/libs/jszip/jszip.min.js"></script>
+    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
+    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+    <!-- Responsive examples -->
+    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
     <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
-        <!-- Datatable init js -->
-        <script src="assets/js/pages/datatables.init.js"></script> 
+    <!-- Datatable init js -->
+    <script src="assets/js/pages/datatables.init.js"></script> 
 
-        <script src="assets/js/app.js"></script>
-
-
+    <script src="assets/js/app.js"></script>
      <script type="text/javascript">
-         $(document).ready(function(){
-            $("#supplier_table").DataTable();
-             $("#supplier-list").load("include/supplier.php?list");
+    $(document).ready(function() {
+        $("#users_table").DataTable();
+		/** Handle Delete button click**/
+        $('#datatable tbody').on('click', '.delete-btn', function() {
+        var id = $(this).data('id');
+        // Confirm deletion
+        if (confirm("Are you sure you want to delete this item?")) {
+            $.ajax({
+                type: 'POST', 
+                url: 'include/supplier_backend.php', 
+                data: { delete_data: true, id: id }, 
+                success: function(response) {
+                    const jsonResponse = JSON.parse(response);
+                    if (jsonResponse.success) {
+                        toastr.success("Item deleted successfully!");
+                        setTimeout(() => {
+                            location.reload();
+                        }, 500);
+                    } else {
+                        toastr.error(jsonResponse.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    toastr.error("Error deleting item! " + error);
+                }
+            });
+        }
+    });
+
+       /** Client The data from the database table **/
+	  $('#addModal form').submit(function(e){
+		e.preventDefault();
+
+		var form = $(this);
+		var url = form.attr('action');
+		var formData = form.serialize();
+		/** Use Ajax to send the delete request **/
+		$.ajax({
+		  type:'POST',
+		  'url':url,
+		  data: formData,
+		 success: function (response) {
+			/*Parse the JSON response*/ 
+			const jsonResponse = JSON.parse(response);
+
+			/* Check if the request was successful*/
+			if (jsonResponse.success) {
+				/*Hide the modal*/ 
+				$('#addModal').modal('hide'); 
+				 /*Reset the form*/ 
+				$('#addModal form')[0].reset();
+				/* Show success message*/
+				toastr.success(jsonResponse.message); 
+
+				/*Reload the page after a short delay*/ 
+				setTimeout(() => {
+					location.reload();
+				}, 500);
+			} else {
+				/*Show error message if success is false*/ 
+				toastr.error(jsonResponse.message); // Show error message
+			}
+		},
+
+
+		  error: function (xhr, status, error) {
+			 /** Handle  errors **/
+			if (xhr.status === 422) {
+				var errors = xhr.responseJSON.errors;
+				$.each(errors, function(key, value) {
+					toastr.error(value[0]); 
+				});
+			}
+		  }
+		});
+	  });
+    
+    	/** Handle edit button click**/
+        $('#datatable tbody').on('click', '.edit-btn', function () {
+    		
+        var id = $(this).data('id');
+        var url = "include/supplier_backend.php?edit_data=true&id=" + id;
+          $.ajax({
+            type: 'GET',
+            url: url,
+              success: function (response) {
+                const jsonResponse = JSON.parse(response);
+                  if (jsonResponse.success) {
+                    $('#editModal').modal('show');
+                    $('#editModal input[name="id"]').val(jsonResponse.data.id);
+                    $('#editModal input[name="fullname"]').val(jsonResponse.data.fullname);
+                    $('#editModal input[name="company"]').val(jsonResponse.data.company);
+                    $('#editModal input[name="phone_number"]').val(jsonResponse.data.mobile);
+                    $('#editModal input[name="email"]').val(jsonResponse.data.email);
+                    $('#editModal input[name="address"]').val(jsonResponse.data.address);
+                    $('#editModal select[name="status"]').val(jsonResponse.data.status);
+                  } else {
+                      toastr.error("Error fetching data for edit: " + jsonResponse.message);
+                  }
+              },
+              error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+                toastr.error("Error fetching data for edit!");
+              }
+          });
+        });
+	
+	
+    	/** Update The data from the database table **/
+    	  $('#editModal form').submit(function(e){
+    		e.preventDefault();
+
+    		var form = $(this);
+    		var url = form.attr('action');
+    		var formData = form.serialize();
+
+    		/*Get the submit button*/
+    		var submitBtn = form.find('button[type="submit"]');
+
+    		/*Save the original button text*/
+    		var originalBtnText = submitBtn.html();
+
+    		/*Change button text to loading state*/
+    		  
+
+    		var form = $(this);
+    		var url = form.attr('action');
+    		var formData = form.serialize();
+    		/** Use Ajax to send the delete request **/
+    		$.ajax({
+    		  type:'POST',
+    		  'url':url,
+    		  data: formData,
+    		  beforeSend: function () {
+    			form.find(':input').prop('disabled', true);
+    		  },
+    		  success: function (response) {
+                const jsonResponse = JSON.parse(response);
+    			if (jsonResponse.success) {
+    				toastr.success(jsonResponse.message);
+                    $('#editModal').modal('hide');
+                    $('#editModal form')[0].reset();
+    				/*Reload the page after a short delay*/ 
+    				setTimeout(() => {
+    					location.reload();
+    				}, 500);
+    			}
+    		  },
+
+    		  error: function (xhr, status, error) {
+    			if (xhr.status === 422) {
+    				var errors = xhr.responseJSON.errors;
+    				$.each(errors, function(key, value) {
+    					toastr.error(value[0]);
+    				});
+    			} else {
+    				toastr.error("An error occurred. Please try again.");
+    			}
+    		  },
+    	  });
+    	});
+
+
+        /** Handle form submission for delete **/
+      $('#DeleteModal form').submit(function(e){
+        e.preventDefault();
+        /*Get the submit button*/
+        var submitBtn =  $('#DeleteModal form').find('button[type="submit"]');
+
+        /* Save the original button text*/
+        var originalBtnText = submitBtn.html();
+
+        /*Change button text to loading state*/
+        submitBtn.html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden">Loading...</span>`);
+
+        var form = $(this);
+        var url = form.attr('action');
+        var formData = form.serialize();
+        /** Use Ajax to send the delete request **/
         $.ajax({
-            type: "GET",
-            url: "include/supplier_data.php?list",
-            cache: false,
-            success: function(list) {
-                $("#supplier-list").html(list);
+          type:'POST',
+          'url':url,
+          data: formData,
+          success: function (response) {
+            if (response.success) {
+              $('#DeleteModal').modal('hide');
+              toastr.success(response.message);
+             
+            }
+          },
+
+          error: function (xhr, status, error) {
+             /** Handle  errors **/
+             toastr.error(xhr.responseText);
+          },
+          complete: function () {
+            submitBtn.html(originalBtnText);
             }
         });
-
-
-
-            //supplier Add
-            $("#supplier_add").click(function(){
-                var fullname=$("#fullname").val();
-                var company=$("#company").val();
-                var mobile=$("#mobile").val();
-                var email=$("#email").val();
-                var address=$("#address").val();
-                if (fullname.length==0) {
-                    toastr.error("Full name required");
-                }else if(company.length==0){
-                    toastr.error("Company name required");
-                }else if(mobile.length==0){
-                    toastr.error("Mobile number required");
-                }else if(email.length==0){
-                    toastr.error("Email required");
-                }else if(address.length==0){
-                    toastr.error("Address required");
-                }else{
-                var formData=$("#supplier_form").serialize();
-                   $.ajax({
-                      type:"GET",
-                      data:formData,
-                      url:"include/supplier_data.php?add",
-                      cache:false,
-                      success:function(){
-                        toastr.success("Supplier Add Successfully");
-                            $("#client-add-popup").modal('hide');
-                         setTimeout(()=>{location.reload();},1000);
-                      }
-                   });
-                }
-               
-            });
-         });
-      </script>
+      });
+    });
+    </script>
 
     </body>
 </html>
