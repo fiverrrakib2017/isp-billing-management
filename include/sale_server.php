@@ -74,7 +74,7 @@ if (isset($_GET['deleteInvItem'])) {
 
      
         /* Update the `sales` table*/
-        $stmt = $con->prepare("UPDATE `sales` SET `total_due` = `total_due` - ? WHERE `id` = ? AND `client_id` = ?");
+        $stmt = $con->prepare("UPDATE `sales` SET `total_paid`= `total_due` + ?, `total_due` = `total_due` - ? WHERE `id` = ? AND `client_id` = ?");
         $stmt->bind_param("iii", $amount, $invoice_id, $client_id);
        
         if ($stmt->execute()) {

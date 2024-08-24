@@ -450,7 +450,7 @@
                                                     <th></th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="customer-list">
+                                            <tbody >
                                                 <?php
                                                 $sql = "SELECT * FROM sales Where client_id=$lstid";
                                                 $result = mysqli_query($con, $sql);
@@ -538,7 +538,7 @@
                               <select class="form-control" type="text" name="invoice_id">
                                  <option value="">---Select---</option>
                                  <?php 
-                                    if ($allSales=$con->query("SELECT * FROM `sales` WHERE client_id=$lstid ")) {
+                                    if ($allSales=$con->query("SELECT * FROM `sales` WHERE client_id=$lstid AND total_due IS NOT NULL")) {
                                         while ($rows = $allSales->fetch_array()) {
                                             echo '<option value="' . $rows['id'] . '">' . $rows['id'] . '</option>';
                                         }

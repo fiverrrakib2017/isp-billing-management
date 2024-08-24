@@ -93,7 +93,7 @@ include "include/pop_security.php";
 
                         <div class="dropdown d-inline-block">
                             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                                <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <!-- item-->
@@ -239,7 +239,7 @@ include "include/pop_security.php";
                         <div class="modal-content col-md-12">
                            <div class="modal-header">
                               <h5 class="modal-title" id="exampleModalLabel"><span
-                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Client</h5>
+                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Supplier</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                            </div>
 						   <div class="modal-body">
