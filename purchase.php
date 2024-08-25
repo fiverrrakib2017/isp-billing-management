@@ -206,7 +206,7 @@ include("include/pop_security.php");
                                             <div class="col">
                                                 <div class="form-group mt-2">
                                                     <label>Client Name</label>
-                                                    <select type="text" id="supplier_name" name="supplier_id" class="form-select select2">
+                                                    <select type="text" id="supplier_name" name="supplier_id" class="form-select select2" required>
                                                         <option>---Select---</option>
                                                     </select>
                                                 </div>
@@ -225,18 +225,18 @@ include("include/pop_security.php");
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="product_item" class="form-label">Product</label>
                                                     <div class="input-group">
-                                                        <select type="text" id="product_name"  class="form-control">
+                                                        <select type="text" id="product_name"  class="form-select select2">
                                                             <option>---Select---</option>
                                                         </select>
-                                                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
+                                                        <button  type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <div class="form-group">
                                                     <label for="qty" class="form-label">Quantity</label>
                                                     <input type="number" id="qty" class="form-control" min="1" value="1">
@@ -260,10 +260,10 @@ include("include/pop_security.php");
                                                     <input id="details" type="text" class="form-control" placeholder="Details">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col text-end">
-                                                <button type="button" id="submitButton" class="btn btn-success">Add</button>
+                                            <div class="col-md-2">
+                                                <div class="form-group mt-1">
+                                                <button type="button" id="submitButton" class="btn btn-primary mt-4">Submit Now</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -282,46 +282,10 @@ include("include/pop_security.php");
                                 </thead>
                                 <tbody id="tableRow">
                                 </tbody>
-                                <tfoot class="">
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Total Amount <input readonly class="form-control table_total_amount" name="table_total_amount" type="text">
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Paid Amount <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" >
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Discount Amount <input  type="text" class="form-control table_discount_amount" name="table_discount_amount" value="00">
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Due Amount <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" >
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Status <select type="text"  class="form-select table_status" name="table_status" >
-                                                <option value="">---Select---</option>
-                                                <option value="0">Draf</option>
-                                                <option value="1">Completed</option>
-                                                <option value="2">Print Invoice</option>
-                                            </select>
-                                        </th>
-                                    </tr>
-                                </tfoot>
+                               
                                 </table>
                                 <div class="form-group text-center">
-                                <button type="submit"  class="btn btn-success"><i class="fe fe-dollar"></i> Create Now</button>
+                                    <button type="button"  data-bs-target="#invoiceModal" data-bs-toggle="modal" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button>
                                 </div>
                             </div>
                         </div>
@@ -351,6 +315,52 @@ include("include/pop_security.php");
         <!-- end main content-->
     </div>
     <?php include 'modal/product_modal.php'; ?>
+    <div class="modal fade bs-example-modal-lg" id="invoiceModal" tabindex="-1" role="dialog"
+               aria-labelledby="exampleModalLabel" aria-hidden="true">
+               <div class="modal-dialog " role="document">
+                  <div class="modal-content col-md-12">
+                     <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><span
+                           class="mdi mdi-account-check mdi-18px"></span> &nbsp;Invoice Summery</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <form id="paymentForm">
+                           
+                           <div class="form-group mb-2">
+                              <label>Total Amount </label>
+                              <input readonly class="form-control table_total_amount" name="table_total_amount" type="text">
+                           </div>
+                           <div class="form-group mb-2">
+                              <label>Paid Amount </label>
+                              <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" >
+                           </div>
+                           <div class="form-group mb-2">
+                              <label> Discount Amount </label>
+                              <input  type="text" class="form-control table_discount_amount" name="table_discount_amount" value="00">
+                           </div>
+                           <div class="form-group mb-2">
+                              <label> Due Amount </label>
+                              <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" >
+                           </div>
+                           <div class="form-group mb-2">
+                              <label>Type</label>
+                              <select type="text" class="form-select table_status" name="table_status">
+                                <option value="">---Select---</option>
+                                <option value="0">Draf</option>
+                                <option value="1">Completed</option>
+                                <option value="2">Print Invoice</option>
+                            </select>
+                           </div>
+                           <div class="modal-footer ">
+                              <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                              <button type="button" id="save_invoice_btn" class="btn btn-success">Save Invoice</button>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+            </div>
     <!-- END layout-wrapper -->
     <!-- Right Sidebar -->
     <div class="right-bar">
@@ -425,7 +435,8 @@ include("include/pop_security.php");
     <script src="modal/product_modal.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            
+            $("#supplier_name").select2(); 
+            $("#product_name").select2(); 
 
           var selectedProductId = null;
             getProductData();
@@ -506,16 +517,26 @@ include("include/pop_security.php");
                 var price = $('#price').val();
                 var totalPrice = $('#total_price').val();
 
-                var row = `<tr>
+                if(!selectedProductId || !quantity || !price || !totalPrice) {
+                    toastr.error('Please fill in all fields');
+                    return;
+                }
+                 var row = `<tr>
                     <td><input type="hidden" name="table_product_id[]"value="`+ selectedProductId +`">${productName}</td>
 
-                    <td><input readonly type="number" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty"></td>
+                    <td><input type="hidden" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty">${quantity}</td>
 
-                    <td><input readonly type="number" name="table_price[]" class="form-control table_price" value="${price}"></td>
+                    <td><input  type="hidden" name="table_price[]" class="form-control table_price" value="${price}">${price}</td>
 
-                    <td><input readonly type="number" id="table_total_price" name="table_total_price[]" class="form-control" value="${totalPrice}"></td>
+                    <td><input  type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="${totalPrice}">${totalPrice}</td>
 
-                   <td><button class="btn btn-danger btn-sm removeRow">Remove</button></td>
+                   <td>
+                   <button class="btn btn-danger btn-sm removeRow">
+
+                    <i class="fas fa-times"></i>
+                   
+                   </button>
+                   </td>
 
                    
                     
@@ -552,53 +573,34 @@ include("include/pop_security.php");
             $(document).on('input', 'input[name="table_paid_amount"], input[name="table_discount_amount"]', function() {
                 calculateTotalAmount();
             });
-
-
-            $("form").submit(function(e){
-                e.preventDefault();
-                var form = $(this);
-                form.find('button[type="submit"]').prop('disabled',true).html(`Loading...`);
-                var url = form.attr('action');
-                var formData = form.serialize();
-                  /** Use Ajax to send the  request **/
-                  $.ajax({
+            $('#save_invoice_btn').on('click', function() {
+                var mainFormData = $('#form-data').serializeArray();
+                var modalFormData = $('#paymentForm').serializeArray(); 
+                var allFormData = $.merge(mainFormData, modalFormData);
+                $(this).prop('disable',true).html('Saving...'); 
+                $.ajax({
                     type:'POST',
-                    'url':url,
-                    data: formData,
+                    url:$("#form-data").attr('action'),
+                    data:$.param(allFormData),
                     dataType: 'json',
-                    success:function(response){
-                        
+                    success: function(response) {
                         if (response.success) {
                             toastr.success(response.message);
+                            /*Close the invoice modal*/ 
+                            $('#invoiceModal').modal('hide'); 
                             setTimeout(() => {
-                                location.reload();
+                                location.reload(); 
                             }, 500);
                         } else {
                             toastr.error(response.message);
                         }
+                        $('#save_invoice_btn').prop('disabled', false).html('Save Invoice');
                     },
-                    error: function (xhr, status, error) {
-                        /** Handle  errors **/
-                        if (xhr.status === 400) {
-                            toastr.error(xhr.responseJSON.message);
-                            return false;
-                        }
-                        if (xhr.responseJSON && xhr.responseJSON.errors) {
-                            var errors = xhr.responseJSON.errors;
-                            Object.values(errors).forEach(function(errorMessage) {
-                            toastr.error(errorMessage);
-                            });
-                            return false;
-                        }
-                        else {
-                            console.error(xhr.responseText);
-                            toastr.error('Server Problem');
-                        }
-                    },
-                    complete:function(){
-                        form.find('button[type="submit"]').prop('disabled',false).html('Create Now');
+                    error:function(xhr,status,error){
+                        toastr.error("Error:"+error); 
+                        $('#save_invoice_btn').prop('disabled', false).html('Save Invoice');
                     }
-                  }); 
+                }); 
             });
 
         });
