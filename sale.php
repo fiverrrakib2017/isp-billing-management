@@ -229,10 +229,10 @@ include("include/pop_security.php");
                                                 <div class="form-group">
                                                     <label for="product_item" class="form-label">Product</label>
                                                     <div class="input-group">
-                                                        <select type="text" id="product_name"  class="form-control">
+                                                        <select type="text" id="product_name"  class="form-control" >
                                                             <option>---Select---</option>
                                                         </select>
-                                                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
+                                                        <button  type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -437,7 +437,8 @@ include("include/pop_security.php");
     <script type="text/javascript">
         $(document).ready(function() {
             
-
+        $("#client_name").select2(); 
+        $("#product_name").select2(); 
           var selectedProductId = null;
             getProductData();
             function getProductData() {
