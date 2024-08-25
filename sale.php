@@ -606,52 +606,6 @@ include("include/pop_security.php");
                 }); 
             });
 
-            // $("form").submit(function(e){
-            //     e.preventDefault();
-            //     var form = $(this);
-            //     form.find('button[type="submit"]').prop('disabled',true).html(`Loading...`);
-            //     var url = form.attr('action');
-            //     var formData = form.serialize();
-            //       /** Use Ajax to send the  request **/
-            //       $.ajax({
-            //         type:'POST',
-            //         'url':url,
-            //         data: formData,
-            //         dataType: 'json',
-            //         success:function(response){
-                        
-            //             if (response.success) {
-            //                 toastr.success(response.message);
-            //                 setTimeout(() => {
-            //                     location.reload();
-            //                 }, 500);
-            //             } else {
-            //                 toastr.error(response.message);
-            //             }
-            //         },
-            //         error: function (xhr, status, error) {
-            //             /** Handle  errors **/
-            //             if (xhr.status === 400) {
-            //                 toastr.error(xhr.responseJSON.message);
-            //                 return false;
-            //             }
-            //             if (xhr.responseJSON && xhr.responseJSON.errors) {
-            //                 var errors = xhr.responseJSON.errors;
-            //                 Object.values(errors).forEach(function(errorMessage) {
-            //                 toastr.error(errorMessage);
-            //                 });
-            //                 return false;
-            //             }
-            //             else {
-            //                 console.error(xhr.responseText);
-            //                 toastr.error('Server Problem');
-            //             }
-            //         },
-            //         complete:function(){
-            //             form.find('button[type="submit"]').prop('disabled',false).html('Create Now');
-            //         }
-            //       }); 
-            // });
 
         });
 

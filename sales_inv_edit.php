@@ -109,7 +109,7 @@ if (isset($_GET["clid"])) {
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
@@ -250,7 +250,7 @@ if (isset($_GET["clid"])) {
                                                         <select type="text" id="product_name"  class="form-control">
                                                             <option>---Select---</option>
                                                         </select>
-                                                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
+                                                        <button  type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -322,61 +322,30 @@ if (isset($_GET["clid"])) {
 
                                     </td>
                                     <td>
-                                        <input readonly type="number" min="1" name="table_qty[]" value="<?php echo $rows['qty']; ?>" class="form-control table_qty">
+                                        <input  type="hidden" min="1" name="table_qty[]" value="<?php echo $rows['qty']; ?>" class="form-control table_qty"><?php echo $rows['qty']; ?>
                                     </td>
                                     <td>
-                                        <input readonly type="number" name="table_price[]" class="form-control table_price" value="<?php echo $rows['value']; ?>">
+                                        <input  type="hidden" name="table_price[]" class="form-control table_price" value="<?php echo $rows['value']; ?>"><?php echo $rows['value']; ?>
                                     </td>
                                     <td>
-                                        <input readonly type="number" id="table_total_price" name="table_total_price[]" class="form-control" value="<?php echo $rows['total']; ?>"></td>
+                                        <input  type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="<?php echo $rows['total']; ?>"><?php echo $rows['total']; ?></td>
                                 
-                                    <td><button class="btn btn-danger btn-sm removeRow">Remove</button></td>
+                                        <td>
+                                            <button class="btn btn-danger btn-sm removeRow">
+
+                                                <i class="fas fa-times"></i>
+                                            
+                                            </button>
+                                        </td>
                                 
                                     </tr>
                                 <?php } ?>
 
 
                                 </tbody>
-                                <tfoot class="">
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Total Amount <input readonly class="form-control table_total_amount" name="table_total_amount" value="<?php echo $sub_total;?>" type="text">
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Paid Amount <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" value="<?php echo $total_paid;?>">
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Discount Amount <input  type="text" class="form-control table_discount_amount" name="table_discount_amount" value="<?php echo $discount; ?>">
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Due Amount <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" value="<?php echo $total_due; ?>">
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-center" colspan="3"></th>
-                                        <th class="text-left" colspan="4">
-                                            Status <select type="text"  class="form-select table_status" name="table_status" >
-                                                <option value="">---Select---</option>
-                                                <option value="0" <?php echo ($status == 0) ? 'selected' : ''; ?>>Draft</option>
-                                                <option value="1" <?php echo ($status == 1) ? 'selected' : ''; ?>>Completed</option>
-                                                <option value="2" <?php echo ($status == 2) ? 'selected' : ''; ?>>Print Invoice</option>
-                                            </select>
-                                        </th>
-                                    </tr>
-                                </tfoot>
                                 </table>
                                 <div class="form-group text-center">
-                                <button type="submit"  class="btn btn-success"><i class="fe fe-dollar"></i> Update Now</button>
+                                    <button type="button"  data-bs-target="#invoiceModal" data-bs-toggle="modal" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button>
                                 </div>
                             </div>
                         </div>
@@ -406,6 +375,52 @@ if (isset($_GET["clid"])) {
         <!-- end main content-->
     </div>
     <?php include 'modal/product_modal.php'; ?>
+    <div class="modal fade bs-example-modal-lg" id="invoiceModal" tabindex="-1" role="dialog"
+               aria-labelledby="exampleModalLabel" aria-hidden="true">
+               <div class="modal-dialog " role="document">
+                  <div class="modal-content col-md-12">
+                     <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><span
+                           class="mdi mdi-account-check mdi-18px"></span> &nbsp;Invoice Summery</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <form id="paymentForm">
+                           
+                           <div class="form-group mb-2">
+                              <label>Total Amount </label>
+                              <input readonly class="form-control table_total_amount" name="table_total_amount" type="text" value="<?php echo $sub_total; ?>">
+                           </div>
+                           <div class="form-group mb-2">
+                              <label>Paid Amount </label>
+                              <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" value="<?php echo $total_paid; ?>">
+                           </div>
+                           <div class="form-group mb-2">
+                              <label> Discount Amount </label>
+                              <input  type="text" class="form-control table_discount_amount" name="table_discount_amount" value="<?php echo $discount; ?>">
+                           </div>
+                           <div class="form-group mb-2">
+                              <label> Due Amount </label>
+                              <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" value="<?php echo $total_due; ?>">
+                           </div>
+                           <div class="form-group mb-2">
+                              <label>Type</label>
+                              <select type="text" class="form-select table_status" name="table_status">
+                                <option value="">---Select---</option>
+                                <option value="0" <?php echo ($status == 0) ? 'selected' : ''; ?>>Draft</option>
+                                <option value="1" <?php echo ($status == 1) ? 'selected' : ''; ?>>Completed</option>
+                                <option value="2" <?php echo ($status == 2) ? 'selected' : ''; ?>>Print Invoice</option>
+                            </select>
+                           </div>
+                           <div class="modal-footer ">
+                              <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                              <button type="button" id="save_invoice_btn" class="btn btn-success">Save Invoice</button>
+                           </div>
+                        </form>
+                     </div>
+                  </div>
+               </div>
+            </div>
     <!-- END layout-wrapper -->
     <!-- Right Sidebar -->
     <div class="right-bar">
@@ -480,7 +495,8 @@ if (isset($_GET["clid"])) {
     <script src="modal/product_modal.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            
+            $("#client_name").select2(); 
+            $("#product_name").select2();
 
           var selectedProductId = null;
             getProductData();
@@ -562,20 +578,28 @@ if (isset($_GET["clid"])) {
                 var price = $('#price').val();
                 var totalPrice = $('#total_price').val();
 
+                if(!selectedProductId || !quantity || !price || !totalPrice) {
+                    toastr.error('Please fill in all fields');
+                    return;
+                }
                 var row = `<tr>
                     <td><input type="hidden" name="table_product_id[]"value="`+ selectedProductId +`">${productName}</td>
 
-                    <td><input readonly type="number" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty"></td>
+                    <td><input type="hidden" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty">${quantity}</td>
 
-                    <td><input readonly type="number" name="table_price[]" class="form-control table_price" value="${price}"></td>
+                    <td><input  type="hidden" name="table_price[]" class="form-control table_price" value="${price}">${price}</td>
 
-                    <td><input readonly type="number" id="table_total_price" name="table_total_price[]" class="form-control" value="${totalPrice}"></td>
+                    <td><input  type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="${totalPrice}">${totalPrice}</td>
 
-                   <td><button class="btn btn-danger btn-sm removeRow">Remove</button></td>
+                   <td>
+                   <button class="btn btn-danger btn-sm removeRow">
 
+                    <i class="fas fa-times"></i>
                    
-                    
+                   </button>
+                   </td>
                   </tr>`;
+
 
                 $("#tableRow").append(row);
                 calculateTotalAmount(); 
@@ -608,54 +632,38 @@ if (isset($_GET["clid"])) {
             $(document).on('input', 'input[name="table_paid_amount"], input[name="table_discount_amount"]', function() {
                 calculateTotalAmount();
             });
-
-
-            $("form").submit(function(e){
-                e.preventDefault();
-                var form = $(this);
-                form.find('button[type="submit"]').prop('disabled',true).html(`Loading...`);
-                var url = form.attr('action');
-                var formData = form.serialize();
-                  /** Use Ajax to send the  request **/
-                  $.ajax({
+            $('#save_invoice_btn').on('click', function() {
+                var mainFormData = $('#form-data').serializeArray();
+                var modalFormData = $('#paymentForm').serializeArray(); 
+                var allFormData = $.merge(mainFormData, modalFormData);
+                $(this).prop('disable',true).html('Saving...'); 
+                $.ajax({
                     type:'POST',
-                    'url':url,
-                    data: formData,
+                    url:$("#form-data").attr('action'),
+                    data:$.param(allFormData),
                     dataType: 'json',
-                    success:function(response){
-                        
+                    success: function(response) {
                         if (response.success) {
                             toastr.success(response.message);
+                            /*Close the invoice modal*/ 
+                            $('#invoiceModal').modal('hide'); 
                             setTimeout(() => {
-                                location.reload();
+                                location.reload(); 
                             }, 500);
                         } else {
                             toastr.error(response.message);
                         }
+                        $('#save_invoice_btn').prop('disabled', false).html('Save Invoice');
                     },
-                    error: function (xhr, status, error) {
-                        /** Handle  errors **/
-                        if (xhr.status === 400) {
-                            toastr.error(xhr.responseJSON.message);
-                            return false;
-                        }
-                        if (xhr.responseJSON && xhr.responseJSON.errors) {
-                            var errors = xhr.responseJSON.errors;
-                            Object.values(errors).forEach(function(errorMessage) {
-                            toastr.error(errorMessage);
-                            });
-                            return false;
-                        }
-                        else {
-                            console.error(xhr.responseText);
-                            toastr.error('Server Problem');
-                        }
-                    },
-                    complete:function(){
-                        form.find('button[type="submit"]').prop('disabled',false).html('Create Now');
+                    error:function(xhr,status,error){
+                        toastr.error("Error:"+error); 
+                        $('#save_invoice_btn').prop('disabled', false).html('Save Invoice');
                     }
-                  }); 
+                }); 
             });
+
+
+          
 
         });
 
