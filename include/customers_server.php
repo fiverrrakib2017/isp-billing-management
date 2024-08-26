@@ -318,45 +318,45 @@ if(isset($_POST['get_customer_phone_number'])){
     $con->close();
   }
 
-  if (isset($_GET['get_all_expire_customer_ids'])) {
-    $query = "SELECT id FROM customers WHERE expiredate<NOW()";
-    $result = mysqli_query($con, $query);
-    $ids = [];
-    while($row = mysqli_fetch_assoc($result)) {
-        $ids[] = $row['id'];
-    }
-    echo implode(",", $ids); 
-  }
   
-  if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['send_message']) {
-    echo 'okkkk'; exit; 
-    if (isset($_POST['customer_ids']) && !empty($_POST['customer_ids'])) {
-        $customerIds = $_POST['customer_ids'];
-        $message = $_POST['message'];
+  
+//   if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['send_message']) {
+//         echo 'okkkk'; exit; 
+//         if (isset($_POST['customer_ids']) && !empty($_POST['customer_ids'])) {
+//             $customerIds = $_POST['customer_ids'];
+//             $message = $_POST['message'];
 
-        // Assuming you have a function to send messages
-        foreach ($customerIds as $id) {
-            // Fetch customer's mobile number or any other details you need
-            $query = "SELECT mobile FROM customers WHERE id = $id";
-            $result = mysqli_query($con, $query);
-            if ($result && mysqli_num_rows($result) > 0) {
-                $customer = mysqli_fetch_assoc($result);
-                $mobileNumber = $customer['mobile'];
+//             // Assuming you have a function to send messages
+//             foreach ($customerIds as $id) {
+//                 // Fetch customer's mobile number or any other details you need
+//                 $query = "SELECT mobile FROM customers WHERE id = $id";
+//                 $result = mysqli_query($con, $query);
+//                 if ($result && mysqli_num_rows($result) > 0) {
+//                     $customer = mysqli_fetch_assoc($result);
+//                     $mobileNumber = $customer['mobile'];
 
-                // Here you can integrate your SMS API or any other messaging service
-                // sendSMS($mobileNumber, $message);
-                
-                // For demonstration, we'll just echo the mobile number and message
-                echo "Message sent to: " . $mobileNumber . " - Message: " . $message . "<br>";
-            }
+//                     // Here you can integrate your SMS API or any other messaging service
+//                     // sendSMS($mobileNumber, $message);
+                    
+//                     // For demonstration, we'll just echo the mobile number and message
+//                     echo "Message sent to: " . $mobileNumber . " - Message: " . $message . "<br>";
+//                 }
+//             }
+//         } else {
+//             echo "No customer selected or message is empty.";
+//         }
+//     }
+
+
+    if (isset($_GET['get_all_expire_customer_ids'])) {
+        $query = "SELECT id FROM customers WHERE expiredate<NOW()";
+        $result = mysqli_query($con, $query);
+        $ids = [];
+        while($row = mysqli_fetch_assoc($result)) {
+            $ids[] = $row['id'];
         }
-    } else {
-        echo "No customer selected or message is empty.";
+        echo implode(",", $ids); 
     }
-}
-
-
-
 ?>
  
 

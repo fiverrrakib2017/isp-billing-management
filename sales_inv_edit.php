@@ -243,7 +243,7 @@ if (isset($_GET["clid"])) {
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="product_item" class="form-label">Product</label>
                                                     <div class="input-group">
@@ -254,7 +254,7 @@ if (isset($_GET["clid"])) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <div class="form-group">
                                                     <label for="qty" class="form-label">Quantity</label>
                                                     <input type="number" id="qty" class="form-control" min="1" value="1">
@@ -278,10 +278,10 @@ if (isset($_GET["clid"])) {
                                                     <input id="details" type="text" class="form-control" placeholder="Details">
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col text-end">
-                                                <button type="button" id="submitButton" class="btn btn-success">Add</button>
+                                            <div class="col-md-2">
+                                                <div class="form-group mt-1">
+                                                <button type="button" id="submitButton" class="btn btn-primary mt-4">Submit Now</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
