@@ -101,7 +101,7 @@ include("include/users_right.php");
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
@@ -429,7 +429,7 @@ include("include/users_right.php");
 													$sql="SELECT * FROM customers WHERE expiredate LIKE '%$ExpMnthYr%'";
 												}
 												else{
-													$sql="SELECT * FROM customers WHERE expiredate<NOW()";
+													$sql="SELECT * FROM customers WHERE expiredate<NOW() LIMIT 50";
 												}
                                                
 											   
@@ -633,7 +633,8 @@ include("include/users_right.php");
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                      </div>
                      <div class="modal-body">
-                        <form id="paymentForm"  method="POST">
+                        <div class="alert alert-info" id="selectedCustomerCount"></div>
+                        <form id="sendMessageForm"  method="POST">
                            
                            <div class="form-group mb-2">
                               <label>Message Template</label>
@@ -651,11 +652,11 @@ include("include/users_right.php");
                            </div>
                            <div class="form-group mb-2">
                               <label>Message</label>
-                              <textarea id="message" rows="5" placeholder="Enter Your Message" class="form-control"></textarea>
+                              <textarea id="message" rows="5" placeholder="Enter Your Message" class="form-control" required></textarea>
                            </div>
                            <div class="modal-footer ">
                               <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
-                              <button type="submit" class="btn btn-success">Send Message</button>
+                              <button type="submit" name="send_message_btn" class="btn btn-success">Send Message</button>
                            </div>
                         </form>
                      </div>
@@ -697,12 +698,12 @@ include("include/users_right.php");
             $(document).on('click','#export_to_excel',function(){
                     let csvContent = "data:text/csv;charset=utf-8,";
                 
-                // Add header row
+                /* Add header row*/
                 csvContent += [
                     'ID', 'Name', 'Package', 'Expired Date', 'User Name', 'Mobile no.', 'POP/Branch', 'Area/Location'
                 ].join(",") + "\n";
                 
-                // Add data rows
+                /* Add data rows*/
                 $('#customers_table tbody tr').each(function() {
                     let row = [];
                     $(this).find('td').each(function() {
@@ -711,32 +712,76 @@ include("include/users_right.php");
                     csvContent += row.join(",") + "\n";
                 });
 
-                // Create a link element and simulate click to download the CSV file
+                /*Create a link element and simulate click to download the CSV file*/ 
                 let encodedUri = encodeURI(csvContent);
                 let link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
                 link.setAttribute("download", "customers.csv");
-                document.body.appendChild(link); // Required for Firefox
+                /*Required for Firefox*/ 
+                document.body.appendChild(link); 
                 link.click();
                 document.body.removeChild(link);
             });
-			
+
+			var selectedCustomers = [];
+            /*CheckAll checkbox change event*/ 
             $("#checkedAll").change(function() {
-                $(".checkSingle").prop('checked', $(this).prop("checked"));
+                if ($(this).prop("checked")) {
+                    $.ajax({
+                        url: 'include/customers_server.php?get_all_expire_customer_ids',
+                        method: 'GET',
+                        success: function(response) {
+                            var allIds = response.split(",");
+                            selectedCustomers = allIds;
+
+                            $(".checkSingle").each(function() {
+                                if ($.inArray($(this).val(), allIds) !== -1) {
+                                    $(this).prop('checked', true);
+                                }
+                            });
+
+                            var countText = "You have selected " + selectedCustomers.length + " customers.";
+                            $("#selectedCustomerCount").text(countText);
+                        }
+                    });
+                } else {
+                    $(".checkSingle").prop('checked', false);
+                    /* Clear selectedCustomers array*/
+                    selectedCustomers = []; 
+                    $("#selectedCustomerCount").text("You have selected 0 customers.");
+                }
             });
-            $(".checkSingle").change(function() {
+            $(document).on('change','.checkSingle',function(){
+                var customerId = $(this).val();
+
+                if ($(this).prop("checked")) {
+                    if ($.inArray(customerId, selectedCustomers) === -1) {
+                        selectedCustomers.push(customerId);
+                    }
+                } else {
+                    var index = selectedCustomers.indexOf(customerId);
+                    if (index > -1) {
+                        selectedCustomers.splice(index, 1);
+                    }
+                }
+
+                /* Update the count display*/
+                var countText = "You have selected " + selectedCustomers.length + " customers.";
+                $("#selectedCustomerCount").text(countText);
+
+                /* Update the CheckAll checkbox state*/
                 if ($(".checkSingle:checked").length == $(".checkSingle").length) {
                     $("#checkedAll").prop("checked", true);
                 } else {
                     $("#checkedAll").prop("checked", false);
                 }
             });
+            
             $("#send_message_btn").click(function() {
-                var selectedCustomers = [];
-                $(".checkSingle:checked").each(function() {
-                    selectedCustomers.push($(this).val());
-                });
-                console.log(selectedCustomers); 
+                
+                var countText = "You have selected " + selectedCustomers.length + " customers.";
+                $("#selectedCustomerCount").text(countText);
+               
                 $('#sendMessageModal').modal('show'); 
 
             });
@@ -748,8 +793,27 @@ include("include/users_right.php");
                     data:{name:name,currentMsgTemp:currentMsgTemp},
                     url:'include/message.php',
                     success:function(response){
-                        console.log(response);
                         $("#message").val(response);
+                    }
+                });
+            });
+            $('button[name="send_message_btn"]').on("click",function(e){
+                e.preventDefault(); 
+                 /*AJAX request to send selected customers to backend*/ 
+                $.ajax({
+                    url: 'include/customers_server.php?send_message=true',
+                    method: 'POST',
+                    data: {
+                        /*sending the array of customer IDs*/ 
+                        customer_ids: selectedCustomers, 
+                        message: $("#message").val(),
+                    },
+                    success: function(response) {
+                        alert("Message sent successfully to selected customers.");
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("An error occurred: " + error);
+                        alert("There was an error sending the message.");
                     }
                 });
             });

@@ -283,9 +283,9 @@ include("include/pop_security.php");
                                 <tbody id="tableRow"></tbody>
                                 
                                 </table>
-                                <div class="form-group text-center">
+                                <div class="form-group " style="text-align: right ; margin-left: 15px;">
                                 <!-- <button type="submit"  class="btn btn-success"><i class="fe fe-dollar"></i> Create Now</button> -->
-                                 <button type="button"  data-bs-target="#invoiceModal" data-bs-toggle="modal" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button>
+                                 <button type="button"  data-bs-target="#invoiceModal" data-bs-toggle="modal" class="btn btn-success" style="text-align: left;"><i class="fe fe-dollar"></i> Finished</button>
                                  <!-- <button type="button" id="finishButton" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button> -->
                                 </div>
                             </div>
