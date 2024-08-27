@@ -12,20 +12,6 @@ if (isset($_POST['deleteData'])) {
     }
 }
 
-if (isset($_GET['getClientData'])) {
-    if ($client = $con->query("SELECT * FROM clients ORDER BY id DESC")) {
-        echo '<option value="">Select</option>';
-        while ($rows = $client->fetch_array()) {
-            $clientId = $rows["id"];
-            $client_name = $rows["fullname"];
-            echo '
-
-<option value=' . $clientId . '>' . $client_name . '</option>
-
-';
-        }
-    }
-}
 
 if (isset($_GET['deleteInvItem'])) {
     $id = $_GET['id'];

@@ -133,5 +133,22 @@
 	    exit; 
 	}
 
+	if (isset($_POST['get_client_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+		$clientData = "";
+		$query = "SELECT * FROM clients ORDER BY id DESC";
+		$result = $con->query($query);
+	
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
+				$clientData .= "<option value='{$row['id']}'>{$row['fullname']}</option>";
+			}
+		} else {
+			$clientData .= "<option value=''>No clients found</option>";
+		}
+		
+		echo $clientData; 
+		exit; 
+	}
+
 
 ?>

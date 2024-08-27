@@ -208,6 +208,17 @@ include("include/pop_security.php");
                                                     <label>Client Name</label>
                                                     <select type="text" id="client_name" name="client_id" class="form-select select2">
                                                         <option>---Select---</option>
+                                    <?php 
+
+                                    if($allClient=$con->query("select * from clients")){
+                                        while($rows=$allClient->fetch_array()){
+                                            $id=$rows['id']; 
+                                            $fullname=$rows['fullname']; 
+                                           echo '<option value='.$id.'>'.$fullname.'</option>'; 
+                                        }
+                                    }
+                                    
+                                    ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -455,23 +466,7 @@ include("include/pop_security.php");
                     }
                 });
             }
-            getClientData()
-
-            function getClientData() {
-
-                $.ajax({
-                    url: "include/sale_server.php?getClientData",
-                    method: 'GET',
-                    success: function(response) {
-                        $('#client_name').html(response);
-                    
-                    },
-                    error: function(xhr, status, error) {
-                        // handle the error response
-                        console.log(error);
-                    }
-                });
-            }
+           
             $("#product_name").change(function() {
                 var itemId = $(this).val();
                 $.ajax({
@@ -605,7 +600,6 @@ include("include/pop_security.php");
                     }
                 }); 
             });
-
 
         });
 
