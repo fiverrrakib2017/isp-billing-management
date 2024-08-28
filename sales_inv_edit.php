@@ -226,6 +226,22 @@ if (isset($_GET["clid"])) {
                                                     <label>Client Name</label>
                                                     <select type="text" id="client_name" name="client_id" class="form-select select2">
                                                         <option>---Select---</option>
+                                                        <?php 
+                                                        
+                                                        if($allClient=$con->query("select * from clients")){
+                                                            while($rows=$allClient->fetch_array()){
+                                                                $id=$rows['id']; 
+                                                                $fullname=$rows['fullname']; 
+                                                                if ($client_id==$id) {
+                                                                    echo '<option value='.$id.' selected>'.$fullname.'</option>'; 
+                                                                }else{
+                                                                    echo '<option value='.$id.'>'.$fullname.'</option>'; 
+                                                                }
+                                                           
+                                                            }
+                                                        }
+
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -300,48 +316,50 @@ if (isset($_GET["clid"])) {
                                 </thead>
                                 <tbody id="tableRow">
                                 <?php
-                                    $sql = "SELECT * FROM `sales_details` WHERE invoice_id=$id";
-                                    $result = mysqli_query($con, $sql);
+                                $invoice_id=$_GET['clid'];
+                                $sql = "SELECT * FROM `sales_details` WHERE invoice_id=$invoice_id";
+                                $result = mysqli_query($con, $sql);
 
-                                    while ($rows = mysqli_fetch_assoc($result)) {
+                                while ($rows = mysqli_fetch_assoc($result)) {
 
-                                    ?>
+                                ?>
 
-                                <tr>
-                                    <td>
-                                        <?php
-                                            $product_id = $rows["product_id"];
-                                            if ($allPD = $con->query("SELECT * FROM products WHERE id='$product_id' ")) {
-                                                while ($rowss = $allPD->fetch_array()) {
-                                                    echo ' <input type="hidden" name="table_product_id[]" value="'.$rowss['id'].'">'; 
-                                                    echo $rowss['name']; 
-                                                }
+                            <tr>
+                                <td>
+                                    <?php
+                                        $product_id = $rows["product_id"];
+                                        if ($allPD = $con->query("SELECT * FROM products WHERE id='$product_id' ")) {
+                                            while ($rowss = $allPD->fetch_array()) {
+                                                echo ' <input type="hidden" name="table_product_id[]" value="'.$rowss['id'].'">'; 
+                                                echo $rowss['name']; 
                                             }
-                                        ?>
-                                    
-
-                                    </td>
-                                    <td>
-                                        <input  type="hidden" min="1" name="table_qty[]" value="<?php echo $rows['qty']; ?>" class="form-control table_qty"><?php echo $rows['qty']; ?>
-                                    </td>
-                                    <td>
-                                        <input  type="hidden" name="table_price[]" class="form-control table_price" value="<?php echo $rows['value']; ?>"><?php echo $rows['value']; ?>
-                                    </td>
-                                    <td>
-                                        <input  type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="<?php echo $rows['total']; ?>"><?php echo $rows['total']; ?></td>
+                                        }
+                                    ?>
                                 
-                                        <td>
-                                            <button class="btn btn-danger btn-sm removeRow">
 
-                                                <i class="fas fa-times"></i>
-                                            
-                                            </button>
-                                        </td>
-                                
-                                    </tr>
-                                <?php } ?>
+                                </td>
+                                <td>
+                                    <input  type="hidden" min="1" name="table_qty[]" value="<?php echo $rows['qty']; ?>" class="form-control table_qty"><?php echo $rows['qty']; ?>
+                                </td>
+                                <td>
+                                    <input  type="hidden" name="table_price[]" class="form-control table_price" value="<?php echo $rows['value']; ?>"><?php echo $rows['value']; ?>
+                                </td>
+                                <td>
+                                    <input  type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="<?php echo $rows['total']; ?>"><?php echo $rows['total']; ?></td>
+                            
+                                    <td>
+                                        <button class="btn btn-danger btn-sm removeRow">
+
+                                            <i class="fas fa-times"></i>
+                                        
+                                        </button>
+                                    </td>
+                            
+                                </tr>
+                            <?php } ?>
 
 
+                               
                                 </tbody>
                                 </table>
                                 <div class="form-group text-center">
@@ -514,24 +532,7 @@ if (isset($_GET["clid"])) {
                     }
                 });
             }
-            getClientData()
-
-            function getClientData() {
-                var client_id=<?php echo $client_id; ?>;
-                $.ajax({
-                    url: "include/sale_server.php?getClientData",
-                    method: 'GET',
-                    success: function(response) {
-                        $('#client_name').html(response);
-                        $('#client_name').val(client_id);
-                    
-                    },
-                    error: function(xhr, status, error) {
-                        // handle the error response
-                        console.log(error);
-                    }
-                });
-            }
+            
             $("#product_name").change(function() {
                 var itemId = $(this).val();
                 $.ajax({

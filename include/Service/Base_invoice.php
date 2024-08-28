@@ -74,6 +74,31 @@ class Base_invoivce{
             }
         }
     }
+    public function request_update_invoice($table,$invoice_id,$validator){
+         /* Update data in `sales` table */
+         $sql = "UPDATE $table SET usr_id = ?, client_id = ?, date = ?, sub_total = ?, discount = ?, grand_total = ?, total_due = ?, total_paid = ?, note = ?, status = ? WHERE id = ?";
+         $stmt = self::$con->prepare($sql);
+         $stmt->bind_param("iisssssissi", 
+             $validator['usr_id'], 
+             $validator['client_id'], 
+             $validator['date'], 
+             $validator['sub_total'], 
+             $validator['discount'], 
+             $validator['grand_total'], 
+             $validator['total_due'], 
+             $validator['total_paid'], 
+             $validator['note'], 
+             $validator['status'], 
+             $invoice_id,
+         );
+         if (!$stmt->execute()) {
+            throw new Exception('Error updating  data.');
+         }
+         
+    }
+    protected function  request_delete_invoice_details($table,$invoice_id){
+         self::$con->query("DELETE FROM $table WHERE invoice_id = $invoice_id");
+    }
 }
 
 
