@@ -140,61 +140,64 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    new Purchase_invoice($con); 
+    $invoice_id = intval($_GET['invoice_id']);
+    $__response=Purchase_invoice::update_invoice($invoice_id,$_POST);
+    echo json_encode($__response);
+
+    // $invoice_id = $_GET['invoice_id'];
+    // $usr_id = isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
+    // $client_id = $_POST['supplier_id'] ?? null;
+    // $date = date('Y-m-d'); 
+    // $sub_total = $_POST['table_total_amount'] ?? null;
+    // $discount = $_POST['table_discount_amount'] ?? 0; 
+    // $grand_total = $sub_total - $discount;
+    // $total_due = $_POST['table_due_amount'] ?? null;
+    // $total_paid = $_POST['table_paid_amount'] ?? null;
+    // $note = $_POST['note']??'';
+    // $status =$_POST['table_status'] ?? 0; 
+
+    // $product_ids = $_POST['table_product_id'] ?? [];
+    // $qtys = $_POST['table_qty'] ?? [];
+    // $prices = $_POST['table_price'] ?? [];
+    // $total_prices = $_POST['table_total_price'] ?? [];
+
+    // if (is_null($client_id) || is_null($sub_total) || is_null($total_paid) || is_null($total_due) || empty($product_ids)) {
+    //     echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
+    //     exit;
+    // }
+    // /*Update purchase table*/ 
+    // $updatePurchaseQuery = "UPDATE purchase SET 
+    //                             client_id = '$client_id', 
+    //                             date = '$date', 
+    //                             sub_total='$sub_total',
+    //                             discount = '$discount', 
+    //                             grand_total = '$grand_total',
+    //                             total_due = '$total_due', 
+    //                             total_paid = '$total_paid', 
+    //                             note = '$note', 
+    //                             status = '$status'
+    //                         WHERE id = '$invoice_id'";
     
-
-    $invoice_id = $_GET['invoice_id'];
-    $usr_id = isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
-    $client_id = $_POST['supplier_id'] ?? null;
-    $date = date('Y-m-d'); 
-    $sub_total = $_POST['table_total_amount'] ?? null;
-    $discount = $_POST['table_discount_amount'] ?? 0; 
-    $grand_total = $sub_total - $discount;
-    $total_due = $_POST['table_due_amount'] ?? null;
-    $total_paid = $_POST['table_paid_amount'] ?? null;
-    $note = $_POST['note']??'';
-    $status =$_POST['table_status'] ?? 0; 
-
-    $product_ids = $_POST['table_product_id'] ?? [];
-    $qtys = $_POST['table_qty'] ?? [];
-    $prices = $_POST['table_price'] ?? [];
-    $total_prices = $_POST['table_total_price'] ?? [];
-
-    if (is_null($client_id) || is_null($sub_total) || is_null($total_paid) || is_null($total_due) || empty($product_ids)) {
-        echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
-        exit;
-    }
-    /*Update purchase table*/ 
-    $updatePurchaseQuery = "UPDATE purchase SET 
-                                client_id = '$client_id', 
-                                date = '$date', 
-                                sub_total='$sub_total',
-                                discount = '$discount', 
-                                grand_total = '$grand_total',
-                                total_due = '$total_due', 
-                                total_paid = '$total_paid', 
-                                note = '$note', 
-                                status = '$status'
-                            WHERE id = '$invoice_id'";
-    
-    if ($con->query($updatePurchaseQuery)) {
-        /*Delete previous purchase details for this invoice*/ 
-        $con->query("DELETE FROM purchase_details WHERE invoice_id = '$invoice_id'");
+    // if ($con->query($updatePurchaseQuery)) {
+    //     /*Delete previous purchase details for this invoice*/ 
+    //     $con->query("DELETE FROM purchase_details WHERE invoice_id = '$invoice_id'");
 
 
-        foreach ($product_ids as $index => $product_id) {
-            $qty = $qtys[$index];
-            $value = $prices[$index];
-            $total = $total_prices[$index];
+    //     foreach ($product_ids as $index => $product_id) {
+    //         $qty = $qtys[$index];
+    //         $value = $prices[$index];
+    //         $total = $total_prices[$index];
 
-            $insertDetailsQuery = "INSERT INTO purchase_details (invoice_id, product_id, qty, value, total) VALUES ('$invoice_id', '$product_id', '$qty', '$value', '$total')";
+    //         $insertDetailsQuery = "INSERT INTO purchase_details (invoice_id, product_id, qty, value, total) VALUES ('$invoice_id', '$product_id', '$qty', '$value', '$total')";
 
-            $con->query($insertDetailsQuery);
-        }
+    //         $con->query($insertDetailsQuery);
+    //     }
 
-        echo json_encode(['success' => true, 'message' => 'Invoice updated successfully.']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error updating invoice: ' . $con->error]);
-    }
+    //     echo json_encode(['success' => true, 'message' => 'Invoice updated successfully.']);
+    // } else {
+    //     echo json_encode(['success' => false, 'message' => 'Error updating invoice: ' . $con->error]);
+    // }
 }
 
 

@@ -223,7 +223,7 @@ if (isset($_GET["id"])) {
                                             <div class="col">
                                                 <div class="form-group mt-2">
                                                     <label>Client Name</label>
-                                                    <select type="text" id="supplier_name" name="supplier_id" class="form-select select2">
+                                                    <select type="text" id="supplier_name" name="client_id" class="form-select select2">
                                                         <option>---Select---</option>
                                                     </select>
                                                 </div>
