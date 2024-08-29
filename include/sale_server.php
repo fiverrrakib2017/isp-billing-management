@@ -3,22 +3,59 @@ include "db_connect.php";
 include 'Service/Sales_invoice.php';
 session_start();
 $sessionUserId = $_SESSION["uid"];
-//delete data
-if (isset($_POST['deleteData'])) {
-    $id = $_POST['id'];
-    $result = $con->query("DELETE FROM `invoice_details` WHERE  id=$id");
-    if ($result == true) {
-        echo "Item Delete Successfully";
+
+
+
+if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    /* Fetch data with filtering*/
+    $start_date = $_GET['start_date'] ?? '';
+    $end_date = $_GET['end_date'] ?? '';
+
+    $query = "SELECT * FROM sales WHERE 1";
+
+    /* Add date range filter if dates are provided*/
+    if (!empty($start_date) && !empty($end_date)) {
+        $query .= " AND date BETWEEN '$start_date' AND '$end_date'";
     }
+    $result = mysqli_query($con, $query);
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($rows = mysqli_fetch_assoc($result)) {
+            echo "<tr>";
+            echo "<td>" . $rows['id'] . "</td>";
+            echo "<td>";
+
+            $client_id = $rows['client_id'];
+            $allCustomerData = $con->query("SELECT * FROM clients WHERE id=$client_id");
+            while ($client_loop = $allCustomerData->fetch_array()) {
+                echo '<a href="client_profile.php?clid=' . $client_id . '" >' . $client_loop['fullname'] . '</a>';
+            }
+
+            echo "</td>";
+            echo "<td>" . $rows['sub_total'] . "</td>";
+            echo "<td>" . $rows['grand_total'] . "</td>";
+            echo "<td>" . $rows['total_due'] . "</td>";
+            echo "<td>";
+
+            $date = $rows['date'];
+            $formatted_date = date("d F Y", strtotime($date));
+            echo $formatted_date;
+
+            echo "</td>";
+            echo "<td>";
+
+            echo '<a class="btn-sm btn btn-primary" style="margin-right: 5px;" href="sales_inv_edit.php?clid=' . $rows['id'] . '"><i class="fas fa-edit"></i></a>';
+            echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/sales_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
+            echo '<a class="btn-sm btn btn-danger" style="margin-right: 5px;" onclick=" return confirm(\'Are You Sure\');" href="sales_inv_delete.php?clid=' . $rows['id'] . '"><i class="fas fa-trash"></i></a>';
+
+            echo "</td>";
+            echo "</tr>";
+        }
+    } 
+
+    mysqli_close($con);
+
 }
-
-
-if (isset($_GET['deleteInvItem'])) {
-    $id = $_GET['id'];
-    $con->query("DELETE  FROM invoice_details WHERE id= $id");
-    echo 1;
-}
-
 if (isset($_GET['get_invoice_data'])) {
     $invoice_id = $_GET['invoice_id'];
 

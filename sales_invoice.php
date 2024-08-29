@@ -212,10 +212,8 @@ ini_set('display_errors', 1);
                                 <div class="d-flex align-items-end flex-wrap">
                                     <div class="mr-md-3 mr-xl-5">
                                         <div class="d-flex">
-                                            <i class="mdi mdi-home text-muted hover-cursor"></i>
-                                            <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
-                                            </p>
-                                            <p class="text-primary mb-0 hover-cursor">Sale's Invoice</p>
+                                          
+                                           
                                         </div>
                                     </div>
                                     <br>
@@ -231,14 +229,31 @@ ini_set('display_errors', 1);
                     <div class="row">
                         <div class="col-md-12 stretch-card">
                             <div class="card">
-                                <div class="card-body">
-                                    <div class="col-md-6 float-md-right grid-margin-sm-0">
-                                        <div class="form-group">
-
+                                <div class="card-header">
+                                    <div class="row d-flex">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="start_date">Start Date:</label>
+                                                <input type="date" id="start_date" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="end_date">End Date:</label>
+                                                <input type="date" id="end_date" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mt-1">
+                                                <button id="filter_invoice_btn" class="btn btn-primary mt-3">Search Now</button>
+                                              
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="card-body">
                                     <div class="table-responsive ">
-                                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <table id="invoice-table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
                                                     <th>Invoice id</th>
@@ -250,51 +265,9 @@ ini_set('display_errors', 1);
                                                     <th></th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="customer-list">
-                                                <?php
-                                                $sql = "SELECT * FROM sales ";
-                                                $result = mysqli_query($con, $sql);
+                                            <tbody id="invoice-list">
+                                             
 
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                ?>
-
-                                                    <tr>
-                                                        <td><?php echo $rows['id']; ?></td>
-                                                        <td>
-                                                            <?php
-                                                            $client_id = $rows['client_id'];
-                                                            $allCsutoemrData = $con->query("SELECT * FROM clients WHERE id=$client_id ");
-                                                            while ($client_loop = $allCsutoemrData->fetch_array()) {
-                                                                echo '<a href="client_profile.php?clid='.$client_id.'" >'.$client_loop['fullname'].'</a>';
-                                                            }
-
-                                                            ?>
-                                                        </td>
-                                                        <td><?php echo $rows['sub_total']; ?></td>
-                                                        <td><?php echo $rows['grand_total']; ?></td>
-                                                        <td><?php echo $rows['total_due']; ?></td>
-                                                        <td>
-                                                            <?php
-
-                                                            $date = $rows['date'];
-                                                            $formatted_date = date("d F Y", strtotime($date));
-                                                            echo $formatted_date;
-
-                                                            ?>
-                                                        </td>
-                                                        <td>
-
-                                                            <a class="btn-sm btn btn-primary" href="sales_inv_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-
-                                                            <a class="btn-sm btn btn-success" href="invoice/sales_inv_view.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i></a>
-
-                                                            <a class="btn-sm btn btn-danger" onclick=" return confirm('Are You Sure');" href="sales_inv_delete.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-trash"></i></a>
-
-                                                        </td>
-
-                                                    </tr>
-                                                <?php } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -426,6 +399,53 @@ ini_set('display_errors', 1);
     <script src="assets/js/pages/datatables.init.js"></script>
 
     <script src="assets/js/app.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //var table = $('#invoice-table').DataTable();
+             /* Fetch initial data*/
+             __fetch_invoice_data();
+
+            /* Filter button click event*/
+            $('#filter_invoice_btn').click(function() {
+                var startDate = $('#start_date').val();
+                var endDate = $('#end_date').val();
+
+                if (startDate.length=='') {
+                    toastr.error("Please Select Date"); 
+                }
+                else if (endDate.length=='') {
+                    toastr.error("Please Select Date"); 
+                }else{
+                    __fetch_invoice_data(startDate,endDate);
+                }
+               
+            });
+            function __fetch_invoice_data(startDate,endDate) {
+
+               
+               
+                $("#filter_invoice_btn").html('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...');
+                $("#filter_invoice_btn").prop('disabled', true);
+
+                $.ajax({
+                    url: 'include/sale_server.php',
+                    type: 'GET',
+                    data: {
+                        start_date: startDate,
+                        end_date: endDate,
+                        fetch_invoice:true,
+                    },
+                    success: function(response) {
+                        $('#invoice-list').html(response);
+                        $("#invoice-table").DataTable();
+                        $('#filter_invoice_btn').html('Search');
+                        $('#filter_invoice_btn').prop('disabled', false);
+                    }
+                });
+            }
+            
+        });
+    </script>
     
 </body>
 
