@@ -357,16 +357,18 @@ function acctual_work($startdate, $enddate) {
                                                     <th>Status</th> 
                                                     <th>Created</th>
                                                     <th>Customer Name</th>
-                                                    <th>Pop/Area</th>
+                                                    <th>Phone Number</th>
                                                     <th>Issues</th>
+                                                    <th>Pop/Area</th>
+                                                   
                                                    
                                                     <th>Assigned Team</th>
                                                     <th>Ticket For</th>
                                                     
                                                     <th>Acctual Work</th>
-                                                    <th>Note</th>
+                                                  
                                                     <th>Percentage</th>
-                                                    
+                                                    <th>Note</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -442,6 +444,28 @@ function acctual_work($startdate, $enddate) {
                                                         
                                                         </td>
                                                         <td>
+                                                         <?php 
+                                                         $customer_id= $rows['customer_id']; 
+                                                         $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
+                                                         while ($stmr = $customer->fetch_array()) {
+                                                            echo  $stmr['mobile'];
+                 
+                                                         }
+                                                         ?>
+                                                        </td>
+
+                                                        <td>
+                                                            <?php
+                                                            $complain_typeId = $rows["complain_type"];
+                                                            if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
+                                                                while ($rowss = $allCom->fetch_array()) {
+                                                                    echo $rowss['topic_name'];
+                                                                }
+                                                            }
+                                                            ?>
+                                                        </td>
+                                                       
+                                                        <td>
                                                              <?php
                                          $customer_id = $rows["customer_id"];
                                         $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
@@ -456,16 +480,8 @@ function acctual_work($startdate, $enddate) {
 
                                                             ?>
                                                         </td>
-                                                        <td>
-                                                            <?php
-                                                            $complain_typeId = $rows["complain_type"];
-                                                            if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                while ($rowss = $allCom->fetch_array()) {
-                                                                    echo $rowss['topic_name'];
-                                                                }
-                                                            }
-                                                            ?>
-                                                        </td>
+                                                        
+                                                        
                                                        
                                                         
                                                         <td>
@@ -501,14 +517,12 @@ function acctual_work($startdate, $enddate) {
                                                              }else{
                                                                 echo acctual_work( $startdate, $enddate); 
                                                              }
-                                                                // $startdate = $rows["startdate"];
-                                                                //echo timeAgo($enddate); 
                                                             ?>
                                                             
                                                         </td>
-                                                        <td><?php echo $rows["notes"]; ?></td>
+                                                       
                                                         <td><?php echo $rows["parcent"]; ?></td>
-                                                        
+                                                        <td><?php echo $rows["notes"]; ?></td>
 
                                                         <td>
                                                             

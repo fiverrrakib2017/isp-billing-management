@@ -211,12 +211,7 @@ ini_set('display_errors', 1);
                             <div class="d-flex justify-content-between flex-wrap">
                                 <div class="d-flex align-items-end flex-wrap">
                                     <div class="mr-md-3 mr-xl-5">
-                                        <div class="d-flex">
-                                            <i class="mdi mdi-home text-muted hover-cursor"></i>
-                                            <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
-                                            </p>
-                                            <p class="text-primary mb-0 hover-cursor">Purchase Invoice</p>
-                                        </div>
+                                        
                                     </div>
                                     <br>
                                 </div>
@@ -231,6 +226,28 @@ ini_set('display_errors', 1);
                     <div class="row">
                         <div class="col-md-12 stretch-card">
                             <div class="card">
+                            <div class="card-header">
+                                    <div class="row d-flex">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="start_date">Start Date:</label>
+                                                <input type="date" id="start_date" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="end_date">End Date:</label>
+                                                <input type="date" id="end_date" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mt-1">
+                                                <button id="filter_invoice_btn" class="btn btn-primary mt-3">Search Now</button>
+                                              
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="card-body">
                                     <div class="col-md-6 float-md-right grid-margin-sm-0">
                                         <div class="form-group">
@@ -238,19 +255,20 @@ ini_set('display_errors', 1);
                                         </div>
                                     </div>
                                     <div class="table-responsive ">
-                                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <table id="invoice-table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                    <!-- <th>Check All <input type="checkbox" id="checkedAll" name="checkedAll" value="Bike"></th> -->
                                                     <th>Invoice id</th>
                                                     <th>Supplier Name</th>
                                                     <th>Sub Total</th>
+                                                    <th>Discount</th>
+                                                    <th>Total Due</th>
                                                     <th>Grand Total</th>
                                                     <th>Create Date</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="customer-list">
+                                            <tbody id="invoice-list">
                                                 <?php
                                                 $sql = "SELECT * FROM purchase ";
                                                 $result = mysqli_query($con, $sql);
@@ -425,7 +443,53 @@ ini_set('display_errors', 1);
     <script src="assets/js/pages/datatables.init.js"></script>
 
     <script src="assets/js/app.js"></script>
-   
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //var table = $('#invoice-table').DataTable();
+             /* Fetch initial data*/
+             __fetch_invoice_data();
+
+            /* Filter button click event*/
+            $('#filter_invoice_btn').click(function() {
+                var startDate = $('#start_date').val();
+                var endDate = $('#end_date').val();
+
+                if (startDate.length=='') {
+                    toastr.error("Please Select Date"); 
+                }
+                else if (endDate.length=='') {
+                    toastr.error("Please Select Date"); 
+                }else{
+                    __fetch_invoice_data(startDate,endDate);
+                }
+               
+            });
+            function __fetch_invoice_data(startDate,endDate) {
+
+               
+               
+                $("#filter_invoice_btn").html('<span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Loading...');
+                $("#filter_invoice_btn").prop('disabled', true);
+
+                $.ajax({
+                    url: 'include/purchase_server.php',
+                    type: 'GET',
+                    data: {
+                        start_date: startDate,
+                        end_date: endDate,
+                        fetch_invoice:true,
+                    },
+                    success: function(response) {
+                        $('#invoice-list').html(response);
+                        $("#invoice-table").DataTable();
+                        $('#filter_invoice_btn').html('Search');
+                        $('#filter_invoice_btn').prop('disabled', false);
+                    }
+                });
+            }
+            
+        });
+    </script>
 </body>
 
 </html>

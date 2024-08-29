@@ -2,14 +2,59 @@
 include "db_connect.php";
 include 'Service/Purchase_invoice.php';
 session_start();
-//delete data
-if (isset($_POST['deleteData'])) {
-   $id = $_POST['id'];
-   $result = $con->query("DELETE FROM `invoice_details` WHERE  id=$id");
-   if ($result == true) {
-      echo "Item Delete Successfully";
-   }
+
+if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    /* Fetch data with filtering*/
+    $start_date = $_GET['start_date'] ?? '';
+    $end_date = $_GET['end_date'] ?? '';
+
+    $query = "SELECT * FROM purchase WHERE 1";
+
+    /* Add date range filter if dates are provided*/
+    if (!empty($start_date) && !empty($end_date)) {
+        $query .= " AND date BETWEEN '$start_date' AND '$end_date'";
+    }
+    $result = mysqli_query($con, $query);
+
+    if (mysqli_num_rows($result) > 0) {
+        while ($rows = mysqli_fetch_assoc($result)) {
+            echo "<tr>";
+            echo "<td>" . $rows['id'] . "</td>";
+            echo "<td>";
+
+            $client_id = $rows['client_id'];
+            $allCustomerData = $con->query("SELECT * FROM suppliers WHERE id=$client_id");
+            while ($client_loop = $allCustomerData->fetch_array()) {
+                echo '<a href="supplier_profile.php?clid=' . $client_id . '" >' . $client_loop['fullname'] . '</a>';
+            }
+
+            echo "</td>";
+            echo "<td>" . $rows['sub_total'] . "</td>";
+            echo "<td>" . $rows['discount'] . "</td>";
+            echo "<td>" . $rows['total_due'] . "</td>";
+            echo "<td>" . $rows['grand_total'] . "</td>";
+            echo "<td>";
+
+            $date = $rows['date'];
+            $formatted_date = date("d F Y", strtotime($date));
+            echo $formatted_date;
+
+            echo "</td>";
+            echo "<td>";
+
+            echo '<a class="btn-sm btn btn-primary" style="margin-right: 5px;" href="purchase_invoice_edit.php?id=' . $rows['id'] . '"><i class="fas fa-edit"></i></a>';
+            echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/purchase_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
+            echo '<a class="btn-sm btn btn-danger" style="margin-right: 5px;" onclick=" return confirm(\'Are You Sure\');" href="purchase_inv_delete.php?clid=' . $rows['id'] . '"><i class="fas fa-trash"></i></a>';
+
+            echo "</td>";
+            echo "</tr>";
+        }
+    } 
+
+    mysqli_close($con);
+
 }
+
 
 if (isset($_GET['getSupplierData'])) {
    if ($client = $con->query("SELECT * FROM suppliers ORDER BY id DESC")) {
@@ -46,13 +91,6 @@ if (isset($_GET['getSingleProductData'])) {
 }
 
 
-
-
-if (isset($_GET['deleteInvItem'])) {
-   $id=$_GET['id'];
-    $con->query("DELETE  FROM purchase_details WHERE id= $id");
-    echo 1;
- }
 
  if (isset($_GET['get_invoice_data'])) {
     $invoice_id = $_GET['invoice_id'];
@@ -144,60 +182,6 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $invoice_id = intval($_GET['invoice_id']);
     $__response=Purchase_invoice::update_invoice($invoice_id,$_POST);
     echo json_encode($__response);
-
-    // $invoice_id = $_GET['invoice_id'];
-    // $usr_id = isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
-    // $client_id = $_POST['supplier_id'] ?? null;
-    // $date = date('Y-m-d'); 
-    // $sub_total = $_POST['table_total_amount'] ?? null;
-    // $discount = $_POST['table_discount_amount'] ?? 0; 
-    // $grand_total = $sub_total - $discount;
-    // $total_due = $_POST['table_due_amount'] ?? null;
-    // $total_paid = $_POST['table_paid_amount'] ?? null;
-    // $note = $_POST['note']??'';
-    // $status =$_POST['table_status'] ?? 0; 
-
-    // $product_ids = $_POST['table_product_id'] ?? [];
-    // $qtys = $_POST['table_qty'] ?? [];
-    // $prices = $_POST['table_price'] ?? [];
-    // $total_prices = $_POST['table_total_price'] ?? [];
-
-    // if (is_null($client_id) || is_null($sub_total) || is_null($total_paid) || is_null($total_due) || empty($product_ids)) {
-    //     echo json_encode(['success' => false, 'message' => 'Invalid input data.']);
-    //     exit;
-    // }
-    // /*Update purchase table*/ 
-    // $updatePurchaseQuery = "UPDATE purchase SET 
-    //                             client_id = '$client_id', 
-    //                             date = '$date', 
-    //                             sub_total='$sub_total',
-    //                             discount = '$discount', 
-    //                             grand_total = '$grand_total',
-    //                             total_due = '$total_due', 
-    //                             total_paid = '$total_paid', 
-    //                             note = '$note', 
-    //                             status = '$status'
-    //                         WHERE id = '$invoice_id'";
-    
-    // if ($con->query($updatePurchaseQuery)) {
-    //     /*Delete previous purchase details for this invoice*/ 
-    //     $con->query("DELETE FROM purchase_details WHERE invoice_id = '$invoice_id'");
-
-
-    //     foreach ($product_ids as $index => $product_id) {
-    //         $qty = $qtys[$index];
-    //         $value = $prices[$index];
-    //         $total = $total_prices[$index];
-
-    //         $insertDetailsQuery = "INSERT INTO purchase_details (invoice_id, product_id, qty, value, total) VALUES ('$invoice_id', '$product_id', '$qty', '$value', '$total')";
-
-    //         $con->query($insertDetailsQuery);
-    //     }
-
-    //     echo json_encode(['success' => true, 'message' => 'Invoice updated successfully.']);
-    // } else {
-    //     echo json_encode(['success' => false, 'message' => 'Error updating invoice: ' . $con->error]);
-    // }
 }
 
 
