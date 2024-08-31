@@ -27,6 +27,7 @@ if (isset($_POST["addTicketData"])) {
 	$ticketFor = $_POST['ticket_for'];
 	$complainType = $_POST['complain_type'];
 	$notes = $_POST['notes'];
+	$priority = $_POST['priority'];
 
 
 	if ($allCstmr=$con->query("SELECT * FROM customers WHERE id=$customerId")) {
@@ -35,8 +36,8 @@ if (isset($_POST["addTicketData"])) {
 		}
 	}
 
-	$result = $con->query("INSERT INTO ticket (customer_id, asignto, ticketfor, complain_type, startdate, notes) 
-	VALUES ('$customerId', '$assignedTo', '$ticketFor', '$complainType', NOW(), '$notes')");
+	$result = $con->query("INSERT INTO ticket (customer_id, asignto, ticketfor, complain_type, startdate, notes,priority) 
+	VALUES ('$customerId', '$assignedTo', '$ticketFor', '$complainType', NOW(), '$notes','$priority')");
 	if ($result == true) {
 		echo 1;
 	} else {

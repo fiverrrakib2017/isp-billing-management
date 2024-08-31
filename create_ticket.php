@@ -277,7 +277,20 @@ include "include/db_connect.php";
 										</div>
 										<div class="from-group mb-2">
 											<label for="">Note</label>
-											<input id="notes" type="textarea" class="form-control">
+											<input id="notes" type="text" class="form-control" placeholder="Enter Your Note">
+
+										</div>
+										<div class="from-group mb-2">
+											<label for="">Ticket Priority</label>
+											<select id="ticket_priority" type="text" class="form-select">
+                                            <option >---Select---</option>
+                                            <option value="1">Low</option>
+                                            <option value="2">Normal</option>
+                                            <option value="3">Standard</option>
+                                            <option value="4">Medium</option>
+                                            <option value="5">High</option>
+                                            <option value="6">Very High</option>
+                                            </select>
 
 										</div>
 
@@ -366,6 +379,7 @@ include "include/db_connect.php";
             var ticketFor = $("#ticket_for").val();
             var complainType = $("#ticket_complain_type").val();
             var notes = $("#notes").val();
+            var ticket_priority = $("#ticket_priority").val();
             
             if (assignedTo.length == 0) {
                 toastr.error("Customer Assign  is require");
@@ -373,8 +387,10 @@ include "include/db_connect.php";
                 toastr.error("Please Select Ticket For");
             } else if (complainType.length == 0) {
                 toastr.error("Complain Type is require");
+            } else if (ticket_priority.length == 0) {
+                toastr.error("Ticket Priority is require");
             } else {
-                // Make AJAX request to server
+                /* Make AJAX request to server*/
                 $.ajax({
                     url: "include/tickets_server.php", 
                     type: "POST",
@@ -385,10 +401,11 @@ include "include/db_connect.php";
                         ticket_for: ticketFor,
                         complain_type: complainType,
                         notes: notes,
+                        priority: ticket_priority,
                         addTicketData: 0,
                     },
                     success: function(response) {
-                      // Handle the response from the server
+                      /* Handle the response from the server*/
                       if (response == 1) {
                             toastr.success("Ticket Added Success");
                             setTimeout(() => {
