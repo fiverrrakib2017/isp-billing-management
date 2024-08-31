@@ -341,6 +341,7 @@ function timeAgo($startdate) {
                         </div> <!-- End col -->
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
+                            <a href="customer_disabled.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
                                         <span class="mini-stat-icon bg-danger me-0 float-end"><i class="fas fa-user-slash"></i></span>
@@ -355,6 +356,7 @@ function timeAgo($startdate) {
                                         </div>
                                     </div>
                                 </div>
+                            </a>
                             </div>
                         </div><!--end col -->
                     </div> <!-- end row-->
@@ -1768,8 +1770,8 @@ $cronupdt = $con->query("SELECT * FROM cron");
     
     <script src="assets/js/pages/form-advanced.init.js"></script>
 
-             <!-- Plugin Js-->
-             <script src="assets/libs/chartist/chartist.min.js"></script>
+        <!-- Plugin Js-->
+        <script src="assets/libs/chartist/chartist.min.js"></script>
         <script src="assets/libs/chartist-plugin-tooltips/chartist-plugin-tooltip.min.js"></script>
         <!-- demo js
         <script src="assets/js/pages/chartist.init.js"></script>-->

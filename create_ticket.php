@@ -99,7 +99,7 @@ include "include/db_connect.php";
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
@@ -256,6 +256,19 @@ include "include/db_connect.php";
 											</select>
 
 										</div>
+                                        <div class="from-group mb-2">
+											<label for="">Ticket Priority</label>
+											<select id="ticket_priority" type="text" class="form-select">
+                                            <option >---Select---</option>
+                                            <option value="1">Low</option>
+                                            <option value="2">Normal</option>
+                                            <option value="3">Standard</option>
+                                            <option value="4">Medium</option>
+                                            <option value="5">High</option>
+                                            <option value="6">Very High</option>
+                                            </select>
+
+										</div>
 										<div class="from-group mb-2">
 											<label for="">Assigned To</label>
 											<select id="ticket_assigned" class="form-select">
@@ -280,19 +293,7 @@ include "include/db_connect.php";
 											<input id="notes" type="text" class="form-control" placeholder="Enter Your Note">
 
 										</div>
-										<div class="from-group mb-2">
-											<label for="">Ticket Priority</label>
-											<select id="ticket_priority" type="text" class="form-select">
-                                            <option >---Select---</option>
-                                            <option value="1">Low</option>
-                                            <option value="2">Normal</option>
-                                            <option value="3">Standard</option>
-                                            <option value="4">Medium</option>
-                                            <option value="5">High</option>
-                                            <option value="6">Very High</option>
-                                            </select>
-
-										</div>
+										
 
                                         <div class="form-group">
                                            
