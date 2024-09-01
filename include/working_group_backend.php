@@ -3,14 +3,17 @@
 	
  if (isset($_POST["add_group_data"])) {
     $group_name = $_POST['group_name'];
-    $area_id = $_POST['area_id'];
+    $area_ids = $_POST['area_id'];
     $note = $_POST['note'];
+
+	/*Convert Array To string*/
+	$area_ids_imploded = implode(",",$area_ids,);
 
     /* Prepare an SQL statement*/
     $stmt = $con->prepare("INSERT INTO working_group (pop_id, group_name, area_id, note, create_date) VALUES (NULL, ?, ?, ?, NOW())");
     
     /* Bind parameters*/
-    $stmt->bind_param("sis", $group_name, $area_id, $note);
+    $stmt->bind_param("sss", $group_name, $area_ids_imploded, $note);
 
     /* Execute the statement*/
     if ($stmt->execute()) {

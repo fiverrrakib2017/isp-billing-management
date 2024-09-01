@@ -251,7 +251,7 @@ include "include/pop_security.php";
 									</div>
 									<div class="form-group mb-2">
 										<label>Area</label>
-										<select name="area_id"  class="form-select" style="width: 100%;" type="text">
+										<select  name="area_id[]"  class="form-control" style="width: 100%;" multiple >
                                         <option>---Select---</option>
                                         <?php
                                         if ($allArea=$con->query("SELECT * FROM area_list")) {
@@ -300,7 +300,7 @@ include "include/pop_security.php";
 									</div>
                                     <div class="form-group mb-2">
 										<label>Area</label>
-										<select name="area_id"  class="form-select" style="width: 100%;" type="text">
+										<select type="text" name="area_id[]"  class="form-select" style="width: 100%;" multiple>
                                         <option>---Select---</option>
                                         <?php
                                         if ($allArea=$con->query("SELECT * FROM area_list")) {
@@ -495,16 +495,20 @@ include "include/pop_security.php";
      <script type="text/javascript">
     $(document).ready(function() {
         $('#addModal').on('shown.bs.modal', function () {
-            if (!$("select[name='area_id']").hasClass("select2-hidden-accessible")) {
-                $("select[name='area_id']").select2({
-                    dropdownParent: $('#addModal')
+            if (!$("select[name='area_id[]']").hasClass("select2-hidden-accessible")) {
+                $("select[name='area_id[]']").select2({
+                    dropdownParent: $('#addModal'),
+                     allowClear: true,
+                    placeholder: "Select Area"
                 });
             }
         });
         $('#editModal').on('shown.bs.modal', function () {
             if (!$("select[name='area_id']").hasClass("select2-hidden-accessible")) {
                 $("select[name='area_id']").select2({
-                    dropdownParent: $('#editModal')
+                    dropdownParent: $('#editModal'),
+                     allowClear: true,
+                    placeholder: "Select Area"
                 });
             }
         });
