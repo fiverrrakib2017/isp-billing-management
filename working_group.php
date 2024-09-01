@@ -350,37 +350,12 @@ include "include/pop_security.php";
                                                <tr>
                                                   <th>ID</th>
                                                     <th>Group Name</th>
+                                                    <th>Area Name</th>
                                                     <th>Note</th>
                                                     <th></th>
                                                </tr>
                                             </thead>
-                                            <tbody>
-                                                <?php 
-
-                                                if ($userlist=$con->query("SELECT* FROM working_group")) {
-
-        while ($rows=$userlist->fetch_array()) {
-
-            $userId=$rows["id"];
-            $group_name=$rows["group_name"];
-            $note=$rows["note"];
-
-             echo '
-     <tr>
-     <td>'.$userId.'</td>
-     <td>'.$group_name.'</td>
-	 <td>'.$note.'</td>
-    <td style=" text-align:right;">
-        <button type="button" class="btn btn-info edit-btn" data-id="'.$userId.'"><i class="fas fa-edit"></i></button>
-        <button type="button" class="btn btn-danger delete-btn" data-id="'.$userId.'" ><i class=" fas fa-trash"></i>
-        </button>
-        </td>
-     </tr>'; 
-        }
-    }
-
-                                                 ?>
-                                            </tbody>
+                                            <tbody></tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -494,6 +469,36 @@ include "include/pop_security.php";
     <script src="assets/js/app.js"></script>
      <script type="text/javascript">
     $(document).ready(function() {
+        loadTableData();
+
+        function loadTableData() {
+            $.ajax({
+                url: "include/working_group_backend.php?get_all_working_data", 
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    var tbody = $('#datatable tbody');
+                    tbody.empty();
+
+                    $.each(data, function(index, row) {
+                        var areaNames = row.area_names.join(', ');
+
+                        var html = '<tr>'+
+                            '<td>'+ row.id +'</td>'+
+                            '<td>'+ row.group_name +'</td>'+
+                            '<td>'+ areaNames +'</td>'+
+                            '<td>'+ row.note +'</td>'+
+                            '<td style="text-align:right;">'+
+                                '<button type="button" class="btn btn-info edit-btn" data-id="'+ row.id +'"><i class="fas fa-edit"></i></button>'+
+                                '<button type="button" class="btn btn-danger delete-btn" data-id="'+ row.id +'"><i class="fas fa-trash"></i></button>'+
+                            '</td>'+
+                        '</tr>';
+                        tbody.append(html);
+                    });
+                }
+            });
+        }
+
         $('#addModal').on('shown.bs.modal', function () {
             if (!$("select[name='area_id[]']").hasClass("select2-hidden-accessible")) {
                 $("select[name='area_id[]']").select2({

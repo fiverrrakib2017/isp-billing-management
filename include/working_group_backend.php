@@ -1,6 +1,38 @@
 <?php 
  include("db_connect.php");
+ 
+ if (isset($_GET['get_all_working_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+	$working_group_data = array();
+
+	if ($result = $con->query("SELECT * FROM working_group")) {
+		while ($rows = $result->fetch_array()) {
+			$userId = $rows["id"];
+			$group_name = $rows["group_name"];
+			$area_ids = $rows["area_id"];
+			$note = $rows["note"];
 	
+			$area_id_array = explode(',', $area_ids);
+			$area_names = array();
+	
+			foreach ($area_id_array as $area_id) {
+				$area_query = $con->query("SELECT name FROM area_list WHERE id = '$area_id'");
+				if ($area_row = $area_query->fetch_array()) {
+					$area_names[] = $area_row['name'];
+				}
+			}
+	
+			$working_group_data[] = array(
+				"id" => $userId,
+				"group_name" => $group_name,
+				"area_names" => $area_names,
+				"note" => $note
+			);
+		}
+	}
+	
+	header('Content-Type: application/json');
+	echo json_encode($working_group_data);
+ }
  if (isset($_POST["add_group_data"])) {
     $group_name = $_POST['group_name'];
     $area_ids = $_POST['area_id'];
