@@ -13,9 +13,6 @@ include "include/pop_security.php";
         <title>FAST-ISP-BILLING-SOFTWARE</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-        <meta content="Themesbrand" name="author">
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
         <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
         <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
         <!-- C3 Chart css -->
@@ -28,6 +25,7 @@ include "include/pop_security.php";
         <!-- App Css-->
         <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     	<link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+        <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
     </head>
 
     <body data-sidebar="dark">
@@ -83,8 +81,8 @@ include "include/pop_security.php";
                         <div class="dropdown d-none d-md-block me-2">
                             <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="font-size-16">
-                                    <?php if (isset($_SESSION['username'])) {
-                                        echo $_SESSION['username'];
+                                    <?php if (isset($_SESSION['fullname'])) {
+                                        echo $_SESSION['fullname'];
                                     } ?>
                                 </span> 
                             </button>
@@ -93,7 +91,7 @@ include "include/pop_security.php";
 
                         <div class="dropdown d-inline-block">
                             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                                <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <!-- item-->
@@ -251,6 +249,19 @@ include "include/pop_security.php";
 										<label>Group Name</label>
 										<input name="group_name" placeholder="Group Name" class="form-control" type="text" >
 									</div>
+									<div class="form-group mb-2">
+										<label>Area</label>
+										<select name="area_id"  class="form-select" style="width: 100%;" type="text">
+                                        <option>---Select---</option>
+                                        <?php
+                                        if ($allArea=$con->query("SELECT * FROM area_list")) {
+                                            while($rows=$allArea->fetch_array()){
+                                                echo '<option value="'.$rows['id'].'">'.$rows['name'].'</option>'; 
+                                            }
+                                        }
+                                        ?>
+                                        </select>
+									</div>
 									<div class="form-group mb-2 ">
 										<label>Note</label>
 										<input name="note" placeholder="Enter Your Note" class="form-control" type="text" >
@@ -286,6 +297,19 @@ include "include/pop_security.php";
 									<div class="form-group mb-2">
 										<label>Group Name</label>
 										<input name="group_name" placeholder="Group Name" class="form-control" type="text" >
+									</div>
+                                    <div class="form-group mb-2">
+										<label>Area</label>
+										<select name="area_id"  class="form-select" style="width: 100%;" type="text">
+                                        <option>---Select---</option>
+                                        <?php
+                                        if ($allArea=$con->query("SELECT * FROM area_list")) {
+                                            while($rows=$allArea->fetch_array()){
+                                                echo '<option value="'.$rows['id'].'">'.$rows['name'].'</option>'; 
+                                            }
+                                        }
+                                        ?>
+                                        </select>
 									</div>
 									<div class="form-group mb-2 ">
 										<label>Note</label>
@@ -466,10 +490,24 @@ include "include/pop_security.php";
     <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
     <!-- Datatable init js -->
     <script src="assets/js/pages/datatables.init.js"></script> 
-
+    <script src="assets/libs/select2/js/select2.min.js"></script>
     <script src="assets/js/app.js"></script>
      <script type="text/javascript">
     $(document).ready(function() {
+        $('#addModal').on('shown.bs.modal', function () {
+            if (!$("select[name='area_id']").hasClass("select2-hidden-accessible")) {
+                $("select[name='area_id']").select2({
+                    dropdownParent: $('#addModal')
+                });
+            }
+        });
+        $('#editModal').on('shown.bs.modal', function () {
+            if (!$("select[name='area_id']").hasClass("select2-hidden-accessible")) {
+                $("select[name='area_id']").select2({
+                    dropdownParent: $('#editModal')
+                });
+            }
+        });
         $("#users_table").DataTable();
 		/** Handle Delete button click**/
         $('#datatable tbody').on('click', '.delete-btn', function() {
@@ -562,6 +600,7 @@ include "include/pop_security.php";
                     $('#editModal input[name="id"]').val(jsonResponse.data.id);
                     $('#editModal input[name="group_name"]').val(jsonResponse.data.group_name);
                     $('#editModal input[name="note"]').val(jsonResponse.data.note);
+                    $('#editModal select[name="area_id"]').val(jsonResponse.data.area_id);
                   } else {
                       toastr.error("Error fetching data for edit: " + jsonResponse.message);
                   }

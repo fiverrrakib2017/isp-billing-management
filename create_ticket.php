@@ -208,7 +208,7 @@ include "include/db_connect.php";
                             <div class="card shadow">
                                 <div class="card-header bg-dark text-white">Create Ticket</div>
                                 <div class="card-body">
-                                    <form action="">
+                                    <form >
                                         
                                        <div class="from-group mb-2">
 										<label>Customer Name</label>
@@ -275,15 +275,15 @@ include "include/db_connect.php";
 												<option>---Select---</option>
 												 <?php 
 
-                                                if ($group=$con->query("SELECT* FROM working_group")) {
+                                                // if ($group=$con->query("SELECT* FROM working_group")) {
 
-                                                    while ($rows=$group->fetch_array()) {
+                                                //     while ($rows=$group->fetch_array()) {
 
-                                                        $userId=$rows["id"];
-                                                        $group_name=$rows["group_name"];
-                                                     echo '<option value='.$userId.'>'.$group_name.'</option>';  
-                                                    }
-                                                }
+                                                //         $userId=$rows["id"];
+                                                //         $group_name=$rows["group_name"];
+                                                //      echo '<option value='.$userId.'>'.$group_name.'</option>';  
+                                                //     }
+                                                // }
 
                                                  ?>  
 											</select>
@@ -372,6 +372,21 @@ include "include/db_connect.php";
         $(document).ready(function() {
 
 			$("#ticket_customer_id").select2();
+            $(document).on('change','#ticket_customer_id',function(){
+                /* Make AJAX request to server*/
+                $.ajax({
+                    url: "include/tickets_server.php", 
+                    type: "POST",
+                    data: {
+                        customer_id: $(this).val(),
+                        get_area:true,
+                    },
+                    success: function(response) {
+                      /* Handle the response from the server*/
+                      $("#ticket_assigned").html(response);
+                    }
+                });
+            });
 			$("#customer_ticket_btn").click(function() {
             // Get form values
             var customerId = $("#ticket_customer_id").val();

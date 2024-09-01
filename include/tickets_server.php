@@ -1,6 +1,52 @@
 <?php
 include "db_connect.php";
 
+
+// if (isset($_POST['get_area']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+// 	$customerId=$_POST['customer_id'];
+// 	if ($allCstmr=$con->query("SELECT `area` FROM customers Where id=$customerId")) {
+// 		while($rows=$allCstmr->fetch_array()){
+// 			$area_id=$rows["area"]; 
+// 			$all_working_area=$con->query("SELECT id,group_name FROM working_group WHERE area_id=$area_id"); 
+// 			while($rowsss=$all_working_area->fetch_array()){
+// 				echo '<option value="'.$rowsss['id'].'">'.$rowsss['group_name'].'</option>'; 
+// 			}
+// 		}
+// 	}
+// }
+if (isset($_POST['get_area']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $customerId = $_POST['customer_id'];
+
+    /*Get area_id from customers table*/ 
+    $allCstmr = $con->query("SELECT `area` FROM customers WHERE id = $customerId");
+
+    if ($allCstmr && $rows = $allCstmr->fetch_array()) {
+        $area_id = $rows["area"];
+
+        /* Check if there is any data in working_group with this area_id*/
+        $all_working_area = $con->query("SELECT id, group_name FROM working_group WHERE area_id = $area_id");
+
+        if ($all_working_area && $all_working_area->num_rows > 0) {
+            /*If area_id matches, show only those records*/ 
+            while ($rowsss = $all_working_area->fetch_array()) {
+                echo '<option value="' . $rowsss['id'] . '">' . $rowsss['group_name'] . '</option>';
+            }
+        } else {
+            /* If no matching area_id, show all records from working_group*/
+            $all_working_area = $con->query("SELECT id, group_name FROM working_group");
+            while ($rowsss = $all_working_area->fetch_array()) {
+                echo '<option value="' . $rowsss['id'] . '">' . $rowsss['group_name'] . '</option>';
+            }
+        }
+    } else {
+        /*If no area_id found, show all records from working_group*/ 
+        $all_working_area = $con->query("SELECT id, group_name FROM working_group");
+        while ($rowsss = $all_working_area->fetch_array()) {
+            echo '<option value="' . $rowsss['id'] . '">' . $rowsss['group_name'] . '</option>';
+        }
+    }
+}
+
 if (isset($_POST["updateTicket"])) {
 	$id = $_POST["id"];
 	$ticket_type = $_POST["ticket_type"];
