@@ -107,8 +107,8 @@ if (isset($_GET["id"])) {
                     <div class="dropdown d-none d-md-block me-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="font-size-16">
-                                <?php if (isset($_SESSION['username'])) {
-                                    echo $_SESSION['username'];
+                                <?php if (isset($_SESSION['fullname'])) {
+                                    echo $_SESSION['fullname'];
                                 } ?>
                             </span>
                         </button>
@@ -117,7 +117,7 @@ if (isset($_GET["id"])) {
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
@@ -223,14 +223,7 @@ if (isset($_GET["id"])) {
 
             <div class="page-content">
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6 m-auto">
-                            <div id="alertMsg" class="alert alert-success p-2 mt-3" style="width: 400px; display:none;">
-                                <i class="mdi mdi-check-circle"></i>
-                                <strong class="mx-2">Success!</strong> Update Data
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="row">
                         <form id="update_tickets">
                             <div>
@@ -300,31 +293,19 @@ if (isset($_GET["id"])) {
                                                             Complain Type
                                                         </label>
                                                         <select name="complain_type" id="complain_type" class="form-select">
-                                                            <option value="<?php echo $complain_type; ?>">
-
-                                                                <?php
-
-
-                                                                $complain_typeId = $complain_type;
-                                                                if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                    while ($rowss = $allCom->fetch_array()) {
-                                                                        echo $rowss['topic_name'];
-                                                                    }
-                                                                }
-
-                                                                ?>
-
-                                                            </option>
-                                                            <?php
-
-                                                            if ($allData = $con->query("SELECT * FROM ticket_topic WHERE pop_id=$auth_usr_POP_id ")) {
-                                                                while ($rows = $allData->fetch_array()) {
-                                                                    echo ' <option value=' . $rows['id'] . '>' . $rows['topic_name'] . '</option>';
-                                                                }
-                                                            }
-
-
-                                                            ?>
+                                <?php
+                                    if ($group = $con->query("SELECT * FROM ticket_topic ")) {
+                                        while ($rows = $group->fetch_array()) {
+                                            $id = $rows["id"];
+                                            $topic_name = $rows["topic_name"];
+                                            
+                                            /*Check if this userId is the assigned one*/ 
+                                            $selected = ($id == $complain_type) ? 'selected' : '';
+                                            
+                                            echo '<option value="'.$userId.'" '.$selected.'>'.$topic_name.'</option>';  
+                                        }
+                                    }
+                                ?>
                                                         </select>
                                                     </div>
                                                 </div>
