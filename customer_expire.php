@@ -405,13 +405,14 @@ include("include/users_right.php");
                                         </div>
                                     </div>
                                     <div class="table-responsive ">
-                                        <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
+                                        <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;" >
+                                            <thead class="bg-success text-white" style="background-color: #2c845f !important;">
                                                 <tr>
 													<th><input type="checkbox" id="checkedAll" name="checkedAll"> All</th>
                                                     <th>ID</th>
                                                     <th>Name</th>
                                                     <th>Package</th>
+                                                    <th>Amount</th>
                                                     <th>Expired Date</th>
                                                     <th>Expired Date</th>
                                                     <th>User Name</th>
@@ -466,6 +467,14 @@ include("include/users_right.php");
                                                             <?php
 
                                                             echo  $rows["package_name"];
+
+                                                            ?>
+
+                                                        </td>
+                                                        <td>
+                                                            <?php
+
+                                                            echo  $rows["price"];
 
                                                             ?>
 
