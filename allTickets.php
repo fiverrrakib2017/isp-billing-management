@@ -352,10 +352,11 @@ function acctual_work($startdate, $enddate) {
                                     </div>
                                     <div class="table-responsive">
                                         <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
+                                            <thead class="bg-success text-white" style="background-color: #2c845f !important;">
                                                 <tr>
                                                     <th>Status</th> 
                                                     <th>Created</th>
+                                                    <th>Priority</th>
                                                     <th>Customer Name</th>
                                                     <th>Phone Number</th>
                                                     <th>Issues</th>
@@ -412,6 +413,41 @@ function acctual_work($startdate, $enddate) {
                                                              echo timeAgo($startdate); 
                                                             ?>
                                                             
+                                                        </td>
+                                                        <td>
+                                                        <?php 
+                                                        /*Priority value from database*/ 
+                                                           $priority = $rows["priority"]; 
+
+                                                           $priorityLabel = '';
+                                                           
+                                                           switch ($priority) {
+                                                               case 1:
+                                                                   $priorityLabel = 'Low';
+                                                                   break;
+                                                               case 2:
+                                                                   $priorityLabel = 'Normal';
+                                                                   break;
+                                                               case 3:
+                                                                   $priorityLabel = 'Standard';
+                                                                   break;
+                                                               case 4:
+                                                                   $priorityLabel = 'Medium';
+                                                                   break;
+                                                               case 5:
+                                                                   $priorityLabel = 'High';
+                                                                   break;
+                                                               case 6:
+                                                                   $priorityLabel = 'Very High';
+                                                                   break;
+                                                               default:
+                                                                   $priorityLabel = 'Unknown'; 
+                                                                   break;
+                                                           }
+                                                           
+                                                           echo $priorityLabel;
+                                                          
+                                                        ?>
                                                         </td>
                                                         <td>
                                                         <?php 
