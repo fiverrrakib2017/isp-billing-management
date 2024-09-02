@@ -275,7 +275,7 @@ include "include/db_connect.php";
 
 <td><?php echo $rows["months"]; ?></td>
 <td><?php echo $rows["rchrg_until"]; ?></td>
-<td><?php echo $rows["amount"]; ?></td>
+<td><?php echo $rows["sales_price"]; ?></td>
 
 </tr>
                        <?php } ?>
