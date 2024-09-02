@@ -20,6 +20,7 @@
                                     <li><a href="bulk_payment.php">Bulk Recharge</a></li>
                                     <li><a href="active_cstmr_list.php">Active Customer List</a></li>
                                     <li><a href="customer_expire.php">Expired Customer List</a></li>
+                                    <li><a href="customer_free_con.php">Free Customer List</a></li>
                                   
 
                                     <li>
