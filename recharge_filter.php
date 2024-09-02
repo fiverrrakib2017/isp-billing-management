@@ -13,8 +13,6 @@ include("include/users_right.php");
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
         <meta content="Themesbrand" name="author">
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
         <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
         <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
         <!-- C3 Chart css -->
@@ -84,8 +82,8 @@ include("include/users_right.php");
                         <div class="dropdown d-none d-md-block me-2">
                             <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="font-size-16">
-                                    <?php if (isset($_SESSION['username'])) {
-                                        echo $_SESSION['username'];
+                                    <?php if (isset($_SESSION['fullname'])) {
+                                        echo $_SESSION['fullname'];
                                     } ?>
                                 </span> 
                             </button>
@@ -94,7 +92,7 @@ include("include/users_right.php");
 
                         <div class="dropdown d-inline-block">
                             <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                                <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                             </button>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <!-- item-->
@@ -310,20 +308,18 @@ include("include/users_right.php");
                 }else if(toDate.length==0){
                     toastr.error("To Date is require");
                 }else{
-                  var rechargeFilter="0";
+                    var rechargeFilter="0";
                     $.ajax({
-                           url:'include/rechargeFilter.php', 
-                           type:'POST',
-                           data:{rechargeFilter:rechargeFilter,fromDate:fromDate,toDate:toDate,popid:popid},
-                           success:function(response){
-                            
+                        url: 'include/rechargeFilter.php',
+                        type: 'POST',
+                        data: {rechargeFilter: rechargeFilter, fromDate: fromDate, toDate: toDate, popid: popid},
+                        success: function(response) {
                             $("#FilterTable").removeClass('d-none');
-                               $("#rechargeTable").html(response);
-                               $("#searchRow").addClass('d-none');
-                               $("#rechargeDataTable").dataTable();
-                               
-                           }
-                    });  
+                            $("#rechargeTable").html(response);
+                            $("#searchRow").addClass('d-none');
+                            $("#rechargeDataTable").dataTable();
+                        }
+                    }); 
                 }
                 
             });
