@@ -25,8 +25,7 @@ include("include/users_right.php");
         <!-- App Css-->
         <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
         <link href="assets/css/custom.css" id="app-style" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
-    
+        <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">    
     </head>
 
     <body data-sidebar="dark">
@@ -296,9 +295,45 @@ include("include/users_right.php");
         <script src="assets/js/pages/datatables.init.js"></script> 
 
         <script src="assets/js/app.js"></script>
+
         <script type="text/javascript">
-            $(document).ready(function(){
-            
+            function downloadCSV(csv, filename) {
+            var csvFile;
+            var downloadLink;
+
+            // CSV ফাইল বানানো
+            csvFile = new Blob([csv], {type: "text/csv"});
+
+            // ডাউনলোড লিঙ্ক তৈরি করা
+            downloadLink = document.createElement("a");
+
+            // ফাইলের নাম
+            downloadLink.download = filename;
+
+            // লিঙ্কে blob ফাইল যোগ করা
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+
+            // লিঙ্কে ক্লিক ইভেন্ট যুক্ত করা
+            downloadLink.click();
+        }
+
+        function exportTableToCSV(filename) {
+            var csv = [];
+            var rows = document.querySelectorAll("#rechargeDataTable tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var row = [], cols = rows[i].querySelectorAll("td, th");
+
+                for (var j = 0; j < cols.length; j++) 
+                    row.push(cols[j].innerText);
+
+                csv.push(row.join(","));        
+            }
+
+            // CSV ফাইল ডাউনলোড করুন
+            downloadCSV(csv.join("\n"), filename);
+        }
+        $(document).ready(function(){
             $("#searchBtn").on('click',function(){
                 var fromDate=$("#fromDate").val();
                 var toDate=$("#toDate").val();
@@ -314,10 +349,13 @@ include("include/users_right.php");
                         type: 'POST',
                         data: {rechargeFilter: rechargeFilter, fromDate: fromDate, toDate: toDate, popid: popid},
                         success: function(response) {
-                            $("#FilterTable").removeClass('d-none');
                             $("#rechargeTable").html(response);
+                            $("#FilterTable").removeClass('d-none');
                             $("#searchRow").addClass('d-none');
-                            $("#rechargeDataTable").dataTable();
+
+                            $("<button class='btn btn-danger' style='margin-top: 10px;'>Export to CSV</button>").insertAfter("#rechargeDataTable").on('click', function() {
+                                exportTableToCSV('recharge_data.csv');
+                            });
                         }
                     }); 
                 }
