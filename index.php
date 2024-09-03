@@ -48,10 +48,6 @@ function timeAgo($startdate) {
     <title>FAST-ISP-BILLING-SYSTEM</title>
     
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-        <meta content="Themesbrand" name="author">
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
     
         <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
         <link href="assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
@@ -68,7 +64,7 @@ function timeAgo($startdate) {
         <link href="assets/libs/chartist/chartist.min.css" rel="stylesheet">
 <!-- C3 Chart css -->
         <link href="assets/libs/c3/c3.min.css" rel="stylesheet" type="text/css">
-    
+        <link href="css/toastr/toastr.min.css" rel="stylesheet" type="text/css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"> </script>
 </head>
 
@@ -1291,99 +1287,89 @@ $cronupdt = $con->query("SELECT * FROM cron");
     </div>
     <!-- END layout-wrapper -->
 
-    <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addRechargeModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Recharge</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="card">
-                    <div class="row" id="searchRow">
-                        <div class="col-md col-sm m-auto">
-                            <div class="card shadow">
-                                
-                                <div class="card-body">
-                                <form action="">
-                                        <div class="form-gruop mt-2">
-                                            <label>Select Customer</label>
-                                                            <!--  -->
-                                            <select id="recharge_customer" class="select2 form-select" data-placeholder="Choose ..." style="width:100%">
-                                                <option class="select2 form-control" value="">Select Customer</option>
-                                                <?php
-                                                if ($allCustomer = $con->query("SELECT * FROM customers")) {
-                                                    while ($rows = $allCustomer->fetch_array()) {
-                                                        echo '<option value="' . $rows['id'] . '">' . $rows['username'] . '(' . $rows['mobile'] . ')</option>';
-                                                    }
-                                                }
-
-
-                                                ?>
-                                            </select>
-                                        </div>
-                                        <div class="form-group mb-1">
-                                            <label>Month</label>
-                                            <select id="recharge_customer_month" class="form-select">
-                                                
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                                <option value="6">6</option>
-                                                <option value="7">7</option>
-                                                <option value="8">8</option>
-                                                <option value="9">9</option>
-                                                <option value="10">10</option>
-                                                <option value="11">11</option>
-                                                <option value="12">12</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group ">
-                                            <label for="">Package</label>
-                                            <select disabled="Disable" id="recharge_customer_package" class="form-select ">
-
-                                            </select>
-                                        </div>
-                                        <div class="form-group mb-1 ">
-                                            <label>Package Price:</label>
-
-                                            <input id="recharge_customer_package_price" disabled="Disable" type="text" class="form-control form-control-sm" value="">
-                                        </div>
-                                        <div class="form-group mb-1 ">
-                                            <label>Ref:</label>
-
-                                            <input id="ref"  type="text" class="form-control form-control-sm" value="">
-                                        </div>
-                                        <div class="form-group mb-1 d-none">
-                                            <label>Pop id:</label>
-
-                                            <input id="recharge_customer_pop_id" disabled="Disable" type="text" class="form-control form-control-sm" value="">
-                                        </div>
-                                        <div class="form-group mb-1 ">
-                                            <label>Payable Amount:</label>
-                                            <input id="recharge_customer_amount" disabled type="text" class="form-control form-control-sm" value="" />
-                                        </div>
-                                        <div class="form-group mb-1">
-                                            <label>Transaction Type:</label>
-                                            <select id="recharge_customer_transaction_type" class="form-select">
-                                                
-                                                <option value="1">Cash</option>
-                                                <option value="0">On Credit</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <button class="btn btn-success" style="width: 100%;" type="button" id="add_recharge_btn"><i class="mdi mdi mdi-battery-charging-90"></i>&nbsp;&nbsp;Recharge Now</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+    <div class="modal fade" id="addRechargeModal" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h5 class="modal-title" id="exampleModalLabel">Add Recharge</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="recharge_customer" class="form-label">Select Customer</label>
+                            <select id="recharge_customer" class="form-select">
+                                <option value="">Select Customer</option>
+                                <?php
+                                if ($allCustomer = $con->query("SELECT * FROM customers")) {
+                                    while ($rows = $allCustomer->fetch_array()) {
+                                        echo '<option value="' . $rows['id'] . '">' . $rows['username'] . ' (' . $rows['mobile'] . ')</option>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="recharge_customer_month" class="form-label">Month</label>
+                            <select id="recharge_customer_month" class="form-select">
+                                <?php for ($i = 1; $i <= 12; $i++) : ?>
+                                    <option value="<?= $i ?>"><?= $i ?></option>
+                                <?php endfor; ?>
+                            </select>
                         </div>
                     </div>
-                </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="recharge_customer_package" class="form-label">Package</label>
+                            <select id="recharge_customer_package" class="form-select" disabled>
+                                <!-- Options will be loaded here dynamically -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="recharge_customer_package_price" class="form-label">Package Price</label>
+                            <input id="recharge_customer_package_price" type="text" class="form-control" disabled>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="ref" class="form-label">Reference</label>
+                            <input id="ref" type="text" class="form-control">
+                        </div>
+                        <div class="col-md-6 d-none">
+                            <label for="recharge_customer_pop_id" class="form-label">Pop ID</label>
+                            <input id="recharge_customer_pop_id" type="text" class="form-control" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="recharge_customer_amount" class="form-label">Payable Amount</label>
+                            <input id="recharge_customer_amount" type="text" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        
+                        <div class="col-md-6">
+                            <label for="recharge_customer_transaction_type" class="form-label">Transaction Type</label>
+                            <select id="recharge_customer_transaction_type" class="form-select">
+                                <option value="1">Cash</option>
+                                <option value="0">On Credit</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-success mt-4" id="add_recharge_btn" style="margin-top: 4px;">
+                                <i class="mdi mdi-battery-charging-90"></i>&nbsp;&nbsp;Recharge Now
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
+
     <!---add send msg modal---->
     <div id="sendMessage" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1726,7 +1712,7 @@ $cronupdt = $con->query("SELECT * FROM cron");
     <script src="assets/libs/metismenu/metisMenu.min.js"></script>
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
-
+    <script type="text/javascript"  src="assets/libs/select2/js/select2.min.js"></script>
     <!-- Required datatable js -->
     <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -1764,8 +1750,8 @@ $cronupdt = $con->query("SELECT * FROM cron");
 
         
     <script type="text/javascript" src="assets/js/js-fluid-meter.js"></script>
-    <script src="assets/libs/select2/js/select2.min.js"></script>
-    <script src="js/toastr/toastr.min.js"></script>
+  
+   
 
     
     <script src="assets/js/pages/form-advanced.init.js"></script>
@@ -1780,7 +1766,7 @@ $cronupdt = $con->query("SELECT * FROM cron");
         
 
 
-
+        <script src="js/toastr/toastr.min.js"></script>
 
 
     <script type="text/javascript">
@@ -1994,7 +1980,16 @@ window.jQuery.ChartC3.init()}();
     <script type="text/javascript">
         $(document).ready(function() {
             $('#cstmr_ac').select2();
-            $("#recharge_customer").select2();
+            //
+            $('#addRechargeModal').on('shown.bs.modal', function () {
+                /*Check if select2 is already initialized*/ 
+                if (!$('#recharge_customer').hasClass("select2-hidden-accessible")) {
+                    $("#recharge_customer").select2({
+                        dropdownParent: $('#addRechargeModal'),
+                        placeholder: "Select Customer"
+                    });
+                }
+            });
         });
 
         function currentMsgTemp() {
@@ -2207,13 +2202,13 @@ window.jQuery.ChartC3.init()}();
 
         
 
-$("#recharge_customer").on('change', function() {
-    var id = $("#recharge_customer").val();
-    getCustomerPackage(id);
-    getCustomerPackagePrice(id);
-    getCustomerPopId(id);
+    $("#recharge_customer").on('change', function() {
+        var id = $("#recharge_customer").val();
+        getCustomerPackage(id);
+        getCustomerPackagePrice(id);
+        getCustomerPopId(id);
 
-});
+    });
 
 //get Package name
 function getCustomerPackage(recevedId) {
@@ -2330,7 +2325,7 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
                     toastr.success("Recharge Successful");
                     setTimeout(() => {
                         location.reload();
-                    }, 1000);
+                    }, 500);
                 } else {
                     toastr.error(response);
                     $("#add_recharge_btn").html('Recharge Now');
