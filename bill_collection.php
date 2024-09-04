@@ -512,7 +512,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
                     /* Get the row's data from the table*/
                     var row = $(this).closest('tr');
                     console.log(row); 
-                    totalAmount = row.find('td:eq(2)').text().trim(); 
+                    totalAmount = row.find('td:eq(3)').text().trim(); 
                 });
                 /* Set the values in the modal's form fields*/
                 $('#total_amount').val(totalAmount);
