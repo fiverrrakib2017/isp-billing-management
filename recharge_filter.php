@@ -293,46 +293,50 @@ include("include/users_right.php");
         <script src="js/toastr/toastr.init.js"></script>
         <!-- Datatable init js -->
         <script src="assets/js/pages/datatables.init.js"></script> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
 
         <script src="assets/js/app.js"></script>
 
         <script type="text/javascript">
-            function downloadCSV(csv, filename) {
-            var csvFile;
-            var downloadLink;
+              function downloadCSV(csv, filename) {
+                var csvFile;
+                var downloadLink;
 
-            // CSV ফাইল বানানো
-            csvFile = new Blob([csv], {type: "text/csv"});
+                csvFile = new Blob([csv], {type: "text/csv"});
 
-            // ডাউনলোড লিঙ্ক তৈরি করা
-            downloadLink = document.createElement("a");
+                downloadLink = document.createElement("a");
 
-            // ফাইলের নাম
-            downloadLink.download = filename;
+                downloadLink.download = filename;
 
-            // লিঙ্কে blob ফাইল যোগ করা
-            downloadLink.href = window.URL.createObjectURL(csvFile);
+                downloadLink.href = window.URL.createObjectURL(csvFile);
 
-            // লিঙ্কে ক্লিক ইভেন্ট যুক্ত করা
-            downloadLink.click();
-        }
-
-        function exportTableToCSV(filename) {
-            var csv = [];
-            var rows = document.querySelectorAll("#rechargeDataTable tr");
-
-            for (var i = 0; i < rows.length; i++) {
-                var row = [], cols = rows[i].querySelectorAll("td, th");
-
-                for (var j = 0; j < cols.length; j++) 
-                    row.push(cols[j].innerText);
-
-                csv.push(row.join(","));        
+                downloadLink.click();
             }
 
-            // CSV ফাইল ডাউনলোড করুন
-            downloadCSV(csv.join("\n"), filename);
-        }
+            function exportTableToCSV(filename) {
+                var csv = [];
+                var rows = document.querySelectorAll("#rechargeDataTable tr");
+
+                for (var i = 0; i < rows.length; i++) {
+                    var row = [], cols = rows[i].querySelectorAll("td, th");
+
+                    for (var j = 0; j < cols.length; j++) 
+                        row.push(cols[j].innerText);
+
+                    csv.push(row.join(","));        
+                }
+                downloadCSV(csv.join("\n"), filename);
+            }
+
+            function exportTableToPDF(filename) {
+                var { jsPDF } = window.jspdf;
+                var doc = new jsPDF();
+
+                doc.autoTable({ html: '#rechargeDataTable' });
+
+                doc.save(filename);
+            }
         $(document).ready(function(){
             $("#searchBtn").on('click',function(){
                 var fromDate=$("#fromDate").val();
@@ -353,9 +357,13 @@ include("include/users_right.php");
                             $("#FilterTable").removeClass('d-none');
                             $("#searchRow").addClass('d-none');
 
-                            $("<button class='btn btn-danger' style='margin-top: 10px;'>Export to CSV</button>").insertAfter("#rechargeDataTable").on('click', function() {
+                            $("<button class='btn-sm btn btn-danger' style='margin-top: 10px; margin-right: 10px;'>Export to CSV</button>").insertAfter("#rechargeDataTable").on('click', function() {
                                 exportTableToCSV('recharge_data.csv');
                             });
+                            $("<button class='btn-sm btn btn-success' style='margin-top: 10px; margin-left: 10px;'>Export to PDF</button>").insertAfter("#rechargeDataTable").on('click', function() {
+                                exportTableToPDF('recharge_data.pdf'); 
+                            });
+
                         }
                     }); 
                 }
