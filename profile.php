@@ -137,8 +137,8 @@ if (isset($_GET['clid'])) {
                     <div class="dropdown d-none d-md-block me-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="font-size-16">
-                                <?php if (isset($_SESSION['username'])) {
-                                    echo $_SESSION['username'];
+                                <?php if (isset($_SESSION['fullname'])) {
+                                    echo $_SESSION['fullname'];
                                 } ?>
                             </span>
                         </button>
@@ -147,7 +147,7 @@ if (isset($_GET['clid'])) {
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
@@ -1182,7 +1182,7 @@ radacct WHERE username='$username' AND  MONTH(acctstarttime)='$currentMonth'")) 
 
                                 <div class="form-group mb-1 ">
                                     <label>Payable Amount:</label>
-                                    <input id="MainAmount" disabled type="text" class="form-control form-control-sm" />
+                                    <input id="MainAmount"  type="text" class="form-control form-control-sm" />
 
                                 </div>
                                 <div class="form-group mb-1 ">
