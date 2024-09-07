@@ -38,11 +38,11 @@ include("include/users_right.php");
 
 
     <!-- Loader -->
-    <div id="preloader">
+    <!-- <div id="preloader">
         <div id="status">
             <div class="spinner"></div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -397,13 +397,8 @@ include("include/users_right.php");
                     <div class="row">
                         <div class="col-md-12 stretch-card">
                             <div class="card">
-                               
+                                
                                 <div class="card-body">
-                                    <div class="col-md-6 float-md-right grid-margin-sm-0">
-                                        <div class="form-group">
-
-                                        </div>
-                                    </div>
                                     <div class="table-responsive ">
                                         <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;" >
                                             <thead class="bg-success text-white" style="background-color: #2c845f !important;">
@@ -423,109 +418,7 @@ include("include/users_right.php");
                                                 </tr>
                                             </thead>
                                             <tbody id="customer-list">
-                                                <?php
-												if(isset($_GET["list"]))
-												{
-													$ExpMnthYr=$_GET["list"];
-													$sql="SELECT * FROM customers WHERE expiredate LIKE '%$ExpMnthYr%'";
-												}
-												else{
-													$sql="SELECT * FROM customers WHERE package=5";
-												}
                                                
-											   
-                                                $result = mysqli_query($con, $sql);
-
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-													$username = $rows["username"];
-
-                                                ?>
-
-                                                    <tr>
-													<td><input type="checkbox" Value="<?php echo $rows["id"]; ?>" name="checkAll[]" class="checkSingle"></td>
-                                                        <td><?php echo $rows['id']; ?></td>
-                                                        <td>
-														<?php 
-                                                            
-                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                            $chkc = $onlineusr->num_rows;
-                                                            if($chkc==1)
-                                                            {
-                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                            } else{
-                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-
-                                                            }
-                                                 
-                                                            
-                                                            ?>
-														
-														
-														
-														<a href="profile.php?clid=<?php echo $rows['id']; ?>"><?php echo $rows["fullname"]; ?></a></td>
-                                                        <td>
-                                                            <?php
-
-                                                            echo  $rows["package_name"];
-
-                                                            ?>
-
-                                                        </td>
-                                                        <td>
-                                                            <?php
-
-                                                            echo  $rows["price"];
-
-                                                            ?>
-
-                                                        </td>
-                                                        <td>
-                                                            <?php
-
-                                                            $expireDate = $rows["expiredate"];
-                                                            $todayDate = date("Y-m-d");
-                                                            if ($expireDate <= $todayDate) {
-                                                                echo "<span class='badge bg-danger'>Expired</span>";
-                                                            } else {
-                                                                echo $expireDate;
-                                                            }
-                                                            ?>
-                                                        </td>
-                                                        <td><?php echo $rows["expiredate"]; ?></td>
-                                                        <td><?php echo $rows["username"]; ?></td>
-                                                        <td><?php echo $rows["mobile"]; ?></td>
-                                                        <td>
-                                                            <?php
-                                                            $popID = $rows["pop"];
-                                                            $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
-                                                            while ($popRow = $allPOP->fetch_array()) {
-                                                                echo $popRow['pop'];
-                                                            }
-
-                                                            ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php $id = $rows["area"];
-                                                            $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-                                                            while ($popRow = $allArea->fetch_array()) {
-                                                                echo $popRow['name'];
-                                                            }
-
-                                                            ?>
-
-                                                        </td>
-
-                                                        <td>
-                                                            <a class="btn btn-info" href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-                                                            <a class="btn btn-success" href="profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
-                                                            </a>
-
-                                                            <!--<a href="customer_delete.php?clid=<?php echo $rows['id']; ?>" class="btn btn-danger deleteBtn" onclick=" return confirm('Are You Sure');" data-id=<?php echo $rows['id']; ?>><i class="fas fa-trash"></i>
-                                                            </a>-->
-
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -790,7 +683,6 @@ include("include/users_right.php");
 			});
 			
 			
-        $("#customers_table").DataTable();
 		
 		
 
@@ -940,6 +832,105 @@ include("include/users_right.php");
                 });
             }
         }
+    </script>
+
+
+    <script type="text/javascript">
+        var table;
+        $(document).ready(function(){
+
+            function loadPopOptions() {
+                $.ajax({
+                    url: 'include/pop_server.php?get_pop_data=1', 
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success==true) {
+                            var popOptions = '<label style="margin-left: 20px;"> ';
+                            popOptions += '<select class="pop_filter form-select">';
+                            popOptions += '<option value="">--Select POP--</option>';
+                            
+                        
+                            $.each(response.data, function(key, data) {
+                                popOptions += '<option value="'+data.id+'">'+data.pop+'</option>';
+                            });
+
+                            popOptions += '</select></label>';
+                            
+                            setTimeout(() => {
+                                $('.dataTables_length').append(popOptions);
+                                $('.select2').select2();
+                            }, 500);
+                        }
+                       
+                    }
+                });
+            }
+            loadPopOptions();
+
+                table=$('#customers_table').DataTable( {
+                    "searching": true,
+                    "paging": true,
+                    "info": false,
+                    "lengthChange":true ,
+                    "processing"		: true,
+                    "serverSide"		: true,
+                    "zeroRecords":    "No matching records found",
+                    "ajax"				: {
+                        url			: "include/customer_free_con_server.php",
+                        type		: 'GET',
+                    },
+                    "buttons": [			
+                {
+                    extend: 'copy',
+                    text: '<i class="fas fa-copy"></i> Copy',
+                    titleAttr: 'Copy',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'excel',
+                    text: '<i class="fas fa-file-excel"></i> Excel',
+                    titleAttr: 'Excel',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'csv',
+                    text: '<i class="fas fa-file-csv"></i> CSV',
+                    titleAttr: 'CSV',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'pdf',
+                    exportOptions: { columns: ':visible' },
+                    orientation: 'landscape',
+                    pageSize: "LEGAL",
+                    text: '<i class="fas fa-file-pdf"></i> PDF',
+                    titleAttr: 'PDF'
+                }, 
+                {
+                    extend: 'print',
+                    text: '<i class="fas fa-print"></i> Print',
+                    titleAttr: 'Print',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'colvis',
+                    text: '<i class="fas fa-list"></i> Column Visibility',
+                    titleAttr: 'Column Visibility'
+                }
+                ],
+            });
+            table.buttons().container().appendTo($('#export_buttonscc'));	
+        });
+         /* POP filter change event*/
+        $(document).on('change','.pop_filter',function(){
+        
+        var pop_filter_result = $('.pop_filter').val() == null ? '' : $('.pop_filter').val();
+
+            table.columns(9).search(pop_filter_result).draw();
+        
+        });
+
     </script>
 </body>
 
