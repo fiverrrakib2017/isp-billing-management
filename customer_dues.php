@@ -37,11 +37,11 @@ include("include/users_right.php");
 
 
     <!-- Loader -->
-    <div id="preloader">
+    <!-- <div id="preloader">
         <div id="status">
             <div class="spinner"></div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -75,7 +75,7 @@ include("include/users_right.php");
                     </button>
 
                     <div class="d-none d-sm-block ms-2">
-                        <h4 class="page-title">Customers</h4>
+                        <h4 class="page-title">Customers Dues/Unpaid</h4>
                     </div>
                 </div>
 
@@ -100,7 +100,7 @@ include("include/users_right.php");
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
@@ -219,9 +219,9 @@ include("include/users_right.php");
                                     </div>
                                     <br>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-end flex-wrap">
+                                <!-- <div class="d-flex justify-content-between align-items-end flex-wrap">
                                     <button data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" id="addBtn" style="margin-bottom: 12px;">&nbsp;&nbsp;New customer</button>
-                                </div>
+                                </div> -->
 
                                 <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -403,7 +403,6 @@ include("include/users_right.php");
                                         <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                    <!-- <th>Check All <input type="checkbox" id="checkedAll" name="checkedAll" value="Bike"></th> -->
                                                     <th>ID</th>
                                                     <th>Name</th>
                                                     <th>Package</th>
@@ -417,79 +416,17 @@ include("include/users_right.php");
                                                 </tr>
                                             </thead>
                                             <tbody id="customer-list">
-                                                <?php
-                                                //balance_amount>0
-                                               $sql="SELECT * FROM customers WHERE expiredate<DATE_ADD(now(), INTERVAL 10 DAY) AND pop='1'";
-                                                $result = mysqli_query($con, $sql);
 
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                ?>
-
-                                                    <tr>
-                                                        <td><?php echo $rows['id']; ?></td>
-                                                        <td><a href="profile.php?clid=<?php echo $rows['id']; ?>"><?php echo $rows["fullname"]; ?></a></td>
-                                                        <td>
-                                                            <?php
-
-                                                            echo  $rows["package_name"];
-                                                            // if ($allData = $con->query("SELECT * FROM radgroupcheck WHERE id='$packageId'")) {
-                                                            //     while ($packageName = $allData->fetch_array()) {
-                                                            //         echo  $packageName['groupname'];
-                                                            //     }
-                                                            // }
-
-                                                            ?>
-
-                                                        </td>
-                                                        <td><?php echo $rows["balance_amount"]; ?></td>
-                                                        <td>
-                                                            <?php
-
-                                                            $expireDate = $rows["expiredate"];
-                                                            $todayDate = date("Y-m-d");
-                                                            if ($expireDate <= $todayDate) {
-                                                                echo "<span class='badge bg-danger'>Expired</span>";
-                                                            } else {
-                                                                echo $expireDate;
-                                                            }
-                                                            ?>
-                                                        </td>
-                                                        <td><?php echo $rows["mobile"]; ?></td>
-                                                        
-                                                        <td>
-                                                            <?php
-                                                            $popID = $rows["pop"];
-                                                            $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
-                                                            while ($popRow = $allPOP->fetch_array()) {
-                                                                echo $popRow['pop'];
-                                                            }
-
-                                                            ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php $id = $rows["area"];
-                                                            $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-                                                            while ($popRow = $allArea->fetch_array()) {
-                                                                echo $popRow['name'];
-                                                            }
-
-                                                            ?>
-
-                                                        </td>
-
-                                                        <td>
-                                                            <a class="btn btn-info" href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-                                                            <a class="btn btn-success" href="profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
-                                                            </a>
-
-                                                            <a href="customer_delete.php?clid=<?php echo $rows['id']; ?>" class="btn btn-danger deleteBtn" onclick=" return confirm('Are You Sure');" data-id=<?php echo $rows['id']; ?>><i class="fas fa-trash"></i>
-                                                            </a>
-
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
                                             </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3"></td>
+                                                    <td colspan="3">
+                                                        <span  id="totalPrice"></span>
+                                                    </td>
+                                                    <td colspan="3"></td>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
@@ -620,155 +557,108 @@ include("include/users_right.php");
     <script src="assets/js/pages/datatables.init.js"></script>
 
     <script src="assets/js/app.js"></script>
-    <script type="text/javascript">
-        $("#customers_table").DataTable();
 
-        $(document).on('keyup', '#customer_username', function() {
-            var customer_username = $("#customer_username").val();
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    current_username: customer_username
-                },
-                success: function(response) {
-                    $("#usernameCheck").html(response);
-                }
-            });
-        });
-        
-        $(document).on('change', '#customer_pop', function() {
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    current_pop_name: pop_id
-                },
-                success: function(response) {
-                     $("#customer_area").html(response);
-                }
-            });
-        });
-        $(document).on('change', '#customer_pop', function() {
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    pop_name: pop_id,
-                    getCustomerPackage:0
-                },
-                success: function(response) {
-                     $("#customer_package").html(response);
-                }
-            });
-        });
-        $(document).on('change', '#customer_package', function() {
-            var packageId = $("#customer_package").val();
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    package_id: packageId,
-                    pop_id: pop_id,
-                    getPackagePrice:0
-                },
-                success: function(response) {
-                     $("#customer_price").val(response);
-                }
-            });
-        });
+     <script type="text/javascript">
+        var table;
+        $(document).ready(function(){
 
-
-
-
-        $("#customer_add").click(function() {
-            var fullname = $("#customer_fullname").val();
-            var package = $("#customer_package").val();
-            var username = $("#customer_username").val();
-            var password = $("#customer_password").val();
-            var mobile = $("#customer_mobile").val();
-            var address = $("#customer_address").val();
-            var expire_date = $("#customer_expire_date").val();
-            var area = $("#customer_area").val();
-            var pop = $("#customer_pop").val();
-            var nid = $("#customer_nid").val();
-            var con_charge = $("#customer_con_charge").val();
-            var price = $("#customer_price").val();
-            var remarks = $("#customer_remarks").val();
-            var status = $("#customer_status").val();
-            var user_type = <?php echo $auth_usr_type; ?>;
-
-            customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status)
-
-        });
-
-        function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status) {
-            if (fullname.length == 0) {
-                toastr.error("Customer name is require");
-            } else if (package.length == 0) {
-                toastr.error("Customer Package is require");
-            } else if (username.length == 0) {
-                toastr.error("Username is require");
-            } else if (password.length == 0) {
-                toastr.error("Password is require");
-            } else if (mobile.length == 0) {
-                toastr.error("Mobile number is require");
-            } else if (expire_date.length == 0) {
-                toastr.error("Expire Date is require");
-            } else if (pop.length == 0) {
-                toastr.error("POP/Branch is require");
-            } else if (area.length == 0) {
-                toastr.error("Area is require");
-            } else if (con_charge.length == 0) {
-                toastr.error("Connection Charge is require");
-            } else if (price.length == 0) {
-                toastr.error("price is require");
-            } else if (status.length == 0) {
-                toastr.error("Status is require");
-            } else {
-                $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-                var addCustomerData = 0;
+            function loadPopOptions() {
                 $.ajax({
-                    type: 'POST',
-                    url: 'include/customers_server.php',
-                    data: {
-                        addCustomerData: addCustomerData,
-                        fullname: fullname,
-                        package: package,
-                        username: username,
-                        password: password,
-                        mobile: mobile,
-                        address: address,
-                        expire_date: expire_date,
-                        area: area,
-                        pop: pop,
-                        con_charge: con_charge,
-                        price: price,
-                        remarks: remarks,
-                        nid: nid,
-                        status: status,
-                        user_type: user_type,
-                    },
-                    success: function(responseData) {
-                        if (responseData == 1) {
-                            toastr.success("Added Successfully");
-                            $("#addCustomerModal").modal('hide');
+                    url: 'include/pop_server.php?get_pop_data=1', 
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success==true) {
+                            var popOptions = '<label style="margin-left: 20px;"> ';
+                            popOptions += '<select class="pop_filter form-select">';
+                            popOptions += '<option value="">--Select POP--</option>';
+                            
+                        
+                            $.each(response.data, function(key, data) {
+                                popOptions += '<option value="'+data.id+'">'+data.pop+'</option>';
+                            });
+
+                            popOptions += '</select></label>';
+                            
                             setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            toastr.error(responseData);
+                                $('.dataTables_length').append(popOptions);
+                                $('.select2').select2();
+                            }, 500);
                         }
+                       
                     }
                 });
             }
-        }
+           // loadPopOptions();
+
+                table=$('#customers_table').DataTable( {
+                    "searching": true,
+                    "paging": true,
+                    "info": false,
+                    "lengthChange":true ,
+                    "processing"		: true,
+                    "serverSide"		: true,
+                    "zeroRecords":    "No matching records found",
+                    "ajax"				: {
+                        url			: "include/customers_dues_server.php",
+                        type		: 'GET',
+                        dataSrc     :function(json){
+                            var totalPrice = json.total_price;
+                            $('#totalPrice').html(totalPrice);
+                            return json.data;
+                        }
+                    },
+                    "buttons": [			
+                {
+                    extend: 'copy',
+                    text: '<i class="fas fa-copy"></i> Copy',
+                    titleAttr: 'Copy',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'excel',
+                    text: '<i class="fas fa-file-excel"></i> Excel',
+                    titleAttr: 'Excel',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'csv',
+                    text: '<i class="fas fa-file-csv"></i> CSV',
+                    titleAttr: 'CSV',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'pdf',
+                    exportOptions: { columns: ':visible' },
+                    orientation: 'landscape',
+                    pageSize: "LEGAL",
+                    text: '<i class="fas fa-file-pdf"></i> PDF',
+                    titleAttr: 'PDF'
+                }, 
+                {
+                    extend: 'print',
+                    text: '<i class="fas fa-print"></i> Print',
+                    titleAttr: 'Print',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'colvis',
+                    text: '<i class="fas fa-list"></i> Column Visibility',
+                    titleAttr: 'Column Visibility'
+                }
+                ],
+            });
+            table.buttons().container().appendTo($('#export_buttonscc'));	
+        });
+         /* POP filter change event*/
+        $(document).on('change','.pop_filter',function(){
+        
+        var pop_filter_result = $('.pop_filter').val() == null ? '' : $('.pop_filter').val();
+
+            table.columns(9).search(pop_filter_result).draw();
+        
+        });
+
     </script>
 </body>
 
