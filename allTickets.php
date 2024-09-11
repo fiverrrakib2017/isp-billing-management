@@ -1,118 +1,9 @@
 <?php
 include("include/security_token.php");
-include("include/db_connect.php");
 
 include("include/users_right.php");
 
-function timeAgo($startdate) {
-    /*Convert startdate to a timestamp*/ 
-    $startTimestamp = strtotime($startdate);
-    $currentTimestamp = time();
-    
-    /* Calculate the difference in seconds*/
-    $difference = $currentTimestamp - $startTimestamp;
 
-    /*Define time intervals*/ 
-    $units = [
-        'year' => 31536000,
-        'month' => 2592000,
-        'week' => 604800,
-        'day' => 86400,
-        'hour' => 3600,
-        'minute' => 60,
-        'second' => 1
-    ];
-
-    /*Check for each time unit*/ 
-    foreach ($units as $unit => $value) {
-        if ($difference >= $value) {
-            $time = floor($difference / $value);
-            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
-        }
-    }
-    /*If the difference is less than a second*/
-    return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
-}
-
-function get_complete_time( $endDate) {
-    /*Convert startdate to a timestamp*/ 
-    $startTimestamp = strtotime($endDate);
-    $currentTimestamp = time();
-    
-    /* Calculate the difference in seconds*/
-    $difference = $currentTimestamp - $startTimestamp;
-
-    /*Define time intervals*/ 
-    $units = [
-        'year' => 31536000,
-        'month' => 2592000,
-        'week' => 604800,
-        'day' => 86400,
-        'hour' => 3600,
-        'minute' => 60,
-        'second' => 1
-    ];
-
-    /*Check for each time unit*/ 
-    foreach ($units as $unit => $value) {
-        if ($difference >= $value) {
-            $time = floor($difference / $value);
-            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
-        }
-    }
-    /*If the difference is less than a second*/
-    return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
-
-    // /***Determine the appropriate time difference string***/ 
-    // if ($timeDifference < $minutes) {
-    //     $count = floor($timeDifference / $seconds);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' second' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $hours) {
-    //     $count = floor($timeDifference / $minutes);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' minute' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $days) {
-    //     $count = floor($timeDifference / $hours);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' hour' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $weeks) {
-    //     $count = floor($timeDifference / $days);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' day' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $months) {
-    //     $count = floor($timeDifference / $weeks);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' week' . ($count !== 1 ? 's' : '') . ' ago';
-    // } elseif ($timeDifference < $years) {
-    //     $count = floor($timeDifference / $months);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' month' . ($count !== 1 ? 's' : '') . ' ago';
-    // } else {
-    //     $count = floor($timeDifference / $years);
-    //     return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$count . ' year' . ($count !== 1 ? 's' : '') . ' ago';
-    // }
-}
-function acctual_work($startdate, $enddate) {
-    $startTimestamp = strtotime($startdate);
-    $endTimestamp = strtotime($enddate);
-    $time_difference = $endTimestamp - $startTimestamp;
-
-    // Define time periods in seconds
-    $units = [
-        'year' => 365 * 24 * 60 * 60,
-        'month' => 30 * 24 * 60 * 60,
-        'week' => 7 * 24 * 60 * 60,
-        'day' => 24 * 60 * 60,
-        'hour' => 60 * 60,
-        'minute' => 60,
-        'second' => 1,
-    ];
-
-    // Determine the appropriate time period
-    foreach ($units as $unit => $value) {
-        if ($time_difference >= $value) {
-            $count = floor($time_difference / $value);
-            return $count . ' ' . $unit . ($count > 1 ? 's' : '') . ' ';
-        }
-    }
-
-    return 'just now'; 
-}
 
 ?>
 <!doctype html>
@@ -151,11 +42,11 @@ function acctual_work($startdate, $enddate) {
 
 
     <!-- Loader -->
-    <div id="preloader">
+    <!-- <div id="preloader">
         <div id="status">
             <div class="spinner"></div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Begin page -->
     <div id="layout-wrapper">
@@ -214,7 +105,7 @@ function acctual_work($startdate, $enddate) {
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
@@ -351,224 +242,26 @@ function acctual_work($startdate, $enddate) {
                                         </div>
                                     </div>
                                     <div class="table-responsive">
-                                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <table id="tickets_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead class="bg-success text-white" style="background-color: #2c845f !important;">
                                                 <tr>
+                                                    <th>No.</th> 
                                                     <th>Status</th> 
                                                     <th>Created</th>
                                                     <th>Priority</th>
                                                     <th>Customer Name</th>
                                                     <th>Phone Number</th>
                                                     <th>Issues</th>
-                                                    <th>Pop/Area</th>
-                                                   
-                                                   
+                                                    <th>Pop/Area</th>                                                   
                                                     <th>Assigned Team</th>
                                                     <th>Ticket For</th>
-                                                    
                                                     <th>Acctual Work</th>
-                                                  
                                                     <th>Percentage</th>
                                                     <th>Note</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-
-                                                <?php
-                                                $sql = "SELECT * FROM `ticket` ORDER BY id DESC";
-                                                $result = mysqli_query($con, $sql);
-
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                ?>
-
-                                                    <tr>
-                                                        <td>
-                                                            <?php 
-                                                            $ticketType = $rows["ticket_type"];
-                                                            
-                                                            if ($ticketType === "Complete"): ?>
-                                                                
-                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
-                                                                    <span class="badge bg-success">Completed</span>
-                                                                </a>
-                                                            <?php elseif ($ticketType === "Active"): ?>
-                                                                
-                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
-                                                                    <span class="badge bg-danger">Active</span>
-                                                                </a>
-                                                            <?php elseif ($ticketType === "Close"): ?>
-                                                                
-                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
-                                                                    <span class="badge bg-success">Close</span>
-                                                                </a>
-                                                            <?php else: ?>
-                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $ticketType; ?></a>
-                                                            <?php endif; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php 
-                                                             $startdate = $rows["startdate"];
-                                                             echo timeAgo($startdate); 
-                                                            ?>
-                                                            
-                                                        </td>
-                                                        <td>
-                                                        <?php 
-                                                        /*Priority value from database*/ 
-                                                           $priority = $rows["priority"]; 
-
-                                                           $priorityLabel = '';
-                                                           
-                                                           switch ($priority) {
-                                                               case 1:
-                                                                   $priorityLabel = 'Low';
-                                                                   break;
-                                                               case 2:
-                                                                   $priorityLabel = 'Normal';
-                                                                   break;
-                                                               case 3:
-                                                                   $priorityLabel = 'Standard';
-                                                                   break;
-                                                               case 4:
-                                                                   $priorityLabel = 'Medium';
-                                                                   break;
-                                                               case 5:
-                                                                   $priorityLabel = 'High';
-                                                                   break;
-                                                               case 6:
-                                                                   $priorityLabel = 'Very High';
-                                                                   break;
-                                                               default:
-                                                                   $priorityLabel = 'Unknown'; 
-                                                                   break;
-                                                           }
-                                                           
-                                                           echo $priorityLabel;
-                                                          
-                                                        ?>
-                                                        </td>
-                                                        <td>
-                                                        <?php 
-                                                            $customer_id= $rows['customer_id']; 
-                                                            $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
-                                                            while ($stmr = $customer->fetch_array()) {
-                                                                 $cstmrID = $stmr['id'];
-																 $username = $stmr['username'];
-																 $cstmr_fullname = $stmr['fullname'];
-                                                            }
-                                                        ?>
-														
-                                                            <?php 
-                                                            
-                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                            $chkc = $onlineusr->num_rows;
-                                                            if($chkc==1)
-                                                            {
-                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                            } else{
-                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-
-                                                            }
-                                                 
-                                                            
-                                                            ?>
-                                                        
-                                                        
-                                                        <a href="profile.php?clid=<?php echo $cstmrID; ?>" target="_blank"> <?php echo $cstmr_fullname; ?></a> <br> (<?php echo $username; ?> ) </td>
-                                                        
-                                                        </td>
-                                                        <td>
-                                                         <?php 
-                                                         $customer_id= $rows['customer_id']; 
-                                                         $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
-                                                         while ($stmr = $customer->fetch_array()) {
-                                                            echo  $stmr['mobile'];
-                 
-                                                         }
-                                                         ?>
-                                                        </td>
-
-                                                        <td>
-                                                            <?php
-                                                            $complain_typeId = $rows["complain_type"];
-                                                            if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                while ($rowss = $allCom->fetch_array()) {
-                                                                    echo $rowss['topic_name'];
-                                                                }
-                                                            }
-                                                            ?>
-                                                        </td>
-                                                       
-                                                        <td>
-                                                             <?php
-                                         $customer_id = $rows["customer_id"];
-                                        $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
-                                        while ($stmr = $customer->fetch_array()) {
-                                            $customer_area_id= $stmr['area'];
-                                            $get_all_area=$con->query("SELECT * FROM area_list WHERE id=$customer_area_id"); 
-                                            while ($all_area = $get_all_area->fetch_array()) {
-                                               echo  $all_area['name'];
-                                            }
-
-                                        }
-
-                                                            ?>
-                                                        </td>
-                                                        
-                                                        
-                                                       
-                                                        
-                                                        <td>
-                                                             <?php 
-                                                            $stmt = $con->prepare("SELECT group_name FROM working_group WHERE id = ?");
-                                                            $stmt->bind_param("i", $rows['asignto']);
-                                                            $stmt->execute();
-                                                            $group_result = $stmt->get_result();
-
-                                                            if ($group_result->num_rows > 0) {
-                                                                while ($ro = $group_result->fetch_assoc()) {
-                                                                    echo htmlspecialchars($ro["group_name"]);
-                                                                }
-                                                            } else {
-                                                                echo "No assigned group";
-                                                            }
-
-                                                            /*Close the statement*/ 
-                                                            $stmt->close();
-                                                            ?>
-                                                                
-                                                            </td>
-                                                         <td><?php echo $rows["ticketfor"]; ?></td>
-                                                        
-                                                       
-                                                         <td>
-                                                            <?php 
-                                                             $startdate = $rows["startdate"];
-                                                             $enddate=$rows["enddate"];
-                                                            
-                                                             if ($enddate=='') {
-                                                                echo 'Work Processing..';
-                                                             }else{
-                                                                echo acctual_work( $startdate, $enddate); 
-                                                             }
-                                                            ?>
-                                                            
-                                                        </td>
-                                                       
-                                                        <td><?php echo $rows["parcent"]; ?></td>
-                                                        <td><?php echo $rows["notes"]; ?></td>
-
-                                                        <td>
-                                                            
-                                                            <a class="btn-sm btn btn-success" href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
-                                                            </a>
-
-
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
 
                                             </tbody>
                                         </table>
@@ -686,6 +379,103 @@ function acctual_work($startdate, $enddate) {
 
     <script src="assets/js/app.js"></script>
     <script type="text/javascript">
+        var table;
+        $(document).ready(function(){
+
+            function loadPopOptions() {
+                $.ajax({
+                    url: 'include/pop_server.php?get_pop_data=1', 
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success==true) {
+                            var popOptions = '<label style="margin-left: 20px;"> ';
+                            popOptions += '<select class="pop_filter form-select">';
+                            popOptions += '<option value="">--Select Area--</option>';
+                            
+                        
+                            $.each(response.data, function(key, data) {
+                                popOptions += '<option value="'+data.id+'">'+data.pop+'</option>';
+                            });
+
+                            popOptions += '</select></label>';
+                            
+                            setTimeout(() => {
+                                $('.dataTables_length').append(popOptions);
+                                $('.select2').select2();
+                            }, 500);
+                        }
+                       
+                    }
+                });
+            }
+            loadPopOptions();
+
+                table=$('#tickets_datatable').DataTable( {
+                    "searching": true,
+                    "paging": true,
+                    "info": false,
+                    "lengthChange":true ,
+                    "processing"		: true,
+                    "serverSide"		: true,
+                    "zeroRecords":    "No matching records found",
+                    "ajax"				: {
+                        url			: "include/tickets_server.php?get_tickets_data=1",
+                        type		: 'GET',
+                    },
+                    "order": [[0, 'desc']], 
+                    "buttons": [			
+                {
+                    extend: 'copy',
+                    text: '<i class="fas fa-copy"></i> Copy',
+                    titleAttr: 'Copy',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'excel',
+                    text: '<i class="fas fa-file-excel"></i> Excel',
+                    titleAttr: 'Excel',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'csv',
+                    text: '<i class="fas fa-file-csv"></i> CSV',
+                    titleAttr: 'CSV',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'pdf',
+                    exportOptions: { columns: ':visible' },
+                    orientation: 'landscape',
+                    pageSize: "LEGAL",
+                    text: '<i class="fas fa-file-pdf"></i> PDF',
+                    titleAttr: 'PDF'
+                }, 
+                {
+                    extend: 'print',
+                    text: '<i class="fas fa-print"></i> Print',
+                    titleAttr: 'Print',
+                    exportOptions: { columns: ':visible' }
+                }, 
+                {
+                    extend: 'colvis',
+                    text: '<i class="fas fa-list"></i> Column Visibility',
+                    titleAttr: 'Column Visibility'
+                }
+                ],
+            });
+            table.buttons().container().appendTo($('#export_buttonscc'));	
+        });
+         /* POP filter change event*/
+        $(document).on('change','.pop_filter',function(){
+        
+        var pop_filter_result = $('.pop_filter').val() == null ? '' : $('.pop_filter').val();
+
+            table.columns(9).search(pop_filter_result).draw();
+        
+        });                   
+
+
 
         $("#customer_ticket_btn").click(function() {
             // Get form values
@@ -709,9 +499,9 @@ function acctual_work($startdate, $enddate) {
             } else if (toDate.length == 0) {
                 toastr.error("To Date is require");
             } else {
-                // Make AJAX request to server
+                /*Make AJAX request to server*/ 
                 $.ajax({
-                    url: "include/tickets_server.php", // Provide the PHP file to handle the database insertion
+                    url: "include/tickets_server.php", 
                     type: "POST",
                     data: {
                         customer_id: customerId,
@@ -724,7 +514,7 @@ function acctual_work($startdate, $enddate) {
                         addTicketData: 0,
                     },
                     success: function(response) {
-                      // Handle the response from the server
+                      /* Handle the response from the server*/
                       if (response == 1) {
                             toastr.success("Ticket Added Success");
                             $("#addTicketModal").modal('hide');

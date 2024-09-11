@@ -1,6 +1,161 @@
 <?php
 include "db_connect.php";
 
+if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
+	require 'datatable.php';
+
+	$table = 'ticket';
+	$primaryKey = 'id';
+
+	$columns = array(
+		array('db' => 'id', 'dt' => 0),
+		array(
+			'db' => 'ticket_type', 
+			'dt' => 1,
+			'formatter'=>function($d, $row){
+				if ($d === "Complete") {
+					return '<a href="tickets_profile.php?id='.$row['id'].'"><span class="badge bg-success">Completed</span></a>';
+				} elseif ($d === "Active") {
+					return '<a href="tickets_profile.php?id='.$row['id'].'"><span class="badge bg-danger">Active</span></a>';
+				} elseif ($d === "Close") {
+					return '<a href="tickets_profile.php?id='.$row['id'].'"><span class="badge bg-success">Close</span></a>';
+				} else {
+					return '<a href="tickets_profile.php?id='.$row['id'].'">'.$d.'</a>';
+				}
+			}
+		),
+		array( 'db' => 'startdate', 'dt' => 2, 'formatter' => function($d, $row) {
+			return timeAgo($d);
+		}),
+		array( 'db' => 'priority', 'dt' => 3, 'formatter' => function($d, $row) {
+			// $priorityLabels = [
+			// 	1 => 'Low', 2 => 'Normal', 4 => 'Standard', 
+			// 	4 => 'Medium', 5 => 'High', 5 => 'Very High'
+			// ];
+			$priority = $row["priority"]; 
+
+			$priorityLabel = '';
+			
+			switch ($priority) {
+				case 1:
+					$priorityLabel = 'Low';
+					break;
+				case 2:
+					$priorityLabel = 'Normal';
+					break;
+				case 3:
+					$priorityLabel = 'Standard';
+					break;
+				case 4:
+					$priorityLabel = 'Medium';
+					break;
+				case 5:
+					$priorityLabel = 'High';
+					break;
+				case 6:
+					$priorityLabel = 'Very High';
+					break;
+				default:
+					$priorityLabel = 'Unknown'; 
+					break;
+			}
+			
+			return $priorityLabel;
+			// isset($priorityLabels[$d]) ? $priorityLabels[$d] : 'Unknown';
+		}),
+		array( 'db' => 'customer_id', 'dt' => 4, 'formatter' => function($d, $row) use ($con) {
+			/*Fetch customer details*/ 
+			$customerQuery = $con->query("SELECT * FROM customers WHERE id=$d");
+			if ($customer = $customerQuery->fetch_assoc()) {
+				$username = $customer['username'];
+				$fullname = $customer['fullname'];
+				$onlineCheck = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+				$statusIcon = ($onlineCheck->num_rows == 1) ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+				return $statusIcon . ' <a href="profile.php?clid=' . $customer['id'] . '" target="_blank">' . $fullname . '</a><br>(' . $username . ')';
+			}
+			return 'Unknown Customer';
+		}),
+		array( 'db' => 'customer_id', 'dt' => 5, 'formatter' => function($d, $row) use ($con) {
+			/*Fetch customer details*/ 
+			$customerQuery = $con->query("SELECT * FROM customers WHERE id=$d");
+			if ($customer = $customerQuery->fetch_assoc()) {
+				return  $customer['mobile'];
+				
+			}
+			return 'Unknown Customer';
+		}),
+		array( 'db' => 'complain_type', 'dt' => 6, 'formatter' => function($d, $row) use ($con) {
+			/* Fetch complain type*/
+			$complainQuery = $con->query("SELECT * FROM ticket_topic WHERE id='$d'");
+			if ($complain = $complainQuery->fetch_assoc()) {
+				return $complain['topic_name'];
+			}
+			return 'Unknown Topic';
+		}),
+		array( 'db' => 'customer_id', 'dt' => 7, 'formatter' => function($d, $row) use ($con) {
+			/*Fetch customer area*/ 
+			$customerQuery = $con->query("SELECT * FROM customers WHERE id=$d");
+			if ($customer = $customerQuery->fetch_assoc()) {
+				$area_id = $customer['area'];
+				$areaQuery = $con->query("SELECT * FROM area_list WHERE id=$area_id");
+				if ($area = $areaQuery->fetch_assoc()) {
+					return $area['name'];
+				}
+			}
+			return 'Unknown Area';
+		}),
+		array( 'db' => 'asignto', 'dt' => 8, 'formatter' => function($d, $row) use ($con) {
+			/*Fetch assigned group*/ 
+			$groupQuery = $con->prepare("SELECT group_name FROM working_group WHERE id = ?");
+			$groupQuery->bind_param("i", $d);
+			$groupQuery->execute();
+			$groupResult = $groupQuery->get_result();
+			if ($group = $groupResult->fetch_assoc()) {
+				return htmlspecialchars($group['group_name']);
+			}
+			return 'No assigned group';
+		}),
+		array(
+			'db' => 'ticketfor', 
+			'dt' => 9,
+		),
+		array(
+			'db'=>'startdate',
+			'dt'=>10,
+			'formatter'=>function($d, $row){
+				$startdate = $row["startdate"];
+				$enddate=$row["enddate"];
+				if ($enddate=='') {
+					return  'Work Processing..';
+				 }else{
+					return acctual_work( $startdate, $enddate); 
+				 }
+			}
+		),
+		array(
+			'db'=>'parcent',
+			'dt'=>11,
+		),
+		array(
+			'db'=>'notes',
+			'dt'=>12,
+		),
+		array(
+			'db'=>'id',
+			'dt'=>13,
+			'formatter'=>function($d, $row){
+				return '<a class="btn-sm btn btn-success" href="tickets_profile.php?id='.$row['id'].'"><i class="fas fa-eye"></i></a>'; 
+			}
+		),
+		
+		
+	);
+	$condition = ""; 
+	/* Output JSON for DataTables to handle*/
+	echo json_encode(
+		SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns,null, $condition)
+	);
+}
 if (isset($_POST['get_area']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $customerId = $_POST['customer_id'];
 
@@ -119,4 +274,62 @@ if (isset($_POST['updateTicketTopic'])) {
 	} else {
 		echo "Error: " . $sql . "<br>" . $con->error;
 	}
+}
+
+
+function timeAgo($startdate) {
+    /*Convert startdate to a timestamp*/ 
+    $startTimestamp = strtotime($startdate);
+    $currentTimestamp = time();
+    
+    /* Calculate the difference in seconds*/
+    $difference = $currentTimestamp - $startTimestamp;
+
+    /*Define time intervals*/ 
+    $units = [
+        'year' => 31536000,
+        'month' => 2592000,
+        'week' => 604800,
+        'day' => 86400,
+        'hour' => 3600,
+        'minute' => 60,
+        'second' => 1
+    ];
+
+    /*Check for each time unit*/ 
+    foreach ($units as $unit => $value) {
+        if ($difference >= $value) {
+            $time = floor($difference / $value);
+            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
+        }
+    }
+    /*If the difference is less than a second*/
+    return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
+}
+
+function acctual_work($startdate, $enddate) {
+    $startTimestamp = strtotime($startdate);
+    $endTimestamp = strtotime($enddate);
+    $time_difference = $endTimestamp - $startTimestamp;
+
+    // Define time periods in seconds
+    $units = [
+        'year' => 365 * 24 * 60 * 60,
+        'month' => 30 * 24 * 60 * 60,
+        'week' => 7 * 24 * 60 * 60,
+        'day' => 24 * 60 * 60,
+        'hour' => 60 * 60,
+        'minute' => 60,
+        'second' => 1,
+    ];
+
+    // Determine the appropriate time period
+    foreach ($units as $unit => $value) {
+        if ($time_difference >= $value) {
+            $count = floor($time_difference / $value);
+            return $count . ' ' . $unit . ($count > 1 ? 's' : '') . ' ';
+        }
+    }
+
+    return 'just now'; 
 }

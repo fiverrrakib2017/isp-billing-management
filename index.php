@@ -65,7 +65,7 @@ function timeAgo($startdate) {
 <!-- C3 Chart css -->
         <link href="assets/libs/c3/c3.min.css" rel="stylesheet" type="text/css">
         <link href="css/toastr/toastr.min.css" rel="stylesheet" type="text/css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"> </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"> </script>
 </head>
 
 <body data-sidebar="dark">
@@ -1771,7 +1771,7 @@ $cronupdt = $con->query("SELECT * FROM cron");
 
     <script type="text/javascript">
 	
-	
+	$('#menu_select_box').select2();
 	var chart=new Chartist.Line("#simple-line-chart",{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
 		series:[
 		[<?php 
