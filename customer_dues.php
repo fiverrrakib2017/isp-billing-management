@@ -19,7 +19,7 @@ include("include/users_right.php");
     <!-- DataTables -->
     <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
     <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
-
+	<link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
     <!-- Responsive datatable examples -->
     <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
 
@@ -535,7 +535,7 @@ include("include/users_right.php");
     <script src="assets/libs/metismenu/metisMenu.min.js"></script>
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
-
+    <script src="assets/libs/select2/js/select2.min.js"></script>
     <!-- Required datatable js -->
     <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -562,34 +562,34 @@ include("include/users_right.php");
         var table;
         $(document).ready(function(){
 
-            function loadPopOptions() {
+            function loadareaOptions() {
                 $.ajax({
-                    url: 'include/pop_server.php?get_pop_data=1', 
+                    url: 'include/area_server.php?get_area_data=1', 
                     type: 'GET',
                     dataType: 'json',
                     success: function(response) {
                         if (response.success==true) {
                             var popOptions = '<label style="margin-left: 20px;"> ';
-                            popOptions += '<select class="pop_filter form-select">';
-                            popOptions += '<option value="">--Select POP--</option>';
+                            popOptions += '<select class="area_filter form-select">';
+                            popOptions += '<option value="">--Select Area--</option>';
                             
                         
                             $.each(response.data, function(key, data) {
-                                popOptions += '<option value="'+data.id+'">'+data.pop+'</option>';
+                                popOptions += '<option value="'+data.id+'">'+data.name+'</option>';
                             });
 
                             popOptions += '</select></label>';
                             
                             setTimeout(() => {
                                 $('.dataTables_length').append(popOptions);
-                                $('.select2').select2();
+                                $('.area_filter').select2(); 
                             }, 500);
                         }
                        
                     }
                 });
             }
-           // loadPopOptions();
+            loadareaOptions();
 
                 table=$('#customers_table').DataTable( {
                     "searching": true,
@@ -651,13 +651,13 @@ include("include/users_right.php");
             table.buttons().container().appendTo($('#export_buttonscc'));	
         });
          /* POP filter change event*/
-        $(document).on('change','.pop_filter',function(){
+         $(document).on('change','.area_filter',function(){
         
-        var pop_filter_result = $('.pop_filter').val() == null ? '' : $('.pop_filter').val();
+        var area_filter_result = $('.area_filter').val() == null ? '' : $('.area_filter').val();
 
-            table.columns(9).search(pop_filter_result).draw();
+            table.columns(7).search(area_filter_result).draw();
         
-        });
+        });  
 
     </script>
 </body>

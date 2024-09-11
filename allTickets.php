@@ -351,7 +351,7 @@ include("include/users_right.php");
     <script src="assets/libs/simplebar/simplebar.min.js"></script>
     <script src="assets/libs/node-waves/waves.min.js"></script>
 	<script src="assets/libs/select2/js/select2.min.js"></script>
-        <script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
+    <script src="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js"></script>
 
     <!-- Required datatable js -->
     <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -378,7 +378,7 @@ include("include/users_right.php");
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
-            function loadPopOptions() {
+            function loadAreaOptions() {
                 $.ajax({
                     url: 'include/area_server.php?get_area_data=1', 
                     type: 'GET',
@@ -405,7 +405,7 @@ include("include/users_right.php");
                     }
                 });
             }
-            loadPopOptions();
+            loadAreaOptions();
 
                 table=$('#tickets_datatable').DataTable( {
                     "searching": true,
