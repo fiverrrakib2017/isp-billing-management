@@ -144,7 +144,9 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 			'db'=>'id',
 			'dt'=>13,
 			'formatter'=>function($d, $row){
-				return '<a class="btn-sm btn btn-success" href="tickets_profile.php?id='.$row['id'].'"><i class="fas fa-eye"></i></a>'; 
+				return '
+				<button type="button" name="settings_button" data-id='.$row['id'].' class="btn-sm btn btn-danger"> <i class="fas fa-cog"></i></button>
+				<a class="btn-sm btn btn-success" href="tickets_profile.php?id='.$row['id'].'"><i class="fas fa-eye"></i></a>'; 
 			}
 		),
 		
@@ -189,6 +191,81 @@ if (isset($_POST['get_area']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+if (isset($_GET['get_single_ticket']) && $_SERVER['REQUEST_METHOD']=='GET') {
+	
+	if (isset($_GET['id']) && !empty($_GET['id'])) {
+        $id=$_GET['id']; 
+
+        $stmt = $con->prepare("SELECT * FROM ticket WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            echo json_encode([
+                'success'=>true, 
+                'message'=>'success', 
+                'data'=>$row, 
+            ]); 
+        }else {
+            echo json_encode([
+                'success'=>false, 
+                'message'=>'Not Found',
+            ]);  
+        }
+
+    }
+}
+if (isset($_GET['get_working_group']) && $_GET['get_working_group'] == 'true') {
+    $stmt2 = $con->prepare("SELECT * FROM working_group");
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+    
+    $data = [];
+    while ($row = $result2->fetch_assoc()) {
+        $data[] = [
+            'id' => $row['id'],
+            'name' => $row['group_name'] 
+        ];
+    }
+    
+    echo json_encode([
+        'success' => true,
+        'data' => $data
+    ]);
+}
+
+if (isset($_GET['add_ticket_settings']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $tickId   = $_POST["ticket_id"];
+    $type     = $_POST["ticket_type"];
+    $progress = $_POST["progress"];
+    $comment  = $_POST["comment"];
+    $assigned = $_POST["assigned"];
+
+    $stmt1 = $con->prepare("INSERT INTO ticket_details (tcktid, status, datetm, comments, parcent, asignto) VALUES (?, ?, NOW(), ?, ?, ?)");
+    $stmt1->bind_param('issss', $tickId, $type, $comment, $progress, $assigned);
+    
+    if ($stmt1->execute()) {
+        /*Update Tickets*/ 
+        $stmt2 = $con->prepare("UPDATE ticket SET notes=?, ticket_type = ?, asignto=?, parcent = ?, enddate = NOW() WHERE id = ?");
+        $stmt2->bind_param('ssisi', $comment, $type, $assigned, $progress, $tickId);
+        
+        if ($stmt2->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Ticket settings updated successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update ticket.'.$stmt->error]);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to insert ticket details.']);
+    }
+    
+    /*Close the statement*/
+    $stmt1->close();
+    $stmt2->close();
+}
+
 if (isset($_POST["updateTicket"])) {
 	$id = $_POST["id"];
 	$ticket_type = $_POST["ticket_type"];
@@ -224,8 +301,8 @@ if (isset($_POST["addTicketData"])) {
 		}
 	}
 
-	$result = $con->query("INSERT INTO ticket (customer_id, asignto, ticketfor, complain_type, startdate, notes,priority) 
-	VALUES ('$customerId', '$assignedTo', '$ticketFor', '$complainType', NOW(), '$notes','$priority')");
+	$result = $con->query("INSERT INTO ticket (customer_id, asignto, ticketfor, complain_type, startdate, notes,parcent,priority) 
+	VALUES ('$customerId', '$assignedTo', '$ticketFor', '$complainType', NOW(), '$notes','0%','$priority')");
 	if ($result == true) {
 		echo 1;
 	} else {

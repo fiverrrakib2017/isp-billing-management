@@ -344,6 +344,67 @@ include("include/users_right.php");
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
+
+    <div class="modal fade" id="settings_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header  bg-info">
+                    <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Settings <i class="fas fa-cog"></i></h5>
+                    
+                </div>
+                <form action="include/tickets_server.php?add_ticket_settings=true" method="POST" id="settings_modal_form">
+                    <div class="modal-body">
+                        <div class="form-group d-none">
+                            <input type="text" name="ticket_id" value="">
+                        </div>
+                        <div class="form-group mb-2">
+                               <label>Ticket Status</label>
+                            <select id="ticket_type" name="ticket_type" class="form-select" required>
+                                <option value="">Select</option>
+                                <option value="Active">Active</option>
+                                <option value="New" >New</option>
+                                <option value="Open">Open</option>
+                                <option value="Complete">Complete</option>
+                                <option value="Close">Close</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Progress</label>
+                                <select id="progress" name="progress" class="form-select" required>
+                                    <option value="">Select</option>
+                                    <option value="0%">0%</option>
+                                    <option value="15%">15%</option>
+                                    <option value="25%">25%</option>
+                                    <option value="35%">35%</option>
+                                    <option value="45%">45%</option>
+                                    <option value="55%">55%</option>
+                                    <option value="65%">65%</option>
+                                    <option value="75%">75%</option>
+                                    <option value="85%">85%</option>
+                                    <option value="95%">95%</option>
+                                    <option value="100%">100%</option>
+                                </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="">Assigned To</label>
+                            <select name="assigned" id="assigned" class="form-select" required>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Write Comment</label> 
+                            <textarea class="form-control"  rows="5" name="comment" placeholder="Enter Your Comment" style="height: 89px;"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <!-- JAVASCRIPT -->
     <script src="assets/libs/jquery/jquery.min.js"></script>
     <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -471,7 +532,99 @@ include("include/users_right.php");
         
         });                   
 
+        $(document).on('click', 'button[name="settings_button"]', function() {
+            let dataId=$(this).data('id'); 
+            $.ajax({
+                url: "include/tickets_server.php?get_single_ticket=true", 
+                type: "GET",
+                data: { 
+                    id:dataId,
+                },
+                dataType:'json',
+                success: function(response) {
+                    if (response.success == true) {
+                        console.log(response); 
+                        $("#settings_modal input[name='ticket_id']").val(response.data.id);
+                        $("#settings_modal select[name='ticket_type']").val(response.data.ticket_type);
+                        $("#settings_modal #progress").val(response.data.parcent);
+                        $("#settings_modal textarea[name='comment']").val(response.data.notes);
+                         $("#settings_modal select[name='assigned']").val(response.data.asignto);
+                        $("#settings_modal").modal('show');
+                    }
+                }
+            });
+            
+        });
+        __load_assign_option()
+        function __load_assign_option(){
+            $.ajax({
+                url: "include/tickets_server.php?get_working_group=true",
+                type: "GET",
+                dataType:'json',
+                success: function(response) {
+                    if (response.success == true) {
+                        let assignedSelect = $("#settings_modal select[name='assigned']");
+                        assignedSelect.empty();  
+                        
+                        $.each(response.data, function(index, item) {
+                            assignedSelect.append(new Option(item.name, item.id));
+                        });
+                    } else {
+                        console.log("No data found or an error occurred.");
+                    }
+                }
+            });
+        }
+        $("#settings_modal_form").submit(function(e) {
+            e.preventDefault();
 
+            /* Get the submit button */
+            var submitBtn = $(this).find('button[type="submit"]');
+            var originalBtnText = submitBtn.html();
+
+            submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden"></span>');
+            submitBtn.prop('disabled', true);
+
+            var form = $(this);
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType:'json',
+                success: function(response) {
+                    if (response.success) {
+                        $("#settings_modal").modal('hide');
+                        toastr.success(response.message);
+                        $('#tickets_datatable').DataTable().ajax.reload();
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.status === 422) { 
+                        /* Validation error*/
+                        var errors = xhr.responseJSON.errors;
+
+                        /* Loop through the errors and show them using toastr*/
+                        $.each(errors, function(field, messages) {
+                            $.each(messages, function(index, message) {
+                                /* Display each error message*/
+                                toastr.error(message); 
+                            });
+                        });
+                    } else {
+                        /*General error message*/ 
+                        toastr.error('An error occurred. Please try again.');
+                    }
+                },
+                complete: function() {
+                    submitBtn.html(originalBtnText);
+                    submitBtn.prop('disabled', false);
+                }
+            });
+        });
 
         $("#customer_ticket_btn").click(function() {
             // Get form values
