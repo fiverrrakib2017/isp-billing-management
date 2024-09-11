@@ -71,7 +71,7 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 				$fullname = $customer['fullname'];
 				$onlineCheck = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
 				$statusIcon = ($onlineCheck->num_rows == 1) ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-				return $statusIcon . ' <a href="profile.php?clid=' . $customer['id'] . '" target="_blank">' . $fullname . '</a><br>(' . $username . ')';
+				return $statusIcon . ' <a href="profile.php?clid=' . $customer['id'] . '" >' . $fullname . '</a><br>(' . $username . ')';
 			}
 			return 'Unknown Customer';
 		}),

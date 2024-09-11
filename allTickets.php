@@ -22,7 +22,7 @@ include("include/users_right.php");
     <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
     <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
 
-           <link href="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
+    <link href="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
 
     <!-- Bootstrap Css -->
     <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
@@ -32,7 +32,8 @@ include("include/users_right.php");
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
 	        
-			
+<link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+		
 			
 
 
@@ -236,11 +237,7 @@ include("include/users_right.php");
                         <div class="col-md-12 stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="col-md-6 float-md-right grid-margin-sm-0">
-                                        <div class="form-group">
-
-                                        </div>
-                                    </div>
+                                    <!-- <div id="export_buttonscc" class="mb-3"></div> -->
                                     <div class="table-responsive">
                                         <table id="tickets_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead class="bg-success text-white" style="background-color: #2c845f !important;">
@@ -375,34 +372,33 @@ include("include/users_right.php");
     <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
     <!-- Datatable init js -->
     <script src="assets/js/pages/datatables.init.js"></script>
-        <script src="assets/js/pages/form-advanced.init.js"></script>
+        <!-- <script src="assets/js/pages/form-advanced.init.js"></script> -->
 
     <script src="assets/js/app.js"></script>
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
-
             function loadPopOptions() {
                 $.ajax({
-                    url: 'include/pop_server.php?get_pop_data=1', 
+                    url: 'include/area_server.php?get_area_data=1', 
                     type: 'GET',
                     dataType: 'json',
                     success: function(response) {
                         if (response.success==true) {
                             var popOptions = '<label style="margin-left: 20px;"> ';
-                            popOptions += '<select class="pop_filter form-select">';
+                            popOptions += '<select class="area_filter form-select">';
                             popOptions += '<option value="">--Select Area--</option>';
                             
                         
                             $.each(response.data, function(key, data) {
-                                popOptions += '<option value="'+data.id+'">'+data.pop+'</option>';
+                                popOptions += '<option value="'+data.id+'">'+data.name+'</option>';
                             });
 
                             popOptions += '</select></label>';
                             
                             setTimeout(() => {
                                 $('.dataTables_length').append(popOptions);
-                                $('.select2').select2();
+                                $('.area_filter').select2(); 
                             }, 500);
                         }
                        
@@ -424,54 +420,54 @@ include("include/users_right.php");
                         type		: 'GET',
                     },
                     "order": [[0, 'desc']], 
-                    "buttons": [			
-                {
-                    extend: 'copy',
-                    text: '<i class="fas fa-copy"></i> Copy',
-                    titleAttr: 'Copy',
-                    exportOptions: { columns: ':visible' }
-                }, 
-                {
-                    extend: 'excel',
-                    text: '<i class="fas fa-file-excel"></i> Excel',
-                    titleAttr: 'Excel',
-                    exportOptions: { columns: ':visible' }
-                }, 
-                {
-                    extend: 'csv',
-                    text: '<i class="fas fa-file-csv"></i> CSV',
-                    titleAttr: 'CSV',
-                    exportOptions: { columns: ':visible' }
-                }, 
-                {
-                    extend: 'pdf',
-                    exportOptions: { columns: ':visible' },
-                    orientation: 'landscape',
-                    pageSize: "LEGAL",
-                    text: '<i class="fas fa-file-pdf"></i> PDF',
-                    titleAttr: 'PDF'
-                }, 
-                {
-                    extend: 'print',
-                    text: '<i class="fas fa-print"></i> Print',
-                    titleAttr: 'Print',
-                    exportOptions: { columns: ':visible' }
-                }, 
-                {
-                    extend: 'colvis',
-                    text: '<i class="fas fa-list"></i> Column Visibility',
-                    titleAttr: 'Column Visibility'
-                }
-                ],
+                    "buttons": [
+                    {
+                        extend: 'copy',
+                        text: '<i class="fas fa-copy"></i> Copy',
+                        titleAttr: 'Copy',
+                        exportOptions: { columns: ':visible' }
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        titleAttr: 'Excel',
+                        exportOptions: { columns: ':visible' }
+                    },
+                    {
+                        extend: 'csv',
+                        text: '<i class="fas fa-file-csv"></i> CSV',
+                        titleAttr: 'CSV',
+                        exportOptions: { columns: ':visible' }
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: { columns: ':visible' },
+                        orientation: 'landscape',
+                        pageSize: "LEGAL",
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        titleAttr: 'PDF'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        exportOptions: { columns: ':visible' }
+                    },
+                    {
+                        extend: 'colvis',
+                        text: '<i class="fas fa-list"></i> Column Visibility',
+                        titleAttr: 'Column Visibility'
+                    }
+                ]
             });
-            table.buttons().container().appendTo($('#export_buttonscc'));	
+            //table.buttons().container().appendTo($('#export_buttonscc'));	
         });
          /* POP filter change event*/
-        $(document).on('change','.pop_filter',function(){
+        $(document).on('change','.area_filter',function(){
         
-        var pop_filter_result = $('.pop_filter').val() == null ? '' : $('.pop_filter').val();
+        var area_filter_result = $('.area_filter').val() == null ? '' : $('.area_filter').val();
 
-            table.columns(9).search(pop_filter_result).draw();
+            table.columns(7).search(area_filter_result).draw();
         
         });                   
 
