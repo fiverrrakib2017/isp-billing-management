@@ -266,6 +266,102 @@ if (isset($_GET['add_ticket_settings']) && $_SERVER['REQUEST_METHOD'] == 'POST')
     $stmt2->close();
 }
 
+if (isset($_GET['get_all_customer'])&& $_SERVER['REQUEST_METHOD']=='GET') {
+	$result = $con->query("SELECT id,username,fullname,mobile FROM customers");
+    $customers = [];
+    while ($row = $result->fetch_assoc()) {
+        $customers[] = $row;
+    }
+    echo json_encode(['success' => true, 'data' => $customers]);
+    exit;
+}
+if (isset($_POST['get_complain_type'])&& $_SERVER['REQUEST_METHOD']=='POST') {
+	$result = $con->query("SELECT id,topic_name FROM ticket_topic WHERE user_type=1");
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+    echo json_encode(['success' => true, 'data' => $data]);
+    exit;
+}
+if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+	$errors = [];
+
+	/* Sanitize input values */
+	$customer_id = isset($_POST["customer_id"]) ? trim($_POST["customer_id"]) : '';
+	$ticket_for = isset($_POST["ticket_for"]) ? trim($_POST["ticket_for"]) : '';
+	$complain_type = isset($_POST["ticket_complain_type"]) ? trim($_POST["ticket_complain_type"]) : '';
+	$assigned = isset($_POST["assigned"]) ? trim($_POST["assigned"]) : '';
+	/* Use trim to remove unwanted spaces*/
+	$note = isset($_POST["notes"]) ? trim($_POST["notes"]) : ''; 
+	$priority = isset($_POST["ticket_priority"]) ? trim($_POST["ticket_priority"]) : '';
+	
+	/* Validate customer_id */
+	if (empty($customer_id)) {
+		$errors['customer_id'] = "Customer ID is required.";
+	}
+	
+	/* Validate ticket_for */
+	if (empty($ticket_for)) {
+		$errors['ticket_for'] = "Ticket For is required.";
+	}
+	
+	/* Validate complain_type */
+	if (empty($complain_type)) {
+		$errors['ticket_complain_type'] = "Complain Type is required.";
+	}
+	
+	/* Validate assigned */
+	if (empty($assigned)) {
+		$errors['assigned'] = "Assigned field is required.";
+	}
+	
+	/* Validate priority */
+	if (empty($priority)) {
+		$errors['ticket_priority'] = "Priority is required.";
+	}
+	
+	/* If validation errors exist, return errors */
+	if (!empty($errors)) {
+		echo json_encode([
+			'success' => false,
+			'errors' => $errors
+		]);
+		exit;
+	}
+	
+	/* If no validation errors, continue with the rest of your logic */
+	
+    /* If no errors, continue with processing*/
+    $customerPopId = null;
+    if ($allCstmr = $con->query("SELECT pop FROM customers WHERE id=$customer_id")) {
+        $customerData = $allCstmr->fetch_assoc();
+        $customerPopId = $customerData['pop'];
+    }
+
+    /*Insert query*/ 
+    $stmt = $con->prepare("INSERT INTO ticket (`customer_id`, `ticket_type`, `asignto`, `ticketfor`, `pop_id`, `complain_type`, `startdate`, `enddate`, `user_type`, `notes`, `parcent`, `priority`) VALUES (?, 'Active', ?, ?, ?, ?, NOW(), NULL, 1, ?, '0%', ?)");
+    $stmt->bind_param('iissssi', $customer_id, $assigned, $ticket_for, $customerPopId, $complain_type, $note, $priority);
+
+    $result = $stmt->execute();
+
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Ticket Added Successfully!'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error: ' . $stmt->error
+        ]);
+    }
+
+    $stmt->close();
+}
+
+
+
 if (isset($_POST["updateTicket"])) {
 	$id = $_POST["id"];
 	$ticket_type = $_POST["ticket_type"];

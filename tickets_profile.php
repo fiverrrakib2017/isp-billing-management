@@ -402,7 +402,8 @@ if(isset($_GET['id'])){
                            </div>
                         </div>
                    </div>
-                   <button class="btn btn-success" type="button" id="addCommentBtn">Add Comment</button>
+                   <!-- <button class="btn btn-success" type="button" id="addCommentBtn">Add Comment</button> -->
+                   <button class="btn btn-success" type="button" >Add Comment</button>
                 </div>
             </div>
 
