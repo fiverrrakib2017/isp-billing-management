@@ -32,9 +32,25 @@ include("include/users_right.php");
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
 	        
-<link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-		
-			
+    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+	<style>
+        div#tickets_datatable_filter {
+            display: none;
+        }
+        div#tickets_datatable_length {
+            display: flex;
+        }
+        .customer_filter {
+            width: 400px !important;
+        }
+        @media (min-width: 600px) {
+            .customer_filter {
+                width: 200px !important; 
+            }
+            
+        }
+    </style>
+
 
 
 </head>
@@ -489,12 +505,16 @@ include("include/users_right.php");
     <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
     <!-- Datatable init js -->
     <script src="assets/js/pages/datatables.init.js"></script>
+    <script src="assets/js/app.js"></script>
         <!-- <script src="assets/js/pages/form-advanced.init.js"></script> -->
 
     <script src="assets/js/app.js"></script>
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
+            loadAreaOptions();
+            loadCustomerOptions(); 
+
             function loadAreaOptions() {
                 $.ajax({
                     url: 'include/area_server.php?get_area_data=1', 
@@ -502,7 +522,7 @@ include("include/users_right.php");
                     dataType: 'json',
                     success: function(response) {
                         if (response.success==true) {
-                            var popOptions = '<label style="margin-left: 30px;"> ';
+                            var popOptions = '<label style="margin-left: 10px;"> ';
                             popOptions += '<select class="area_filter form-select select2">';
                             popOptions += '<option value="">--Select Area--</option>';
                             
@@ -538,81 +558,103 @@ include("include/users_right.php");
                     }
                 });
             }
-            loadAreaOptions();
-                
+           
+            function loadCustomerOptions() {
+                $.ajax({
+                url: 'include/tickets_server.php?get_all_customer=true',
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success==true) {
+                            var customerOptions = '<label style="margin-left: 10px;"> ';
+                            customerOptions += '<select class="customer_filter form-select select2">';
+                            customerOptions += '<option value="">--Select Customer--</option>';
+                            
+                        
+                            $.each(response.data, function(key, customer) {
+                                customerOptions += '<option value="'+customer.id+'">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>';
+                            });
 
-                table=$('#tickets_datatable').DataTable( {
-                    "searching": true,
-                    "paging": true,
-                    "info": false,
-                    "lengthChange":true ,
-                    "processing"		: true,
-                    "serverSide"		: true,
-                    "zeroRecords":    "No matching records found",
-                    "ajax"				: {
-                        url			: "include/tickets_server.php?get_tickets_data=1",
-                        type		: 'GET',
-                    },
-                    "order": [[0, 'desc']], 
-                    "buttons": [
-                    {
-                        extend: 'copy',
-                        text: '<i class="fas fa-copy"></i> Copy',
-                        titleAttr: 'Copy',
-                        exportOptions: { columns: ':visible' }
-                    },
-                    {
-                        extend: 'excel',
-                        text: '<i class="fas fa-file-excel"></i> Excel',
-                        titleAttr: 'Excel',
-                        exportOptions: { columns: ':visible' }
-                    },
-                    {
-                        extend: 'csv',
-                        text: '<i class="fas fa-file-csv"></i> CSV',
-                        titleAttr: 'CSV',
-                        exportOptions: { columns: ':visible' }
-                    },
-                    {
-                        extend: 'pdf',
-                        exportOptions: { columns: ':visible' },
-                        orientation: 'landscape',
-                        pageSize: "LEGAL",
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        titleAttr: 'PDF'
-                    },
-                    {
-                        extend: 'print',
-                        text: '<i class="fas fa-print"></i> Print',
-                        titleAttr: 'Print',
-                        exportOptions: { columns: ':visible' }
-                    },
-                    {
-                        extend: 'colvis',
-                        text: '<i class="fas fa-list"></i> Column Visibility',
-                        titleAttr: 'Column Visibility'
-                    }
-                ]
+                            customerOptions += '</select></label>';
+                            
+                            setTimeout(() => {
+                                $('.dataTables_length').append(customerOptions);
+                                $('.select2').select2();
+                            }, 500);
+                        }
+                }
             });
-            //table.buttons().container().appendTo($('#export_buttonscc'));	
+            }
+            table=$('#tickets_datatable').DataTable( {
+               "searching": true,
+                "paging": true,
+                "info": false,
+                "lengthChange":true ,
+                "processing"		: true,
+                "serverSide"		: true,
+                "zeroRecords":    "No matching records found",
+                "ajax"				: {
+                    url			: "include/tickets_server.php?get_tickets_data=1",
+                    type		: 'GET',
+                },
+                "order": [[0, 'desc']], 
+                "buttons": [
+                {
+                    extend: 'copy',
+                    text: '<i class="fas fa-copy"></i> Copy',
+                    titleAttr: 'Copy',
+                    exportOptions: { columns: ':visible' }
+                },
+                {
+                    extend: 'excel',
+                    text: '<i class="fas fa-file-excel"></i> Excel',
+                    titleAttr: 'Excel',
+                    exportOptions: { columns: ':visible' }
+                },
+                {
+                    extend: 'csv',
+                    text: '<i class="fas fa-file-csv"></i> CSV',
+                    titleAttr: 'CSV',
+                    exportOptions: { columns: ':visible' }
+                },
+                {
+                    extend: 'pdf',
+                    exportOptions: { columns: ':visible' },
+                    orientation: 'landscape',
+                    pageSize: "LEGAL",
+                    text: '<i class="fas fa-file-pdf"></i> PDF',
+                    titleAttr: 'PDF'
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="fas fa-print"></i> Print',
+                    titleAttr: 'Print',
+                    exportOptions: { columns: ':visible' }
+                },
+                {
+                    extend: 'colvis',
+                    text: '<i class="fas fa-list"></i> Column Visibility',
+                    titleAttr: 'Column Visibility'
+                }
+            ],
+            });
+            table.buttons().container().appendTo($('#export_buttonscc'));	
         });
         /* Area filter change event*/
-        $(document).on('change','.area_filter',function(){
-        
-        var area_filter_result = $('.area_filter').val() == null ? '' : $('.area_filter').val();
-
+        $(document).on('change', '.area_filter', function(){
+            var area_filter_result = $('.area_filter').val() || '';
             table.columns(7).search(area_filter_result).draw();
-        
-        });       
+        });          
         /* Status filter change event*/
-        $(document).on('change','.status_filter',function(){
-        
-        var status_filter_result = $('.status_filter').val() == null ? '' : $('.status_filter').val();
-
+        $(document).on('change', '.status_filter', function(){
+            var status_filter_result = $('.status_filter').val() || '';
             table.columns(1).search(status_filter_result).draw();
+        });   
+        $(document).on('change', '.customer_filter', function(){
+            var status_filter_result = $('.customer_filter').val() || '';
+            table.columns(4).search(status_filter_result).draw();
+        });   
         
-        });                   
-
         $(document).on('click', 'button[name="settings_button"]', function() {
             let dataId=$(this).data('id'); 
             $.ajax({

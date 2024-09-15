@@ -1,7 +1,7 @@
 <?php
 include "db_connect.php";
 
-if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
+ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 	require 'datatable.php';
 
 	$table = 'ticket';
@@ -28,10 +28,6 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 			return timeAgo($d);
 		}),
 		array( 'db' => 'priority', 'dt' => 3, 'formatter' => function($d, $row) {
-			// $priorityLabels = [
-			// 	1 => 'Low', 2 => 'Normal', 4 => 'Standard', 
-			// 	4 => 'Medium', 5 => 'High', 5 => 'Very High'
-			// ];
 			$priority = $row["priority"]; 
 
 			$priorityLabel = '';
@@ -61,7 +57,6 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 			}
 			
 			return $priorityLabel;
-			// isset($priorityLabels[$d]) ? $priorityLabels[$d] : 'Unknown';
 		}),
 		array( 'db' => 'customer_id', 'dt' => 4, 'formatter' => function($d, $row) use ($con) {
 			/*Fetch customer details*/ 
@@ -120,16 +115,16 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 			'dt' => 9,
 		),
 		array(
-			'db'=>'startdate',
+			'db'=>'enddate',
 			'dt'=>10,
 			'formatter'=>function($d, $row){
 				$startdate = $row["startdate"];
-				$enddate=$row["enddate"];
-				if ($enddate=='') {
-					return  'Work Processing..';
-				 }else{
+				 $enddate=$row["enddate"];
+				if (!empty($enddate)) {
 					return acctual_work( $startdate, $enddate); 
-				 }
+				}else{
+					return  'Work Processing..';
+				}
 			}
 		),
 		array(
@@ -152,12 +147,13 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 		
 		
 	);
+
 	$condition = ""; 
 	/* Output JSON for DataTables to handle*/
 	echo json_encode(
-		SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns,null, $condition)
+		SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns,null, $searchCondition)
 	);
-}
+ }
 if (isset($_POST['get_area']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $customerId = $_POST['customer_id'];
 
@@ -329,9 +325,6 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 		]);
 		exit;
 	}
-	
-	/* If no validation errors, continue with the rest of your logic */
-	
     /* If no errors, continue with processing*/
     $customerPopId = null;
     if ($allCstmr = $con->query("SELECT pop FROM customers WHERE id=$customer_id")) {
@@ -381,30 +374,30 @@ if (isset($_POST["updateTicket"])) {
 	}
 }
 
-if (isset($_POST["addTicketData"])) {
-	$customerId = $_POST['customer_id'];
+// if (isset($_POST["addTicketData"])) {
+// 	$customerId = $_POST['customer_id'];
 
-	$assignedTo = $_POST['assigned_to'];
-	$ticketFor = $_POST['ticket_for'];
-	$complainType = $_POST['complain_type'];
-	$notes = $_POST['notes'];
-	$priority = $_POST['priority'];
+// 	$assignedTo = $_POST['assigned_to'];
+// 	$ticketFor = $_POST['ticket_for'];
+// 	$complainType = $_POST['complain_type'];
+// 	$notes = $_POST['notes'];
+// 	$priority = $_POST['priority'];
 
 
-	if ($allCstmr=$con->query("SELECT * FROM customers WHERE id=$customerId")) {
-		while($rows=$allCstmr->fetch_array()){
-			$customerPopId = $rows['pop'];
-		}
-	}
+// 	if ($allCstmr=$con->query("SELECT * FROM customers WHERE id=$customerId")) {
+// 		while($rows=$allCstmr->fetch_array()){
+// 			$customerPopId = $rows['pop'];
+// 		}
+// 	}
 
-	$result = $con->query("INSERT INTO ticket (customer_id, asignto, ticketfor, complain_type, startdate, notes,parcent,priority) 
-	VALUES ('$customerId', '$assignedTo', '$ticketFor', '$complainType', NOW(), '$notes','0%','$priority')");
-	if ($result == true) {
-		echo 1;
-	} else {
-		echo "Error: " . $sql . "<br>" . $con->error;
-	}
-}
+// 	$result = $con->query("INSERT INTO ticket (customer_id, asignto, ticketfor, complain_type, startdate, notes,parcent,priority) 
+// 	VALUES ('$customerId', '$assignedTo', '$ticketFor', '$complainType', NOW(), '$notes','0%','$priority')");
+// 	if ($result == true) {
+// 		echo 1;
+// 	} else {
+// 		echo "Error: " . $sql . "<br>" . $con->error;
+// 	}
+// }
 if (isset($_POST["addTicketTopicData"])) {
 	$ticketTopic = $_POST['ticketTopic'];
 	$pop_id = $_POST['pop_id'];
