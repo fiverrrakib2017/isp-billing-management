@@ -9,15 +9,15 @@
                                     <span> Dashboard </span>
                                 </a>
                             </li>
-                            <!-- <li>
+                            <li>
                                <select name="" id="menu_select_box" class="form-control">
                                     <option value="">---Select---</option>
                                </select> 
-                               <script type="text/javascript">
+                               <!-- <script type="text/javascript">
                                     $('#menu_select_box').select2();
-                               </script>
+                               </script> -->
                               
-                            </li> -->
+                            </li> 
 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
