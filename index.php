@@ -49,23 +49,7 @@ function timeAgo($startdate) {
     
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-        <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
-        <link href="assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
-        <link href="assets/libs/spectrum-colorpicker2/spectrum.min.css" rel="stylesheet" type="text/css">
-        <link href="assets/libs/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css" rel="stylesheet">
-    
-        <!-- Bootstrap Css -->
-        <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
-        <!-- Icons Css -->
-        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
-        <!-- App Css-->
-        <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-        <!-- Chartist Chart -->
-        <link href="assets/libs/chartist/chartist.min.css" rel="stylesheet">
-<!-- C3 Chart css -->
-        <link href="assets/libs/c3/c3.min.css" rel="stylesheet" type="text/css">
-        <link href="css/toastr/toastr.min.css" rel="stylesheet" type="text/css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"> </script>
+        <?php include 'style.php';?>
 </head>
 
 <body data-sidebar="dark">
@@ -1550,72 +1534,11 @@ $cronupdt = $con->query("SELECT * FROM cron");
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-    <!-- JAVASCRIPT -->
-    <script src="assets/libs/jquery/jquery.min.js"></script>
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-    <script src="assets/libs/simplebar/simplebar.min.js"></script>
-    <script src="assets/libs/node-waves/waves.min.js"></script>
-    <script type="text/javascript"  src="assets/libs/select2/js/select2.min.js"></script>
-    <!-- Required datatable js -->
-    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <!-- Buttons examples -->
-    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-   
-    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-    <!-- Responsive examples -->
-    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-    <script src="js/toastr/toastr.min.js"></script>
-    <script src="js/toastr/toastr.init.js"></script>
-    <!-- Datatable init js -->
-    <script src="assets/js/pages/datatables.init.js"></script>
-
-    <script src="assets/js/app.js"></script>
-
-    <!-- Peity chart-->
-    <script src="assets/libs/peity/jquery.peity.min.js"></script>
-
-   <!--C3 Chart-->
-        <script src="assets/libs/d3/d3.min.js"></script>
-        <script src="assets/libs/c3/c3.min.js"></script>
-        
-        <!-- Init js 
-        <script src="assets/js/pages/c3-chart.init.js"></script>-->
-    <script src="assets/libs/jquery-knob/jquery.knob.min.js"></script>
-
-    <script src="assets/js/pages/dashboard.init.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-
-        
-    <script type="text/javascript" src="assets/js/js-fluid-meter.js"></script>
-  
    
 
-    
-    <script src="assets/js/pages/form-advanced.init.js"></script>
-
-        <!-- Plugin Js-->
-        <script src="assets/libs/chartist/chartist.min.js"></script>
-        <script src="assets/libs/chartist-plugin-tooltips/chartist-plugin-tooltip.min.js"></script>
-        <!-- demo js
-        <script src="assets/js/pages/chartist.init.js"></script>-->
-
-        <script src="assets/js/app.js"></script>
-        
-
-
-        <script src="js/toastr/toastr.min.js"></script>
-
-
+    <?php include 'script.php';?>
     <script type="text/javascript">
-	
-	//$('#menu_select_box').select2();
+
 	var chart=new Chartist.Line("#simple-line-chart",{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
 		series:[
 		[<?php 

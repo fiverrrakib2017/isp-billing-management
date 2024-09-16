@@ -9,14 +9,13 @@
                                     <span> Dashboard </span>
                                 </a>
                             </li>
-                            <li>
-                               <select name="" id="menu_select_box" class="form-control">
-                                    <option value="">---Select---</option>
-                               </select> 
-                               <!-- <script type="text/javascript">
-                                    $('#menu_select_box').select2();
-                               </script> -->
-                              
+                            <li >
+                                <?php
+                                if ($page_title=="Welcome To Dashboard") {
+                                   echo '<select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
+                                }
+                                
+                                ?>
                             </li> 
 
                             <li>

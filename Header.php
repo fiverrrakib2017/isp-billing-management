@@ -36,11 +36,6 @@
 
 
                 <div class="d-flex">
-
-
-
-
-
                     <div class="dropdown d-none d-md-block me-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="font-size-16">
