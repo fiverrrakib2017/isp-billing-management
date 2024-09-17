@@ -108,7 +108,7 @@ if (isset($_POST['addCustomerDuePayment'])) {
   $remarks = $_POST['remarks'];
   $transaction_type = 4;
   $date = date('Y-m-d');
-  $recharge_by = $_SESSION['username'];
+  $recharge_by = $_SESSION['uid'];
 
   $result = $con->query("INSERT INTO `customer_rechrg` (`id`, `customer_id`, `pop_id`, `months`, `sales_price`,`purchase_price`, `ref`, `rchrg_until`, `type`, `rchg_by`, `datetm`) VALUES (NULL, '$customer_id', '$pop_id', '', '00','$amount', '$remarks', '2023-06-02', '$transaction_type', '$recharge_by', '$date');");
   if ($result == true) {

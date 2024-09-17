@@ -54,11 +54,15 @@
 <!-- Fluid Meter -->
  <script src="assets/js/js-fluid-meter.js"></script>
 <!-- Form Advanced Init -->
- <script src="assets/js/pages/form-advanced.init.js"></script> 
+ <!-- <script src="assets/js/pages/form-advanced.init.js"></script>  -->
 
 <!-- Plugin Js for Charts -->
 <script src="assets/libs/chartist/chartist.min.js"></script>
 <script src="assets/libs/chartist-plugin-tooltips/chartist-plugin-tooltip.min.js"></script>
+
+
+
+
 <script type="text/javascript">
 $(document).ready(function() {
     // console.log('rakib');
