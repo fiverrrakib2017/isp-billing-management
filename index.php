@@ -104,7 +104,7 @@ function timeAgo($startdate) {
 
                             <button type="button" id="addSmsBtn" class="btn-sm btn btn-primary mb-1"><i class="far fa-envelope"></i> SMS Notification</button>
 
-                            <button type="button" id="AddTicketBtn" class="btn-sm btn btn-success mb-1">Add Ticket</button>
+                            <button type="button"  data-bs-toggle="modal" data-bs-target="#ticketModal"  class="btn-sm btn btn-success mb-1">Add Ticket</button>
                         </div>
                     </div>
                     <div class="row">
@@ -1114,88 +1114,88 @@ $cronupdt = $con->query("SELECT * FROM cron");
 
     </div>
     <!-- END layout-wrapper -->
-
+    
     <div class="modal fade" id="addRechargeModal" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog ">
-        <div class="modal-content">
-            <div class="modal-header ">
-                <h5 class="modal-title" id="exampleModalLabel">Add Recharge</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="recharge_customer" class="form-label">Select Customer</label>
-                            <select id="recharge_customer" class="form-select">
-                                <option value="">Select Customer</option>
-                                <?php
-                                if ($allCustomer = $con->query("SELECT * FROM customers")) {
-                                    while ($rows = $allCustomer->fetch_array()) {
-                                        echo '<option value="' . $rows['id'] . '">' . $rows['username'] . ' (' . $rows['mobile'] . ')</option>';
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header ">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Recharge</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="recharge_customer" class="form-label">Select Customer</label>
+                                <select id="recharge_customer" class="form-select">
+                                    <option value="">Select Customer</option>
+                                    <?php
+                                    if ($allCustomer = $con->query("SELECT * FROM customers")) {
+                                        while ($rows = $allCustomer->fetch_array()) {
+                                            echo '<option value="' . $rows['id'] . '">' . $rows['username'] . ' (' . $rows['mobile'] . ')</option>';
+                                        }
                                     }
-                                }
-                                ?>
-                            </select>
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="recharge_customer_month" class="form-label">Month</label>
+                                <select id="recharge_customer_month" class="form-select">
+                                    <?php for ($i = 1; $i <= 12; $i++) : ?>
+                                        <option value="<?= $i ?>"><?= $i ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="recharge_customer_month" class="form-label">Month</label>
-                            <select id="recharge_customer_month" class="form-select">
-                                <?php for ($i = 1; $i <= 12; $i++) : ?>
-                                    <option value="<?= $i ?>"><?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="recharge_customer_package" class="form-label">Package</label>
-                            <select id="recharge_customer_package" class="form-select" disabled>
-                                <!-- Options will be loaded here dynamically -->
-                            </select>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="recharge_customer_package" class="form-label">Package</label>
+                                <select id="recharge_customer_package" class="form-select" disabled>
+                                    <!-- Options will be loaded here dynamically -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="recharge_customer_package_price" class="form-label">Package Price</label>
+                                <input id="recharge_customer_package_price" type="text" class="form-control" disabled>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="recharge_customer_package_price" class="form-label">Package Price</label>
-                            <input id="recharge_customer_package_price" type="text" class="form-control" disabled>
-                        </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="ref" class="form-label">Reference</label>
-                            <input id="ref" type="text" class="form-control">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="ref" class="form-label">Reference</label>
+                                <input id="ref" type="text" class="form-control">
+                            </div>
+                            <div class="col-md-6 d-none">
+                                <label for="recharge_customer_pop_id" class="form-label">Pop ID</label>
+                                <input id="recharge_customer_pop_id" type="text" class="form-control" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="recharge_customer_amount" class="form-label">Payable Amount</label>
+                                <input id="recharge_customer_amount" type="text" class="form-control">
+                            </div>
                         </div>
-                        <div class="col-md-6 d-none">
-                            <label for="recharge_customer_pop_id" class="form-label">Pop ID</label>
-                            <input id="recharge_customer_pop_id" type="text" class="form-control" disabled>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="recharge_customer_amount" class="form-label">Payable Amount</label>
-                            <input id="recharge_customer_amount" type="text" class="form-control">
-                        </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        
-                        <div class="col-md-6">
-                            <label for="recharge_customer_transaction_type" class="form-label">Transaction Type</label>
-                            <select id="recharge_customer_transaction_type" class="form-select">
-                                <option value="1">Cash</option>
-                                <option value="0">On Credit</option>
-                            </select>
+                        <div class="row mb-3">
+                            
+                            <div class="col-md-6">
+                                <label for="recharge_customer_transaction_type" class="form-label">Transaction Type</label>
+                                <select id="recharge_customer_transaction_type" class="form-select">
+                                    <option value="1">Cash</option>
+                                    <option value="0">On Credit</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-success mt-4" id="add_recharge_btn" style="margin-top: 4px;">
+                                    <i class="mdi mdi-battery-charging-90"></i>&nbsp;&nbsp;Recharge Now
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-success mt-4" id="add_recharge_btn" style="margin-top: 4px;">
-                                <i class="mdi mdi-battery-charging-90"></i>&nbsp;&nbsp;Recharge Now
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
     <!---add send msg modal---->
@@ -1268,102 +1268,7 @@ $cronupdt = $con->query("SELECT * FROM cron");
         </div><!-- /.modal-dialog -->
     </div>
 
-    <div class="modal fade" id="addTicketModal" tabindex="-1" role="dialog" aria-labelledby="Profile_pic_upload_Label" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Add Customer Ticket</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form>
-
-                                                    <div class="from-group ">
-                                                        <label>Customer Name</label>
-                                                        <select class="form-select" type="text" id="ticket_customer_id">
-                                                            <option value="">Select</option>
-                                                            <?php
-
-                                                            if ($allData = $con->query("SELECT * FROM customers ")) {
-                                                                while ($rows = $allData->fetch_array()) {
-                                                                    echo ' <option value="' . $rows['id'] . '">' . $rows['username'] . '</option>';
-                                                                }
-                                                            }
-
-
-                                                            ?>
-                                                        </select>
-                                                    </div>
-                                                    <div class="from-group mb-2">
-                                                        <label for="">Ticket Type</label>
-                                                        <select id="ticket_type" class="form-select">
-                                                            <option value="">Select</option>
-                                                            <option value="Active">Active</option>
-                                                            <option value="New">New</option>
-                                                            <option value="Open">Open</option>
-                                                            <option value="Complete">Complete</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="from-group mb-2">
-                                                        <label for="">Assigned To</label>
-                                                        <select id="ticket_assigned" class="form-select">
-                                                            <option value="">Select</option>
-                                                            <option value="Locale Team">Locale Team</option>
-                                                            <option value="Fiber Team">Fiber Team</option>
-                                                            <option value="Rayhan Sir">Rayhan Sir</option>
-                                                            <option value="SR Comunication">SR Comunication</option>
-                                                            <option value="Ali Hossain">Ali Hossain</option>
-                                                            <option value="Support">Support</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="from-group mb-2">
-                                                        <label for="">Ticket For</label>
-                                                        <select id="ticket_for" name="ticket_for " class="form-select">
-                                                            <option value="">Select</option>
-                                                            <option value="Reseller">Reseller</option>
-                                                            <option value="Corporate">Corporate</option>
-                                                            <option value="Home Connection">Home Connection</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="from-group mb-2">
-                                                        <label for=""> Complain Type </label>
-                                                        <select id="ticket_complain_type" class="form-select">
-                                                            <option value="">Select</option>
-                                                            <?php
-
-                                                            if ($allData = $con->query("SELECT * FROM ticket_topic WHERE user_type=1")) {
-                                                                while ($rows = $allData->fetch_array()) {
-                                                                    echo ' <option value="' . $rows['id'] . '">' . $rows['topic_name'] . '</option>';
-                                                                }
-                                                            }
-
-
-                                                            ?>
-                                                        </select>
-
-                                                    </div>
-                                                    <div class="from-group mb-2">
-                                                        <label for="">Form Date</label>
-                                                        <input id="ticket_from_date" type="date" class="form-control">
-
-                                                    </div>
-                                                    <div class="from-group mb-2">
-                                                        <label for="">To Date</label>
-                                                        <input id="ticket_to_date" type="date" class="form-control">
-
-                                                    </div>
-
-
-
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" id="customer_ticket_btn" class="btn btn-primary">Add Ticket Now</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+    <?php include 'modal/tickets_modal.php'; ?>
 
 
     <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
@@ -1537,7 +1442,14 @@ $cronupdt = $con->query("SELECT * FROM cron");
    
 
     <?php include 'script.php';?>
+    <script src="js/tickets.js"></script>
     <script type="text/javascript">
+        /*** Add ticket Modal Script****/
+        ticket_modal();
+        loadCustomers();
+        ticket_assign();
+        ticket_complain_type();
+
 
 	var chart=new Chartist.Line("#simple-line-chart",{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
 		series:[
@@ -1688,61 +1600,7 @@ window.jQuery.ChartC3.init()}();
 
 
         $('#expire_customer_datatable').dataTable();
-        $(document).on('click', '#AddTicketBtn', function() {
-            $("#addTicketModal").modal('show');
-        });
-        $("#customer_ticket_btn").click(function() {
-            // Get form values
-            var customerId = $("#ticket_customer_id").val();
-            var ticketType = $("#ticket_type").val();
-            var assignedTo = $("#ticket_assigned").val();
-            var ticketFor = $("#ticket_for").val();
-            var complainType = $("#ticket_complain_type").val();
-            var fromDate = $("#ticket_from_date").val();
-            var toDate = $("#ticket_to_date").val();
-            if (ticketType.length == 0) {
-                toastr.error("Customer Ticket Type is require");
-            } else if (assignedTo.length == 0) {
-                toastr.error("Customer Assign  is require");
-            } else if (ticketFor.length == 0) {
-                toastr.error("Please Select Ticket For");
-            } else if (complainType.length == 0) {
-                toastr.error("Complain Type is require");
-            } else if (fromDate.length == 0) {
-                toastr.error("From Date is require");
-            } else if (toDate.length == 0) {
-                toastr.error("To Date is require");
-            } else {
-                // Make AJAX request to server
-                $.ajax({
-                    url: "include/tickets_server.php", // Provide the PHP file to handle the database insertion
-                    type: "POST",
-                    data: {
-                        customer_id: customerId,
-                        ticket_type: ticketType,
-                        assigned_to: assignedTo,
-                        ticket_for: ticketFor,
-                        complain_type: complainType,
-                        from_date: fromDate,
-                        to_date: toDate,
-                        addTicketData: 0,
-                    },
-                    success: function(response) {
-                        // Handle the response from the server
-                        if (response == 1) {
-                            toastr.success("Ticket Added Success");
-                            $("#addTicketModal").modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            toastr.error(response);
-                        }
-                    }
-                });
-            }
-
-        });
+        
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -2174,7 +2032,7 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
 /////////////////////////Chart /////////////////////////////////////
 
 
-
+        
 
     </script>
 	
