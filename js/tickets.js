@@ -1,5 +1,29 @@
 // Customers load function
-export function loadCustomers(selectedCustomerId) {
+function ticket_modal(){
+    $("#ticketModal").on('show.bs.modal', function (event) {
+        /*Check if select2 is already initialized*/
+        if (!$('#ticket_customer_id').hasClass("select2-hidden-accessible")) {
+            $("#ticket_customer_id").select2({
+                dropdownParent: $("#ticketModal"),
+                placeholder: "Select Customer"
+            });
+            $("#ticket_assigned").select2({
+                dropdownParent: $("#ticketModal"),
+                placeholder: "---Select---"
+            });
+            $("#ticket_complain_type").select2({
+                dropdownParent: $("#ticketModal"),
+                placeholder: "---Select---"
+            });
+            $("#ticket_priority").select2({
+                dropdownParent: $("#ticketModal"),
+                placeholder: "---Select---"
+            });
+        }
+     }); 
+}
+
+function loadCustomers(selectedCustomerId) {
     $.ajax({
         url: 'include/tickets_server.php?get_all_customer=true',
         type: 'GET',
@@ -21,7 +45,7 @@ export function loadCustomers(selectedCustomerId) {
 }
 
 // Ticket assign function
-export function ticket_assign(customerId) {
+ function ticket_assign(customerId) {
     if (customerId) {
         $.ajax({
             url: "include/tickets_server.php",
@@ -34,11 +58,27 @@ export function ticket_assign(customerId) {
                 $("#ticket_assigned").html(response);
             }
         });
+    }else{
+        $(document).on('change','#ticket_customer_id',function(){
+            /* Make AJAX request to server*/
+            $.ajax({
+                url: "include/tickets_server.php", 
+                type: "POST",
+                data: {
+                    customer_id: $(this).val(),
+                    get_area:true,
+                },
+                success: function(response) {
+                    /* Handle the response from the server*/
+                    $("#ticket_assigned").html(response);
+                }
+            });
+        });
     }
 }
 
 // Ticket complain type function
-export function ticket_complain_type() {
+ function ticket_complain_type() {
     $.ajax({
         url: "include/tickets_server.php",
         type: "POST",
@@ -58,3 +98,45 @@ export function ticket_complain_type() {
         }
     });
 }
+
+
+$("#ticket_modal_form").submit(function(e) {
+    e.preventDefault();
+
+    /* Get the submit button */
+    var submitBtn = $(this).find('button[type="submit"]');
+    var originalBtnText = submitBtn.html();
+
+    submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden"></span>');
+    submitBtn.prop('disabled', true);
+
+    var form = $(this);
+    var formData = new FormData(this);
+
+    $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType:'json',
+        success: function(response) {
+            if (response.success) {
+                $("#ticketModal").fadeOut(500, function() {
+                    $(this).modal('hide');
+                    toastr.success(response.message);
+                    $('#tickets_datatable').DataTable().ajax.reload();
+                });
+
+            } else if (!response.success && response.errors) {
+                $.each(response.errors, function(field, message) {
+                    toastr.error(message);
+                });
+            }
+        },
+        complete: function() {
+            submitBtn.html(originalBtnText);
+            submitBtn.prop('disabled', false);
+        }
+    });
+});

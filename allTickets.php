@@ -195,64 +195,10 @@ include("include/users_right.php");
         </div>
     </div>
 
-    <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header  bg-success">
-                    <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="mdi mdi-account-plus"></i></h5>
-                    
-                </div>
-                <form action="include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
-                    <div class="modal-body">
-                        <div class="from-group mb-2">
-                            <label>Customer Name</label>
-                            <select class="form-select" name="customer_id" id="ticket_customer_id" style="width: 100%;"></select>
-						</div>
-                        <div class="from-group mb-2">
-                            <label for="">Ticket For</label>
-                            <select id="ticket_for" name="ticket_for" class="form-select" required>
-                                <option value="Home Connection">Home Connection</option>
-                                <option value="POP">POP Support</option>
-                                <option value="Corporate">Corporate</option>
-                                
-                            </select>
-                        </div>
-                        <div class="from-group mb-2">
-                            <label for=""> Complain Type </label>
-                            <select id="ticket_complain_type" name="ticket_complain_type" class="form-select" style="width: 100%;" ></select>
-
-                        </div>
-                        <div class="from-group mb-2">
-                            <label for="">Ticket Priority</label>
-                            <select id="ticket_priority" name="ticket_priority" type="text" class="form-select" style="width: 100%;">
-                            <option >---Select---</option>
-                            <option value="1">Low</option>
-                            <option value="2">Normal</option>
-                            <option value="3">Standard</option>
-                            <option value="4">Medium</option>
-                            <option value="5">High</option>
-                            <option value="6">Very High</option>
-                            </select>
-						</div>
-                        <div class="from-group mb-2">
-                            <label for="">Assigned To</label>
-                            <select id="ticket_assigned" name="assigned" class="form-select" style="width: 100%;"></select>
-                        </div>
-                        <div class="from-group mb-2">
-                            <label for="">Note</label>
-                            <input id="notes" type="text" name="notes" class="form-control" placeholder="Enter Your Note">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <?php require 'modal/tickets_modal.php';?>
 
     <?php include 'script.php'; ?>
+    <script src="js/tickets.js"></script>
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
@@ -494,128 +440,11 @@ include("include/users_right.php");
         });
         
 
-        /*** Add Modal Script****/
-        $('#ticketModal').on('show.bs.modal', function (event) {
-             loadCustomers();
-             ticket_assign();
-             ticket_complain_type(); 
-            /*Check if select2 is already initialized*/ 
-            if (!$('#ticket_customer_id').hasClass("select2-hidden-accessible")) {
-                $("#ticket_customer_id").select2({
-                    dropdownParent: $('#ticketModal'),
-                    placeholder: "Select Customer"
-                });
-                $("#ticket_assigned").select2({
-                    dropdownParent: $('#ticketModal'),
-                    placeholder: "---Select---"
-                });
-                $("#ticket_complain_type").select2({
-                    dropdownParent: $('#ticketModal'),
-                    placeholder: "---Select---"
-                });
-                $("#ticket_priority").select2({
-                    dropdownParent: $('#ticketModal'),
-                    placeholder: "---Select---"
-                });
-            }
-        });
-        function loadCustomers() {
-            $.ajax({
-                url: 'include/tickets_server.php?get_all_customer=true',
-                type: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success==true) {
-                        let customerSelect = $("#ticket_customer_id");
-                        customerSelect.empty(); 
-                        customerSelect.append('<option value="">---Select Customer---</option>');
-                        $.each(response.data, function (index, customer) {
-                            customerSelect.append('<option value="' + customer.id + '">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>');
-                        });
-                    }
-                }
-            });
-        }
-        function ticket_assign(){
-            $(document).on('change','#ticket_customer_id',function(){
-                /* Make AJAX request to server*/
-                $.ajax({
-                    url: "include/tickets_server.php", 
-                    type: "POST",
-                    data: {
-                        customer_id: $(this).val(),
-                        get_area:true,
-                    },
-                    success: function(response) {
-                      /* Handle the response from the server*/
-                      $("#ticket_assigned").html(response);
-                    }
-                });
-            });
-        }
-        function ticket_complain_type(){
-            /* Make AJAX request to server*/
-            $.ajax({
-                url: "include/tickets_server.php", 
-                type: "POST",
-                data: {
-                    get_complain_type:true,
-                },
-                dataType:'json',
-                success: function(response) {
-                    /* Handle the response from the server*/
-                    //$("#ticket_complain_type").html(response);
-                    if (response.success==true) {
-                        let ticket_complain_type = $("#ticket_complain_type");
-                        ticket_complain_type.empty(); 
-                        ticket_complain_type.append('<option value="">---Select---</option>');
-                        $.each(response.data, function (index, item) {
-                            ticket_complain_type.append('<option value="' + item.id + '">'+item.topic_name+'</option>');
-                        });
-                    }
-                }
-            });
-        }
-        $("#ticket_modal_form").submit(function(e) {
-            e.preventDefault();
-
-            /* Get the submit button */
-            var submitBtn = $(this).find('button[type="submit"]');
-            var originalBtnText = submitBtn.html();
-
-            submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden"></span>');
-            submitBtn.prop('disabled', true);
-
-            var form = $(this);
-            var formData = new FormData(this);
-
-            $.ajax({
-                type: form.attr('method'),
-                url: form.attr('action'),
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType:'json',
-                success: function(response) {
-                    if (response.success) {
-                        $("#ticketModal").fadeOut(500, function() {
-                            $(this).modal('hide');
-                            toastr.success(response.message);
-                            $('#tickets_datatable').DataTable().ajax.reload();
-                        });
-
-                    } else if (!response.success && response.errors) {
-                        $.each(response.errors, function(field, message) {
-                            toastr.error(message);
-                        });
-                    }
-                },
-                complete: function() {
-                    submitBtn.html(originalBtnText);
-                    submitBtn.prop('disabled', false);
-                }
-            });
-        });
+        /*** Add ticket Modal Script****/
+         ticket_modal();
+         loadCustomers();
+         ticket_assign();
+         ticket_complain_type();
     </script>
 </body>
 
