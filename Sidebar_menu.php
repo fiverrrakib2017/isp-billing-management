@@ -108,6 +108,19 @@
                                     <li><a href="bank_maping.php">Bank Mapping  </a></li>
                                 </ul>
                             </li>
+                           <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="mdi mdi-book"></i>
+                                    <span>HR Management</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="department.php">Department</a></li>
+                                    <li><a href="shift.php">Shift</a></li>
+                                    <li><a href="leave.php">Leave</a></li>
+                                    <li><a href="attendance.php">Attendance</a></li>
+                                    <li><a href="employee.php">Employee</a></li>
+                                </ul>
+                            </li>
                             
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
