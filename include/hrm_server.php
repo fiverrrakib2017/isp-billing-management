@@ -136,3 +136,32 @@ if (isset($_GET['update_department']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($response);
     exit; 
 }
+
+
+if (isset($_POST['delete_data']) && $_SERVER['REQUEST_METHOD']=='POST') {
+    $id = intval($_POST['id']);
+
+    /*Prepare the SQL statement*/ 
+    $stmt = $con->prepare("DELETE FROM department WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        if ($stmt->affected_rows > 0) {
+            $response = array("success" => true, "message" => "Record deleted successfully!");
+            
+        } else {
+            $response = array("success" => false, "message" => "No record found with the provided ID!");
+        }
+    } else {
+        $response = array("success" => false, "message" => "Error executing query: " . $stmt->error);
+    }
+
+    /*Close the statement and connection*/ 
+    $stmt->close();
+    $con->close();
+
+    /* Return the response as JSON*/
+    echo json_encode($response); 
+    exit; 
+}

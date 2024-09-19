@@ -20,7 +20,7 @@ include("include/users_right.php");
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php  include 'Header.php';  ?>
+        <?php $page_title="Department";  include 'Header.php';  ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -344,6 +344,31 @@ include("include/users_right.php");
                 form.find(':input').prop('disabled', false);
             }
         });
+    });
+
+    /*Delete Script*/
+    $(document).on('click',"button[name='delete_button']",function(){
+        var id=$(this).data('id');
+        if (confirm("Are you sure you want to delete this item?")) {
+            $.ajax({
+                type: 'POST', 
+                url: 'include/hrm_server.php', 
+                data: { delete_data: true, id: id }, 
+                dataType:'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success("Deleted successfully!");
+                       table.draw();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    toastr.error("Error deleting item! " + error);
+                }
+            });
+        }
     });
 
     </script>
