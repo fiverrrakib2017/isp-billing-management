@@ -76,9 +76,13 @@ include("include/users_right.php");
                                             <thead class="bg-success text-white" style="background-color: #2c845f !important;">
                                                 <tr>
                                                     <th>ID</th>
-                                                    <th>Employee Name</th>
-                                                    <th>Start Time</th>
-                                                    <th>End Time</th>
+                                                    <th>Name</th>
+                                                    <th>Phone Number</th>
+                                                    <th>Email</th>
+                                                    <th>Designation</th>
+                                                    <th>Department</th>
+                                                    <th>Postal Code</th>
+                                                    <th>Joining Date</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -86,10 +90,6 @@ include("include/users_right.php");
                                         </table>
                                     </div>
                                 </div>
-                                <!-- <div class="card-footer" style="text-align: right;">
-                                    <button class="btn btn-primary" id="send_message_btn" >Send Message</button>
-                                    <button class="btn btn-success" id="export_to_excel" >Export To Excel</button>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -302,7 +302,7 @@ include("include/users_right.php");
                 "serverSide"		: true,
                 "zeroRecords":    "No matching records found",
                 "ajax"				: {
-                    url			: "include/hrm_server.php?show_shift_data=true",
+                    url			: "include/hrm_server.php?show_employee_data=true",
                     type		: 'GET',
                 },
                 "buttons": [			
@@ -388,7 +388,7 @@ include("include/users_right.php");
     $(document).on("click", "button[name='edit_button']", function() {
         var shift_id = $(this).data("id");
         $.ajax({
-            url: "include/hrm_server.php?get_shift=true", 
+            url: "include/hrm_server.php?get_employee=true", 
             type: "GET",
             data: { id: shift_id }, 
             dataType:'json',
