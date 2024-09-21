@@ -411,6 +411,16 @@ if (isset($_GET['show_employee_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     );
 }
 
+if (isset($_GET['get_all_employee']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    $result = $con->query("SELECT id,name FROM employees");
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+        $data[] = $row;
+    }
+    echo json_encode(['success' => true, 'data' => $data]);
+    exit;
+}
+
 if (isset($_GET['add_employee']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = [];
     /*Retrieving form data*/
@@ -571,6 +581,104 @@ if (isset($_GET['edit_employee']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode([
             'success' => false,
             'message' => 'Error: ' . $stmt->error
+        ]);
+    }
+
+    $stmt->close();
+}
+
+
+if (isset($_POST['employee_delete_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = intval($_POST['id']);
+
+    /*Prepare the SQL statement*/
+    $stmt = $con->prepare("DELETE FROM `employees` WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        if ($stmt->affected_rows > 0) {
+            $response = array("success" => true, "message" => "Record deleted successfully!");
+
+        } else {
+            $response = array("success" => false, "message" => "No record found with the provided ID!");
+        }
+    } else {
+        $response = array("success" => false, "message" => "Error executing query: " . $stmt->error);
+    }
+
+    /*Close the statement and connection*/
+    $stmt->close();
+    $con->close();
+
+    /* Return the response as JSON*/
+    echo json_encode($response);
+    exit;
+}
+
+
+/*============================================================================================================================================Leave======================================================================================================================================================================================================================================================================================================================================================================*/
+
+
+if (isset($_GET['add_leave']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $errors = [];
+    /*Retrieving form data*/
+    $employee_id = isset($_POST["employee_id"]) ? trim($_POST["employee_id"]) : '';
+    $leave_type = isset($_POST["leave_type"]) ? trim($_POST["leave_type"]) : '';
+    $leave_reason = isset($_POST["leave_reason"]) ? trim($_POST["leave_reason"]) : '';
+    $leave_status = isset($_POST["leave_status"]) ? trim($_POST["leave_status"]) : '';
+
+    $start_date = isset($_POST["start_date"]) ? trim($_POST["start_date"]) : '';
+    $end_date = isset($_POST["end_date"]) ? trim($_POST["end_date"]) : '';
+
+    /*Basic validation for some fields*/
+    if (empty($employee_id)) {
+        $errors['employee_id'] = "Employee Name is required.";
+    }
+    if (empty($leave_type)) {
+        $errors['leave_type'] = "Leave Type is required.";
+    }
+    if (empty($leave_reason)) {
+        $errors['leave_reason'] = "Leave Reason is required.";
+    }
+    if (empty($leave_status)) {
+        $errors['leave_status'] = "Leave Status is required.";
+    }
+    if (empty($start_date)) {
+        $errors['start_date'] = "Start Date is required.";
+    }
+    if (empty($end_date)) {
+        $errors['end_date'] = "End Date is required.";
+    }
+
+    /* If validation errors exist, return errors */
+    if (!empty($errors)) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $errors,
+        ]);
+        exit;
+    }
+
+    /* Insert query */
+    $stmt = $con->prepare("INSERT INTO `leaves`(`employee_id`, `leave_type`, `leave_reason`, `leave_status`, `start_date`, `end_date`)VALUES(?, ?, ?, ?, ?, ?)");
+
+    $stmt->bind_param(
+        'isssss',
+        $employee_id, $leave_type, $leave_reason, $leave_status, $start_date, $end_date
+    );
+
+    $result = $stmt->execute();
+
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Added successfully!',
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => $stmt->error,
         ]);
     }
 

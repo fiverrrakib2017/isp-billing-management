@@ -77,7 +77,10 @@ include("include/users_right.php");
                                             <thead class="bg-success text-white" style="background-color: #2c845f !important;">
                                                 <tr>
                                                     <th>ID</th>
-                                                    <th>Shift Name</th>
+                                                    <th>Employee Name</th>
+                                                    <th>Leave Type</th>
+                                                    <th>Leave Reason</th>
+                                                    <th>Status</th>
                                                     <th>Start Time</th>
                                                     <th>End Time</th>
                                                     <th></th>
@@ -87,10 +90,6 @@ include("include/users_right.php");
                                         </table>
                                     </div>
                                 </div>
-                                <!-- <div class="card-footer" style="text-align: right;">
-                                    <button class="btn btn-primary" id="send_message_btn" >Send Message</button>
-                                    <button class="btn btn-success" id="export_to_excel" >Export To Excel</button>
-                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -137,18 +136,41 @@ include("include/users_right.php");
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="include/hrm_server.php?add_shift=true" method="POST" enctype="multipart/form-data">
+                    <form action="include/hrm_server.php?add_leave=true" method="POST" enctype="multipart/form-data">
                         <div class="form-group mb-2">
-                            <label>Shift Name</label>
-                            <input name="shift_name" placeholder="Enter Shift Name" class="form-control" type="text" >
+                            <label>Employee Name</label>
+                            <select name="employee_id" class="form-select" type="text" style="width: 100%;" required></select>
                         </div>           
                         <div class="form-group mb-2">
-                            <label>Start TIme</label>
-                            <input name="start_time" class="form-control" type="time" >
+                            <label>Leave Type</label>
+                            <select name="leave_type" class="form-select" type="text" required>
+                                <option >---Select---</option>
+                                <option value="Sick">Sick</option>
+                                <option value="Casual">Casual</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Unpaid">Unpaid</option>
+                            </select>
                         </div>           
                         <div class="form-group mb-2">
-                            <label>End TIme</label>
-                            <input name="end_time" class="form-control" type="time" >
+                            <label>Leave Reason</label>
+                            <textarea name="leave_reason" class="form-control" type="text" placeholder="Enter Leave Reason" required></textarea>
+                        </div>    
+                        <div class="form-group mb-2">
+                            <label>Leave Status</label>
+                            <select name="leave_status" class="form-select" type="text" required>
+                                <option >---Select---</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>        
+                        <div class="form-group mb-2">
+                            <label>Start Date</label>
+                            <input name="start_date" class="form-control" type="date"  required>
+                        </div>           
+                        <div class="form-group mb-2">
+                            <label>End Date</label>
+                            <input name="end_date" class="form-control" type="date"  required>
                         </div>           
                         <div class="modal-footer ">
                             <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
@@ -252,7 +274,7 @@ include("include/users_right.php");
         });
         table.buttons().container().appendTo($('#export_buttonscc'));	
     });
-    /** Department Add **/
+    /** Leave Add **/
     $('#addModal form').submit(function(e){
         e.preventDefault();
 
@@ -287,7 +309,7 @@ include("include/users_right.php");
             }
         });
     });
-    /** Department Edit **/
+    /** Leave Edit **/
     $(document).on("click", "button[name='edit_button']", function() {
         var shift_id = $(this).data("id");
         $.ajax({
@@ -390,7 +412,36 @@ include("include/users_right.php");
             });
         }
     });
+    loadEmployee();
+    function loadEmployee(){
+        $.ajax({
+            type: 'GET', 
+            url: 'include/hrm_server.php', 
+            data: { get_all_employee: true }, 
+            dataType:'json',
+            success: function(response) {
+                var form = $("select[name='employee_id']");
+                form.append("<option value=''>---Select---</option>");
+                for (var i = 0; i < response.data.length; i++) {
+                    form.append("<option value='" + response.data[i].id + "'>" + response.data[i].name + "</option>");
+                }
 
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+                toastr.error("Error deleting item! " + error);
+            }
+        });
+    }
+    $("#addModal").on('show.bs.modal', function (event) {
+        /*Check if select2 is already initialized*/
+        if (!$("select[name='employee_id']").hasClass("select2-hidden-accessible")) {
+            $("select[name='employee_id']").select2({
+                dropdownParent: $("#addModal"),
+                placeholder: "Select Employee"
+            });
+        }
+     }); 
     </script>
 </body>
 

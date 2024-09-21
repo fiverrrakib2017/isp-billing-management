@@ -565,7 +565,7 @@ include("include/users_right.php");
             $.ajax({
                 type: 'POST', 
                 url: 'include/hrm_server.php', 
-                data: { shift_delete_data: true, id: id }, 
+                data: { employee_delete_data: true, id: id }, 
                 dataType:'json',
                 success: function(response) {
                     if (response.success) {
@@ -582,8 +582,8 @@ include("include/users_right.php");
             });
         }
     });
-    loadEmployee();
-    function loadEmployee(){
+    loadDepartment();
+    function loadDepartment(){
         $.ajax({
             type: 'GET', 
             url: 'include/hrm_server.php', 
