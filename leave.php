@@ -188,23 +188,46 @@ include("include/users_right.php");
             <div class="modal-content col-md-12">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"><span
-                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Shift</h5>
+                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Leave</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="include/hrm_server.php?update_shift=true" method="POST" enctype="multipart/form-data" >          
+                <form action="include/hrm_server.php?edit_leave=true" method="POST" enctype="multipart/form-data">
                         <div class="form-group mb-2">
-                            <label>Shift Name</label>
+                            <label>Employee Name</label>
                             <input type="text" class="d-none" name="id">
-                            <input name="shift_name" placeholder="Enter Shift Name" class="form-control" type="text" >
+                            <select name="employee_id" class="form-select" type="text" style="width: 100%;" required></select>
                         </div>           
                         <div class="form-group mb-2">
-                            <label>Start TIme</label>
-                            <input name="start_time" class="form-control" type="time" >
+                            <label>Leave Type</label>
+                            <select name="leave_type" class="form-select" type="text" required>
+                                <option >---Select---</option>
+                                <option value="Sick">Sick</option>
+                                <option value="Casual">Casual</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Unpaid">Unpaid</option>
+                            </select>
                         </div>           
                         <div class="form-group mb-2">
-                            <label>End TIme</label>
-                            <input name="end_time" class="form-control" type="time" >
+                            <label>Leave Reason</label>
+                            <textarea name="leave_reason" class="form-control" type="text" placeholder="Enter Leave Reason" required></textarea>
+                        </div>    
+                        <div class="form-group mb-2">
+                            <label>Leave Status</label>
+                            <select name="leave_status" class="form-select" type="text" required>
+                                <option >---Select---</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>        
+                        <div class="form-group mb-2">
+                            <label>Start Date</label>
+                            <input name="start_date" class="form-control" type="date"  required>
+                        </div>           
+                        <div class="form-group mb-2">
+                            <label>End Date</label>
+                            <input name="end_date" class="form-control" type="date"  required>
                         </div>           
                         <div class="modal-footer ">
                             <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
@@ -229,7 +252,7 @@ include("include/users_right.php");
                 "serverSide"		: true,
                 "zeroRecords":    "No matching records found",
                 "ajax"				: {
-                    url			: "include/hrm_server.php?show_shift_data=true",
+                    url			: "include/hrm_server.php?show_leave_data=true",
                     type		: 'GET',
                 },
                 "buttons": [			
@@ -313,7 +336,7 @@ include("include/users_right.php");
     $(document).on("click", "button[name='edit_button']", function() {
         var shift_id = $(this).data("id");
         $.ajax({
-            url: "include/hrm_server.php?get_shift=true", 
+            url: "include/hrm_server.php?get_leave=true", 
             type: "GET",
             data: { id: shift_id }, 
             dataType:'json',
@@ -321,9 +344,12 @@ include("include/users_right.php");
                 if (response.success) {
                 $('#editModal').modal('show');
                 $('#editModal input[name="id"]').val(response.data.id);
-                $('#editModal input[name="shift_name"]').val(response.data.shift_name);
-                $('#editModal input[name="start_time"]').val(response.data.start_time);
-                $('#editModal input[name="end_time"]').val(response.data.end_time);
+                $('#editModal select[name="employee_id"]').val(response.data.employee_id);
+                $('#editModal select[name="leave_type"]').val(response.data.leave_type);
+                $('#editModal textarea[name="leave_reason"]').val(response.data.leave_reason);
+                $('#editModal select[name="leave_status"]').val(response.data.leave_status);
+                $('#editModal input[name="start_date"]').val(response.data.start_date);
+                $('#editModal input[name="end_date"]').val(response.data.end_date);
                 } else {
                     toastr.error("Error fetching data for edit: " + response.message);
                 }

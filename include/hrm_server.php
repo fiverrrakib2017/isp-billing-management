@@ -618,7 +618,181 @@ if (isset($_POST['employee_delete_data']) && $_SERVER['REQUEST_METHOD'] == 'POST
 
 
 /*============================================================================================================================================Leave======================================================================================================================================================================================================================================================================================================================================================================*/
+if (isset($_GET['show_leave_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    $table = 'leaves';
+    $primaryKey = 'id';
 
+    $columns = array(
+        array('db' => 'id', 'dt' => 0),
+        array(
+            'db' => 'employee_id',
+            'dt' => 1,
+            'formatter' => function($d, $row) use ($con) {
+                $employee_id = $d;
+                $all_employee = $con->query("SELECT name FROM employees WHERE id=$employee_id");
+                $row = $all_employee->fetch_array();
+                return $row['name'];
+            }
+        ),
+        array(
+            'db' => 'leave_type',
+            'dt' => 2,
+        ),
+        array(
+            'db' => 'leave_reason',
+            'dt' => 3,
+            // 'formatter'=>function($d, $row) {
+            //     /* Check if the string contains '<br>' and remove everything after it*/
+            //     if (strpos($d, '<br>') !== false) {
+            //         $d = substr($d, 0, strpos($d, '<br>'));
+            //     }
+            //     if (strlen($d) > 30) {
+            //         return substr($d, 0, 30) . '...'; 
+            //     } else {
+            //         return $d;
+            //     }
+            // }
+            'formatter'=>function($d, $row) {
+            /*to find the position of '<br>'*/
+            // function findPosition($haystack, $needle) {
+            //     $length = customStrlen($needle);
+            //     for ($i = 0; $i <= customStrlen($haystack) - $length; $i++) {
+            //         $match = true;
+            //         for ($j = 0; $j < $length; $j++) {
+            //             if ($haystack[$i + $j] !== $needle[$j]) {
+            //                 $match = false;
+            //                 break;
+            //             }
+            //         }
+            //         if ($match) {
+            //             return $i;
+            //         }
+            //     }
+            //     return false;
+            // }
+
+            // function customSubstr($string, $start, $length = null) {
+            //     $result = '';
+            //     $strLength = customStrlen($string);
+            //     if ($length === null) {
+            //         $length = $strLength - $start;
+            //     }
+            //     for ($i = $start; $i < $start + $length && $i < $strLength; $i++) {
+            //         $result .= $string[$i];
+            //     }
+            //     return $result;
+            // }
+            // function customStrlen($string) {
+            //     $length = 0;
+            //     while (isset($string[$length])) {
+            //         $length++;
+            //     }
+            //     return $length;
+            // }
+            // $position = findPosition($d, '<br>');
+            // if ($position !== false) {
+            //     $d = customSubstr($d, 0, $position);
+            // }
+            // if (customStrlen($d) > 30) {
+            //     return customSubstr($d, 0, 30) . '...';
+            // } else {
+            //     return $d; 
+            // }
+            if (strpos($d, '<br>') !== false) {
+                $d = substr($d, 0, strpos($d, '<br>'));
+            }
+            if (strlen($d) > 30) {
+                return substr($d, 0, 30) . '...'; 
+            } else {
+                return $d;
+            }
+        }
+
+
+        ),
+        array(
+            'db' => 'leave_status',
+            'dt' => 4,
+            'formatter'=>function($d, $row){
+                if($d == 'Approved'){
+                    return '<span class="badge bg-success">Approved</span>';
+                }elseif($d=='Rejected'){
+                    return '<span class="badge bg-danger">Rejected</span>';
+                }
+                else{
+                    return '<span class="badge bg-danger">Pending</span>';
+                }
+            }
+        ),
+        array(
+            'db' => 'start_date',
+            'dt' => 5,
+            'formatter' => function($d, $row) {
+            // function customDateFormat($dateString) {
+            //     $timestamp = customStrToTime($dateString);
+            //     if ($timestamp === false) {
+            //         return $dateString; 
+            //     }
+            //     $day = customDate('d', $timestamp);
+            //     $month = customDate('M', $timestamp);
+            //     $year = customDate('Y', $timestamp);
+            //     return $day . ' ' . $month . ' ' . $year;
+            // }
+            // function customStrToTime($dateString) {
+            //     $dateParts = explode('-', $dateString);
+            //     if (count($dateParts) !== 3) {
+            //         return false; 
+            //     }
+            //     return mktime(0, 0, 0, $dateParts[1], $dateParts[2], $dateParts[0]);
+            // }
+            // function customDate($format, $timestamp) {
+            //     $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            //     $day = date('d', $timestamp);
+            //     $month = date('m', $timestamp);
+            //     $year = date('Y', $timestamp);
+
+            //     switch ($format) {
+            //         case 'd':
+            //             return $day;
+            //         case 'M':
+            //             return $months[$month - 1];
+            //         case 'Y':
+            //             return $year;
+            //         default:
+            //             return '';
+            //     }
+            // }
+            // return customDateFormat($d);
+            return date('d M Y', strtotime($d)); 
+        }
+
+        ),
+        array(
+            'db' => 'end_date',
+            'dt' => 6,
+            'formatter' => function($d, $row) {
+                return date('d M Y', strtotime($d)); 
+            }
+        ),
+        array(
+            'db' => 'id',
+            'dt' => 7,
+            'formatter' => function ($d, $row) {
+                return '
+				<button type="button" name="edit_button" data-id=' . $row['id'] . ' class="btn-sm btn btn-primary"> <i class="fas fa-edit"></i></button>
+
+				<button type="button" name="delete_button" data-id=' . $row['id'] . ' class="btn-sm btn btn-danger"> <i class="fas fa-trash"></i></button>';
+            },
+        ),
+
+    );
+
+    $condition = "";
+    /* Output JSON for DataTables to handle*/
+    echo json_encode(
+        SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns, null, $condition)
+    );
+}
 
 if (isset($_GET['add_leave']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = [];
@@ -684,3 +858,99 @@ if (isset($_GET['add_leave']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $stmt->close();
 }
+
+if (isset($_GET['get_leave']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    $_id = intval($_GET['id']);
+
+    /* Prepare the SQL statement*/
+    $stmt = $con->prepare("SELECT * FROM `leaves` WHERE id = ?");
+    $stmt->bind_param("i", $_id);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $data = $result->fetch_assoc();
+            $response = array("success" => true, "data" => $data);
+        } else {
+            $response = array("success" => false, "message" => "No record found!");
+        }
+    } else {
+        $response = array("success" => false, "message" => "Error executing query: " . $stmt->error);
+    }
+
+    /*Close the statement*/
+    $stmt->close();
+    $con->close();
+
+    /* Return the response as JSON*/
+    echo json_encode($response);
+    exit;
+}
+
+
+if (isset($_GET['edit_leave']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+   
+    $errors = [];
+    /*Retrieving form data*/
+    $id = isset($_POST["id"]) ? trim($_POST["id"]) : ''; 
+    $employee_id = isset($_POST["employee_id"]) ? trim($_POST["employee_id"]) : '';
+    $leave_type = isset($_POST["leave_type"]) ? trim($_POST["leave_type"]) : '';
+    $leave_reason = isset($_POST["leave_reason"]) ? trim($_POST["leave_reason"]) : '';
+    $leave_status = isset($_POST["leave_status"]) ? trim($_POST["leave_status"]) : '';
+
+    $start_date = isset($_POST["start_date"]) ? trim($_POST["start_date"]) : '';
+    $end_date = isset($_POST["end_date"]) ? trim($_POST["end_date"]) : '';
+
+    /*Basic validation for some fields*/
+    if (empty($employee_id)) {
+        $errors['employee_id'] = "Employee Name is required.";
+    }
+    if (empty($leave_type)) {
+        $errors['leave_type'] = "Leave Type is required.";
+    }
+    if (empty($leave_reason)) {
+        $errors['leave_reason'] = "Leave Reason is required.";
+    }
+    if (empty($leave_status)) {
+        $errors['leave_status'] = "Leave Status is required.";
+    }
+    if (empty($start_date)) {
+        $errors['start_date'] = "Start Date is required.";
+    }
+    if (empty($end_date)) {
+        $errors['end_date'] = "End Date is required.";
+    }
+
+    /* If validation errors exist, return errors */
+    if (!empty($errors)) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $errors,
+        ]);
+        exit;
+    }
+
+    /*Update query*/
+    $stmt = $con->prepare("UPDATE `leaves` SET `employee_id`=?, `leave_type`=?, `leave_reason`=?, `leave_status`=?, `start_date`=?, `end_date`=?  WHERE `id`=?");
+    $stmt->bind_param('isssssi', $employee_id, $leave_type, $leave_reason, $leave_status, $start_date, $end_date, $id);
+   
+    $result = $stmt->execute();
+
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Updated successfully!'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Error: ' . $stmt->error
+        ]);
+    }
+
+    $stmt->close();
+}
+
+
