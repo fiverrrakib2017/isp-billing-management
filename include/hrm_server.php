@@ -517,3 +517,62 @@ if (isset($_GET['get_employee']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     echo json_encode($response);
     exit;
 }
+if (isset($_GET['edit_employee']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = isset($_POST["id"]) ? trim($_POST["id"]) : ''; 
+    $employee_code = isset($_POST["employee_code"]) ? trim($_POST["employee_code"]) : '';
+    $name = isset($_POST["name"]) ? trim($_POST["name"]) : '';
+    $father_name = isset($_POST["father_name"]) ? trim($_POST["father_name"]) : '';
+    $mother_name = isset($_POST["mother_name"]) ? trim($_POST["mother_name"]) : '';
+    $nid = isset($_POST["nid"]) ? trim($_POST["nid"]) : '';
+    $birth_date = isset($_POST["birth_date"]) ? trim($_POST["birth_date"]) : '';
+    $gender = isset($_POST["gender"]) ? trim($_POST["gender"]) : '';
+    $phone_number = isset($_POST["phone_number"]) ? trim($_POST["phone_number"]) : '';
+    $email = isset($_POST["email"]) ? trim($_POST["email"]) : '';
+    $address = isset($_POST["address"]) ? trim($_POST["address"]) : '';
+    $division = isset($_POST["division"]) ? trim($_POST["division"]) : '';
+    $district = isset($_POST["district"]) ? trim($_POST["district"]) : '';
+    $upazila = isset($_POST["upazila"]) ? trim($_POST["upazila"]) : '';
+    $postal_code = isset($_POST["postal_code"]) ? trim($_POST["postal_code"]) : '';
+    $joining_date = isset($_POST["joining_date"]) ? trim($_POST["joining_date"]) : '';
+    $designation = isset($_POST["designation"]) ? trim($_POST["designation"]) : '';
+    $department = isset($_POST["department"]) ? trim($_POST["department"]) : '';
+    $salary = isset($_POST["salary"]) ? trim($_POST["salary"]) : '';
+    $status = isset($_POST["status"]) ? trim($_POST["status"]) : '';
+
+    $errors = [];
+
+   
+
+    if (empty($employee_code)) {
+        $errors['employee_code'] = "Employee Code is required.";
+    }
+
+    if (!empty($errors)) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $errors
+        ]);
+        exit;
+    }
+ 
+
+    /*Update query*/
+    $stmt = $con->prepare("UPDATE `employees` SET `employee_code`=?, `name`=?, `father_name`=?, `mother_name`=?, `nid`=?, `birth_date`=?, `gender`=?, `phone_number`=?, `email`=?, `address`=?, `division`=?, `district`=?, `upazila`=?, `postal_code`=?, `joining_date`=?, `designation`=?, `department`=?, `salary`=?  WHERE `id`=?");
+    $stmt->bind_param('ssssssssssssssssisi', $employee_code, $name, $father_name, $mother_name, $nid, $birth_date, $gender, $phone_number, $email, $address, $division, $district, $upazila, $postal_code, $joining_date, $designation, $department, $salary, $id);
+   
+    $result = $stmt->execute();
+
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Employee updated successfully!'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Error: ' . $stmt->error
+        ]);
+    }
+
+    $stmt->close();
+}

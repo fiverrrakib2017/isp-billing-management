@@ -233,13 +233,6 @@ include("include/users_right.php");
                                 <label>Salary</label>
                                 <input name="salary" placeholder="Enter Salary" class="form-control" type="text">
                             </div>
-                            <!-- <div class="form-group mb-3">
-                                <label>Status</label>
-                                <select name="status" class="form-control">
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div> -->
                         </div>
                     </div>
 
@@ -257,29 +250,116 @@ include("include/users_right.php");
      <!-- Edit Modal -->
      <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog " role="document">
+        <div class="modal-dialog  modal-lg" role="document">
             <div class="modal-content col-md-12">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"><span
-                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Shift</h5>
+                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Employee</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="include/hrm_server.php?update_shift=true" method="POST" enctype="multipart/form-data" >          
-                        <div class="form-group mb-2">
-                            <label>Shift Name</label>
-                            <input type="text" class="d-none" name="id">
-                            <input name="shift_name" placeholder="Enter Shift Name" class="form-control" type="text" >
-                        </div>           
-                        <div class="form-group mb-2">
-                            <label>Start TIme</label>
-                            <input name="start_time" class="form-control" type="time" >
-                        </div>           
-                        <div class="form-group mb-2">
-                            <label>End TIme</label>
-                            <input name="end_time" class="form-control" type="time" >
-                        </div>           
-                        <div class="modal-footer ">
+                    <form action="include/hrm_server.php?edit_employee=true" method="POST" enctype="multipart/form-data">
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>Employee Code</label>
+                                    <input type="text" name="id" class="d-none">
+                                    <input name="employee_code" placeholder="Enter Employee Code" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Employee Name</label>
+                                    <input name="name" placeholder="Enter Employee Name" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Father's Name</label>
+                                    <input name="father_name" placeholder="Enter Father's Name" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Mother's Name</label>
+                                    <input name="mother_name" placeholder="Enter Mother's Name" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>NID</label>
+                                    <input name="nid" placeholder="Enter NID" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Birth Date</label>
+                                    <input name="birth_date" class="form-control" type="date">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Gender</label>
+                                    <select name="gender" class="form-select">
+                                        <option >--Select---</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>Phone Number</label>
+                                    <input name="phone_number" placeholder="Enter Phone Number" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Email</label>
+                                    <input name="email" placeholder="Enter Email" class="form-control" type="email">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Address</label>
+                                    <input name="address" placeholder="Enter Address" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Division</label>
+                                    <input name="division" placeholder="Enter Division" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>District</label>
+                                    <input name="district" placeholder="Enter District" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Upazila</label>
+                                    <input name="upazila" placeholder="Enter Upazila" class="form-control" type="text">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Postal Code</label>
+                                    <input name="postal_code" placeholder="Enter Postal Code" class="form-control" type="text">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Bottom Row -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>Joining Date</label>
+                                    <input name="joining_date" class="form-control" type="date">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Designation</label>
+                                    <input name="designation" placeholder="Enter Designation" class="form-control" type="text">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label>Department</label>
+                                    <select name="department" class="form-select" type="text">
+
+                                    </select>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>Salary</label>
+                                    <input name="salary" placeholder="Enter Salary" class="form-control" type="text">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
                             <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
                             <button type="submit" class="btn btn-success">Save Changes</button>
                         </div>
@@ -394,11 +474,26 @@ include("include/users_right.php");
             dataType:'json',
             success: function(response) {
                 if (response.success) {
-                $('#editModal').modal('show');
-                $('#editModal input[name="id"]').val(response.data.id);
-                $('#editModal input[name="shift_name"]').val(response.data.shift_name);
-                $('#editModal input[name="start_time"]').val(response.data.start_time);
-                $('#editModal input[name="end_time"]').val(response.data.end_time);
+                    $('#editModal').modal('show');
+                    $('#editModal input[name="id"]').val(response.data.id);
+                    $('#editModal input[name="employee_code"]').val(response.data.employee_code);
+                    $('#editModal input[name="name"]').val(response.data.name);
+                    $('#editModal input[name="father_name"]').val(response.data.father_name);
+                    $('#editModal input[name="mother_name"]').val(response.data.mother_name);
+                    $('#editModal input[name="nid"]').val(response.data.nid);
+                    $('#editModal input[name="birth_date"]').val(response.data.birth_date);
+                    $('#editModal select[name="gender"]').val(response.data.gender);
+                    $('#editModal input[name="phone_number"]').val(response.data.phone_number);
+                    $('#editModal input[name="email"]').val(response.data.email);
+                    $('#editModal input[name="address"]').val(response.data.address);
+                    $('#editModal input[name="division"]').val(response.data.division);
+                    $('#editModal input[name="district"]').val(response.data.district);
+                    $('#editModal input[name="upazila"]').val(response.data.upazila);
+                    $('#editModal input[name="postal_code"]').val(response.data.postal_code);
+                    $('#editModal input[name="joining_date"]').val(response.data.joining_date);
+                    $('#editModal input[name="designation"]').val(response.data.designation);
+                    $('#editModal select[name="department"]').val(response.data.department);
+                    $('#editModal input[name="salary"]').val(response.data.salary);
                 } else {
                     toastr.error("Error fetching data for edit: " + response.message);
                 }
@@ -495,7 +590,7 @@ include("include/users_right.php");
             data: { get_all_department: true }, 
             dataType:'json',
             success: function(response) {
-                var form = $("#addModal select[name='department']");
+                var form = $("select[name='department']");
                 form.append("<option value=''>Select</option>");
                 for (var i = 0; i < response.data.length; i++) {
                     form.append("<option value='" + response.data[i].id + "'>" + response.data[i].department_name + "</option>");
