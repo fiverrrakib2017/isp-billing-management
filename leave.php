@@ -421,7 +421,7 @@ include("include/users_right.php");
             $.ajax({
                 type: 'POST', 
                 url: 'include/hrm_server.php', 
-                data: { shift_delete_data: true, id: id }, 
+                data: { leave_delete_data: true, id: id }, 
                 dataType:'json',
                 success: function(response) {
                     if (response.success) {
