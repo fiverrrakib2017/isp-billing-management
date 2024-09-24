@@ -980,3 +980,166 @@ if (isset($_POST['leave_delete_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') 
     echo json_encode($response);
     exit;
 }
+/*============================================================================================================================================Attendance======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================*/
+if (isset($_GET['show_attendance_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    $table = 'attendances';
+    $primaryKey = 'id';
+
+    $columns = array(
+        array('db' => 'id', 'dt' => 0),
+        array(
+            'db' => 'employee_id',
+            'dt' => 1, 
+            'formatter'=>function($d, $row) use($con){
+                $employee_id=$d; 
+                $all_employee=$con->query("SELECT name FROM employees WHERE id=$employee_id");
+                $row=$all_employee->fetch_array();
+                return $row['name'];
+            }
+        ),
+        array(
+            'db' => 'duty_date',
+            'dt' => 2,
+        ),
+        array(
+            'db' => 'shift_id',
+            'dt' => 3, 
+            'formatter'=>function($d, $row) use($con){
+                $shift_id=$d; 
+                $all_shift=$con->query("SELECT shift_name FROM `shifts` WHERE id=$shift_id");
+                $row=$all_shift->fetch_array();
+                return $row['shift_name'];
+            }
+        ),
+        array(
+            'db' => 'time_in',
+            'dt' => 4,
+        ),
+        array(
+            'db' => 'time_out',
+            'dt' => 5,
+        ),
+        array(
+            'db' => 'working_time',
+            'dt' => 6,
+        ),
+        array(
+            'db' => 'over_time',
+            'dt' => 7,
+        ),
+        array(
+            'db' => 'status',
+            'dt' => 8,
+            'formatter' => function($d, $row) {
+                if ($d == 'Present') { 
+                    return '<span class="badge bg-success">Present</span>';
+                }
+                return '<span class="badge bg-danger">Absent</span>';
+            }
+        ),
+        array(
+            'db' => 'id',
+            'dt' => 9,
+            'formatter' => function ($d, $row) {
+                return '
+                <button type="button" name="edit_button" data-id=' . $row['id'] . ' class="btn-sm btn btn-primary"> <i class="fas fa-edit"></i></button>
+
+                <button type="button" name="delete_button" data-id=' . $row['id'] . ' class="btn-sm btn btn-danger"> <i class="fas fa-trash"></i></button>';
+            },
+        ),
+
+    );
+
+    $condition = "";
+    /* Output JSON for DataTables to handle*/
+    echo json_encode(
+        SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns, null, $condition)
+    );
+}
+
+if (isset($_GET['add_attendance']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $errors = [];
+    /* Define the desired time zone */
+    $time_zone = 'Asia/Dhaka';
+    /* Retrieving form data */
+    $employee_id = isset($_POST["employee_id"]) ? trim($_POST["employee_id"]) : '';
+    $duty_date = isset($_POST["duty_date"]) ? trim($_POST["duty_date"]) : '';
+    $shift_id = isset($_POST["shift_id"]) ? trim($_POST["shift_id"]) : '';
+    $time_in = isset($_POST["time_in"]) ? trim($_POST["time_in"]) : '';
+    $time_out = isset($_POST["time_out"]) ? trim($_POST["time_out"]) : '';
+
+    /* Basic validation for some fields */
+    if (empty($employee_id)) {
+        $errors['employee_id'] = "Employee Name is required.";
+    }
+    if (empty($duty_date)) {
+        $errors['duty_date'] = "Duty Date is required.";
+    }
+    if (empty($shift_id)) {
+        $errors['shift_id'] = "Shift Time is required.";
+    }
+    if (empty($time_in)) {
+        $errors['time_in'] = "Time In is required.";
+    }
+    if (empty($time_out)) {
+        $errors['time_out'] = "Time Out is required.";
+    }
+
+    /* If validation errors exist, return errors */
+    if (!empty($errors)) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $errors,
+        ]);
+        exit;
+    }
+    /* Set time zone */
+    $tz = new DateTimeZone($time_zone);
+    /* Calculate working time and over time */
+    $start_time = new DateTime($time_in, $tz);
+    $end_time = new DateTime($time_out, $tz);
+
+    /*Assuming shift starts at 9:00 AM, adjust as needed*/ 
+    $shift_start = new DateTime('09:00',$tz); 
+    /*Assuming shift ends at 5:00 PM, adjust as needed*/ 
+    $shift_end = new DateTime('17:00',$tz);  
+
+    /* Calculate total working hours*/
+    $working_interval = $start_time->diff($end_time);
+    /*Total working time in hours:minutes:seconds*/ 
+    $working_time = $working_interval->format('%H:%I:%S');
+
+    /* Calculate overtime if worked beyond the shift end*/
+    if ($end_time > $shift_end) {
+        $over_time_interval = $shift_end->diff($end_time);
+        $over_time = $over_time_interval->format('%H:%I:%S');
+    } else {
+        /*No overtime*/ 
+        $over_time = '00:00:00'; 
+    }
+
+    /* Insert query */
+    $stmt = $con->prepare("INSERT INTO `attendances` (`employee_id`, `duty_date`, `shift_id`, `time_in`, `time_out`, `working_time`, `over_time`, `status`)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, 'Present')");
+
+    $stmt->bind_param(
+        'issssss',
+        $employee_id, $duty_date, $shift_id, $time_in, $time_out, $working_time, $over_time
+    );
+
+    $result = $stmt->execute();
+
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Added successfully!',
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => $stmt->error,
+        ]);
+    }
+
+    $stmt->close();
+}
