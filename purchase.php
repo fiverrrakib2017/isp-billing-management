@@ -205,7 +205,7 @@ include("include/pop_security.php");
                                             </div>
                                             <div class="col">
                                                 <div class="form-group mt-2">
-                                                    <label>Client Name</label>
+                                                    <label>Suppliers Name</label>
                                                     <select type="text" id="supplier_name" name="client_id" class="form-select select2" required>
                                                         <option>---Select---</option>
                                                     </select>
