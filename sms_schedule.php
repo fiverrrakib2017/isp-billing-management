@@ -88,7 +88,10 @@ echo '<script>var areas = ' . json_encode($areaData) . ';</script>';
                                             <thead class="bg-success text-white" style="background-color: #2c845f !important;">
                                                 <tr>
                                                     <th>No.</th> 
-                                                    <th>Status</th> 
+                                                    <th>POP/Branch Name</th> 
+                                                    <th> Area Name</th> 
+                                                    <th>Message</th> 
+                                                    <th>Send Date</th> 
                                                     <th>Created</th>
                                                     <th></th>
                                                 </tr>
@@ -200,7 +203,7 @@ echo '<script>var areas = ' . json_encode($areaData) . ';</script>';
                 "serverSide"		: true,
                 "zeroRecords":    "No matching records found",
                 "ajax"				: {
-                    url			: "include/tickets_server.php?get_tickets_data=1",
+                    url			: "include/message_server.php?get_message_schedule_data=1",
                     type		: 'GET',
                 },
                 "order": [[0, 'desc']], 
@@ -321,22 +324,29 @@ echo '<script>var areas = ' . json_encode($areaData) . ';</script>';
             dataType:'json',
             success: function(response) {
                 if (response.success) {
+                $("#addModal").fadeOut(500, function() {
+                    $(this).modal('hide');
                     toastr.success(response.message);
-                    $("#addModal").modal('hide');
-                    table.ajax.reload();
+                    $('#datatable1').DataTable().ajax.reload();
+                });
+
+                } else if (!response.success && response.errors) {
+                    $.each(response.errors, function(field, message) {
+                        toastr.error(message);
+                    });
                 }
             },
             error: function(xhr, status, error) {
                 /* Handle errors */
-                console.error(xhr.responseText);
-                if (xhr.status === 422) {
-                    var errors = xhr.responseJSON.errors;
-                    for (var error in errors) {
-                        toastr.error(errors[error][0]);
-                    }
-                } else {
-                    toastr.error('An error occurred while processing the request.');
-                }
+                // console.error(xhr.responseText);
+                // if (xhr.status === 422) {
+                //     var errors = xhr.responseJSON.errors;
+                //     for (var error in errors) {
+                //         toastr.error(errors[error][0]);
+                //     }
+                // } else {
+                //     toastr.error('An error occurred while processing the request.');
+                // }
             },
             complete: function() {
                 /* Reset button text and enable the button */

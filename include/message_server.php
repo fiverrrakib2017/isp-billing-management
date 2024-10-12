@@ -65,3 +65,74 @@ if (isset($_GET['add_message_shchedule_data']) && $_SERVER['REQUEST_METHOD'] == 
     /* Close statement */
     $stmt->close();
 }
+function get_message_schedule_data(){
+
+}
+if (isset($_GET['get_message_schedule_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+	require 'datatable.php';
+
+	$table = 'message_schedule';
+	$primaryKey = 'id';
+	$columns = array(
+		array('db' => 'id', 'dt' => 0),
+		array('db'=>'pop_id','dt'=>1,'formatter'=>function($d, $row)use ($con){
+			
+			/*Fetch POP/Branch details*/ 
+			$Query = $con->query("SELECT * FROM add_pop WHERE id=$d");
+			if ($run_query = $Query->fetch_assoc()) {
+				$data = $run_query['pop'];
+				return $data;
+			}
+			return 'Unknown POP/Branch';
+
+		}),
+		array('db'=>'area_id','dt'=>2,'formatter'=>function($d, $row)use ($con){
+			/*Fetch POP/Branch details*/ 
+			$Query = $con->query("SELECT * FROM area_list WHERE id=$d");
+			if ($run_query = $Query->fetch_assoc()) {
+				$data = $run_query['name'];
+				return $data;
+			}
+			return 'Unknown Area';
+
+		}),
+		array(
+			'db' => 'message_text',
+			'dt' => 3,
+			'formatter' => function($d, $row) use ($con) {
+				/* Limit message text to 40 characters */
+				if (strlen($d) > 40) {
+					return substr($d, 0, 40) . '...';
+				} else {
+					return $d;
+				}
+			}
+		),
+		
+		array('db'=>'send_date','dt'=>4,'formatter'=>function($d, $row)use ($con){
+			return $d; 
+
+		}),
+		array('db'=>'create_date','dt'=>5,'formatter'=>function($d, $row)use ($con){
+			return $d; 
+
+		}),
+		array(
+			'db'=>'id',
+			'dt'=>6,
+			'formatter'=>function($d, $row){
+				return '
+				<button type="button" name="settings_button" data-id='.$row['id'].' class="btn-sm btn btn-danger"> <i class="fas fa-cog"></i></button>
+				<a class="btn-sm btn btn-success" href="tickets_profile.php?id='.$row['id'].'"><i class="fas fa-eye"></i></a>'; 
+			}
+		),
+		
+		
+	);
+
+	$condition = ""; 
+	/* Output JSON for DataTables to handle*/
+	echo json_encode(
+		SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns,null, $searchCondition)
+	);
+}
