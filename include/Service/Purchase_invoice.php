@@ -17,6 +17,7 @@ class Purchase_invoice extends Base_invoivce  implements InvoiceInterface{
             /* Insert data into `purchase` table */
            $invoice_id= self::insert_invoice('purchase',$validator); 
 
+            
             /* Insert data into `purchase_details` table */
             self::insert_invoice_details('purchase_details', $invoice_id, $validator);
 

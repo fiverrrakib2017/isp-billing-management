@@ -3,9 +3,7 @@ include "include/db_connect.php";
 include("include/security_token.php");
 include("include/users_right.php");
 include("include/pop_security.php");
-if (isset($_SESSION['uid'])) {
-    $ledgr_id = $_SESSION["uid"];
-}
+
 
 ?>
 <!doctype html>
@@ -45,9 +43,7 @@ if (isset($_SESSION['uid'])) {
                             <div class="card ">
                                 <div class="container">
                                     <div class="row mb-3 mt-1">
-                                        <input id="user_id" class="form-control d-none" type="text" value="<?php if (isset($_SESSION['uid'])) {
-                                                                                                                echo $_SESSION['uid'];
-                                                                                                            } ?>">
+                                        <input id="user_id" class="form-control d-none" type="text" value="<?php if (isset($_SESSION['uid'])) {echo $_SESSION['uid'];} ?>">
 
 
                                     </div>

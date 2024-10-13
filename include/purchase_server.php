@@ -169,6 +169,7 @@ if (isset($_GET['process_payment']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    
     $purchase_invoice=new Purchase_invoice($con); 
     
     $__response=Purchase_invoice::add_invoice($_POST);
