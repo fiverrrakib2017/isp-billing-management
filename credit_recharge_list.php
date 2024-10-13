@@ -404,84 +404,57 @@ include("include/users_right.php");
                                         <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                    <!-- <th>Check All <input type="checkbox" id="checkedAll" name="checkedAll" value="Bike"></th> -->
-													<th><input type="checkbox" id="checkedAll" name="checkedAll"> All</th>
-                                                    <th>ID</th>
-                                                    <th>Name</th>
-                                                    <th>Package</th>
-                                                    <th>Expired Date</th>
-                                                    <th>User Name</th>
-                                                    <th>Mobile no.</th>
-                                                    <th>POP/Branch</th>
-                                                    <th>Area/Location</th>
-                                                    <th></th>
+                                                    <th>Customer Name</th>
+                                                    <th>Recharged</th>
+                                                    <th>Total Paid</th>
+                                                    <th>Total Due</th>
+                                                    <th>Due Paid</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="customer-list">
                                             <?php
-$sql = "SELECT  c.id, c.fullname, c.package_name, c.expiredate, c.username, c.mobile, c.pop, c.area,
-        cr.months, cr.sales_price, cr.purchase_price, cr.ref, cr.rchrg_until, cr.type, cr.datetm FROM  customers c JOIN  customer_rechrg cr  ON c.id = cr.customer_id WHERE  cr.type = '0'";
+                    if ($customers = $con->query("SELECT DISTINCT customer_id FROM customer_rechrg Limit 500")) {
+                        while ($customer = $customers->fetch_array()) {
+                            $clid = $customer['customer_id'];
 
-$result = mysqli_query($con, $sql);
+                            // Recharged
+                            $totalrchd = 0;
+                            if ($rchdamt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type !='4'")) {
+                                while ($r_rchd_rows = $rchdamt->fetch_array()) {
+                                    $totalrchd = $r_rchd_rows["Amount"];
+                                }
+                            }
 
-while ($rows = mysqli_fetch_assoc($result)) {
-    $username = $rows["username"];
-    ?>
-    <tr>
-        <td><input type="checkbox" Value="<?php echo $rows["id"]; ?>" name="checkAll[]" class="checkSingle"></td>
-        <td><?php echo $rows['id']; ?></td>
-        <td>
-            <?php 
-            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-            $chkc = $onlineusr->num_rows;
-            if ($chkc == 1) {
-                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-            } else {
-                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-            }
-            ?>
-            <a href="profile.php?clid=<?php echo $rows['id']; ?>"><?php echo $rows["fullname"]; ?></a>
-        </td>
-        <td><?php echo $rows["package_name"]; ?></td>
-        <td>
-            <?php
-            $expireDate = $rows["expiredate"];
-            $todayDate = date("Y-m-d");
-            if ($expireDate <= $todayDate) {
-                echo "<span class='badge bg-danger'>Expired</span>";
-            } else {
-                echo $expireDate;
-            }
-            ?>
-        </td>
-        <td><?php echo $rows["username"]; ?></td>
-        <td><?php echo $rows["mobile"]; ?></td>
-        <td>
-            <?php
-            $popID = $rows["pop"];
-            $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
-            while ($popRow = $allPOP->fetch_array()) {
-                echo $popRow['pop'];
-            }
-            ?>
-        </td>
-        <td>
-            <?php $id = $rows["area"];
-            $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-            while ($popRow = $allArea->fetch_array()) {
-                echo $popRow['name'];
-            }
-            ?>
-        </td>
-        <td>
-            <a class="btn btn-info" href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-            <a class="btn btn-success" href="profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i></a>
-        </td>
-    </tr>
-    <?php
-}
-?>
+                            // Total Paid
+                            $totalpaid = 0;
+                            if ($dueamt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type !='0'")) {
+                                while ($r_due_rows = $dueamt->fetch_array()) {
+                                    $totalpaid = $r_due_rows["Amount"];
+                                }
+                            }
 
+                            // Due Paid
+                            $totalpmtpaid = 0;
+                            if ($duepmt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type='4'")) {
+                                while ($pmt_rows = $duepmt->fetch_array()) {
+                                    $totalpmtpaid = $pmt_rows["Amount"];
+                                }
+                            }
+
+                            // Total Due
+                            $totalDue = $totalrchd - $totalpaid;
+
+                            // টেবিলের মধ্যে ডেটা প্রদর্শন
+                            echo "<tr>
+                                    <td>$clid</td>
+                                    <td>$totalrchd</td>
+                                    <td>$totalpaid</td>
+                                    <td>$totalDue</td>
+                                    <td>$totalpmtpaid</td>
+                                  </tr>";
+                        }
+                    }
+                    ?>
                                             </tbody>
                                         </table>
                                     </div>
