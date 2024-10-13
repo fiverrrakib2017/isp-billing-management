@@ -94,10 +94,9 @@ if (isset($_GET['process_payment']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         ]);
         exit();
     }
-
     /* Update the `sales` table*/
     $stmt = $con->prepare("UPDATE `sales` SET `total_paid`= `total_due` + ?, `total_due` = `total_due` - ? WHERE `id` = ? AND `client_id` = ?");
-    $stmt->bind_param("iii", $amount, $invoice_id, $client_id);
+    $stmt->bind_param("iiii", $amount, $amount, $invoice_id, $client_id);
 
     if ($stmt->execute()) {
 
@@ -107,18 +106,18 @@ if (isset($_GET['process_payment']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($stmt2->execute()) {
             echo json_encode([
-                'status' => 'success',
+                'success' =>true,
                 'message' => 'Payment processed successfully and record saved.',
             ]);
         } else {
             echo json_encode([
-                'status' => 'error',
+                'success' =>false,
                 'message' => 'Payment processed but failed to save payment record.',
             ]);
         }
     } else {
         echo json_encode([
-            'status' => 'error',
+            'success' =>false,
             'message' => 'Failed to update payment. Please try again.',
         ]);
     }
