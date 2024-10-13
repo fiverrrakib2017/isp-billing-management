@@ -29,7 +29,7 @@ class Base_invoivce{
     }
     protected function insert_invoice($table,$validator){
 
-        if ($table=="purchase") {
+        if ($table=="purchase" || $table=="sales") {
             /* Insert data into `ledger_transaction ` table */
             $sub_ledger = $validator['sub_ledger'];
             if ($allSubLedger=self::$con->query("SELECT * FROM legder_sub WHERE id=$sub_ledger")) {

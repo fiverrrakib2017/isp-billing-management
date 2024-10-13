@@ -51,7 +51,7 @@ include("include/pop_security.php");
                                                 <div class="form-group mt-2">
                                                     <label>Client Name</label>
                                                     <select type="text" id="client_name" name="client_id" class="form-select select2">
-                                                        <option>---Select---</option>
+                                                        <option value="">---Select---</option>
                                     <?php 
 
                                     if($allClient=$con->query("select * from clients")){
@@ -146,10 +146,8 @@ include("include/pop_security.php");
                                 <tbody id="tableRow"></tbody>
                                 
                                 </table>
-                                <div class="form-group " style="text-align: right ; margin-left: 15px;">
-                                <!-- <button type="submit"  class="btn btn-success"><i class="fe fe-dollar"></i> Create Now</button> -->
-                                 <button type="button"  data-bs-target="#invoiceModal" data-bs-toggle="modal" class="btn btn-success" style="text-align: left;"><i class="fe fe-dollar"></i> Finished</button>
-                                 <!-- <button type="button" id="finishButton" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button> -->
+                                <div class="form-group text-center">
+                                    <button type="button" name="finished_btn" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +173,10 @@ include("include/pop_security.php");
                      </div>
                      <div class="modal-body">
                         <form id="paymentForm">
-                           
+                            <div class="form-group mb-2">
+                              <label>Ledger/Sub ledger </label>
+                              <select class="form-select select2" name="sub_ledger" type="text" style="width: 100%;" required></select>
+                           </div>
                            <div class="form-group mb-2">
                               <label>Total Amount </label>
                               <input readonly class="form-control table_total_amount" name="table_total_amount" type="text">
@@ -348,6 +349,34 @@ include("include/pop_security.php");
                 var mainFormData = $('#form-data').serializeArray();
                 var modalFormData = $('#paymentForm').serializeArray(); 
                 var allFormData = $.merge(mainFormData, modalFormData);
+                var isValid = true;
+                /*Validate each form data field*/ 
+                $.each(allFormData, function(index, field) {
+                    if (field.name==='client_id' && field.value === '') {
+                        toastr.error("Client must be selected!");
+                        isValid = false; 
+                        return false; 
+                    }
+                    else if (field.name === 'table_paid_amount' && field.value === '') {
+                        toastr.error("Paid Amount is required");
+                        isValid = false; 
+                        return false; 
+                    }
+                    else if (field.name === 'sub_ledger' && field.value === '') {
+                        toastr.error("Please select a sub ledger!");
+                        isValid = false;
+                        return false; 
+                    }
+                    else if (field.name === 'date' && field.value === '') {
+                        toastr.error("Date is required!");
+                        isValid = false; 
+                        return false;
+                    }
+                });
+
+                if (!isValid) {
+                    return false;
+                }
                 $(this).prop('disable',true).html('Saving...'); 
                 $.ajax({
                     type:'POST',
@@ -374,6 +403,23 @@ include("include/pop_security.php");
                 }); 
             });
 
+        });
+
+        $(document).on('click','button[name="finished_btn"]',function(){
+            $('#invoiceModal').modal('show');
+            $.ajax({
+                url: "include/transactions_server.php?getLedger",
+                method: 'GET',
+                success: function(response) {
+                    $('select[name="sub_ledger"]').html(response);
+                    $('select[name="sub_ledger"]').select2({
+                        dropdownParent: $('#invoiceModal')
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
         });
 
        
