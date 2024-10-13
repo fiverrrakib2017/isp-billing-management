@@ -11,8 +11,6 @@ include("include/pop_security.php");
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-    <meta content="Themesbrand" name="author">
     <?php include 'style.php';?>
 </head>
 
@@ -70,17 +68,11 @@ include("include/pop_security.php");
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-md-3">
+                                            <div class="col-md-3" >
                                                 <div class="form-group">
                                                     <label for="product_item" class="form-label">Product</label>
-                                                    <!-- <div class="input-group">
-                                                        <select type="text" id="product_name"  class="form-select select2">
-                                                            <option>---Select---</option>
-                                                        </select>
-                                                        <button  type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
-                                                    </div> -->
-                                                    <div class="input-group">
-                                                        <select id="product_name" class="form-select select2" aria-label="Product Name">
+                                                    <div class="input-group" >
+                                                        <select id="product_name" class="form-select select2" aria-label="Product Name"  style="width: 100%;">
                                                             <option value="">---Select---</option>
                                                             <!-- Other options -->
                                                         </select>
@@ -149,22 +141,7 @@ include("include/pop_security.php");
                
             </div>
             <!-- End Page-content -->
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script> © IT-FAST.
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-                                Development <i class="mdi mdi-heart text-danger"></i><a href="https://facebook.com/rakib56789">Rakib Mahmud</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <?php include 'Footer.php'; ?>
         </div>
         <!-- end main content-->
     </div>
