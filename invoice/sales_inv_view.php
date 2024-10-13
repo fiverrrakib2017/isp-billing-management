@@ -261,6 +261,13 @@ if (isset($_GET['clid'])) {
                     </span>
                     <span class="tm_btn_text">Download</span>
                 </button>
+                <button id="tm_download_btn" class="tm_invoice_btn tm_color3" onclick="window.history.back()">
+                    <span class="tm_btn_icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+                            <path d="M328 112L184 256l144 144" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48"/>
+                        </svg>
+                    </span>
+                </button>
             </div>
         </div>
     </div>
