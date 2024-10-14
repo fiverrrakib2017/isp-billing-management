@@ -600,7 +600,7 @@ include("include/users_right.php");
                     "serverSide"		: true,
                     "zeroRecords":    "No matching records found",
                     "ajax"				: {
-                        url			: "include/customers_dues_server.php",
+                        url			: "include/customers_dues_server.php?show_customer_dues_data=true",
                         type		: 'GET',
                         dataSrc     :function(json){
                             var totalPrice = json.total_price;
