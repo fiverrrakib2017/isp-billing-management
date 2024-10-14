@@ -4,15 +4,19 @@ include("include/db_connect.php");
 include("include/pop_security.php");
 include("include/users_right.php");
 
-$sql = "
-    SELECT 
+$sql = "SELECT 
         c.id AS customer_id, 
         c.username, 
         COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
         COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
         (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
         COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due,
-        COALESCE(SUM(CASE WHEN cr.type = '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_due_paid
+        COALESCE(SUM(CASE WHEN cr.type = '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_due_paid,
+        CASE 
+            WHEN c.expiredate <= DATE_ADD(CURDATE(), INTERVAL 10 DAY) 
+            THEN c.price 
+            ELSE 0 
+        END AS expiring_price
     FROM 
         customers c
     LEFT JOIN 
@@ -20,7 +24,7 @@ $sql = "
     GROUP BY 
         c.id
     HAVING 
-        total_due > 0"; 
+        (total_due + expiring_price) > 0";
 
 $result = $con->query($sql);
 
@@ -314,31 +318,30 @@ $result = $con->query($sql);
                                             </thead>
                                             <tbody >
                                             <?php
-                                                if ($result->num_rows > 0) {
-                                                    $total_due_sum = 0;
-                                                    while($row = $result->fetch_assoc()) {
-                                                        $total_due_sum += $row['total_due'];
-                                                        echo "<tr>";
-                                                        echo "<td> <a href='profile.php?clid=" . $row['customer_id'] . "'>" . $row['username'] . "</a> </td>";
-                                                        echo "<td>" . $row['total_recharge'] . "</td>";
-                                                        echo "<td>" . $row['total_paid'] . "</td>";
-                                                        echo "<td>" . $row['total_due'] . "</td>";
-                                                        echo "<td>" . $row['total_due_paid'] . "</td>";
-                                                        echo "</tr>";
-                                                    }
-                                                    
-                                                } else {
-                                                    echo "<tr><td colspan='5'>No customers with due amounts found</td></tr>";
-                                                }
-                                                ?>
+        if ($result->num_rows > 0) {
+            $total_due_sum = 0;
+            while($row = $result->fetch_assoc()) {
+                $total_due_sum += ($row['total_due'] + $row['expiring_price']); 
+                echo "<tr>";
+                echo "<td> <a href='profile.php?clid=" . $row['customer_id'] . "'>" . $row['username'] . "</a> </td>";
+                echo "<td>" . $row['total_recharge'] . "</td>";
+                echo "<td>" . $row['total_paid'] . "</td>";
+                echo "<td>" . ($row['total_due'] + $row['expiring_price']) . "</td>"; 
+                echo "<td>" . $row['total_due_paid'] . "</td>";
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='5'>No customers with due amounts found</td></tr>";
+        }
+    ?>
                                                 
                                             </tbody>
                                             <tfooter>
                                             <tr>
-                                                <td colspan="3"><strong>Total Due</strong></td>
-                                                <td><strong><?php echo $total_due_sum; ?></strong></td>
-                                                <td></td>
-                                            </tr>
+        <td colspan="3"><strong>Total Due</strong></td>
+        <td><strong><?php echo $total_due_sum; ?></strong></td>
+        <td></td>
+    </tr>
                                             </tfooter>
                                         </table>
                                         <button class="btn-sm btn btn-success" onclick="printTable()">Print</button>
