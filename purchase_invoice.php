@@ -123,7 +123,7 @@ ini_set('display_errors', 1);
                                                             $client_id = $rows['client_id'];
                                                             $allSupplierData = $con->query("SELECT * FROM suppliers WHERE id=$client_id ");
                                                             while ($supplier = $allSupplierData->fetch_array()) {
-                                                                echo $supplier['fullname'];
+                                                                echo $supplier['fullname'] . ' (' . $supplier['company'] . ')';
                                                             }
 
                                                             ?>
