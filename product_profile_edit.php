@@ -19,6 +19,7 @@ if (isset($_GET['id'])) {
             $s_price = $rows["sale_price"];
             $store = $rows["store"];
             $note = $rows["note"];
+            $qty = $rows['qty'];
         }
     }
 }
@@ -397,6 +398,12 @@ if (isset($_GET['id'])) {
                                             <input type="text" class="form-control" id="note"  name="note" placeholder="Enter Your Note" value="<?php echo $note; ?>"/>
                                         </div>
                                     </div>
+                                    <div class="col">
+                                        <div class="form-group mb-4">
+                                            <label for="">Quantity</label>
+                                            <input type="text" class="form-control" id="qty"  name="qty" placeholder="Enter Quantity" value="<?php echo $qty; ?>"/>
+                                        </div>
+                                    </div>
                                 </div>
 
 
@@ -404,7 +411,7 @@ if (isset($_GET['id'])) {
                                 </div>
                                 <div class="card-footer">
                                     <button type="button" onclick="history.back();" class="btn btn-danger">Back</button>
-                                    <button type="submit" class=" btn btn-success">Add Now</button>
+                                    <button type="submit" class=" btn btn-success">Update Now</button>
                                 </div>
                                 </form>
                             </div>

@@ -10,15 +10,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
     $sale_price = $_POST['s_price'];
     $store = $_POST['store'];
     $note = $_POST['note'];
+    $qty = $_POST['qty'];
 
     // Debugging: Check what is received in POST
     //print_r($_POST); exit;
 
     /* Prepare an SQL statement*/
-    $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`, `purchase_price`, `sale_price`, `store`,`note`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`, `purchase_price`, `sale_price`, `store`,`note`,`qty`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     /* Bind parameters*/
-    $stmt->bind_param("siiiiiiis", $name, $category, $brand, $purchase_ac, $sales_ac, $purchase_price, $sale_price, $store, $note);
+    $stmt->bind_param("siiiiiiisi", $name, $category, $brand, $purchase_ac, $sales_ac, $purchase_price, $sale_price, $store, $note, $qty);
 
     /* Execute the statement*/
     if ($stmt->execute()) {
@@ -49,13 +50,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['update_product'])) {
     $sale_price = $_POST['s_price'];
     $store = $_POST['store'];
     $note = $_POST['note'];
-
+    $qty = $_POST['qty'];
     
     /* Prepare an SQL statement for updating the product*/
-    $stmt = $con->prepare("UPDATE products SET `name`=?, `category`=?, `brand`=?, `purchase_ac`=?, `sales_ac`=?, `purchase_price`=?, `sale_price`=?, `store`=?, `note`=? WHERE `id`=?");
+    $stmt = $con->prepare("UPDATE products SET `name`=?, `category`=?, `brand`=?, `purchase_ac`=?, `sales_ac`=?, `purchase_price`=?, `sale_price`=?, `store`=?, `note`=?, `qty`=? WHERE `id`=?");
     
     /* Bind parameters*/
-    $stmt->bind_param("sssiiisssi", $name, $category, $brand, $purchase_ac, $sales_ac, $purchase_price, $sale_price, $store, $note, $product_id);
+    $stmt->bind_param("sssiiisssii", $name, $category, $brand, $purchase_ac, $sales_ac, $purchase_price, $sale_price, $store, $note,$qty,$product_id);
 
     /* Execute the statement*/
     if ($stmt->execute()) {

@@ -277,7 +277,7 @@ include("include/pop_security.php");
                 var qty = $('#qty').val();
                 var price = $('#price').val();
                 var total = qty * price;
-                $('#total_price').val(total);
+                $('#total_price').val(Math.round(parseFloat(total),2));
                
             }
 

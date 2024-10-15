@@ -190,6 +190,12 @@
                                         <input type="text" class="form-control" id="note"  name="note" placeholder="Enter Your Note" />
                                     </div>
                                 </div>
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="">Quantity</label>
+                                        <input type="text" class="form-control" id="qty"  name="qty" placeholder="Enter Quantity" />
+                                    </div>
+                                </div>
                             </div>
 
 

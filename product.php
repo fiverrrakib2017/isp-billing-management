@@ -238,6 +238,7 @@ include("include/pop_security.php");
                                           <th>Purchase Price</th>
                                           <th>Sale Price</th>
                                           <th>Store</th>
+                                          <th>Quantity</th>
                                           <th></th>
                                        </tr>
                                     </thead>
@@ -288,6 +289,7 @@ include("include/pop_security.php");
             ?> 
             
         </td>
+        <td><?php echo $rows['qty']; ?></td>
        <td style="text-align:right">
         <a class="btn-sm btn btn-info" href="product_profile_edit.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
         <a class="btn-sm btn btn-success" href="product_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
