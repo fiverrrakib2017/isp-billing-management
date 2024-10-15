@@ -143,6 +143,26 @@
                                 </div>            
                                 <div class="col">
                                     <div class="form-group mb-4">
+                                        <label>Units</label>
+                                        <select type="text" id="unit_id" class="form-select" name="unit_id" required style="width: 100%;">
+                                    <?php
+                                    if ($all_data = $con->query("SELECT id,unit_name FROM units")) {
+                                        echo '<option value="">Select</option>';
+
+                                        while ($rowsitm = $all_data->fetch_array()) {
+                                            $unit_id = $rowsitm["id"];
+                                            $unit_name = $rowsitm["unit_name"];
+
+                                            echo '<option value="' . $unit_id . '">' . $unit_name . '</option>';
+
+                                        }
+                                    }
+                                    ?>
+                                        </select>
+                                    </div>
+                                </div>            
+                                <div class="col">
+                                    <div class="form-group mb-4">
                                         <label for="">Purchase Price</label>
                                         <input type="number" class="form-control" id="p_price"  name="p_price" placeholder="Enter Your Price" required/>
                                     </div>

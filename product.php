@@ -83,6 +83,7 @@ include("include/pop_security.php");
                                           <th>Brand</th>
                                           <th>Purchase Price</th>
                                           <th>Sale Price</th>
+                                          <th>unit</th>
                                           <th>Store</th>
                                           <th>Quantity</th>
                                           <th></th>
@@ -124,6 +125,17 @@ include("include/pop_security.php");
         </td>
         <td><?php echo $rows['purchase_price']; ?></td>
         <td><?php echo $rows['sale_price']; ?></td>
+        <td>
+        <?php 
+            $unit_id= $rows['unit_id']; 
+            if ($stores = $con->query("SELECT unit_name FROM units WHERE id= '$unit_id' ")) {
+                while($row = $stores->fetch_array()){
+                    echo $row['unit_name'];
+                }
+            }
+            ?> 
+            
+        </td>
         <td>
         <?php 
             $storeid= $rows['store']; 

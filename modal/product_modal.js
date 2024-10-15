@@ -10,6 +10,11 @@ $('#addproductModal').on('shown.bs.modal', function () {
             dropdownParent: $('#addproductModal')
         });
     }
+    if (!$('#unit_id').hasClass("select2-hidden-accessible")) {
+        $("#unit_id").select2({
+            dropdownParent: $('#addproductModal')
+        });
+    }
     if (!$('#sales_ac').hasClass("select2-hidden-accessible")) {
         $("#sales_ac").select2({
             dropdownParent: $('#addproductModal')

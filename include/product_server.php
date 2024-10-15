@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
     $category = $_POST['category'];
     $brand = $_POST['brand'];
     $purchase_ac = $_POST['purchase_ac'];
+    $unit_id = $_POST['unit_id'];
     $sales_ac = $_POST['sales_ac'];
     $purchase_price = $_POST['p_price'];
     $sale_price = $_POST['s_price'];
@@ -16,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
     //print_r($_POST); exit;
 
     /* Prepare an SQL statement*/
-    $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`, `purchase_price`, `sale_price`, `store`,`note`,`qty`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`,`unit_id`, `purchase_price`, `sale_price`, `store`,`note`,`qty`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     /* Bind parameters*/
-    $stmt->bind_param("siiiiiiisi", $name, $category, $brand, $purchase_ac, $sales_ac, $purchase_price, $sale_price, $store, $note, $qty);
+    $stmt->bind_param("siiiiiiiisi", $name, $category, $brand, $purchase_ac, $sales_ac, $unit_id, $purchase_price, $sale_price, $store, $note, $qty);
 
     /* Execute the statement*/
     if ($stmt->execute()) {
@@ -45,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['update_product'])) {
     $category = $_POST['category'];
     $brand = $_POST['brand'];
     $purchase_ac = $_POST['purchase_ac'];
+    $unit_id = $_POST['unit_id'];
     $sales_ac = $_POST['sales_ac'];
     $purchase_price = $_POST['p_price'];
     $sale_price = $_POST['s_price'];
@@ -53,10 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['update_product'])) {
     $qty = $_POST['qty'];
     
     /* Prepare an SQL statement for updating the product*/
-    $stmt = $con->prepare("UPDATE products SET `name`=?, `category`=?, `brand`=?, `purchase_ac`=?, `sales_ac`=?, `purchase_price`=?, `sale_price`=?, `store`=?, `note`=?, `qty`=? WHERE `id`=?");
+    $stmt = $con->prepare("UPDATE products SET `name`=?, `category`=?, `brand`=?, `purchase_ac`=?, `sales_ac`=?, `unit_id`=?, `purchase_price`=?, `sale_price`=?, `store`=?, `note`=?, `qty`=? WHERE `id`=?");
     
     /* Bind parameters*/
-    $stmt->bind_param("sssiiisssii", $name, $category, $brand, $purchase_ac, $sales_ac, $purchase_price, $sale_price, $store, $note,$qty,$product_id);
+    $stmt->bind_param("sssiiiisssii", $name, $category, $brand, $purchase_ac, $sales_ac, $unit_id, $purchase_price, $sale_price, $store, $note,$qty,$product_id);
 
     /* Execute the statement*/
     if ($stmt->execute()) {
