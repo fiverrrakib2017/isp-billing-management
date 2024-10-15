@@ -1,6 +1,7 @@
 <?php
 include "db_connect.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
+    /* Prepare an SQL statement*/
     $name = $_POST['product_name'];
     $category = $_POST['category'];
     $brand = $_POST['brand'];
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
     //print_r($_POST); exit;
 
     /* Prepare an SQL statement*/
-    $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`,`unit_id`, `purchase_price`, `sale_price`, `store`,`note`,`qty`) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`,`unit_id`, `purchase_price`, `sale_price`, `store`,`note`,`qty`) VALUES(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)");
 
     /* Bind parameters*/
     $stmt->bind_param("siiiiiiiisi", $name, $category, $brand, $purchase_ac, $sales_ac, $unit_id, $purchase_price, $sale_price, $store, $note, $qty);
