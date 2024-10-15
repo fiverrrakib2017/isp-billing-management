@@ -254,7 +254,7 @@ include("include/pop_security.php");
                     success: function(response) {
                         var data = JSON.parse(response);
                         selectedProductId = data.id;
-                        var price = data.sale_price;
+                        var price = data.purchase_price;
 
                         $('#price').val(price);
                         updateTotalPrice();
