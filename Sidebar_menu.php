@@ -11,8 +11,12 @@
                             </li>
                             <li >
                                 <?php
-                                if ($page_title=="Welcome To Dashboard") {
-                                   echo '<select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
+                                
+
+                                if (isset($page_title)) {
+                                    if ($page_title=="Welcome To Dashboard") {
+                                        echo '<select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
+                                     }
                                 }
                                 
                                 ?>
@@ -135,6 +139,7 @@
                                     <li><a href="product.php">Products</a></li>
                                     <li><a href="category.php">Category</a></li>
                                     <li><a href="brand.php">Brand</a></li>
+                                    <li><a href="units.php">Units</a></li>
                                     <li><a href="client.php">Client </a></li>
                                     <li><a href="store.php">Store</a></li>
                                     <li><a href="supplier.php">Supplier</a></li>
