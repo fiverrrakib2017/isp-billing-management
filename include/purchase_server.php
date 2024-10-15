@@ -57,15 +57,17 @@ if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
 
 
 if (isset($_GET['getSupplierData'])) {
-   if ($client = $con->query("SELECT * FROM suppliers ORDER BY id DESC")) {
-      echo '<option value="">Select</option>';
-      while ($rows = $client->fetch_array()) {
-         $clientId = $rows["id"];
-         $client_name = $rows["fullname"];
-         echo '<option value='. $clientId.'>' . $client_name . '</option>';
-      }
-   }
-}
+    if ($client = $con->query("SELECT * FROM suppliers ORDER BY id DESC")) {
+       echo '<option value="">---Select---</option>';
+       while ($rows = $client->fetch_array()) {
+          $clientId = $rows["id"];
+          $client_name = $rows["fullname"];
+          $company_name = $rows["company"];
+          echo '<option value="' . $clientId . '">' . $client_name . ' (' . $company_name . ')</option>';
+       }
+    }
+ }
+ 
 if (isset($_GET['getProductData'])) {
    if ($ledgr = $con->query("SELECT * FROM products")) {
       echo '<option value="">Select</option>';
