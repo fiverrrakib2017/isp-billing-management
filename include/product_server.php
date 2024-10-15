@@ -74,6 +74,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['update_product'])) {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['check_product_qty'])) {
+    $product_id = $_POST['product_id'];
+    $requested_qty = $_POST['qty'];
 
+    $query = "SELECT qty FROM products WHERE id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $product = $result->fetch_assoc();
+    if ($product) {
+        $available_qty = $product['qty'];
+
+        if ($available_qty >= $requested_qty) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false]); 
+        }
+    } else {
+        echo json_encode(['success' => false]);
+    }
+}
 
 ?>

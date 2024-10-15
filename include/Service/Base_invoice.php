@@ -86,7 +86,17 @@ class Base_invoivce{
             $qty = $validator['qtys'][$index];
             $price = $validator['prices'][$index];
             $total_price = $validator['total_prices'][$index];
-            
+
+
+            if ($table == "purchase") {
+                /*If Purchase quantity will be updated*/
+                self::$con->query("UPDATE products SET qty = qty + $qty WHERE id = $product_id");
+            } elseif ($table == "sales") {
+                /*If Sales quantity will be updated*/
+                self::$con->query("UPDATE products SET qty = qty - $qty WHERE id = $product_id");
+            }
+
+
             $details_stmt->bind_param("iiiii", $invoice_id, $product_id, $qty, $price, $total_price);
             
             if (!$details_stmt->execute()) {

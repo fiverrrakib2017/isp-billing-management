@@ -16,6 +16,9 @@ include("include/pop_security.php");
 </head>
 
 <body data-sidebar="dark">
+    <div id="loader" style="display:none ;">
+        <img class="mx-auto d-block img-fluid" height="100px" width="200px" src="https://media.tenor.com/I6kN-6X7nhAAAAAi/loading-buffering.gif" alt="Loading..."> 
+    </div>
     <!-- Begin page -->
     <div id="layout-wrapper">
         <?php $page_title="Sale";  include 'Header.php';  ?>
@@ -281,7 +284,6 @@ include("include/pop_security.php");
 
             $(document).on('click','#submitButton',function(e){
                 e.preventDefault(); 
-
                 var productName = $('#product_name option:selected').text();
                 var quantity = $('#qty').val();
                 var price = $('#price').val();
@@ -291,35 +293,47 @@ include("include/pop_security.php");
                     toastr.error('Please fill in all fields');
                     return;
                 }
+                $('#submitButton').html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden">Loading...</span>`).prop('disabled', true);
+                $.ajax({
+                    url: 'include/product_server.php?check_product_qty=true', 
+                    method: 'POST',
+                    data: { product_id: selectedProductId, qty: quantity },
+                    success: function(response) {
+                        if (response.success) {
+                            var row = `<tr>
+                                <td><input type="hidden" name="table_product_id[]" value="`+ selectedProductId +`">${productName}</td>
+                                <td><input type="hidden" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty">${quantity}</td>
+                                <td><input type="hidden" name="table_price[]" class="form-control table_price" value="${price}">${price}</td>
+                                <td><input type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="${totalPrice}">${totalPrice}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm removeRow">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>`;
+                            $("#tableRow").append(row);
 
-                var row = `<tr>
-                    <td><input type="hidden" name="table_product_id[]"value="`+ selectedProductId +`">${productName}</td>
+                            calculateTotalAmount(); 
 
-                    <td><input type="hidden" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty">${quantity}</td>
+                            /*Clear The Fild*/
+                            $('#product_name').val('');
+                            $('#qty').val('1');
+                            $('#price').val('');
+                            $('#total_price').val('');
+                            selectedProductId = null;
+                        } else {
+                            /*IF The Stock Is Not Available*/
+                            toastr.error('Not enough stock available.');
+                        }
+                    },
+                    error: function() {
+                        toastr.error('Error checking product stock.');
 
-                    <td><input  type="hidden" name="table_price[]" class="form-control table_price" value="${price}">${price}</td>
-
-                    <td><input  type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="${totalPrice}">${totalPrice}</td>
-
-                   <td>
-                   <button class="btn btn-danger btn-sm removeRow">
-
-                    <i class="fas fa-times"></i>
-                   
-                   </button>
-                   </td>
-
-                   
-                    
-                  </tr>`;
-
-                $("#tableRow").append(row);
-                calculateTotalAmount(); 
-                 $('#product_name').val('');
-                 $('#qty').val('1');
-                 $('#price').val('');
-                 $('#total_price').val('');
-                 selectedProductId = null;
+                    },
+                    complete:function(){
+                        $('#submitButton').html('Submit').prop('disabled', false);
+                    }
+                });
             });
             $(document).on('click', '.removeRow', function() {
                 $(this).closest('tr').remove();
