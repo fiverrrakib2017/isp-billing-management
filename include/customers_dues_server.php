@@ -168,9 +168,9 @@ if (isset($_GET['show_customer_dues_data']) && $_GET['show_customer_dues_data'] 
     $row = $result->fetch_assoc();
     $total_price = $row['total_price'];
 
-    $condition = "expiredate<DATE_ADD(now(), INTERVAL 10 DAY) AND pop='1'"; 
+    $condition ="expiredate<DATE_ADD(now(), INTERVAL 10 DAY) AND pop='1'"; 
     /* Output JSON for DataTables to handle*/
-    $data = SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns, null, $condition);
+    $data = SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, null, $condition);
     /*Add total_price to the json response*/ 
     $data['total_price'] = $total_price;
     echo json_encode($data);
