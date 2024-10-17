@@ -331,9 +331,15 @@ include("include/users_right.php");
                             });
 
                             popOptions += '</select></label>';
-                            
+                            print_button = '<label style="margin-left: 20px;"> ';
+                            print_button += '<button class="btn-sm btn btn-success" onclick="printTable()"><i class="fas fa-solid fa-print"></i></button>';
+                            print_button += '</label>';
                             setTimeout(() => {
                                 $('.dataTables_length').append(popOptions);
+                                $('.area_filter').select2(); 
+                            }, 500);
+                            setTimeout(() => {
+                                $('.dataTables_length').append(print_button);
                                 $('.area_filter').select2(); 
                             }, 500);
                         }
@@ -410,6 +416,22 @@ include("include/users_right.php");
             table.columns(7).search(area_filter_result).draw();
         
         });  
+        function printTable() {
+            var divToPrint = document.getElementById('customers_table');
+            var newWin = window.open('', '_blank');
+            newWin.document.write('<html><head><title>Print Table</title>');
+            newWin.document.write('<style>');
+            newWin.document.write('table { width: 100%; border-collapse: collapse; }');
+            newWin.document.write('table, th, td { border: 1px solid black; padding: 10px; text-align: left; }');
+            newWin.document.write('a { text-decoration: none; color: black; }');
+            newWin.document.write('</style></head><body>');
+            newWin.document.write(divToPrint.outerHTML);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.focus();
+            newWin.print();
+            newWin.close();
+        }
 
     </script>
 </body>
