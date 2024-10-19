@@ -11,7 +11,7 @@ include("include/users_right.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<?php include 'style.php'; ?>
-
+    
 
 </head>
 
@@ -237,33 +237,49 @@ include("include/users_right.php");
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
-            loadCustomerOptions();            
-            function loadCustomerOptions() {
-                $.ajax({
-                url: 'include/client_backend.php?get_all_client=true',
-                type: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success==true) {
-                            var customerOptions = '<label style="margin-left: 10px;"> ';
-                            customerOptions += '<select class="customer_filter form-select select2">';
-                            customerOptions += '<option value="">--Select Customer--</option>';
+            //loadCustomerOptions();            
+            // function loadCustomerOptions() {
+            //     $.ajax({
+            //     url: 'include/client_backend.php?get_all_client=true',
+            //     type: 'GET',
+            //     dataType: 'json',
+            //     success: function (response) {
+            //         if (response.success==true) {
+            //                 var customerOptions = '<label style="margin-left: 10px;"> ';
+            //                 customerOptions += '<select class="customer_filter form-select select2">';
+            //                 customerOptions += '<option value="">--Select Customer--</option>';
                             
                         
-                            $.each(response.data, function(key, client) {
-                                customerOptions += '<option value="'+client.id+'">'+client.fullname+'</option>';
-                            });
+            //                 $.each(response.data, function(key, client) {
+            //                     customerOptions += '<option value="'+client.id+'">'+client.fullname+'</option>';
+            //                 });
 
-                            customerOptions += '</select></label>';
+            //                 customerOptions += '</select></label>';
                             
-                            setTimeout(() => {
-                                $('.dataTables_length').append(customerOptions);
-                                $('.select2').select2();
-                            }, 500);
-                        }
-                }
-            });
-            }
+            //                 setTimeout(() => {
+            //                     $('.dataTables_length').append(customerOptions);
+            //                     $('.select2').select2();
+            //                 }, 500);
+                            
+            //             }
+            //     }
+            // });
+            // }
+            var status_filter = '<label style="margin-left: 10px;"> ';
+            status_filter += '<select class="status_filter form-select select2">';
+            status_filter += '<option value="">--Select Status--</option>';
+            status_filter += ' <option value="Active">Active</option>';
+            status_filter += '<option value="New" >New</option>';
+            status_filter += '<option value="Open">Open</option>';
+            status_filter += '<option value="Complete">Complete</option>';
+            status_filter += ' <option value="Close">Close</option>';
+            status_filter += '</select></label>';
+
+
+            setTimeout(() => {
+            $('.dataTables_length').append(status_filter);
+            $('.select2').select2();
+            }, 500);
             table=$('#tickets_datatable').DataTable( {
                "searching": true,
                 "paging": true,
@@ -318,12 +334,7 @@ include("include/users_right.php");
             ],
             });
             table.buttons().container().appendTo($('#export_buttonscc'));	
-        });
-        /* Area filter change event*/
-        $(document).on('change', '.area_filter', function(){
-            var area_filter_result = $('.area_filter').val() || '';
-            table.columns(7).search(area_filter_result).draw();
-        });          
+        });      
         /* Status filter change event*/
         $(document).on('change', '.status_filter', function(){
             var status_filter_result = $('.status_filter').val() || '';

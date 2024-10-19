@@ -519,8 +519,7 @@ if (isset($_GET['get_client_tickets_data'])&& $_SERVER['REQUEST_METHOD']=='GET')
 				} elseif ($d === "Close") {
 					return '<a href="#"><span class="badge bg-success">Close</span></a>';
 				} else {
-					// return '<a href="tickets_profile.php?id='.$row['id'].'">'.$d.'</a>';
-					//return '<a href="#"><span class="badge bg-success">Close</span></a>';
+					return '<a href="#"><span class="badge bg-danger">Unknown</span></a>';
 				}
 			}
 		),
