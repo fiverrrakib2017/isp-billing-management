@@ -988,6 +988,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                            <div class="form-group mb-1">
                               <label>Transaction Type:</label>
                               <select id="tra_type" name="tra_type" class="form-select">
+                                 <option>---Select---</option>
                                  <option value="1">Cash</option>
                                  <option value="0">On Credit</option>
                                  <option value="2">Bkash</option>
@@ -1046,6 +1047,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                            <div class="form-group mb-1">
                               <label>Transaction Type:</label>
                               <select id="tra_type" name="tra_type" class="form-select">
+                              <option>---Select---</option>
                                  <option value="0">On Credit</option>
                               </select>
                            </div>
@@ -1078,6 +1080,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                               <div class="form-group mb-2">
                                  <label>Transaction Type:</label>
                                  <select id="addRechargeTra_type" class="form-select">
+                                    <option>---Select---</option>
                                     <option value="1">Cash</option>
                                     <option value="2">Bkash</option>
                                     <option value="3">Nagad</option>

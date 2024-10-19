@@ -1446,11 +1446,11 @@ $cronupdt = $con->query("SELECT * FROM cron");
     <script type="text/javascript">
         /*** Add ticket Modal Script****/
         ticket_modal();
-        loadCustomers();
-        ticket_assign();
-        ticket_complain_type();
+         loadCustomers();
+         ticket_assign();
+         ticket_complain_type();
 
-
+         
 	var chart=new Chartist.Line("#simple-line-chart",{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
 		series:[
 		[<?php 

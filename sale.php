@@ -298,8 +298,9 @@ include("include/pop_security.php");
                     url: 'include/product_server.php?check_product_qty=true', 
                     method: 'POST',
                     data: { product_id: selectedProductId, qty: quantity },
+                    dataType: 'json',
                     success: function(response) {
-                        if (response.success) {
+                        if (response.success==true) {
                             var row = `<tr>
                                 <td><input type="hidden" name="table_product_id[]" value="`+ selectedProductId +`">${productName}</td>
                                 <td><input type="hidden" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty">${quantity}</td>
@@ -321,13 +322,14 @@ include("include/pop_security.php");
                             $('#price').val('');
                             $('#total_price').val('');
                             selectedProductId = null;
-                        } else {
+                        } else if(response.success==false) {
                             /*IF The Stock Is Not Available*/
-                            toastr.error('Not enough stock available.');
+                            toastr.error(response.message);
                         }
+                       
                     },
                     error: function() {
-                        toastr.error('Error checking product stock.');
+                      //  toastr.error('Error checking product stock.');
 
                     },
                     complete:function(){

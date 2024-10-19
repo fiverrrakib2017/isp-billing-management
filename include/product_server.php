@@ -89,11 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['check_product_qty'])) 
     $product = $result->fetch_assoc();
     if ($product) {
         $available_qty = $product['qty'];
-
-        if ($available_qty >= $requested_qty) {
-            echo json_encode(['success' => true]);
+        if ($requested_qty>=$available_qty) {
+            //1800 > 3612
+            echo json_encode(['success' => false, 'message' => 'Not enough stock available.']);
         } else {
-            echo json_encode(['success' => false]); 
+            echo json_encode(['success' => true, 'message' => 'Sufficient stock available']);
         }
     } else {
         echo json_encode(['success' => false]);
