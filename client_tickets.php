@@ -123,7 +123,7 @@ include("include/users_right.php");
                     <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Settings <i class="fas fa-cog"></i></h5>
                     
                 </div>
-                <form action="include/tickets_server.php?add_ticket_settings=true" method="POST" id="settings_modal_form">
+                <form action="include/tickets_server.php?add_client_ticket_settings=true" method="POST" id="settings_modal_form">
                     <div class="modal-body">
                         <div class="form-group d-none">
                             <input type="text" name="ticket_id" value="" required>
@@ -156,15 +156,15 @@ include("include/users_right.php");
                                     <option value="100%">100%</option>
                                 </select>
                         </div>
-                        <div class="form-group mb-2">
+                        <!-- <div class="form-group mb-2">
                             <label for="">Assigned To</label>
                             <select name="assigned" id="assigned" class="form-select" required>
                             </select>
-                        </div>
+                        </div>-->
                         <div class="form-group mb-2">
                             <label>Write Comment</label> 
                             <textarea class="form-control"  rows="5" name="comment" placeholder="Enter Your Comment" style="height: 89px;"></textarea>
-                        </div>
+                        </div> 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -337,7 +337,7 @@ include("include/users_right.php");
         $(document).on('click', 'button[name="settings_button"]', function() {
             let dataId=$(this).data('id'); 
             $.ajax({
-                url: "include/tickets_server.php?get_single_ticket=true", 
+                url: "include/tickets_server.php?get_single_ticket_at_client=true", 
                 type: "GET",
                 data: { 
                     id:dataId,
@@ -349,8 +349,8 @@ include("include/users_right.php");
                         $("#settings_modal input[name='ticket_id']").val(response.data.id);
                         $("#settings_modal select[name='ticket_type']").val(response.data.ticket_type);
                         $("#settings_modal #progress").val(response.data.parcent);
-                        $("#settings_modal textarea[name='comment']").val(response.data.notes);
-                         $("#settings_modal select[name='assigned']").val(response.data.asignto);
+                        // $("#settings_modal textarea[name='comment']").val(response.data.notes);
+                        //  $("#settings_modal select[name='assigned']").val(response.data.asignto);
                         $("#settings_modal").modal('show');
                     }
                 }
@@ -398,7 +398,8 @@ include("include/users_right.php");
                 contentType: false,
                 dataType:'json',
                 success: function(response) {
-                    if (response.success) {
+                    //console.log(response);
+                    if (response.success==true) {
                         $("#settings_modal").modal('hide');
                         toastr.success(response.message);
                         $('#tickets_datatable').DataTable().ajax.reload();
@@ -416,9 +417,6 @@ include("include/users_right.php");
                                 toastr.error(message); 
                             });
                         });
-                    } else {
-                        /*General error message*/ 
-                        toastr.error('An error occurred. Please try again.');
                     }
                 },
                 complete: function() {

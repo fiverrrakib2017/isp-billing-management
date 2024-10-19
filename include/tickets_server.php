@@ -713,3 +713,54 @@ if (isset($_GET['add_client_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POS
 
     $stmt->close();
 }
+
+
+
+
+if (isset($_GET['get_single_ticket_at_client']) && $_SERVER['REQUEST_METHOD']=='GET') {
+	
+	if (isset($_GET['id']) && !empty($_GET['id'])) {
+        $id=$_GET['id']; 
+
+        $stmt = $con->prepare("SELECT * FROM client_tickets WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            echo json_encode([
+                'success'=>true, 
+                'message'=>'success', 
+                'data'=>$row, 
+            ]); 
+        }else {
+            echo json_encode([
+                'success'=>false, 
+                'message'=>'Not Found',
+            ]);  
+        }
+
+    }
+}
+
+
+if (isset($_GET['add_client_ticket_settings']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $tickId   = $_POST["ticket_id"];
+    $type     = $_POST["ticket_type"];
+    $progress = $_POST["progress"];
+    $comment  = $_POST["comment"];
+    //$assigned = $_POST["assigned"];
+
+	$stmt2 = $con->prepare("UPDATE client_tickets SET notes=?, ticket_type = ?, parcent = ?, enddate = NOW() WHERE id = ?");
+	$stmt2->bind_param('sssi', $comment, $type, $progress, $tickId);
+	
+	if ($stmt2->execute()) {
+		echo json_encode(['success' => true, 'message' => 'Ticket settings updated successfully.']);
+	} else {
+		echo json_encode(['success' => false, 'message' => 'Failed to update ticket.'.$stmt->error]);
+	}
+    /*Close the statement*/
+    $stmt2->close();
+}
