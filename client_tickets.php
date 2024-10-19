@@ -425,7 +425,30 @@ include("include/users_right.php");
                 }
             });
         });
-        
+        /*Delete Script*/
+        $(document).on('click',"button[name='delete_button']",function(){
+            var id=$(this).data('id');
+            if (confirm("Are you sure you want to delete this item?")) {
+                $.ajax({
+                    type: 'POST', 
+                    url: 'include/tickets_server.php?delete_client_ticket=true', 
+                    data: { id: id }, 
+                    dataType:'json',
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success("Deleted successfully!");
+                        table.draw();
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        toastr.error("Error deleting item! " + error);
+                    }
+                });
+            }
+        });
 
         /*** Add ticket Modal Script****/
          ticket_modal();

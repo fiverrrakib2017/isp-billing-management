@@ -520,7 +520,7 @@ if (isset($_GET['get_client_tickets_data'])&& $_SERVER['REQUEST_METHOD']=='GET')
 					return '<a href="#"><span class="badge bg-success">Close</span></a>';
 				} else {
 					// return '<a href="tickets_profile.php?id='.$row['id'].'">'.$d.'</a>';
-					return '<a href="#"><span class="badge bg-success">Close</span></a>';
+					//return '<a href="#"><span class="badge bg-success">Close</span></a>';
 				}
 			}
 		),
@@ -626,8 +626,8 @@ if (isset($_GET['get_client_tickets_data'])&& $_SERVER['REQUEST_METHOD']=='GET')
 			'dt'=>12,
 			'formatter'=>function($d, $row){
 				return '
-				<button type="button" name="settings_button" data-id='.$row['id'].' class="btn-sm btn btn-danger"> <i class="fas fa-cog"></i></button>
-				<a class="btn-sm btn btn-success" href="tickets_profile.php?id='.$row['id'].'"><i class="fas fa-eye"></i></a>'; 
+				<button type="button" name="settings_button" data-id='.$row['id'].' class="btn-sm btn btn-info"> <i class="fas fa-cog"></i></button>
+				<button type="button" name="delete_button" data-id=' . $row['id'] . ' class="btn-sm btn btn-danger"> <i class="fas fa-trash"></i></button>'; 
 			}
 		),
 		
@@ -763,4 +763,31 @@ if (isset($_GET['add_client_ticket_settings']) && $_SERVER['REQUEST_METHOD'] == 
 	}
     /*Close the statement*/
     $stmt2->close();
+}
+if (isset($_GET['delete_client_ticket']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = intval($_POST['id']);
+
+    /*Prepare the SQL statement*/
+    $stmt = $con->prepare("DELETE FROM client_tickets WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        if ($stmt->affected_rows > 0) {
+            $response = array("success" => true, "message" => "Record deleted successfully!");
+
+        } else {
+            $response = array("success" => false, "message" => "No record found with the provided ID!");
+        }
+    } else {
+        $response = array("success" => false, "message" => "Error executing query: " . $stmt->error);
+    }
+
+    /*Close the statement and connection*/
+    $stmt->close();
+    $con->close();
+
+    /* Return the response as JSON*/
+    echo json_encode($response);
+    exit;
 }
