@@ -499,3 +499,217 @@ function acctual_work($startdate, $enddate) {
 
     return 'just now'; 
 }
+
+if (isset($_GET['get_client_tickets_data'])&& $_SERVER['REQUEST_METHOD']=='GET') {
+	require 'datatable.php';
+
+	$table = 'client_tickets';
+	$primaryKey = 'id';
+
+	$columns = array(
+		array('db' => 'id', 'dt' => 0),
+		array(
+			'db' => 'ticket_type', 
+			'dt' => 1,
+			'formatter'=>function($d, $row){
+				if ($d === "Complete") {
+					return '<a href="#"><span class="badge bg-success">Completed</span></a>';
+				} elseif ($d === "Active") {
+					return '<a href="#"><span class="badge bg-danger">Active</span></a>';
+				} elseif ($d === "Close") {
+					return '<a href="#"><span class="badge bg-success">Close</span></a>';
+				} else {
+					// return '<a href="tickets_profile.php?id='.$row['id'].'">'.$d.'</a>';
+					return '<a href="#"><span class="badge bg-success">Close</span></a>';
+				}
+			}
+		),
+		array( 'db' => 'startdate', 'dt' => 2, 'formatter' => function($d, $row) {
+			return timeAgo($d);
+		}),
+		array( 'db' => 'priority', 'dt' => 3, 'formatter' => function($d, $row) {
+			$priority = $row["priority"]; 
+
+			$priorityLabel = '';
+			
+			switch ($priority) {
+				case 1:
+					$priorityLabel = 'Low';
+					break;
+				case 2:
+					$priorityLabel = 'Normal';
+					break;
+				case 3:
+					$priorityLabel = 'Standard';
+					break;
+				case 4:
+					$priorityLabel = 'Medium';
+					break;
+				case 5:
+					$priorityLabel = 'High';
+					break;
+				case 6:
+					$priorityLabel = 'Very High';
+					break;
+				default:
+					$priorityLabel = 'Unknown'; 
+					break;
+			}
+			
+			return $priorityLabel;
+		}),
+		array( 'db' => 'client_id', 'dt' => 4, 'formatter' => function($d, $row) use ($con) {
+			/*Fetch Client details*/ 
+			$customerQuery = $con->query("SELECT * FROM clients WHERE id=$d");
+			if ($customer = $customerQuery->fetch_assoc()) {
+				$fullname = $customer['fullname'];
+				return $fullname;
+			}
+			return 'Unknown Customer';
+		}),
+		array( 'db' => 'client_id', 'dt' => 5, 'formatter' => function($d, $row) use ($con) {
+			/*Fetch Client details*/ 
+			$customerQuery = $con->query("SELECT * FROM clients WHERE id=$d");
+			if ($customer = $customerQuery->fetch_assoc()) {
+				return  $customer['mobile'];
+				
+			}
+			return 'Unknown';
+		}),
+		array( 'db' => 'complain_type', 'dt' => 6, 'formatter' => function($d, $row) use ($con) {
+			/* Fetch complain type*/
+			$complainQuery = $con->query("SELECT * FROM ticket_topic WHERE id='$d'");
+			if ($complain = $complainQuery->fetch_assoc()) {
+				return $complain['topic_name'];
+			}
+			return 'Unknown Topic';
+		}),
+		
+		array( 'db' => 'assign_id', 'dt' => 7, 'formatter' => function($d, $row) use ($con) {
+			/*Fetch assigned group*/ 
+			$groupQuery = $con->prepare("SELECT group_name FROM working_group WHERE id = ?");
+			$groupQuery->bind_param("i", $d);
+			$groupQuery->execute();
+			$groupResult = $groupQuery->get_result();
+			if ($group = $groupResult->fetch_assoc()) {
+				return htmlspecialchars($group['group_name']);
+			}
+			return 'No assigned group';
+		}),
+		array(
+			'db' => 'ticketfor', 
+			'dt' => 8,
+		),
+		array(
+			'db'=>'enddate',
+			'dt'=>9,
+			'formatter'=>function($d, $row){
+				$startdate = $row["startdate"];
+				 $enddate=$row["enddate"];
+				if (!empty($enddate)) {
+					return acctual_work( $startdate, $enddate); 
+				}else{
+					return  'Work Processing..';
+				}
+			}
+		),
+		array(
+			'db'=>'parcent',
+			'dt'=>10,
+		),
+		array(
+			'db'=>'notes',
+			'dt'=>11,
+		),
+		array(
+			'db'=>'id',
+			'dt'=>12,
+			'formatter'=>function($d, $row){
+				return '
+				<button type="button" name="settings_button" data-id='.$row['id'].' class="btn-sm btn btn-danger"> <i class="fas fa-cog"></i></button>
+				<a class="btn-sm btn btn-success" href="tickets_profile.php?id='.$row['id'].'"><i class="fas fa-eye"></i></a>'; 
+			}
+		),
+		
+		
+	);
+
+	$condition = ""; 
+	/* Output JSON for DataTables to handle*/
+	echo json_encode(
+		SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns,null, $searchCondition)
+	);
+}
+
+if (isset($_GET['add_client_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+	$errors = [];
+
+	/* Sanitize input values */
+	$customer_id = isset($_POST["customer_id"]) ? trim($_POST["customer_id"]) : '';
+	$ticket_for = isset($_POST["ticket_for"]) ? trim($_POST["ticket_for"]) : '';
+	$complain_type = isset($_POST["ticket_complain_type"]) ? trim($_POST["ticket_complain_type"]) : '';
+	$assigned = isset($_POST["assigned"]) ? trim($_POST["assigned"]) : '';
+	/* Use trim to remove unwanted spaces*/
+	$note = isset($_POST["notes"]) ? trim($_POST["notes"]) : ''; 
+	$priority = isset($_POST["ticket_priority"]) ? trim($_POST["ticket_priority"]) : '';
+	
+	/* Validate customer_id */
+	if (empty($customer_id)) {
+		$errors['customer_id'] = "Customer ID is required.";
+	}
+	
+	/* Validate ticket_for */
+	if (empty($ticket_for)) {
+		$errors['ticket_for'] = "Ticket For is required.";
+	}
+	
+	/* Validate complain_type */
+	if (empty($complain_type)) {
+		$errors['ticket_complain_type'] = "Complain Type is required.";
+	}
+	
+	/* Validate assigned */
+	if (empty($assigned)) {
+		$errors['assigned'] = "Assigned field is required.";
+	}
+	
+	/* Validate priority */
+	if (empty($priority)) {
+		$errors['ticket_priority'] = "Priority is required.";
+	}
+	
+	/* If validation errors exist, return errors */
+	if (!empty($errors)) {
+		echo json_encode([
+			'success' => false,
+			'errors' => $errors
+		]);
+		exit;
+	}
+    /* If no errors, continue with processing*/
+    $customerPopId = null;
+    // if ($allCstmr = $con->query("SELECT pop FROM customers WHERE id=$customer_id")) {
+    //     $customerData = $allCstmr->fetch_assoc();
+    //     $customerPopId = $customerData['pop'];
+    // }
+
+    /*Insert query*/ 
+    $stmt = $con->prepare("INSERT INTO client_tickets (`client_id`, `ticket_type`, `assign_id`, `ticketfor`, `pop_id`, `complain_type`, `startdate`, `enddate`, `user_type`, `notes`, `parcent`, `priority`) VALUES (?, 'Active', ?, ?, ?, ?, NOW(), NULL, 1, ?, '0%', ?)");
+    $stmt->bind_param('iissssi', $customer_id, $assigned, $ticket_for, $customerPopId, $complain_type, $note, $priority);
+
+    $result = $stmt->execute();
+
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Ticket Added Successfully!'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error: ' . $stmt->error
+        ]);
+    }
+
+    $stmt->close();
+}

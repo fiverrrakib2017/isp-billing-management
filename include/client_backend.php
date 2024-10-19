@@ -150,5 +150,14 @@
 		exit; 
 	}
 
+	if (isset($_GET['get_all_client'])&& $_SERVER['REQUEST_METHOD']=='GET') {
+		$result = $con->query("SELECT * FROM clients");
+		$data = [];
+		while ($row = $result->fetch_assoc()) {
+			$data[] = $row;
+		}
+		echo json_encode(['success' => true, 'data' => $data]);
+		exit;
+	}
 
 ?>

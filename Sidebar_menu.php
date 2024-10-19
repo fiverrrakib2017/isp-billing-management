@@ -141,6 +141,7 @@
                                     <li><a href="brand.php">Brand</a></li>
                                     <li><a href="units.php">Units</a></li>
                                     <li><a href="client.php">Client </a></li>
+                                    <li><a href="client_tickets.php">Client Tickets</a></li>
                                     <li><a href="store.php">Store</a></li>
                                     <li><a href="supplier.php">Supplier</a></li>
                                 </ul>
