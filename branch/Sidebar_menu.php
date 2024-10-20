@@ -50,15 +50,17 @@
              </a>
          </li>
          <li>
-             <a href="javascript: void(0);" class="has-arrow waves-effect">
-                 <i class="mdi mdi-ticket-outline"></i>
-                 <span>Tickets</span>
-             </a>
-             <ul class="sub-menu" aria-expanded="false">
-                 <li><a href="allTickets.php">Tickets List</a></li>
-                 <li><a href="ticketsTopic.php"> Ticket Topics </a></li>
-             </ul>
-         </li>
+            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                <i class="mdi mdi-ticket-outline"></i>
+                <span>Tickets</span>
+            </a>
+            <ul class="sub-menu" aria-expanded="false">
+                <li><a href="allTickets.php"> List All Tickets </a></li>
+                <li><a href="ticketsTopic.php"> Ticket Topics  </a></li>
+                <li><a href="working_group.php"> Working Group  </a></li>
+                <li><a href="works.php"> Works  </a></li>
+            </ul>
+        </li>
 
 
 
