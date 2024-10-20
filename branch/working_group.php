@@ -1,11 +1,17 @@
+<?php
+include("include/security_token.php");
+include("include/users_right.php");
+include "include/db_connect.php";
+include "include/pop_security.php";
 
-
+?>
 <!doctype html>
 <html lang="en">
     <head>
     
         <meta charset="utf-8">
         <title>FAST-ISP-BILLING-SOFTWARE</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php
         
         $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
@@ -19,15 +25,15 @@
     <body data-sidebar="dark">
 
 
+        
 
         <!-- Begin page -->
         <div id="layout-wrapper">
         
-        <?php 
-        $page_title="Works";
-           include '../Header.php';
-        
-        ?>
+            <?php 
+            $page_title="Working Group";
+            include '../Header.php';
+            ?>
 
 
         
@@ -61,7 +67,7 @@
                                             <i class="mdi mdi-home text-muted hover-cursor"></i>
                                             <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
                                             </p>
-                                            <p class="text-primary mb-0 hover-cursor">Works</p>
+                                            <p class="text-primary mb-0 hover-cursor">Working Group</p>
                                         </div>
 
 
@@ -73,7 +79,7 @@
                                 <div class="d-flex justify-content-between align-items-end flex-wrap">
                                     <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"
                                  data-bs-toggle="modal" data-bs-target="#addModal" style="margin-bottom: 12px;">&nbsp;&nbsp;New
-                              Works</button>
+                              Working Group</button>
                           </div>
                             </div>
                         </div>
@@ -90,44 +96,34 @@
                         <div class="modal-content col-md-12">
                            <div class="modal-header">
                               <h5 class="modal-title" id="exampleModalLabel"><span
-                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Works</h5>
+                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Working Group</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                            </div>
 						   <div class="modal-body">
-							  <form action="../include/works_backend.php" method="POST" enctype="multipart/form-data">
+							  <form action="../include/working_group_backend.php" method="POST" enctype="multipart/form-data">
 									<div class="form-group mb-2 d-none">
-										<input name="add_works_data" class="form-control" type="text" >
+										<input name="add_group_data" class="form-control" type="text" >
 									</div>
 									<div class="form-group mb-2">
-										<label>Name</label>
-										<input name="name" placeholder="Enter Name" class="form-control" type="text" >
+										<label>Group Name</label>
+										<input name="group_name" placeholder="Group Name" class="form-control" type="text" >
 									</div>
-                                    <div class="form-group mb-2">
-                                        <label>Email</label>
-                                        <input name="email" placeholder="Enter Email" class="form-control" type="email" >
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label>Phone</label>
-                                        <input name="phone" placeholder="Enter Phone" class="form-control" type="text" >
-                                    </div>
-									<div class="form-group mb-2 ">
-										<label>Group</label>
-										<select name="group_id" class="form-select" type="text" >
-                                            <option>---Select---</option>  
-                                            <?php 
-
-                                                if ($group=$con->query("SELECT* FROM working_group WHERE pop_id=$auth_usr_POP_id")) {
-
-                                                    while ($rows=$group->fetch_array()) {
-
-                                                        $userId=$rows["id"];
-                                                        $group_name=$rows["group_name"];
-                                                     echo '<option value='.$userId.'>'.$group_name.'</option>';  
-                                                    }
-                                                }
-
-                                                 ?>                             
+									<div class="form-group mb-2">
+										<label>Area</label>
+										<select  name="area_id[]"  class="form-control" style="width: 100%;" multiple >
+                                        <option>---Select---</option>
+                                        <?php
+                                        if ($allArea=$con->query("SELECT * FROM area_list WHERE pop_id=$auth_usr_POP_id ")) {
+                                            while($rows=$allArea->fetch_array()){
+                                                echo '<option value="'.$rows['id'].'">'.$rows['name'].'</option>'; 
+                                            }
+                                        }
+                                        ?>
                                         </select>
+									</div>
+									<div class="form-group mb-2 ">
+										<label>Note</label>
+										<input name="note" placeholder="Enter Your Note" class="form-control" type="text" >
 									</div>                    
 									<div class="modal-footer ">
 										<button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
@@ -146,54 +142,43 @@
                         <div class="modal-content col-md-12">
                            <div class="modal-header">
                               <h5 class="modal-title" id="exampleModalLabel"><span
-                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Works</h5>
+                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Working Group</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                            </div>
 						   <div class="modal-body">
-							  <form action="../include/works_backend.php" method="POST" enctype="multipart/form-data">
-                                    <div class="form-group mb-2 d-none">
-                                        <input name="update_works_data" class="form-control" type="text" >
-                                    </div>
-                                    <div class="form-group mb-2 d-none">
-                                        <label>ID</label>
-                                        <input name="id"  class="form-control" type="text" >
-                                    </div>
+							  <form action="../include/working_group_backend.php" method="POST" enctype="multipart/form-data">
+									<div class="form-group mb-2 d-none">
+										<input name="update_working_data" class="form-control" type="text" >
+									</div>
+									<div class="form-group mb-2 d-none">
+										<input name="id" class="form-control" type="text" >
+									</div>
+									<div class="form-group mb-2">
+										<label>Group Name</label>
+										<input name="group_name" placeholder="Group Name" class="form-control" type="text" >
+									</div>
                                     <div class="form-group mb-2">
-                                        <label>Name</label>
-                                        <input name="name" placeholder="Enter Name" class="form-control" type="text" >
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label>Email</label>
-                                        <input name="email" placeholder="Enter Email" class="form-control" type="email" >
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label>Phone</label>
-                                        <input name="phone" placeholder="Enter Phone" class="form-control" type="text" >
-                                    </div>
-                                    <div class="form-group mb-2 ">
-                                        <label>Group</label>
-                                        <select name="group_id" class="form-select" type="text" >
-                                            <option>---Select---</option>  
-                                            <?php 
-
-                                                if ($group=$con->query("SELECT* FROM working_group where pop_id=$auth_usr_POP_id")) {
-
-                                                    while ($rows=$group->fetch_array()) {
-
-                                                        $userId=$rows["id"];
-                                                        $group_name=$rows["group_name"];
-                                                     echo '<option value='.$userId.'>'.$group_name.'</option>';  
-                                                    }
-                                                }
-
-                                                 ?>                             
+										<label>Area</label>
+										<select type="text" name="area_id[]"  class="form-select" style="width: 100%;" multiple>
+                                        <option>---Select---</option>
+                                        <?php
+                                        if ($allArea=$con->query("SELECT * FROM area_list WHERE pop_id=$auth_usr_POP_id")) {
+                                            while($rows=$allArea->fetch_array()){
+                                                echo '<option value="'.$rows['id'].'">'.$rows['name'].'</option>'; 
+                                            }
+                                        }
+                                        ?>
                                         </select>
-                                    </div>                    
-                                    <div class="modal-footer ">
-                                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
-                                        <button type="submit" class="btn btn-success">Save Changes</button>
-                                    </div>
-                                </form>
+									</div>
+									<div class="form-group mb-2 ">
+										<label>Note</label>
+										<input name="note" placeholder="Enter Your Note" class="form-control" type="text" >
+									</div>                    
+									<div class="modal-footer ">
+										<button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+										<button type="submit" class="btn btn-success">Save Changes</button>
+									</div>
+								</form>
 							</div>
                         </div>
                      </div>
@@ -223,50 +208,13 @@
                                             <thead>
                                                <tr>
                                                   <th>ID</th>
-                                                    <th>Name</th>
-                                                    <th>Email</th>
-                                                    <th>Phone</th>
-                                                    <th>Group</th>
+                                                    <th>Group Name</th>
+                                                    <th>Area Name</th>
+                                                    <th>Note</th>
                                                     <th></th>
                                                </tr>
                                             </thead>
-                                            <tbody>
-                                                <?php 
-
-                                                if ($userlist=$con->query("SELECT* FROM works WHERE pop_id=$auth_usr_POP_id")) {
-
-        while ($rows=$userlist->fetch_array()) {
-
-            $userId=$rows["id"];
-            $name=$rows["name"];
-            $email=$rows["email"];
-            $phone=$rows["phone"];
-            $group_id=$rows["group_id"];
-            if ($list=$con->query("SELECT `group_name` FROM working_group WHERE id=$group_id")) {
-                while ($ro=$list->fetch_array()) {
-                     $group_name=$ro["group_name"];
-                }
-            }
-             echo '
-     <tr>
-     <td>'.$userId.'</td>
-     <td>'.$name.'</td>
-	 <td>'.$email.'</td>
-     <td>'.$phone.'</td>
-     <td>
-       '.$group_name.' 
-    </td>
-    <td style=" text-align:right;">
-        <button type="button" class="btn btn-info edit-btn" data-id="'.$userId.'"><i class="fas fa-edit"></i></button>
-        <button type="button" class="btn btn-danger delete-btn" data-id="'.$userId.'" ><i class=" fas fa-trash"></i>
-        </button>
-        </td>
-     </tr>'; 
-        }
-    }
-
-                                                 ?>
-                                            </tbody>
+                                            <tbody></tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -292,7 +240,53 @@
         </div>
         <!-- END layout-wrapper -->
 
-       
+        <!-- Right Sidebar -->
+        <div class="right-bar">
+            <div data-simplebar class="h-100">
+                <div class="rightbar-title px-3 py-4">
+                    <a href="javascript:void(0);" class="right-bar-toggle float-end">
+                        <i class="mdi mdi-close noti-icon"></i>
+                    </a>
+                    <h5 class="m-0">Settings</h5>
+                </div>
+
+                <!-- Settings -->
+                <hr class="mt-0">
+                <h6 class="text-center mb-0">Choose Layouts</h6>
+
+                <div class="p-4">
+                    <div class="mb-2">
+                        <img src="assets/images/layouts/layout-1.jpg" class="img-fluid img-thumbnail" alt="Layouts-1">
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch">
+                        <label class="form-check-label" for="light-mode-switch">Light Mode</label>
+                    </div>
+
+                    <div class="mb-2">
+                        <img src="assets/images/layouts/layout-2.jpg" class="img-fluid img-thumbnail" alt="Layouts-2">
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css">
+                        <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
+                    </div>
+    
+                    <div class="mb-2">
+                        <img src="assets/images/layouts/layout-3.jpg" class="img-fluid img-thumbnail" alt="Layouts-3">
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input theme-choice" type="checkbox"  id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css">
+                        <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
+                    </div>
+            
+            
+                </div>
+
+            </div> <!-- end slimscroll-menu-->
+        </div>
+        <!-- /Right-bar -->
 
         <!-- Right bar overlay-->
         <div class="rightbar-overlay"></div>
@@ -309,17 +303,65 @@
         ?>
      <script type="text/javascript">
     $(document).ready(function() {
+        loadTableData();
+
+        function loadTableData() {
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/working_group_backend.php?get_all_working_data';
+            $.ajax({
+                url: url, 
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    var tbody = $('#datatable tbody');
+                    tbody.empty();
+
+                    $.each(data, function(index, row) {
+                        var areaNames = row.area_names.join(', ');
+
+                        var html = '<tr>'+
+                            '<td>'+ row.id +'</td>'+
+                            '<td>'+ row.group_name +'</td>'+
+                            '<td>'+ areaNames +'</td>'+
+                            '<td>'+ row.note +'</td>'+
+                            '<td style="text-align:right;">'+
+                                '<button type="button" class="btn btn-info edit-btn" data-id="'+ row.id +'"><i class="fas fa-edit"></i></button>'+
+                                '<button type="button" class="btn btn-danger delete-btn" data-id="'+ row.id +'"><i class="fas fa-trash"></i></button>'+
+                            '</td>'+
+                        '</tr>';
+                        tbody.append(html);
+                    });
+                }
+            });
+        }
+
+        $('#addModal').on('shown.bs.modal', function () {
+            if (!$("select[name='area_id[]']").hasClass("select2-hidden-accessible")) {
+                $("select[name='area_id[]']").select2({
+                    dropdownParent: $('#addModal'),
+                     allowClear: true,
+                    placeholder: "Select Area"
+                });
+            }
+        });
+        $('#editModal').on('shown.bs.modal', function () {
+            if (!$("select[name='area_id']").hasClass("select2-hidden-accessible")) {
+                $("select[name='area_id']").select2({
+                    dropdownParent: $('#editModal'),
+                     allowClear: true,
+                    placeholder: "Select Area"
+                });
+            }
+        });
         $("#users_table").DataTable();
 		/** Handle Delete button click**/
         $('#datatable tbody').on('click', '.delete-btn', function() {
         var id = $(this).data('id');
         // Confirm deletion
         if (confirm("Are you sure you want to delete this item?")) {
-            var protocol = location.protocol;
-            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/works_backend.php';
             $.ajax({
                 type: 'POST', 
-                url: url, 
+                url: '../include/working_group_backend.php', 
                 data: { delete_data: true, id: id }, 
                 success: function(response) {
                     const jsonResponse = JSON.parse(response);
@@ -392,7 +434,7 @@
         $('#datatable tbody').on('click', '.edit-btn', function () {
     		
         var id = $(this).data('id');
-        var url = "../include/works_backend.php?edit_data=true&id=" + id;
+        var url = "../include/working_group_backend.php?edit_data=true&id=" + id;
           $.ajax({
             type: 'GET',
             url: url,
@@ -401,10 +443,9 @@
                   if (jsonResponse.success) {
                     $('#editModal').modal('show');
                     $('#editModal input[name="id"]').val(jsonResponse.data.id);
-                    $('#editModal input[name="name"]').val(jsonResponse.data.name);
-                    $('#editModal input[name="email"]').val(jsonResponse.data.email);
-                    $('#editModal input[name="phone"]').val(jsonResponse.data.phone);
-                    $('#editModal select[name="group_id"]').val(jsonResponse.data.group_id);
+                    $('#editModal input[name="group_name"]').val(jsonResponse.data.group_name);
+                    $('#editModal input[name="note"]').val(jsonResponse.data.note);
+                    $('#editModal select[name="area_id"]').val(jsonResponse.data.area_id);
                   } else {
                       toastr.error("Error fetching data for edit: " + jsonResponse.message);
                   }
@@ -446,11 +487,12 @@
     			form.find(':input').prop('disabled', true);
     		  },
     		  success: function (response) {
-                const jsonResponse = JSON.parse(response);
+            const jsonResponse = JSON.parse(response);
+    			$('#editModal').modal('hide');
+    			$('#editModal form')[0].reset();
     			if (jsonResponse.success) {
     				toastr.success(jsonResponse.message);
-                    $('#editModal').modal('hide');
-                    $('#editModal form')[0].reset();
+
     				/*Reload the page after a short delay*/ 
     				setTimeout(() => {
     					location.reload();

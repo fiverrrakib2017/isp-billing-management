@@ -1,7 +1,19 @@
 <?php
-include("include/security_token.php");
-include("include/users_right.php");
-include "include/db_connect.php";
+if (!isset($_SESSION)) {
+    session_start();
+}
+$rootPath = $_SERVER['DOCUMENT_ROOT'];  
+
+$db_connect_path = $rootPath . '/include/db_connect.php';  
+$users_right_path = $rootPath . '/include/users_right.php';
+
+if (file_exists($db_connect_path)) {
+    require($db_connect_path);
+}
+
+if (file_exists($users_right_path)) {
+    require($users_right_path);
+}
 
 ?>
 <!doctype html>
@@ -26,10 +38,10 @@ include "include/db_connect.php";
     <div id="layout-wrapper">
 
         <?php 
+            $page_title = "Customer Recharge";
             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
             $url = $protocol . $_SERVER['HTTP_HOST'] . '/Header.php';
-
-            echo file_get_contents($url);
+            include '../Header.php';
         ?>
 
         <!-- ========== Left Sidebar Start ========== -->

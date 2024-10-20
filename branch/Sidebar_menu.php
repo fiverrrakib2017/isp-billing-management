@@ -1,3 +1,6 @@
+
+ 
+ 
  <div id="sidebar-menu">
      <!-- Left Menu Start -->
      <ul class="metismenu list-unstyled" id="side-menu">
@@ -22,23 +25,7 @@
                  <li><a href="customer_recharge.php">Customer Recharge</a></li>
                  <li><a href="customer_dues.php">Customer Dues/Unpaid</a></li>
                  <li><a href="bulk_payment.php">Bulk Recharge</a></li>
-                 <li>
-                     <a href="con_request.php">Customer Request
-                         <?php
-                            if ($allCstmr = $con->query("SELECT * FROM customers WHERE user_type=$auth_usr_type AND pop=$auth_usr_POP_id AND status=3")) {
-                                //echo $allCstmr->num_rows;
-                                if ($allCstmr->num_rows > 0) {
-                                    echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
-                                } else {
-                                }
-                            }
-
-
-
-                            ?>
-
-                     </a>
-                 </li>
+                 
                  <li><a href="package_add.php">Package's</a></li>
              </ul>
          </li>

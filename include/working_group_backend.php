@@ -1,10 +1,16 @@
 <?php 
  include("db_connect.php");
- 
+ session_start();
  if (isset($_GET['get_all_working_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
 	$working_group_data = array();
+	$pop_id_condition ="";
 
-	if ($result = $con->query("SELECT * FROM working_group")) {
+	if (!empty($_SESSION['user_pop'])) {
+		$pop_id=$_SESSION['user_pop'];
+		$pop_id_condition = "WHERE pop_id='$pop_id'";
+	}
+
+	if ($result = $con->query("SELECT * FROM working_group $pop_id_condition ")) {
 		while ($rows = $result->fetch_array()) {
 			$userId = $rows["id"];
 			$group_name = $rows["group_name"];
@@ -37,15 +43,19 @@
     $group_name = $_POST['group_name'];
     $area_ids = $_POST['area_id'];
     $note = $_POST['note'];
+	$pop_id="";
+	if (!empty($_SESSION['user_pop'])) {
+		$pop_id=$_SESSION['user_pop'];
+	}
 
 	/*Convert Array To string*/
 	$area_ids_imploded = implode(",",$area_ids,);
 
     /* Prepare an SQL statement*/
-    $stmt = $con->prepare("INSERT INTO working_group (pop_id, group_name, area_id, note, create_date) VALUES (NULL, ?, ?, ?, NOW())");
+    $stmt = $con->prepare("INSERT INTO working_group (pop_id, group_name, area_id, note, create_date) VALUES (?, ?, ?, ?, NOW())");
     
     /* Bind parameters*/
-    $stmt->bind_param("sss", $group_name, $area_ids_imploded, $note);
+    $stmt->bind_param("isss", $pop_id,$group_name, $area_ids_imploded, $note);
 
     /* Execute the statement*/
     if ($stmt->execute()) {
