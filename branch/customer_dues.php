@@ -14,177 +14,30 @@ include("include/users_right.php");
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-    <meta content="Themesbrand" name="author">
-    <!-- DataTables -->
-    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
-    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
-
-    <!-- Responsive datatable examples -->
-    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
-
-    <!-- Bootstrap Css -->
-    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
-    <link rel="stylesheet" type="text/css" href="css/deleteModal.css">
+    <?php 
+        $page_title = "Customers";
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+        
+        echo file_get_contents($url);
+        
+    ?>
 </head>
 
 <body data-sidebar="dark">
 
 
-    <!-- Loader -->
-    <div id="preloader">
-        <div id="status">
-            <div class="spinner"></div>
-        </div>
-    </div>
-
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <header id="page-topbar">
-            <div class="navbar-header">
-                <div class="d-flex">
-                    <!-- LOGO -->
-                    <div class="navbar-brand-box">
-                        <a href="index.php" class="logo logo-dark">
-                            <span class="logo-sm">
-                                <img src="assets/images/it-fast.png" alt="" height="22">
-                            </span>
-                            <span class="logo-lg">
-                                <img src="assets/images/it-fast.png" alt="" height="17">
-                            </span>
-                        </a>
-
-                        <a href="index.php" class="logo logo-light">
-                            <span class="logo-sm">
-                                <img src="assets/images/it-fast.png" alt="" height="22">
-                            </span>
-                            <span class="logo-lg">
-                                <img src="assets/images/it-fast.png" alt="" height="36">
-                            </span>
-                        </a>
-                    </div>
-
-                    <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
-                        <i class="mdi mdi-menu"></i>
-                    </button>
-
-                    <div class="d-none d-sm-block ms-2">
-                        <h4 class="page-title">Customers</h4>
-                    </div>
-                </div>
-
-
-
-                <div class="d-flex">
-
-
-
-
-
-                    <div class="dropdown d-none d-md-block me-2">
-                        <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="font-size-16">
-                                <?php if (isset($_SESSION['username'])) {
-                                    echo $_SESSION['username'];
-                                } ?>
-                            </span>
-                        </button>
-                    </div>
-
-
-                    <div class="dropdown d-inline-block">
-                        <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <!-- item-->
-                            <a class="dropdown-item text-danger" href="logout.php">Logout</a>
-                        </div>
-                    </div>
-
-                    <div class="dropdown d-inline-block me-2">
-                        <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="ion ion-md-notifications"></i>
-                            <span class="badge bg-danger rounded-pill">3</span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
-                            <div class="p-3">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h5 class="m-0 font-size-16"> Notification (3) </h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div data-simplebar style="max-height: 230px;">
-                                <a href="" class="text-reset notification-item">
-                                    <div class="d-flex">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title bg-success rounded-circle font-size-16">
-                                                <i class="mdi mdi-cart-outline"></i>
-                                            </span>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h6 class="mt-0 font-size-15 mb-1">Your order is placed</h6>
-                                            <div class="font-size-12 text-muted">
-                                                <p class="mb-1">Dummy text of the printing and typesetting industry.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-
-                                <a href="" class="text-reset notification-item">
-                                    <div class="d-flex">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title bg-warning rounded-circle font-size-16">
-                                                <i class="mdi mdi-message-text-outline"></i>
-                                            </span>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h6 class="mt-0 font-size-15 mb-1">New Message received</h6>
-                                            <div class="font-size-12 text-muted">
-                                                <p class="mb-1">You have 87 unread messages</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-
-                                <a href="" class="text-reset notification-item">
-                                    <div class="d-flex">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title bg-info rounded-circle font-size-16">
-                                                <i class="mdi mdi-glass-cocktail"></i>
-                                            </span>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h6 class="mt-0 font-size-15 mb-1">Your item is shipped</h6>
-                                            <div class="font-size-12 text-muted">
-                                                <p class="mb-1">It is a long established fact that a reader will</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-
-                            </div>
-                            <div class="p-2 border-top">
-                                <div class="d-grid">
-                                    <a class="btn btn-sm btn-link font-size-14  text-center" href="javascript:void(0)">
-                                        View all
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </header>
-
+    <?php 
+        $page_title = "Customers Dues/Unpaid";
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/Header.php';
+        
+        echo file_get_contents($url);
+        
+    ?>
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
 
@@ -499,75 +352,19 @@ include("include/users_right.php");
             </div>
             <!-- End Page-content -->
 
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script> © IT-FAST.
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-                                Development <i class="mdi mdi-heart text-danger"></i><a target="__blank" href="https://facebook.com/rakib56789">Rakib Mahmud</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <?php 
+                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+                $url = $protocol . $_SERVER['HTTP_HOST'] . '/Footer.php';
+                
+                echo file_get_contents($url);
+                
+            ?>
 
         </div>
         <!-- end main content-->
 
     </div>
     <!-- END layout-wrapper -->
-    <!-- Right Sidebar -->
-    <div class="right-bar">
-        <div data-simplebar class="h-100">
-            <div class="rightbar-title px-3 py-4">
-                <a href="javascript:void(0);" class="right-bar-toggle float-end">
-                    <i class="mdi mdi-close noti-icon"></i>
-                </a>
-                <h5 class="m-0">Settings</h5>
-            </div>
-
-            <!-- Settings -->
-            <hr class="mt-0">
-            <h6 class="text-center mb-0">Choose Layouts</h6>
-
-            <div class="p-4">
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-1.jpg" class="img-fluid img-thumbnail" alt="Layouts-1">
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch">
-                    <label class="form-check-label" for="light-mode-switch">Light Mode</label>
-                </div>
-
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-2.jpg" class="img-fluid img-thumbnail" alt="Layouts-2">
-                </div>
-
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css">
-                    <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
-                </div>
-
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-3.jpg" class="img-fluid img-thumbnail" alt="Layouts-3">
-                </div>
-
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css">
-                    <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
-                </div>
-
-
-            </div>
-
-        </div> <!-- end slimscroll-menu-->
-    </div>
-    <!-- /Right-bar -->
     <div id="deleteModal" class="modal fade">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
@@ -592,182 +389,402 @@ include("include/users_right.php");
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
-    <script src="assets/libs/jquery/jquery.min.js"></script>
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-    <script src="assets/libs/simplebar/simplebar.min.js"></script>
-    <script src="assets/libs/node-waves/waves.min.js"></script>
-
-    <!-- Required datatable js -->
-    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <!-- Buttons examples -->
-    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-    <script src="assets/libs/jszip/jszip.min.js"></script>
-    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
-    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-    <!-- Responsive examples -->
-    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-    <script type="text/javascript" src="js/toastr/toastr.min.js"></script>
-    <script type="text/javascript" src="js/toastr/toastr.init.js"></script>
-    <!-- Datatable init js -->
-    <script src="assets/js/pages/datatables.init.js"></script>
-
-    <script src="assets/js/app.js"></script>
-    <script type="text/javascript">
-        $("#customers_table").DataTable();
-
-        $(document).on('keyup', '#customer_username', function() {
-            var customer_username = $("#customer_username").val();
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    current_username: customer_username
-                },
-                success: function(response) {
-                    $("#usernameCheck").html(response);
-                }
-            });
-        });
+    <?php 
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
         
-        $(document).on('change', '#customer_pop', function() {
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    current_pop_name: pop_id
-                },
-                success: function(response) {
-                     $("#customer_area").html(response);
-                }
+        echo file_get_contents($url);
+        
+    ?>
+     <script type="text/javascript">
+        $(document).ready(function() {
+            $("#printCustomerButton").click(function(){
+                printCustomerData();
             });
-        });
-        $(document).on('change', '#customer_pop', function() {
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    pop_name: pop_id,
-                    getCustomerPackage:0
-                },
-                success: function(response) {
-                     $("#customer_package").html(response);
-                }
-            });
-        });
-        $(document).on('change', '#customer_package', function() {
-            var packageId = $("#customer_package").val();
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    package_id: packageId,
-                    pop_id: pop_id,
-                    getPackagePrice:0
-                },
-                success: function(response) {
-                     $("#customer_price").val(response);
-                }
-            });
-        });
+         	$("#customer_popact").hide();
+         	$("#customer_areaact").hide();
+         
+         	//Search Customer by POP
+         	$(document).on('change', '#srch_poplst', function() {
+                    var searchdta = 'srch_poplst='+$(this).val() + '&srch_area_id='+$("#srch_area").val() + '&customer_sttssrch='+$("#customer_sttssrch").val();
+                    
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_list_table.php';
 
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: searchdta,
+                        success: function(response) {
+                             $("#customer_tbl_list").html(response);
+                        }
+                    });
+                });
+         
+         	// Search customer with Area Criteria
+         	$(document).on('change', '#srch_area', function() {
+                    var searchdta = 'srch_area_id='+$(this).val() + '&srch_poplst='+$("#srch_poplst").val() + '&customer_sttssrch='+$("#customer_sttssrch").val();
 
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_list_table.php';
 
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: searchdta,
+                        success: function(response) {
+                             $("#customer_tbl_list").html(response);
+                        }
+                    });
+                });
+         
+         	// Search customer with Status Criteria
+         	$(document).on('change', '#customer_sttssrch', function() {
+                    var searchdta = 'customer_sttssrch='+$(this).val() + '&srch_poplst='+$("#srch_poplst").val() + '&srch_area_id='+$("#srch_area").val();
+                    
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_list_table.php';
 
-        $("#customer_add").click(function() {
-            var fullname = $("#customer_fullname").val();
-            var package = $("#customer_package").val();
-            var username = $("#customer_username").val();
-            var password = $("#customer_password").val();
-            var mobile = $("#customer_mobile").val();
-            var address = $("#customer_address").val();
-            var expire_date = $("#customer_expire_date").val();
-            var area = $("#customer_area").val();
-            var pop = $("#customer_pop").val();
-            var nid = $("#customer_nid").val();
-            var con_charge = $("#customer_con_charge").val();
-            var price = $("#customer_price").val();
-            var remarks = $("#customer_remarks").val();
-            var status = $("#customer_status").val();
-            var user_type = <?php echo $auth_usr_type; ?>;
+         		$.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: searchdta,
+                        success: function(response) {
+                             $("#customer_tbl_list").html(response);
+                        }
+                    });
+                });
+         
+         
+         
+         	//Search  by POP & Load area
+         	$(document).on('change', '#srch_poplst', function() {
+                    var popiD = $(this).val();
+         		if(popiD !=0)
+         		{
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
 
-            customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status)
-
-        });
-
-        function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status) {
-            if (fullname.length == 0) {
-                toastr.error("Customer name is require");
-            } else if (package.length == 0) {
-                toastr.error("Customer Package is require");
-            } else if (username.length == 0) {
-                toastr.error("Username is require");
-            } else if (password.length == 0) {
-                toastr.error("Password is require");
-            } else if (mobile.length == 0) {
-                toastr.error("Mobile number is require");
-            } else if (expire_date.length == 0) {
-                toastr.error("Expire Date is require");
-            } else if (pop.length == 0) {
-                toastr.error("POP/Branch is require");
-            } else if (area.length == 0) {
-                toastr.error("Area is require");
-            } else if (con_charge.length == 0) {
-                toastr.error("Connection Charge is require");
-            } else if (price.length == 0) {
-                toastr.error("price is require");
-            } else if (status.length == 0) {
-                toastr.error("Status is require");
-            } else {
-                $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-                var addCustomerData = 0;
+         			 $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {
+                            srch_pop_name: popiD
+                        },
+                        success: function(response) {
+                             $("#srch_area").html(response);
+                        }
+                    });
+         
+         		}
+         
+         
+                });
+         	// Action for customers
+         	//POP load
+         	$(document).on('change', '#customer_actions', function() {
+                    if($(this).val()== 4)
+         		{
+         			$("#customer_popact").show();
+         			$("#customer_areaact").show();
+         		}
+         		else{ $("#customer_popact").hide();
+         		$("#customer_areaact").hide();}
+         
+                });
+         
+         
+         	//Area load
+         	$(document).on('change', '#customer_popact', function() {
+                    var popiD = $(this).val();
+         		if(popiD !=0)
+         		{
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+                    
+         			 $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {
+                            current_pop_name: popiD
+                        },
+                        success: function(response) {
+                             $("#customer_areaact").html(response);
+                        }
+                    });
+         
+         		}
+         
+         
+                });
+         
+         	// Form Submission
+         	$("#processBtn").click(function(e) {
+                e.preventDefault(); 
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_actions.php';
                 $.ajax({
                     type: 'POST',
-                    url: 'include/customers_server.php',
+                    url: url,
                     data: {
-                        addCustomerData: addCustomerData,
-                        fullname: fullname,
-                        package: package,
-                        username: username,
-                        password: password,
-                        mobile: mobile,
-                        address: address,
-                        expire_date: expire_date,
-                        area: area,
-                        pop: pop,
-                        con_charge: con_charge,
-                        price: price,
-                        remarks: remarks,
-                        nid: nid,
-                        status: status,
-                        user_type: user_type,
+                        action: $('#customer_actions').val(),
+                        pop: $('#srch_poplst').val(),
+                        area: $('#srch_area').val(),
+                        process:'print',
                     },
-                    success: function(responseData) {
-                        if (responseData == 1) {
-                            toastr.success("Added Successfully");
-                            $("#addCustomerModal").modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            toastr.error(responseData);
-                        }
+                    success: function(response) {
+
+                        var data = JSON.parse(response);
+                        var modalBody = '<table class="table table-responsive table-bordered">';
+                        modalBody += '<thead><tr>';
+                        modalBody += '<th>ID</th>';
+                        modalBody += '<th>Full Name</th>';
+                        modalBody += '<th>Expire Date</th>';
+                        modalBody += '<th>Username</th>';
+                        modalBody += '<th>Phone</th>';
+                        modalBody += '<th>Comment</th>';
+                        modalBody += '</tr></thead>';
+                        modalBody += '<tbody>';
+                        data.forEach(function(customer) {
+                           var expireDate = new Date(customer.expiredate);
+                           var todayDate = new Date();
+
+                             modalBody += '<tr>';
+                             modalBody += '<td>' + customer.id + '</td>';
+                             modalBody += '<td>' + customer.fullname + '</td>';
+                             if (expireDate <= todayDate) {
+                                 modalBody += '<td><span class="badge bg-danger">Expired</span></td>';
+                              } else {
+                                 modalBody += '<td>' + customer.expiredate + '</td>';
+                              }
+                             modalBody += '<td>' + customer.username + '</td>';
+                             modalBody += '<td>' + customer.mobile + '</td>';
+                             modalBody += '<td><input type="text" class="form-control"></td>';
+                             modalBody += '</tr>';
+                        });
+                        modalBody += '</tbody></table>';
+
+                        $('#customerPrint_Modal #customerDataContainer').html(modalBody);
+                        $("#customerPrint_Modal").modal('show'); 
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("An error occurred: " + error);
                     }
                 });
+         	});
+         
+            // Print function
+            function printCustomerData() {
+                var printContents = document.getElementById('customerDataContainer').innerHTML;
+                var originalContents = document.body.innerHTML;
+
+                document.body.innerHTML = printContents;
+
+                window.print();
+
+                document.body.innerHTML = originalContents;
             }
-        }
+         
+         
+         
+                    $("#checkedAll").change(function() {
+                        if (this.checked) {
+                            $(".checkSingle").each(function() {
+                                this.checked = true;
+                            })
+                        } else {
+                            $(".checkSingle").each(function() {
+                                this.checked = false;
+                            })
+                        }
+                    });
+         
+                    $(".checkSingle").click(function() {
+                        if ($(this).is(":checked")) {
+                            var isAllChecked = 0;
+                            $(".checkSingle").each(function() {
+                                if (!this.checked)
+                                    isAllChecked = 1;
+                            })
+                            if (isAllChecked == 0) {
+                                $("#checkedAll").prop("checked", true);
+                            }
+                        } else {
+                            $("#checkedAll").prop("checked", false);
+                        }
+                    });
+         		});
+         
+         
+         
+         
+                $("#customers_table").DataTable();
+         
+                $(document).on('keyup', '#customer_username', function() {
+                    var customer_username = $("#customer_username").val();
+                    var protocol = location.protocol;
+                     var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {
+                            current_username: customer_username
+                        },
+                        success: function(response) {
+                            $("#usernameCheck").html(response);
+                        }
+                    });
+                });
+         
+                $(document).on('change', '#customer_pop', function() {
+                    var pop_id = $("#customer_pop").val();
+
+                    var protocol = location.protocol;
+                     var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {
+                            current_pop_name: pop_id
+                        },
+                        success: function(response) {
+                             $("#customer_area").html(response);
+                        }
+                    });
+                });
+                $(document).on('change', '#customer_pop', function() {
+                    var pop_id = $("#customer_pop").val();
+                   
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {
+                            pop_name: pop_id,
+                            getCustomerPackage:0
+                        },
+                        success: function(response) {
+                             $("#customer_package").html(response);
+                        }
+                    });
+                });
+         
+         
+                $(document).on('change', '#customer_package', function() {
+                    var packageId = $("#customer_package").val();
+                    var pop_id = $("#customer_pop").val();
+
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {
+                            package_id: packageId,
+                            pop_id: pop_id,
+                            getPackagePrice:0
+                        },
+                        success: function(response) {
+                             $("#customer_price").val(response);
+                        }
+                    });
+                });
+         
+         
+         
+         
+                $("#customer_add").click(function() {
+                    var fullname = $("#customer_fullname").val();
+                    var package = $("#customer_package").val();
+                    var username = $("#customer_username").val();
+                    var password = $("#customer_password").val();
+                    var mobile = $("#customer_mobile").val();
+                    var address = $("#customer_address").val();
+                    var expire_date = $("#customer_expire_date").val();
+                    var area = $("#customer_area").val();
+                    var pop = $("#customer_pop").val();
+                    var nid = $("#customer_nid").val();
+                    var con_charge = $("#customer_con_charge").val();
+                    var price = $("#customer_price").val();
+                    var remarks = $("#customer_remarks").val();
+                    var status = $("#customer_status").val();
+                    var user_type = <?php echo $auth_usr_type; ?>;
+         
+                    customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status)
+         
+                });
+         
+                function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status) {
+                    if (fullname.length == 0) {
+                        toastr.error("Customer name is require");
+                    } else if (package.length == 0) {
+                        toastr.error("Customer Package is require");
+                    } else if (username.length == 0) {
+                        toastr.error("Username is require");
+                    } else if (password.length == 0) {
+                        toastr.error("Password is require");
+                    } else if (mobile.length == 0) {
+                        toastr.error("Mobile number is require");
+                    } else if (expire_date.length == 0) {
+                        toastr.error("Expire Date is require");
+                    } else if (pop.length == 0) {
+                        toastr.error("POP/Branch is require");
+                    } else if (area.length == 0) {
+                        toastr.error("Area is require");
+                    } else if (con_charge.length == 0) {
+                        toastr.error("Connection Charge is require");
+                    } else if (price.length == 0) {
+                        toastr.error("price is require");
+                    } else if (status.length == 0) {
+                        toastr.error("Status is require");
+                    } else {
+                        $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+                        var addCustomerData = 0;
+
+                        var protocol = location.protocol;
+                        var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+
+                        $.ajax({
+                            type: 'POST',
+                            url: url,
+                            data: {
+                                addCustomerData: addCustomerData,
+                                fullname: fullname,
+                                package: package,
+                                username: username,
+                                password: password,
+                                mobile: mobile,
+                                address: address,
+                                expire_date: expire_date,
+                                area: area,
+                                pop: pop,
+                                con_charge: con_charge,
+                                price: price,
+                                remarks: remarks,
+                                nid: nid,
+                                status: status,
+                                user_type: user_type,
+                            },
+                            success: function(responseData) {
+                                if (responseData == 1) {
+                                    toastr.success("Added Successfully");
+                                    $("#addCustomerModal").modal('hide');
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 1000);
+                                } else {
+                                    toastr.error(responseData);
+                                }
+                            }
+                        });
+                    }
+                }
+            
     </script>
 </body>
 
