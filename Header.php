@@ -39,10 +39,14 @@
                     <div class="dropdown d-none d-md-block me-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="font-size-16">
-                                <?php if (isset($_SESSION['fullname'])) {
+                                <?php 
+                                if (isset($_SESSION['fullname'])) {
                                     echo $_SESSION['fullname'];
 									
-                                } ?>
+                                }elseif (isset($_SESSION['username'])) {
+                                    echo $_SESSION['username'];
+                                }
+                                ?>
                             </span>
                         </button>
                     </div>
