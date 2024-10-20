@@ -431,7 +431,7 @@ include("include/users_right.php");
         echo file_get_contents($url);
     ?>
     <script type="text/javascript">
-         $(document).ready(function() {
+        $(document).ready(function() {
             $("#printCustomerButton").click(function(){
                 printCustomerData();
             });
@@ -819,7 +819,7 @@ include("include/users_right.php");
                     }
                 }
             
-      </script>
+    </script>
 </body>
 
 </html>
