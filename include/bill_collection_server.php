@@ -4,8 +4,10 @@
         session_start();
     }
     $condition="";
+    $pop_id=1;
     if (!empty($_SESSION['user_pop'])) {
 		$condition = "pop_id = '" . $_SESSION['user_pop'] . "'";
+        $pop_id=$_SESSION['user_pop'];
 	} else {
 		$condition = "pop_id = 1"; 
 	}
@@ -21,7 +23,7 @@
         $uploader_info = isset($_SESSION['uid']) ? $_SESSION['uid'] : '';
     
         // Insert into cash_collection
-        $insert_query = "INSERT INTO cash_collection (user_id, amount, received_amount, note, uploader_info, collection_date, create_date) VALUES ('$user_id', '$total_amount', '$received_amount', '$note', '$uploader_info', '$collection_date', NOW())";
+        $insert_query = "INSERT INTO cash_collection (user_id, amount, received_amount, note, uploader_info,pop_id, collection_date, create_date) VALUES ('$user_id', '$total_amount', '$received_amount', '$note', '$uploader_info', '$pop_id', '$collection_date', NOW())";
     
         if (mysqli_query($con, $insert_query)) {
             /*Retrieve IDs from customer_rechrg where user_id and collection_date match*/ 
