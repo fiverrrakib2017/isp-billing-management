@@ -1,6 +1,19 @@
 <?php
-include("include/security_token.php");
-include("include/users_right.php");
+if (!isset($_SESSION)) {
+    session_start();
+}
+$rootPath = $_SERVER['DOCUMENT_ROOT'];  
+
+$db_connect_path = $rootPath . '/include/db_connect.php';  
+$users_right_path = $rootPath . '/include/users_right.php';
+
+if (file_exists($db_connect_path)) {
+    require($db_connect_path);
+}
+
+if (file_exists($users_right_path)) {
+    require($users_right_path);
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -152,7 +165,7 @@ include("include/users_right.php");
                     <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Settings <i class="fas fa-cog"></i></h5>
                     
                 </div>
-                <form action="include/tickets_server.php?add_ticket_settings=true" method="POST" id="settings_modal_form">
+                <form action="../include/tickets_server.php?add_ticket_settings=true" method="POST" id="settings_modal_form">
                     <div class="modal-body">
                         <div class="form-group d-none">
                             <input type="text" name="ticket_id" value="" required>
@@ -204,7 +217,62 @@ include("include/users_right.php");
         </div>
     </div>
 
-    <?php require '../modal/tickets_modal.php';?>
+    <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header  bg-success">
+                    <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="mdi mdi-account-plus"></i></h5>
+                    
+                </div>
+                <form action="../include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
+                    <div class="modal-body">
+                        <div class="from-group mb-2">
+                            <label>Customer Name</label>
+                            <select class="form-select" name="customer_id" id="ticket_customer_id" style="width: 100%;"></select>
+						</div>
+                        <div class="from-group mb-2">
+                            <label for="">Ticket For</label>
+                            <select id="ticket_for" name="ticket_for" class="form-select" required>
+                                <option value="Home Connection">Home Connection</option>
+                                <option value="POP">POP Support</option>
+                                <option value="Corporate">Corporate</option>
+                                
+                            </select>
+                        </div>
+                        <div class="from-group mb-2">
+                            <label for=""> Complain Type </label>
+                            <select id="ticket_complain_type" name="ticket_complain_type" class="form-select" style="width: 100%;" ></select>
+
+                        </div>
+                        <div class="from-group mb-2">
+                            <label for="">Ticket Priority</label>
+                            <select id="ticket_priority" name="ticket_priority" type="text" class="form-select" style="width: 100%;">
+                            <option >---Select---</option>
+                            <option value="1">Low</option>
+                            <option value="2">Normal</option>
+                            <option value="3">Standard</option>
+                            <option value="4">Medium</option>
+                            <option value="5">High</option>
+                            <option value="6">Very High</option>
+                            </select>
+						</div>
+                        <div class="from-group mb-2">
+                            <label for="">Assigned To</label>
+                            <select id="ticket_assigned" name="assigned" class="form-select" style="width: 100%;"></select>
+                        </div>
+                        <div class="from-group mb-2">
+                            <label for="">Note</label>
+                            <input id="notes" type="text" name="notes" class="form-control" placeholder="Enter Your Note">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <?php
         
@@ -373,8 +441,10 @@ include("include/users_right.php");
             loadCustomerOptions(); 
 
             function loadAreaOptions() {
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/area_server.php?get_area_data=1';
                 $.ajax({
-                    url: 'include/area_server.php?get_area_data=1', 
+                    url: url, 
                     type: 'GET',
                     dataType: 'json',
                     success: function(response) {
@@ -417,8 +487,10 @@ include("include/users_right.php");
             }
            
             function loadCustomerOptions() {
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_all_customer=true';
                 $.ajax({
-                url: 'include/tickets_server.php?get_all_customer=true',
+                url: url,
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
@@ -442,6 +514,8 @@ include("include/users_right.php");
                 }
             });
             }
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_tickets_data=1';
             table=$('#tickets_datatable').DataTable( {
                "searching": true,
                 "paging": true,
@@ -451,7 +525,7 @@ include("include/users_right.php");
                 "serverSide"		: true,
                 "zeroRecords":    "No matching records found",
                 "ajax"				: {
-                    url			: "include/tickets_server.php?get_tickets_data=1",
+                    url			: url,
                     type		: 'GET',
                 },
                 "order": [[0, 'desc']], 
@@ -514,8 +588,10 @@ include("include/users_right.php");
         
         $(document).on('click', 'button[name="settings_button"]', function() {
             let dataId=$(this).data('id'); 
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_single_ticket=true';
             $.ajax({
-                url: "include/tickets_server.php?get_single_ticket=true", 
+                url: url, 
                 type: "GET",
                 data: { 
                     id:dataId,
@@ -537,8 +613,10 @@ include("include/users_right.php");
         });
         __load_assign_option()
         function __load_assign_option(){
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_working_group=true';
             $.ajax({
-                url: "include/tickets_server.php?get_working_group=true",
+                url: url,
                 type: "GET",
                 dataType:'json',
                 success: function(response) {

@@ -1,6 +1,8 @@
 <?php
 include "db_connect.php";
-
+if (!isset($_SESSION)) {
+    session_start();
+}
  if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 	require 'datatable.php';
 
@@ -147,11 +149,14 @@ include "db_connect.php";
 		
 		
 	);
-
-	$condition = ""; 
+	if (!empty($_SESSION['user_pop'])) {
+		$condition = "pop_id = '" . $_SESSION['user_pop'] . "'";
+	} else {
+		$condition = "pop_id = 1"; 
+	}
 	/* Output JSON for DataTables to handle*/
 	echo json_encode(
-		SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns,null, $searchCondition)
+		SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
 	);
  }
 if (isset($_POST['get_area']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -262,13 +267,43 @@ if (isset($_GET['add_ticket_settings']) && $_SERVER['REQUEST_METHOD'] == 'POST')
     $stmt2->close();
 }
 
-if (isset($_GET['get_all_customer'])&& $_SERVER['REQUEST_METHOD']=='GET') {
-	$result = $con->query("SELECT id,username,fullname,mobile FROM customers");
-    $customers = [];
-    while ($row = $result->fetch_assoc()) {
-        $customers[] = $row;
+if (isset($_GET['get_all_customer']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    /* Check if session is started*/
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
     }
-    echo json_encode(['success' => true, 'data' => $customers]);
+    $condition = "WHERE pop = ?";
+    
+    /* Set default pop_id value*/
+    $pop_id = 1; 
+    
+    if (isset($_SESSION['user_pop']) && !empty($_SESSION['user_pop'])) {
+        $pop_id = $_SESSION['user_pop'];
+    }
+
+    /*Prepare the SQL query */ 
+    $stmt = $con->prepare("SELECT id, username, fullname, mobile FROM customers $condition");
+    $stmt->bind_param('i', $pop_id); 
+
+    /* Execute the query*/
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        $customers = [];
+
+        /*Fetch results*/ 
+        while ($row = $result->fetch_assoc()) {
+            $customers[] = $row;
+        }
+
+        /* Return JSON response*/
+        echo json_encode(['success' => true, 'data' => $customers]);
+    } else {
+        /*If there's an error with the query*/ 
+        echo json_encode(['success' => false, 'message' => 'Error retrieving customer data']);
+    }
+
+    /* Close the statement*/
+    $stmt->close();
     exit;
 }
 if (isset($_POST['get_complain_type'])&& $_SERVER['REQUEST_METHOD']=='POST') {
