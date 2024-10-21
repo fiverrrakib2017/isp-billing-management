@@ -44,7 +44,7 @@ if (file_exists($users_right_path)) {
     <div id="layout-wrapper">
 
             <?php 
-                $page_title="Working Group";
+                $page_title="Payment History";
                 include '../Header.php';
             ?>
 

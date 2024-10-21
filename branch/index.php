@@ -26,22 +26,14 @@ if (file_exists($users_right_path)) {
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-    <meta content="Themesbrand" name="author">
-
-    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
-    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
-    <!-- C3 Chart css -->
-    <link href="assets/libs/c3/c3.min.css" rel="stylesheet" type="text/css">
-    <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
-    <!-- Bootstrap Css -->
-    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-
-    <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+    <?php
+        
+        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+        
+        echo file_get_contents($url);
+        
+    ?>
 
 </head>
 
@@ -899,22 +891,14 @@ if (file_exists($users_right_path)) {
             </div>
             <!-- End Page-content -->
 
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script> © IT-FAST.
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-                                Development <i class="mdi mdi-heart text-danger"></i><a target="__blank" href="https://facebook.com/rakib56789">Rakib Mahmud</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <?php
+        
+                $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+                $url = $protocol . $_SERVER['HTTP_HOST'] . '/Footer.php';
+                
+                echo file_get_contents($url);
+                
+            ?>
 
         </div>
         <!-- end main content-->
@@ -1346,59 +1330,14 @@ if (file_exists($users_right_path)) {
     <div class="rightbar-overlay"></div>
 
     <!-- JAVASCRIPT -->
-    <script src="assets/libs/jquery/jquery.min.js"></script>
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-    <script src="assets/libs/simplebar/simplebar.min.js"></script>
-    <script src="assets/libs/node-waves/waves.min.js"></script>
-
-    <!-- Required datatable js -->
-    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <!-- Buttons examples -->
-    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-    <script src="assets/libs/jszip/jszip.min.js"></script>
-    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
-    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-    <!-- Responsive examples -->
-    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-    <script src="js/toastr/toastr.min.js"></script>
-    <script src="js/toastr/toastr.init.js"></script>
-    <!-- Datatable init js -->
-    <script src="assets/js/pages/datatables.init.js"></script>
-
-    <script src="assets/js/app.js"></script>
-
-    <!-- Peity chart-->
-    <script src="assets/libs/peity/jquery.peity.min.js"></script>
-
-
-
-    <script src="assets/js/pages/dashboard.init.js"></script>
-
-    <script src="assets/js/app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-
-    <!-- Required datatable js -->
-    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Responsive examples -->
-    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
-    <!-- Datatable init js -->
-    <script src="assets/js/pages/datatables.init.js"></script>
-
-    <script src="assets/js/app.js"></script>
-    <script type="text/javascript" src="assets/js/js-fluid-meter.js"></script>
-    <script src="assets/libs/select2/js/select2.min.js"></script>
-    <script src="js/toastr/toastr.min.js"></script>
+    <?php
+        
+        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
+        
+        echo file_get_contents($url);
+        
+    ?>
     <script type="text/javascript">
         $(document).ready(function() {
 
