@@ -59,7 +59,7 @@
                  <span>Reports</span>
              </a>
              <ul class="sub-menu" aria-expanded="false">
-                 <li><a href="customers_payment.php">Customer Recharge</a></li>
+                 <li><a href="customers_payment.php">Customer Payment</a></li>
                  <li><a href="recharge_filter.php">Recharge Filter</a></li>
                  <li><a href="payment_history.php">Payment History</a></li>
                  <li><a href="mobile_banking.php">Mobile Banking Log</a></li>
