@@ -24,6 +24,7 @@
                  <li><a href="customer_expire.php">Expired Customer List</a></li>
                  <li><a href="customer_recharge.php">Customer Recharge</a></li>
                  <li><a href="customer_dues.php">Customer Dues/Unpaid</a></li>
+                 <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
                  <li><a href="bulk_payment.php">Bulk Recharge</a></li>
                  
                  <li><a href="package_add.php">Package's</a></li>
