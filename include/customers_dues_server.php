@@ -1,6 +1,8 @@
 <?php
 include 'db_connect.php';
-
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 if (isset($_GET['show_customer_recharge_list']) && $_GET['show_customer_recharge_list'] == 'true') {
     require 'datatable.php';
@@ -166,9 +168,16 @@ if (isset($_GET['show_customer_dues_data']) && $_GET['show_customer_dues_data'] 
     /*Total price calculation*/
     $result = $con->query("SELECT SUM(price) AS total_price FROM customers WHERE expiredate < DATE_ADD(now(), INTERVAL 10 DAY) AND pop = '1'");
     $row = $result->fetch_assoc();
-    $total_price = $row['total_price'];
+   
 
-    $condition ="expiredate<DATE_ADD(now(), INTERVAL 10 DAY) AND pop='1'"; 
+    $condition = "";
+
+    if (!empty($_SESSION['user_pop'])) {
+        $condition = "pop = '" . $_SESSION['user_pop'] . "' AND expiredate < DATE_ADD(now(), INTERVAL 10 DAY)";
+    } else {
+        $condition = "expiredate < DATE_ADD(now(), INTERVAL 10 DAY) AND pop = '1'";
+        $total_price = $row['total_price'];
+    }
     /* Output JSON for DataTables to handle*/
     $data = SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, null, $condition);
     /*Add total_price to the json response*/ 
