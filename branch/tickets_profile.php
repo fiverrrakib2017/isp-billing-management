@@ -248,8 +248,12 @@ if(isset($_GET['id'])){
                             <select name="assigned" id="assigned" class="form-select">
                         <?php 
 
-                            
-                        if ($group = $con->query("SELECT * FROM `working_group`")) {
+                        if (!empty($_SESSION['user_pop'])) {
+                            $condition = "WHERE pop_id = '" . $_SESSION['user_pop'] . "'";
+                        } else {
+                            $condition = "WHERE pop_id = 1"; 
+                        }   
+                        if ($group = $con->query("SELECT * FROM `working_group` $condition")) {
                             while ($rows = $group->fetch_array()) {
                                 $userId = $rows["id"];
                                  $group_name = $rows["group_name"];
