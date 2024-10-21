@@ -1,6 +1,8 @@
 <?php 
  include("db_connect.php");
-	
+ if (!isset($_SESSION)) {
+    session_start();
+}
 	
 
 	if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_works_data'])) {
@@ -9,11 +11,16 @@
 	    $phone = $_POST['phone'];
 	    $group_id = $_POST['group_id'];
 
+		$pop_id="";
+		if (!empty($_SESSION['user_pop'])) {
+			$pop_id=$_SESSION['user_pop'];
+		}
+
 	    /* Prepare an SQL statement*/
-	    $stmt = $con->prepare("INSERT INTO works(`name`, `email`, `phone`, `group_id`, `create_date`) VALUES(?, ?, ?,?, NOW())");
+	    $stmt = $con->prepare("INSERT INTO works(`name`, `email`, `phone`, `group_id`,`pop_id`, `create_date`) VALUES(?, ?, ?, ?, ?, NOW())");
 	    
 	    /* Bind parameters*/
-	    $stmt->bind_param("sssi", $name, $email,$phone,$group_id);
+	    $stmt->bind_param("sssii", $name, $email,$phone,$group_id,$pop_id);
 
 	    /* Execute the statement*/
 	    if ($stmt->execute()) {

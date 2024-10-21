@@ -1,8 +1,19 @@
 <?php
-include("include/security_token.php");
-include("include/users_right.php");
-include "include/db_connect.php";
-include "include/pop_security.php";
+if (!isset($_SESSION)) {
+    session_start();
+}
+$rootPath = $_SERVER['DOCUMENT_ROOT'];  
+
+$db_connect_path = $rootPath . '/include/db_connect.php';  
+$users_right_path = $rootPath . '/include/users_right.php';
+
+if (file_exists($db_connect_path)) {
+    require($db_connect_path);
+}
+
+if (file_exists($users_right_path)) {
+    require($users_right_path);
+}
 
 ?>
 <!doctype html>
