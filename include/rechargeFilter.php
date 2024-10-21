@@ -8,10 +8,13 @@ if (isset($_POST["rechargeFilter"])) {
     $fromDate = $_POST["fromDate"];
     $toDate = $_POST["toDate"];
     $popid = $_POST["popid"];
+    if (empty($popid)) {
+        $popid=1;
+    }
 
     $totalAmount = 0;
 
-    if ($result=$con->query("SELECT * FROM customers INNER JOIN customer_rechrg ON customers.id=customer_rechrg.customer_id WHERE `datetm` BETWEEN '$fromDate'AND '$toDate' AND user_type=1 ")) {
+    if ($result=$con->query("SELECT * FROM customers INNER JOIN customer_rechrg ON customers.id=customer_rechrg.customer_id WHERE `datetm` BETWEEN '$fromDate'AND '$toDate' AND `pop_id` = '$popid'")) {
         while ($rows=$result->fetch_array()) {
             $totalAmount += $rows['sales_price'];
             echo '
