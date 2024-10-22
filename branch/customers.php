@@ -163,7 +163,7 @@ if (file_exists($users_right_path)) {
                                                                         <select id="customer_pop" class="form-select">
                                                                             <option value="">Select Pop/Branch</option>
                                                                             <?php
-                                                                            if ($pop = $con->query("SELECT * FROM add_pop ")) {
+                                                                            if ($pop = $con->query("SELECT * FROM add_pop where id=$auth_usr_POP_id")) {
                                                                                 while ($rows = $pop->fetch_array()) {
 
 
@@ -345,7 +345,7 @@ if (file_exists($users_right_path)) {
                               <select class="form-select" name="message_template" >
                                 <option>---Select---</option>
                                 <?php 
-                                    if ($allCstmr=$con->query("SELECT * FROM message_template WHERE user_type=1")) {
+                                    if ($allCstmr=$con->query("SELECT * FROM message_template WHERE pop_id=$auth_usr_POP_id")) {
                                     while ($rows=$allCstmr->fetch_array()) {
                                         echo '<option value='.$rows['id'].'>'.$rows['template_name'].'</option>';
                                     }
@@ -428,9 +428,11 @@ if (file_exists($users_right_path)) {
             });
             $('button[name="send_message_btn"]').on('click',function(e){
                 e.preventDefault(); 
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php?send_message=true';
                  /*AJAX request to send selected customers to backend*/ 
                  $.ajax({
-                    url: 'include/customers_server.php?send_message=true',
+                    url:url,
                     method: 'POST',
                     data: {
                         /*sending the array of customer IDs*/ 
@@ -449,10 +451,12 @@ if (file_exists($users_right_path)) {
             $('select[name="message_template"]').on('change', function() {
                 var name=$(this).val();
                 var currentMsgTemp="0";
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/message.php';
                 $.ajax({
                     type:'POST',
                     data:{name:name,currentMsgTemp:currentMsgTemp},
-                    url:'include/message.php',
+                    url:url,
                     success:function(response){
                         console.log(response);
                         $("#message").val(response);
@@ -469,9 +473,11 @@ if (file_exists($users_right_path)) {
 
         $(document).on('keyup', '#customer_username', function() {
             var customer_username = $("#customer_username").val();
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: url,
                 data: {
                     current_username: customer_username
                 },
@@ -483,10 +489,11 @@ if (file_exists($users_right_path)) {
         
         $(document).on('change', '#customer_pop', function() {
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: url,
                 data: {
                     current_pop_name: pop_id
                 },
@@ -497,10 +504,11 @@ if (file_exists($users_right_path)) {
         });
         $(document).on('change', '#customer_pop', function() {
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: url,
                 data: {
                     pop_name: pop_id,
                     getCustomerPackage:0
@@ -513,10 +521,11 @@ if (file_exists($users_right_path)) {
         $(document).on('change', '#customer_package', function() {
             var packageId = $("#customer_package").val();
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url:url,
                 data: {
                     package_id: packageId,
                     pop_id: pop_id,
@@ -578,9 +587,11 @@ if (file_exists($users_right_path)) {
             } else {
                 $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
                 var addCustomerData = 0;
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
                 $.ajax({
                     type: 'POST',
-                    url: 'include/customers_server.php',
+                    url:url,
                     data: {
                         addCustomerData: addCustomerData,
                         fullname: fullname,
