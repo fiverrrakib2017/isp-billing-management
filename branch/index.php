@@ -16,6 +16,36 @@ if (file_exists($users_right_path)) {
 }
 
 
+function timeAgo($startdate) {
+    /*Convert startdate to a timestamp*/ 
+    $startTimestamp = strtotime($startdate);
+    $currentTimestamp = time();
+    
+    /* Calculate the difference in seconds*/
+    $difference = $currentTimestamp - $startTimestamp;
+
+    /*Define time intervals*/ 
+    $units = [
+        'year' => 31536000,
+        'month' => 2592000,
+        'week' => 604800,
+        'day' => 86400,
+        'hour' => 3600,
+        'min' => 60,
+        'second' => 1
+    ];
+
+    /*Check for each time unit*/ 
+    foreach ($units as $unit => $value) {
+        if ($difference >= $value) {
+            $time = floor($difference / $value);
+            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . '';
+        }
+    }
+    /*If the difference is less than a second*/
+    return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
+}
+
 ?>
 
 <!doctype html>
@@ -87,7 +117,7 @@ if (file_exists($users_right_path)) {
 
                             <button type="button" data-bs-toggle="modal" data-bs-target="#sendMessage" class="btn-sm btn btn-primary mb-1"><i class="far fa-envelope"></i> SMS Notification</button>
 
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#addTicketModal" class="btn-sm btn btn-success mb-1">Add Ticket</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#ticketModal" class="btn-sm btn btn-success mb-1">Add Ticket</button>
                         </div>
                     </div>
                     <div class="row">
@@ -166,12 +196,13 @@ if (file_exists($users_right_path)) {
                         </div> <!-- End col -->
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
+                            <a href="customer_disabled.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-teal me-0 float-end"><i class=" fas fa-calendar-times"></i></span>
+                                        <span class="mini-stat-icon bg-danger me-0 float-end"><i class="fas fa-user-slash"></i></span>
                                         <div class="mini-stat-info">
                                             <span class="counter text-teal">
-                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0'AND user_type=$auth_usr_type AND pop=$auth_usr_POP_id")) {
+                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND pop=$auth_usr_POP_id")) {
                                                     echo  $dsblcstmr->num_rows;
                                                 }
                                                 ?>
@@ -180,6 +211,7 @@ if (file_exists($users_right_path)) {
                                         </div>
                                     </div>
                                 </div>
+                            </a>
                             </div>
                         </div><!--end col -->
                     </div> <!-- end row-->
@@ -274,31 +306,24 @@ if (file_exists($users_right_path)) {
                                 </div>
                             </div>
                         </div>
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #0FADF1;">
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card " style="border-left:3px solid red;">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-warning me-0 float-end"><i class="far fa-sticky-note"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-teal">
+                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id")) {
+                                                    echo  $dsblcstmr->num_rows;
+                                                }
+                                                ?>
+                                            </span>
+                                            Tickets
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div><!--end col -->
 
                     </div>
 
@@ -428,18 +453,20 @@ if (file_exists($users_right_path)) {
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table id="tickets_table" class="table">
+                                    <div class="table table-responsive">
+                                    <table id="tickets_table" class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>Complain Type</th>
-                                                    <th>Ticket Type</th>
-                                                    <th>Form Date</th>
+                                                    <th>Status</th> 
+                                                    <th>Created</th>
+                                                    <th>Customer</th>
+                                                    <th>Issues</th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody id="ticket-list">
-                                                <?php
-                                                $sql = "SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id LIMIT 5";
+                                            <?php
+                                                $sql = "SELECT * FROM `ticket` WHERE pop_id=$auth_usr_POP_id ORDER BY id DESC limit 5";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
@@ -447,39 +474,84 @@ if (file_exists($users_right_path)) {
                                                 ?>
 
                                                     <tr>
-
+                                                       
                                                         <td>
-                                                            <?php
+                                                            <?php 
+                                                            $ticketType = $rows["ticket_type"];
+                                                            
+                                                            if ($ticketType === "Complete"): ?>
+                                                                
+                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                                    <span class="badge bg-success">Completed</span>
+                                                                </a>
+                                                            <?php elseif ($ticketType === "Active"): ?>
+                                                                
+                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                                    <span class="badge bg-danger">Active</span>
+                                                                </a>
+                                                            <?php elseif ($ticketType === "Close"): ?>
+                                                                
+                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                                    <span class="badge bg-success">Close</span>
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $ticketType; ?></a>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php 
+                                                             $startdate = $rows["startdate"];
+                                                             echo timeAgo($startdate); 
+                                                            ?>
+                                                            
+                                                        </td>
+                                                        <td>
+                                                        <?php 
+                                                            $customer_id= $rows['customer_id']; 
+                                                            $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
+                                                            while ($stmr = $customer->fetch_array()) {
+                                                                 $cstmrID = $stmr['id'];
+																 $username = $stmr['username'];
+																 $cstmr_fullname = $stmr['fullname'];
+                                                            }
+                                                        ?>
+														
+                                                            <?php 
+                                                            
+                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                                                            $chkc = $onlineusr->num_rows;
+                                                            if($chkc==1)
+                                                            {
+                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                                                            } else{
+                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+
+                                                            }
+                                                 
+                                                            
+                                                            ?>
+                                                        
+                                                        
+                                                        <a href="profile.php?clid=<?php echo $cstmrID; ?>" target="_blank"> <?php echo $cstmr_fullname; ?></a></td>
+                                                        
+                                                        </td>
+                                                        <td>
+                                                             <?php
                                                             $complain_typeId = $rows["complain_type"];
-                                                            $ticketsId = $rows["id"];
                                                             if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
                                                                 while ($rowss = $allCom->fetch_array()) {
-                                                                    $topicName = $rowss['topic_name'];
-                                                                    echo '<a href="tickets_edit.php?id=' . $ticketsId . '">' . $topicName . '</a>';
+                                                                    echo $rowss['topic_name'];
                                                                 }
                                                             }
                                                             ?>
-
                                                         </td>
                                                         <td>
-                                                            <?php
-                                                            $ticketType = $rows['ticket_type'];
-                                                            if ($ticketType == "Active") {
-                                                                echo "<span class='badge bg-danger'>Active</span>";
-                                                            } else if ($ticketType == "Open") {
-                                                                echo "<span class='badge bg-info'>Open</span>";
-                                                            } else if ($ticketType == "New") {
-                                                                echo "<span class='badge bg-danger'>New</span>";
-                                                            } else if ($ticketType == "Complete") {
-                                                                echo "<span class='badge bg-success'>Complete</span>";
-                                                            }
+                                                            
+                                                            <a class="btn-sm btn btn-success" href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
+                                                            </a>
 
-                                                            ?>
 
                                                         </td>
-
-                                                        <td><?php echo $rows["startdate"]; ?></td>
-
                                                     </tr>
                                                 <?php } ?>
                                             </tbody>
@@ -492,10 +564,445 @@ if (file_exists($users_right_path)) {
                     </div>
                     <!-- end row -->
 
+                    <div class="row">
+					 <div class="col-md-6 grid-margin stretch-card">
+					 <div class="card">
+                                <div class="card-body">
+                                    	<h4 class="card-title mb-4">Ticket Statics 10 Days</h4>					
+									
 
-                   
+                                         <div class="row text-center mt-4">
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												
+												</h5>
+                                                <p class="text-muted text-truncate">Tickets</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												
+												</h5>
+                                                <p class="text-muted text-truncate">Resolved</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												</h5>
+                                                <p class="text-muted text-truncate">Pending</p>
+                                            </div>
+											
+											<div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												</h5>
+                                                <p class="text-muted text-truncate danger">Closed</p>
+                                            </div>
+											
+                                        </div>
+
+                                        <div id="chart" dir="ltr"></div>
+									
+									
+									
+									
+									
+                                </div>
+                            </div>
+							</div>
+							
+							
+                        <div class="col-md-6 grid-margin stretch-card">
+                        <div class="card">
+                                    <div class="card-body">
+
+                                        <h4 class="card-title mb-4">Customer Statics</h4>
+
+                                        <div class="row text-center mt-4">
+                                            <div class="col-4">
+                                                <h5 class="mb-0 font-size-18">50</h5>
+                                                <p class="text-muted text-truncate">New</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <h5 class="mb-0 font-size-18">44</h5>
+                                                <p class="text-muted text-truncate">Expired</p>
+                                            </div>
+                                            <div class="col-4">
+                                                <h5 class="mb-0 font-size-18">32</h5>
+                                                <p class="text-muted text-truncate">Disabled</p>
+                                            </div>
+                                        </div>
+
+                                        <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr"></div>
+
+                                    </div>
+                                </div>
+                        </div>
+
+
+                    </div> 
                     <!-- end row -->
+                    <div class="row">
+                        <div class="col-md-6 stretch-card">
+                            <div class="card">
+                                <div class="card-body">
 
+
+
+                                    <div class="row">
+                                        <div class="col-md-8 mt-1 py-2">
+                                            <p class="card-title ">Recent Customers</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button style="float: right;">
+                                                <a href="customers.php">+</a>
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="table-responsive">
+                                        <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Full Name</th>
+                                                    
+                                                    <th>POP</th>
+                                                    <th>Area</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                //AND user_type='$auth_usr_type'
+                                                $sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id ORDER BY id DESC LIMIT 5 ";
+                                                $result = mysqli_query($con, $sql);
+
+                                                while ($rows = mysqli_fetch_assoc($result)) {
+                                                    $username = $rows["username"];
+
+                                                ?>
+
+                                                    <tr>
+                                                        <td><?php echo $rows['id']; ?></td>
+                                                        <td><a target="new" href="profile.php?clid=<?php echo $rows['id']; ?>">
+                                                        <?php 
+                                                        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                                                        $chkc = $onlineusr->num_rows;
+                                                        if($chkc==1)
+                                                        {
+                                                            echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                                                        } else{
+                                                            echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+
+                                                        }
+                                                        
+                                                        
+                                                        echo ' '. $rows["fullname"]; ?></a></td>
+                                                        
+                                                        <td>
+                                                            <?php
+                                                            $popID = $rows["pop"];
+                                                            $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
+                                                            while ($popRow = $allPOP->fetch_array()) {
+                                                                echo $popRow['pop'];
+                                                            }
+
+                                                            ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php $id = $rows["area"];
+                                                            $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
+                                                            while ($popRow = $allArea->fetch_array()) {
+                                                                echo $popRow['name'];
+                                                            }
+
+                                                            ?>
+
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                <?php } ?>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						
+						
+						<div class="col-md-6 stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+
+
+
+                                    <div class="row">
+                                        <div class="col-md-8 mt-1 py-2">
+                                            <p class="card-title ">Recent Expired</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button style="float: right;">
+                                                <a href="customers.php">+</a>
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="table-responsive">
+                                        <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Full Name</th>
+                                                    
+                                                    <th>POP</th>
+                                                    <th>Area</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                //AND user_type='$auth_usr_type'
+                                                $sql = "SELECT * FROM customers WHERE expiredate<NOW() AND pop=$auth_usr_POP_id ORDER BY id DESC LIMIT 5 ";
+                                                $result = mysqli_query($con, $sql);
+
+                                                while ($rows = mysqli_fetch_assoc($result)) {
+                                                    $username = $rows["username"];
+
+                                                ?>
+
+                                                    <tr>
+                                                        <td><?php echo $rows['id']; ?></td>
+                                                        <td><a target="new" href="profile.php?clid=<?php echo $rows['id']; ?>">
+                                                        <?php 
+                                                        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                                                        $chkc = $onlineusr->num_rows;
+                                                        if($chkc==1)
+                                                        {
+                                                            echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                                                        } else{
+                                                            echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+
+                                                        }
+                                                        
+                                                        
+                                                        echo ' '. $rows["fullname"]; ?></a></td>
+                                                        
+                                                        <td>
+                                                            <?php
+                                                            $popID = $rows["pop"];
+                                                            $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
+                                                            while ($popRow = $allPOP->fetch_array()) {
+                                                                echo $popRow['pop'];
+                                                            }
+
+                                                            ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php $id = $rows["area"];
+                                                            $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
+                                                            while ($popRow = $allArea->fetch_array()) {
+                                                                echo $popRow['name'];
+                                                            }
+
+                                                            ?>
+
+                                                        </td>
+                                                        
+                                                    </tr>
+                                                <?php } ?>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						
+						
+						
+						
+						
+						
+						
+						
+                    </div>
+                    <div class="row">
+					
+					<div class="col-md-12 grid-margin stretch-card">
+					 <div class="card">
+                                <div class="card-body">
+                                    	<h4 class="card-title mb-4">Yearly Customer Statics</h4>					
+									
+
+                                         <div class="row text-center mt-4">
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												
+												</h5>
+                                                <p class="text-muted text-truncate">Tickets</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												
+												</h5>
+                                                <p class="text-muted text-truncate">Resolved</p>
+                                            </div>
+                                            <div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE  pop_id=$auth_usr_POP_id AND ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												</h5>
+                                                <p class="text-muted text-truncate">Pending</p>
+                                            </div>
+											
+											<div class="col-3">
+                                                <h5 class="mb-0 font-size-18">
+												<?php
+												$daystkt = date("Y-m-d", strtotime('-7 day'));
+												$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+												echo $tktsql->num_rows;
+												?>
+												</h5>
+                                                <p class="text-muted text-truncate danger">Closed</p>
+                                            </div>
+											
+                                        </div>
+
+                                        <div id="chart_year" dir="ltr"></div>
+								
+                                </div>
+                            </div>
+							</div>
+							
+							
+							
+							
+							
+							
+							
+                        <div class="col-md-12 stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+
+
+
+                                    <div class="row">
+                                        <div class="col-md-8 mt-1 py-2">
+                                            <p class="card-title ">New Customers by months</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button style="float: right;">
+                                                <a href="customers.php">+</a>
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="table-responsive">
+                                        <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Months</th>
+                                                    <th>New Conn.</th>
+													<th>Expired Conn.</th>
+                                                    
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+											<?php
+											for($i=1; $i<13; $i++)
+											{
+												?>
+												
+												
+												
+											
+
+                                                    <tr>
+													<td><?php echo $i; ?></td>
+                                                        <td><?php 
+														//$monthDigit = "0".$i;
+														$currentyrMnth = date("Y").'-0'.$i;
+														echo date("M-Y", strtotime(date("Y").'-'.$i)); ?></td>
+                                                        <td>
+														<?php
+															//AND user_type='$auth_usr_type'
+															
+															$sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND  createdate LIKE '%$currentyrMnth%'";
+															$result = mysqli_query($con, $sql);
+														     $countconn = mysqli_num_rows($result);	
+                                                            echo '<a href="customer_newcon.php?list='.$currentyrMnth.'">'.$countconn.'</a>';											
+
+														?>
+														</td>
+														
+														<td>
+														<?php
+															//AND user_type='$auth_usr_type'
+															
+															$sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND expiredate LIKE '%$currentyrMnth%'";
+															$result = mysqli_query($con, $sql);
+															$countexpconn = mysqli_num_rows($result);
+															echo '<a href="customer_expire.php?list='.$currentyrMnth.'">'.$countexpconn.'</a>';
+															
+
+														?>
+														</td>
+														
+														                                                                                                               
+                                                        
+                                                    </tr>
+													<?php }	?>
+                                                
+                                                
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end row -->
                     <div class="row">
                         <div class="card">
                             <div class="card-body">
@@ -906,100 +1413,87 @@ if (file_exists($users_right_path)) {
     </div>
     <!-- END layout-wrapper -->
 
-    <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addRechargeModal">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="addRechargeModal" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog ">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header ">
                     <h5 class="modal-title" id="exampleModalLabel">Add Recharge</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="card">
-                    <div class="row" id="searchRow">
-                        <div class="col-md col-sm m-auto">
-                            <div class="card shadow">
-                                
-                                <div class="card-body">
-                                <form action="">
-                                        <div class="form-gruop mb-2">
-                                            <label>Select Customer</label>
-
-                                            <select type="text" id="recharge_customer" class="form-select">
-                                                <option value="">Select Item</option>
-                                                <?php
-                                                if ($allCustomer = $con->query("SELECT * FROM customers WHERE pop=$auth_usr_POP_id ")) {
-                                                    while ($rows = $allCustomer->fetch_array()) {
-                                                        echo '<option value="' . $rows['id'] . '">' . $rows['username'] . '(' . $rows['mobile'] . ')</option>';
-                                                    }
-                                                }
-
-
-                                                ?>
-                                            </select>
-                                        </div>
-                                        <div class="form-group mb-1">
-                                            <label>Month</label>
-                                            <select id="recharge_customer_month" class="form-select">
-                                                <option value="">Select</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
-                                                <option value="4">4</option>
-                                                <option value="5">5</option>
-                                                <option value="6">6</option>
-                                                <option value="7">7</option>
-                                                <option value="8">8</option>
-                                                <option value="9">9</option>
-                                                <option value="10">10</option>
-                                                <option value="11">11</option>
-                                                <option value="12">12</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group ">
-                                            <label for="">Package</label>
-                                            <select disabled="Disable" id="recharge_customer_package" class="form-select ">
-
-                                            </select>
-                                        </div>
-                                        <div class="form-group mb-1 ">
-                                            <label>Package Price:</label>
-
-                                            <input id="recharge_customer_package_price" disabled="Disable" type="text" class="form-control " value="">
-                                        </div>
-                                        <div class="form-group mb-1 ">
-                                            <label>Ref:</label>
-
-                                            <input id="ref"  type="text" class="form-control " value="">
-                                        </div>
-                                        <div class="form-group mb-1 d-none">
-                                            <label>Pop id:</label>
-
-                                            <input id="recharge_customer_pop_id" disabled="Disable" type="text" class="form-control form-control-sm" value="">
-                                        </div>
-                                        <div class="form-group mb-1 ">
-                                            <label>Payable Amount:</label>
-                                            <input id="recharge_customer_amount" disabled type="text" class="form-control form-control-sm" value="" />
-                                        </div>
-                                        <div class="form-group mb-1">
-                                            <label>Transaction Type:</label>
-                                            <select id="recharge_customer_transaction_type" class="form-select">
-                                                <option value="">Select</option>
-                                                <option value="1">Cash</option>
-                                                <option value="0">On Credit</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <button class="btn btn-success" style="width: 100%;" type="button" id="add_recharge_btn"><i class="mdi mdi mdi-battery-charging-90"></i>&nbsp;&nbsp;Recharge Now</button>
-                                        </div>
-                                    </form>
-                                </div>
+                <div class="modal-body">
+                    <form action="">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="recharge_customer" class="form-label">Select Customer</label>
+                                <select id="recharge_customer" class="form-select">
+                                    <option value="">Select Customer</option>
+                                    <?php
+                                    if ($allCustomer = $con->query("SELECT * FROM customers WHERE pop=$auth_usr_POP_id ")) {
+                                        while ($rows = $allCustomer->fetch_array()) {
+                                            echo '<option value="' . $rows['id'] . '">' . $rows['username'] . ' (' . $rows['mobile'] . ')</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="recharge_customer_month" class="form-label">Month</label>
+                                <select id="recharge_customer_month" class="form-select">
+                                    <?php for ($i = 1; $i <= 12; $i++) : ?>
+                                        <option value="<?= $i ?>"><?= $i ?></option>
+                                    <?php endfor; ?>
+                                </select>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="recharge_customer_package" class="form-label">Package</label>
+                                <select id="recharge_customer_package" class="form-select" disabled>
+                                    <!-- Options will be loaded here dynamically -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="recharge_customer_package_price" class="form-label">Package Price</label>
+                                <input id="recharge_customer_package_price" type="text" class="form-control" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="ref" class="form-label">Reference</label>
+                                <input id="ref" type="text" class="form-control">
+                            </div>
+                            <div class="col-md-6 d-none">
+                                <label for="recharge_customer_pop_id" class="form-label">Pop ID</label>
+                                <input id="recharge_customer_pop_id" type="text" class="form-control" disabled>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="recharge_customer_amount" class="form-label">Payable Amount</label>
+                                <input id="recharge_customer_amount" type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            
+                            <div class="col-md-6">
+                                <label for="recharge_customer_transaction_type" class="form-label">Transaction Type</label>
+                                <select id="recharge_customer_transaction_type" class="form-select">
+                                    <option value="1">Cash</option>
+                                    <option value="0">On Credit</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-success mt-4" id="add_recharge_btn" style="margin-top: 4px;">
+                                    <i class="mdi mdi-battery-charging-90"></i>&nbsp;&nbsp;Recharge Now
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
     <!---add send msg modal---->
     <div id="sendMessage" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1070,94 +1564,62 @@ if (file_exists($users_right_path)) {
         </div><!-- /.modal-dialog -->
     </div>
 
-    <div id="addTicketModal" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+ 
+    <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title mt-0" id="myModalLabel">Add Ticket</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header  bg-success">
+                    <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="mdi mdi-account-plus"></i></h5>
+                    
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm">
-                            <div class="form-group mb-2">
-                                <label for="">Ticket Type</label>
-                                <select id="ticket_type" name="ticket_type" class="form-select">
-                                    <option value="">Select</option>
-                                    <option value="Active">Active</option>
-                                    <option value="New">New</option>
-                                    <option value="Open">Open</option>
-                                    <option value="Complete">Complete</option>
-                                </select>
-                            </div>
+                <form action="../include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
+                    <div class="modal-body">
+                        <div class="from-group mb-2">
+                            <label>Customer Name</label>
+                            <select class="form-select" name="customer_id" id="ticket_customer_id" style="width: 100%;"></select>
+						</div>
+                        <div class="from-group mb-2">
+                            <label for="">Ticket For</label>
+                            <select id="ticket_for" name="ticket_for" class="form-select" required>
+                                <option value="Home Connection">Home Connection</option>
+                                <option value="POP">POP Support</option>
+                                <option value="Corporate">Corporate</option>
+                                
+                            </select>
                         </div>
-                        <div class="col-sm">
-                            <div class="form-group mb-2">
-                                <label for="">Assigned To</label>
-                                <select id="assigned" name="assigned" class="form-select">
-                                    <option value="">Select</option>
-                                    <option value="SR Comunication">SR Comunication</option>
-                                    <option value="Ali Hossain">Ali Hossain</option>
-                                    <option value="Ali Hossain">Ali Hossain</option>
-                                    <option value="Support">Support</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm">
-                            <div class="form-group mb-2">
-                                <label for="">Ticket For</label>
-                                <select id="ticket_for" name="ticket_for " class="form-select">
-                                    <option value="">Select</option>
-                                    <option value="Reseller">Reseller</option>
-                                    <option value="Corporate">Corporate</option>
-                                    <option value="Home Connection">Home Connection</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm">
-                            <div class="form-group mb-2">
-                                <label for=""> Complain Type </label>
-                                <select id="complain_type" name="complain_type" class="form-select">
-                                    <option value="">Select</option>
-                                    <?php
+                        <div class="from-group mb-2">
+                            <label for=""> Complain Type </label>
+                            <select id="ticket_complain_type" name="ticket_complain_type" class="form-select" style="width: 100%;" ></select>
 
-                                    if ($allData = $con->query("SELECT * FROM ticket_topic WHERE user_type=$auth_usr_type AND pop_id=$auth_usr_POP_id")) {
-                                        while ($rows = $allData->fetch_array()) {
-                                            echo ' <option value=' . $rows['id'] . '>' . $rows['topic_name'] . '</option>';
-                                        }
-                                    }
-                                    ?>
-                                </select>
-                            </div>
+                        </div>
+                        <div class="from-group mb-2">
+                            <label for="">Ticket Priority</label>
+                            <select id="ticket_priority" name="ticket_priority" type="text" class="form-select" style="width: 100%;">
+                            <option >---Select---</option>
+                            <option value="1">Low</option>
+                            <option value="2">Normal</option>
+                            <option value="3">Standard</option>
+                            <option value="4">Medium</option>
+                            <option value="5">High</option>
+                            <option value="6">Very High</option>
+                            </select>
+						</div>
+                        <div class="from-group mb-2">
+                            <label for="">Assigned To</label>
+                            <select id="ticket_assigned" name="assigned" class="form-select" style="width: 100%;"></select>
+                        </div>
+                        <div class="from-group mb-2">
+                            <label for="">Note</label>
+                            <input id="notes" type="text" name="notes" class="form-control" placeholder="Enter Your Note">
                         </div>
                     </div>
-                    <div class="row">
-
-                        <div class="col-sm">
-                            <div class="form-group mb-2">
-                                <label for="">Form Date</label>
-                                <input id="from_date" name="from_data" type="date" class="form-control">
-                            </div>
-                        </div>
-                        <div class="col-sm">
-                            <div class="form-group">
-                                <label for="">To Date</label>
-                                <input id="to_date" type="date" name="to_date" class="form-control">
-                            </div>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save changes</button>
                     </div>
-                    <div class="row">
-                        <input class="d-none" type="text" id="user_type" value="<?php echo $auth_usr_type; ?>">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-sm btn btn-danger waves-effect" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="addTicketConfirmBtn" class="btn-sm btn btn-primary waves-effect waves-light">Add Ticket</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
+                </form>
+            </div>
+        </div>
     </div>
 
 
@@ -1355,145 +1817,165 @@ if (file_exists($users_right_path)) {
             $('#customerId').select2();
 
 
-            //recharge script
+            /********************************Recharge script*************************************/
+
+            $('#addRechargeModal').on('shown.bs.modal', function () {
+                /*Check if select2 is already initialized*/ 
+                if (!$('#recharge_customer').hasClass("select2-hidden-accessible")) {
+                    $("#recharge_customer").select2({
+                        dropdownParent: $('#addRechargeModal'),
+                        placeholder: "Select Customer"
+                    });
+                }
+            });
+
             $("#recharge_customer").on('change', function() {
-    var id = $("#recharge_customer").val();
-    getCustomerPackage(id);
-    getCustomerPackagePrice(id);
-    getCustomerPopId(id);
+                var id = $("#recharge_customer").val();
+                getCustomerPackage(id);
+                getCustomerPackagePrice(id);
+                getCustomerPopId(id);
 
-});
+            });
 
-//get Package name
-function getCustomerPackage(recevedId) {
-    var customerId = recevedId;
-    $.ajax({
-        url: 'include/customers_server.php',
-        method: 'POST',
-        data: {
-            id: customerId,
-            getCustomerSpecificId: 0
-        },
-        //dataType: 'json',
-        success: function(responseData) {
-            $("#recharge_customer_package").html(responseData);
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            // Handle any errors here
-            console.error('An error occurred:', errorThrown);
-        }
-    });
-}
-//get Package price
-function getCustomerPackagePrice(recevedId) {
-    var customerId = recevedId;
-    $.ajax({
-        url: 'include/customers_server.php',
-        method: 'POST',
-        data: {
-            id: customerId,
-            getCustomerPackagePrice: 0
-        },
-        //dataType: 'json',
-        success: function(responseData) {
-            $("#recharge_customer_package_price").val(responseData);
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            // Handle any errors here
-            console.error('An error occurred:', errorThrown);
-        }
-    });
-}
-//get Package price
-function getCustomerPopId(recevedId) {
-    var customerId = recevedId;
-    $.ajax({
-        url: 'include/customers_server.php',
-        method: 'POST',
-        data: {
-            id: customerId,
-            getCustomerPop: 0
-        },
-        //dataType: 'json',
-        success: function(responseData) {
-            $("#recharge_customer_pop_id").val(responseData);
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            // Handle any errors here
-            console.error('An error occurred:', errorThrown);
-        }
-    });
-}
-//get recharge Calculation
-getCalculation();
+            //get Package name
+            function getCustomerPackage(recevedId) {
+                var customerId = recevedId;
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        id: customerId,
+                        getCustomerSpecificId: 0
+                    },
+                    //dataType: 'json',
+                    success: function(responseData) {
+                        $("#recharge_customer_package").html(responseData);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        // Handle any errors here
+                        console.error('An error occurred:', errorThrown);
+                    }
+                });
+            }
+            //get Package price
+            function getCustomerPackagePrice(recevedId) {
+                var customerId = recevedId;
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        id: customerId,
+                        getCustomerPackagePrice: 0
+                    },
+                    //dataType: 'json',
+                    success: function(responseData) {
+                        $("#recharge_customer_package_price").val(responseData);
+                        $("#recharge_customer_amount").val(responseData);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        // Handle any errors here
+                        console.error('An error occurred:', errorThrown);
+                    }
+                });
+            }
+            //get Package price
+            function getCustomerPopId(recevedId) {
+                var customerId = recevedId;
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: {
+                        id: customerId,
+                        getCustomerPop: 0
+                    },
+                    //dataType: 'json',
+                    success: function(responseData) {
+                        $("#recharge_customer_pop_id").val(responseData);
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        // Handle any errors here
+                        console.error('An error occurred:', errorThrown);
+                    }
+                });
+            }
+            //get recharge Calculation
+            getCalculation();
 
-function getCalculation() {
-    $(document).on('change', "#recharge_customer_month", function() {
-        var month = $("#recharge_customer_month").val();
-        var price = $("#recharge_customer_package_price").val();
-        var totalAmount = Number(month * price);
-        $("#recharge_customer_amount").val(totalAmount);
-    });
-}
+            function getCalculation() {
+                $(document).on('change', "#recharge_customer_month", function() {
+                    var month = $("#recharge_customer_month").val();
+                    var price = $("#recharge_customer_package_price").val();
+                    var totalAmount = Number(month * price);
+                    $("#recharge_customer_amount").val(totalAmount);
+                });
+            }
 
-//customer recharge script
+            //customer recharge script
 
-$(document).on('click', '#add_recharge_btn', function() {
-    var customer_id = $("#recharge_customer").val();
-    var month = $("#recharge_customer_month").val();
-    var package = $("#recharge_customer_package").val();
-    var mainAmount = $("#recharge_customer_amount").val();
-    var tra_type = $("#recharge_customer_transaction_type").val();
-    var pop_id = $("#recharge_customer_pop_id").val();
-    var ref = $("#ref").val();
-    sendData(customer_id, month, package, mainAmount, tra_type, pop_id,ref);
-});
-const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref) => {
+            $(document).on('click', '#add_recharge_btn', function() {
+                var customer_id = $("#recharge_customer").val();
+                var month = $("#recharge_customer_month").val();
+                var package = $("#recharge_customer_package").val();
+                var mainAmount = $("#recharge_customer_amount").val();
+                var tra_type = $("#recharge_customer_transaction_type").val();
+                var pop_id = $("#recharge_customer_pop_id").val();
+                var ref = $("#ref").val();
+                sendData(customer_id, month, package, mainAmount, tra_type, pop_id,ref);
+            });
+            const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref) => {
 
-    if (month.length == 0) {
-        toastr.error("Select Month");
-    } else if (customer_id.length == 0) {
-        toastr.error("Select Customer");
-    } else if (tra_type.length == 0) {
-        toastr.error("Select Transaction");
-    } else {
-        $("#add_recharge_btn").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-        $.ajax({
-            type: 'POST',
-            url: 'include/customer_recharge_server.php',
-            data: {
-                customer_id: customer_id,
-                month: month,
-                package: package,
-                amount: mainAmount,
-                tra_type: tra_type,
-                pop_id: pop_id,
-                RefNo: ref,
-                add_recharge_data:0
-            },
-            success: function(response) {
-                if (response == 1) {
-                    $("#add_recharge_btn").html('Recharge Now');
-                    $("#addRechargeModal").modal('hide');
-                    toastr.success("Recharge Successful");
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                if (month.length == 0) {
+                    toastr.error("Select Month");
+                } else if (customer_id.length == 0) {
+                    toastr.error("Select Customer");
+                } else if (tra_type.length == 0) {
+                    toastr.error("Select Transaction");
                 } else {
-                    toastr.error(response);
-                    $("#add_recharge_btn").html('Recharge Now');
+                    $("#add_recharge_btn").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+                    var protocol = location.protocol;
+                     var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_recharge_server.php';
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data: {
+                            customer_id: customer_id,
+                            month: month,
+                            package: package,
+                            amount: mainAmount,
+                            tra_type: tra_type,
+                            pop_id: pop_id,
+                            RefNo: ref,
+                            add_recharge_data:0
+                        },
+                        success: function(response) {
+                            if (response == 1) {
+                                $("#add_recharge_btn").html('Recharge Now');
+                                $("#addRechargeModal").modal('hide');
+                                toastr.success("Recharge Successful");
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 500);
+                            } else {
+                                toastr.error(response);
+                                $("#add_recharge_btn").html('Recharge Now');
+                            }
+
+
+
+                        }
+                    });
+
+
+
                 }
 
-
-
             }
-        });
-
-
-
-    }
-
-}
 
 
 
@@ -1504,14 +1986,14 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
 
 
 
-
-
-            //////////////////////////////// ADD CUSTOMER SCRIPT ///////////////////////////////////////////////////
+            /********************************Customer script*************************************/
             $(document).on('keyup', '#customer_username', function() {
             var customer_username = $("#customer_username").val();
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: url,
                 data: {
                     current_username: customer_username
                 },
@@ -1523,10 +2005,11 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
         
         $(document).on('change', '#customer_pop', function() {
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url:url,
                 data: {
                     current_pop_name: pop_id
                 },
@@ -1537,10 +2020,11 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
         });
         $(document).on('change', '#customer_pop', function() {
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: url,
                 data: {
                     pop_name: pop_id,
                     getCustomerPackage:0
@@ -1553,10 +2037,11 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
         $(document).on('change', '#customer_package', function() {
             var packageId = $("#customer_package").val();
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: url,
                 data: {
                     package_id: packageId,
                     pop_id: pop_id,
@@ -1618,9 +2103,11 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
             } else {
                 $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
                 var addCustomerData = 0;
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php';
                 $.ajax({
                     type: 'POST',
-                    url: 'include/customers_server.php',
+                    url: url,
                     data: {
                         addCustomerData: addCustomerData,
                         fullname: fullname,
@@ -1662,7 +2149,7 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
 
 
 
-            //////////////////////////////// ADD Message SCRIPT ///////////////////////////////////////////////////
+            /******************************** Message Script*************************************/
             $(document).on('change', '#currentMessageTemp', function() {
                 var name = $("#currentMessageTemp").val();
                 var currentMsgTemp = "0";
@@ -1706,95 +2193,168 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
 
 
 
-            //////////////////////////////// ADD Message SCRIPT ///////////////////////////////////////////////////
-            $("#addTicketConfirmBtn").click(function() {
-                var ticket_type = $("#ticket_type").val();
-                var assigned = $("#assigned").val();
-                var ticket_for = $("#ticket_for").val();
-                var pop = <?php echo $auth_usr_POP_id; ?>;
-                var complain_type = $("#complain_type").val();
-                var from_date = $("#from_date").val();
-                var to_date = $("#to_date").val();
-                var user_type = $("#user_type").val();
-                if (ticket_type.length == 0) {
-                    toastr.error('Ticket type required');
-                } else if (assigned.length == 0) {
-                    toastr.error('Assigned required');
-                } else if (ticket_for.length == 0) {
-                    toastr.error('Ticket for required');
-                } else if (pop.length == 0) {
-                    toastr.error('POP/Branch is required');
-                } else if (complain_type.length == 0) {
-                    toastr.error('Complain type for required');
-                } else if (from_date.length == 0) {
-                    toastr.error('From Date required');
-                } else if (to_date.length == 0) {
-                    toastr.error('To Date required');
-                } else {
-                    var addTicketData = "0";
+           /******************************** Tickets Script*************************************/
+            /* Customers load function*/
+            ticket_modal()
+            function ticket_modal(){
+                $("#ticketModal").on('show.bs.modal', function (event) {
+                    /*Check if select2 is already initialized*/
+                    if (!$('#ticket_customer_id').hasClass("select2-hidden-accessible")) {
+                        $("#ticket_customer_id").select2({
+                            dropdownParent: $("#ticketModal"),
+                            placeholder: "Select Customer"
+                        });
+                        $("#ticket_assigned").select2({
+                            dropdownParent: $("#ticketModal"),
+                            placeholder: "---Select---"
+                        });
+                        $("#ticket_complain_type").select2({
+                            dropdownParent: $("#ticketModal"),
+                            placeholder: "---Select---"
+                        });
+                        $("#ticket_priority").select2({
+                            dropdownParent: $("#ticketModal"),
+                            placeholder: "---Select---"
+                        });
+                    }
+                }); 
+            }
+
+            function loadCustomers(selectedCustomerId) {
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_all_customer=true';
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success == true) {
+                            let customerSelect = $("#ticket_customer_id");
+                            customerSelect.empty();
+                            customerSelect.append('<option value="">---Select Customer---</option>');
+                            $.each(response.data, function (index, customer) {
+                                customerSelect.append('<option value="' + customer.id + '">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>');
+                            });
+                        }
+                        if (selectedCustomerId) {
+                            $("#ticket_customer_id").val(selectedCustomerId);
+                        }
+                    }
+                });
+            }
+
+            /*Ticket assign function*/ 
+            function ticket_assign(customerId) {
+                if (customerId) {
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
                     $.ajax({
+                        url: url,
                         type: "POST",
                         data: {
-                            type: ticket_type,
-                            assigned: assigned,
-                            ticket_for: ticket_for,
-                            complain_type: complain_type,
-                            from_date: from_date,
-                            to_date: to_date,
-                            addTicketData: addTicketData,
-                            user_type: user_type,
-                            pop: pop
+                            customer_id: customerId,
+                            get_area: true,
                         },
-                        url: "include/tickets.php",
                         success: function(response) {
-                            if (response == 1) {
-                                toastr.success("Ticket Create Successfully");
-                                $("#addTicketModal").modal('hide');
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 1000);
-                            } else {
-                                toastr.error("Please try again");
-                            }
+                            $("#ticket_assigned").html(response);
                         }
                     });
+                }else{
+                    $(document).on('change','#ticket_customer_id',function(){
+                        var protocol = location.protocol;
+                        var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
+                        /* Make AJAX request to server*/
+                        $.ajax({
+                            url: url, 
+                            type: "POST",
+                            data: {
+                                customer_id: $(this).val(),
+                                get_area:true,
+                            },
+                            success: function(response) {
+                                /* Handle the response from the server*/
+                                $("#ticket_assigned").html(response);
+                            }
+                        });
+                    });
                 }
-            });
+            }
 
-
-
-
-            ////////////////////////////////  customer static SCRIPT ///////////////////////////////////////////////////
-
-
-            //customer static 
-            var xValues = [1, 2, 3, 4, 5, 6];
-
-            new Chart("myChart", {
-                type: "line",
-                data: {
-                    labels: xValues,
-                    datasets: [{
-                        data: [2, 1140, 1060, 1060, 1070, 1110],
-                        borderColor: "red",
-                        fill: false
-                    }, {
-                        data: [1600, 1700, 1700, 1900, 2000, 2700],
-                        borderColor: "green",
-                        fill: false
-                    }, {
-                        data: [13, 500, 400, 700, 900, 1000],
-                        borderColor: "blue",
-                        fill: false
-                    }]
-                },
-                options: {
-                    legend: {
-                        display: false
+            /* Ticket complain type function*/
+            function ticket_complain_type() {
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        get_complain_type: true,
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success == true) {
+                            let ticket_complain_type = $("#ticket_complain_type");
+                            ticket_complain_type.empty();
+                            ticket_complain_type.append('<option value="">---Select---</option>');
+                            $.each(response.data, function (index, item) {
+                                ticket_complain_type.append('<option value="' + item.id + '">'+item.topic_name+'</option>');
+                            });
+                        }
                     }
-                }
+                });
+            }
+
+
+            $("#ticket_modal_form").submit(function(e) {
+                e.preventDefault();
+
+                /* Get the submit button */
+                var submitBtn = $(this).find('button[type="submit"]');
+                var originalBtnText = submitBtn.html();
+
+                submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden"></span>');
+                submitBtn.prop('disabled', true);
+
+                var form = $(this);
+                var formData = new FormData(this);
+
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType:'json',
+                    success: function(response) {
+                        if (response.success) {
+                            $("#ticketModal").fadeOut(500, function() {
+                                $(this).modal('hide');
+                                toastr.success(response.message);
+                                $('#tickets_datatable').DataTable().ajax.reload();
+                            });
+
+                        } else if (!response.success && response.errors) {
+                            $.each(response.errors, function(field, message) {
+                                toastr.error(message);
+                            });
+                        }
+                    },
+                    complete: function() {
+                        submitBtn.html(originalBtnText);
+                        submitBtn.prop('disabled', false);
+                    }
+                });
             });
 
+            //ticket_modal();
+            loadCustomers();
+            ticket_assign();
+            ticket_complain_type();
+
+
+        /******************************** Customer Static Script*************************************/
+
+            
 
 
 
@@ -1805,7 +2365,159 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
             
         });
     </script>
+<script type="text/javascript">
+         
+	var chart=new Chartist.Line("#simple-line-chart",{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+		series:[
+		[<?php 
+		for($i=1; $i<13; $i++)
+			{
+				$currentyrMnth = date("Y").'-0'.$i;
+				$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+				$result = mysqli_query($con, $sql);
+				echo $countconn = mysqli_num_rows($result).',';
+			}
+				?>],
+		[
+		
+		<?php
+		for($i=1; $i<13; $i++)
+			{
+				$currentyrMnth = date("Y").'-0'.$i;
+				$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+				$result = mysqli_query($con, $sql);
+				//echo $countexpconn = mysqli_num_rows($result).',';
+				
+			}
 
+		?>],
+		[1,3,4,5,6,7,7,7,7,7,7,7,10],
+		[10,2,3,4,5,6,6,6,6,6,6,6,13]]},
+		{fullWidth:!0,chartPadding:{right:40},plugins:[Chartist.plugins.tooltip()]});
+		
+		var times=function(e){return Array.apply(null,new Array(e))},data=times(52).map(Math.random).reduce(function(e,t,a){return e.labels.push(a+1),e.series.forEach(function(e){e.push(100*Math.random())}),e},{labels:[],series:times(4).map(function(){return new Array})}),
+		options={showLine:!1,axisX:{labelInterpolationFnc:function(e,t){return t%13==0?"W"+e:null}}},responsiveOptions=[["screen and (min-width: 640px)",{axisX:{labelInterpolationFnc:function(e,t){return t%4==0?"W"+e:null}}}]];new Chartist.Line("#scatter-diagram",data,options,responsiveOptions);
+
+
+///////////////// Chart Bar //////////////////////
+!function(e){"use strict";function a(){}a.prototype.init=function(){c3.generate({bindto:"#chart",
+data:{columns:[
+["Tickets",
+<?php 
+// Date find from 5 days ago
+//echo $Fidayago = strtotime(date("d", strtotime("-5 day")));
+/**/
+		for($i=0; $i<9; $i++)
+			{
+				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
+				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%'");
+				echo $tktsql->num_rows;
+				echo ',';
+				 
+				
+				
+			}
+			
+?>
+],
+["Resolved",
+<?php 
+// Date find from 5 days ago
+
+		for($i=0; $i<9; $i++)
+			{
+				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
+				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Complete'");
+				echo $tktsql->num_rows;
+				echo ',';	
+			}
+			
+?>
+
+
+],
+["Pending",
+<?php 
+// Date find from 5 days ago
+
+		for($i=0; $i<9; $i++)
+			{
+				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
+				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
+				echo $tktsql->num_rows;
+				echo ',';	
+			}
+			
+?>
+
+
+]],
+type:"bar",colors:{Tickets:"#fb8c00",Resolved:"#3bc3e9",Pending:"#5468da"}}})},
+e.ChartC3=new a,e.ChartC3.Constructor=a}(window.jQuery),
+function(){"use strict";
+window.jQuery.ChartC3.init()}();
+
+
+///////////////// ####### Yearly Customer statics Chart Bar ######## //////////////////////
+!function(e){"use strict";function a(){}a.prototype.init=function(){c3.generate({bindto:"#chart_year",
+data:{columns:[
+["New Customer",
+<?php 
+
+		for($i=1; $i<13; $i++)
+			{
+				
+				$currentyrMnth = date("Y").'-0'.$i;
+				date("M-Y", strtotime(date("Y").'-'.$i));
+				$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+				$result = mysqli_query($con, $sql);
+				echo $countconn = mysqli_num_rows($result).',';
+			}
+			
+?>
+],
+["Expired",
+<?php 
+// Date find from 5 days ago
+
+		for($i=0; $i<11; $i++)
+			{
+				$currentyrMnth = date("Y").'-0'.$i;
+				date("M-Y", strtotime(date("Y").'-'.$i));
+				$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+				$result = mysqli_query($con, $sql);
+				echo $countconn = mysqli_num_rows($result).',';
+			}
+			
+?>
+
+
+],
+["Disabled",
+<?php 
+// Date find from 5 days ago
+
+		for($i=0; $i<11; $i++)
+			{
+				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
+				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
+				echo $tktsql->num_rows;
+				echo ',';	
+			}
+			
+?>
+
+
+]],
+type:"bar",colors:{Tickets:"#fb8c00",Resolved:"#3bc3e9",Pending:"#5468da"}}})},
+e.ChartC3=new a,e.ChartC3.Constructor=a}(window.jQuery),
+function(){"use strict";
+window.jQuery.ChartC3.init()}();
+
+
+        $('#expire_customer_datatable').dataTable();
+        
+    </script>
 
 
 
