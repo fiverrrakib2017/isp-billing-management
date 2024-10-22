@@ -576,7 +576,7 @@ function timeAgo($startdate) {
                                                 <h5 class="mb-0 font-size-18">
 												<?php
 												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE startdate BETWEEN '$daystkt' AND NOW()");
+												$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND startdate BETWEEN '$daystkt' AND NOW()");
 												echo $tktsql->num_rows;
 												?>
 												
@@ -587,7 +587,7 @@ function timeAgo($startdate) {
                                                 <h5 class="mb-0 font-size-18">
 												<?php
 												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+												$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
 												echo $tktsql->num_rows;
 												?>
 												
@@ -598,7 +598,7 @@ function timeAgo($startdate) {
                                                 <h5 class="mb-0 font-size-18">
 												<?php
 												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
+												$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
 												echo $tktsql->num_rows;
 												?>
 												</h5>
@@ -609,7 +609,7 @@ function timeAgo($startdate) {
                                                 <h5 class="mb-0 font-size-18">
 												<?php
 												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+												$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
 												echo $tktsql->num_rows;
 												?>
 												</h5>
@@ -936,67 +936,55 @@ function timeAgo($startdate) {
 
 
                                     <div class="table-responsive">
-                                        <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
+                                    <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Months</th>
+                                                <th>New Conn.</th>
+                                                <th>Expired Conn.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            for($i=1; $i<=12; $i++)
+                                            {
+                                                ?>
                                                 <tr>
-                                                    <th>No.</th>
-                                                    <th>Months</th>
-                                                    <th>New Conn.</th>
-													<th>Expired Conn.</th>
-                                                    
-                                                    
+                                                    <td><?php echo $i; ?></td>
+                                                    <td>
+                                                        <?php 
+                                                        // মাসের ভ্যালুকে 2 অঙ্কে ফরম্যাট করে নিচ্ছি
+                                                        $month = sprintf("%02d", $i);
+                                                        $currentyrMnth = date("Y").'-'.$month;
+                                                        echo date("M-Y", strtotime($currentyrMnth)); 
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        // নতুন সংযোগের জন্য SQL
+                                                        $sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND createdate LIKE '%$currentyrMnth%'";
+                                                        $result = mysqli_query($con, $sql);
+                                                        $countconn = mysqli_num_rows($result);
+                                                        echo '<a href="customer_newcon.php?list='.$currentyrMnth.'">'.$countconn.'</a>';											
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        // এক্সপায়ার্ড সংযোগের জন্য SQL
+                                                        $sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND expiredate LIKE '%$currentyrMnth%'";
+                                                        $result = mysqli_query($con, $sql);
+                                                        $countexpconn = mysqli_num_rows($result);
+                                                        echo '<a href="customer_expire.php?list='.$currentyrMnth.'">'.$countexpconn.'</a>';
+                                                        ?>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-											<?php
-											for($i=1; $i<13; $i++)
-											{
-												?>
-												
-												
-												
-											
+                                            <?php 
+                                            }	
+                                            ?>
+                                        </tbody>
+                                    </table>
 
-                                                    <tr>
-													<td><?php echo $i; ?></td>
-                                                        <td><?php 
-														//$monthDigit = "0".$i;
-														$currentyrMnth = date("Y").'-0'.$i;
-														echo date("M-Y", strtotime(date("Y").'-'.$i)); ?></td>
-                                                        <td>
-														<?php
-															//AND user_type='$auth_usr_type'
-															
-															$sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND  createdate LIKE '%$currentyrMnth%'";
-															$result = mysqli_query($con, $sql);
-														     $countconn = mysqli_num_rows($result);	
-                                                            echo '<a href="customer_newcon.php?list='.$currentyrMnth.'">'.$countconn.'</a>';											
-
-														?>
-														</td>
-														
-														<td>
-														<?php
-															//AND user_type='$auth_usr_type'
-															
-															$sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND expiredate LIKE '%$currentyrMnth%'";
-															$result = mysqli_query($con, $sql);
-															$countexpconn = mysqli_num_rows($result);
-															echo '<a href="customer_expire.php?list='.$currentyrMnth.'">'.$countexpconn.'</a>';
-															
-
-														?>
-														</td>
-														
-														                                                                                                               
-                                                        
-                                                    </tr>
-													<?php }	?>
-                                                
-                                                
-
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -2373,7 +2361,7 @@ function timeAgo($startdate) {
 		for($i=1; $i<13; $i++)
 			{
 				$currentyrMnth = date("Y").'-0'.$i;
-				$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+				$sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND createdate LIKE '%$currentyrMnth%'";
 				$result = mysqli_query($con, $sql);
 				echo $countconn = mysqli_num_rows($result).',';
 			}
@@ -2384,7 +2372,7 @@ function timeAgo($startdate) {
 		for($i=1; $i<13; $i++)
 			{
 				$currentyrMnth = date("Y").'-0'.$i;
-				$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+				$sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND expiredate LIKE '%$currentyrMnth%'";
 				$result = mysqli_query($con, $sql);
 				//echo $countexpconn = mysqli_num_rows($result).',';
 				
@@ -2410,7 +2398,7 @@ data:{columns:[
 		for($i=0; $i<9; $i++)
 			{
 				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
-				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%'");
+				$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND startdate LIKE '%$daystkt%'");
 				echo $tktsql->num_rows;
 				echo ',';
 				 
@@ -2427,7 +2415,7 @@ data:{columns:[
 		for($i=0; $i<9; $i++)
 			{
 				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
-				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Complete'");
+				$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND startdate LIKE '%$daystkt%' AND ticket_type='Complete'");
 				echo $tktsql->num_rows;
 				echo ',';	
 			}
@@ -2443,7 +2431,7 @@ data:{columns:[
 		for($i=0; $i<9; $i++)
 			{
 				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
-				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
+				$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND startdate LIKE '%$daystkt%' AND ticket_type='Active'");
 				echo $tktsql->num_rows;
 				echo ',';	
 			}
@@ -2469,7 +2457,7 @@ data:{columns:[
 				
 				$currentyrMnth = date("Y").'-0'.$i;
 				date("M-Y", strtotime(date("Y").'-'.$i));
-				$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+				$sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND createdate LIKE '%$currentyrMnth%'";
 				$result = mysqli_query($con, $sql);
 				echo $countconn = mysqli_num_rows($result).',';
 			}
@@ -2484,7 +2472,7 @@ data:{columns:[
 			{
 				$currentyrMnth = date("Y").'-0'.$i;
 				date("M-Y", strtotime(date("Y").'-'.$i));
-				$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+				$sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND expiredate LIKE '%$currentyrMnth%'";
 				$result = mysqli_query($con, $sql);
 				echo $countconn = mysqli_num_rows($result).',';
 			}
@@ -2500,7 +2488,7 @@ data:{columns:[
 		for($i=0; $i<11; $i++)
 			{
 				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
-				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
+				$tktsql = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id AND startdate LIKE '%$daystkt%' AND ticket_type='Active'");
 				echo $tktsql->num_rows;
 				echo ',';	
 			}

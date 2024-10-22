@@ -928,67 +928,52 @@ function timeAgo($startdate) {
 
 
                                     <div class="table-responsive">
-                                        <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
-                                                <tr>
-                                                    <th>No.</th>
-                                                    <th>Months</th>
-                                                    <th>New Conn.</th>
-													<th>Expired Conn.</th>
-                                                    
-                                                    
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-											<?php
-											for($i=1; $i<13; $i++)
-											{
-												?>
-												
-												
-												
-											
+                                    <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Months</th>
+            <th>New Conn.</th>
+            <th>Expired Conn.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        for($i=1; $i<=12; $i++)
+        {
+            ?>
+            <tr>
+                <td><?php echo $i; ?></td>
+                <td>
+                    <?php 
+                    $month = sprintf("%02d", $i);
+                    $currentyrMnth = date("Y").'-'.$month;
+                    echo date("M-Y", strtotime($currentyrMnth)); 
+                    ?>
+                </td>
+                <td>
+                    <?php
+                    $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+                    $result = mysqli_query($con, $sql);
+                    $countconn = mysqli_num_rows($result);
+                    echo '<a href="customer_newcon.php?list='.$currentyrMnth.'">'.$countconn.'</a>';											
+                    ?>
+                </td>
+                <td>
+                    <?php
+                    $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%'";
+                    $result = mysqli_query($con, $sql);
+                    $countexpconn = mysqli_num_rows($result);
+                    echo '<a href="customer_expire.php?list='.$currentyrMnth.'">'.$countexpconn.'</a>';
+                    ?>
+                </td>
+            </tr>
+        <?php 
+        }	
+        ?>
+    </tbody>
+</table>
 
-                                                    <tr>
-													<td><?php echo $i; ?></td>
-                                                        <td><?php 
-														//$monthDigit = "0".$i;
-														$currentyrMnth = date("Y").'-0'.$i;
-														echo date("M-Y", strtotime(date("Y").'-'.$i)); ?></td>
-                                                        <td>
-														<?php
-															//AND user_type='$auth_usr_type'
-															
-															$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
-															$result = mysqli_query($con, $sql);
-														     $countconn = mysqli_num_rows($result);	
-                                                            echo '<a href="customer_newcon.php?list='.$currentyrMnth.'">'.$countconn.'</a>';											
-
-														?>
-														</td>
-														
-														<td>
-														<?php
-															//AND user_type='$auth_usr_type'
-															
-															$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
-															$result = mysqli_query($con, $sql);
-															$countexpconn = mysqli_num_rows($result);
-															echo '<a href="customer_expire.php?list='.$currentyrMnth.'">'.$countexpconn.'</a>';
-															
-
-														?>
-														</td>
-														
-														                                                                                                               
-                                                        
-                                                    </tr>
-													<?php }	?>
-                                                
-                                                
-
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </div>
                             </div>
