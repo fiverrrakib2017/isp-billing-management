@@ -12,7 +12,13 @@ include("include/pop_security.php");
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include 'style.php';?>
-   
+    <style>
+    @media print {
+        .removeRow, .hide-on-print {
+            display: none !important;
+        }
+    }
+</style>
 </head>
 
 <body data-sidebar="dark">
@@ -138,7 +144,7 @@ include("include/pop_security.php");
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered" id="invoiceTable">
                                 <thead class="bg bg-info text-white">
                                     <th>Product List</th>
                                     <th>Qty</th>
@@ -151,6 +157,7 @@ include("include/pop_security.php");
                                 </table>
                                 <div class="form-group text-center">
                                     <button type="button" name="finished_btn" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button>
+                                    <button type="button" name="print_btn" class="btn btn-success"><i class="fe fe-dollar"></i>Print</button>
                                 </div>
                             </div>
                         </div>
@@ -313,6 +320,7 @@ include("include/pop_security.php");
                                 </td>
                             </tr>`;
                             $("#tableRow").append(row);
+                            
 
                             calculateTotalAmount(); 
 
@@ -336,6 +344,65 @@ include("include/pop_security.php");
                         $('#submitButton').html('Submit').prop('disabled', false);
                     }
                 });
+            });
+            $(document).on('click', 'button[name="print_btn"]', function() {
+                var totalAmount = 0;
+                $('#tableRow tr').each(function() {
+                    var total_price = $(this).find('input[name="table_total_price[]"]').val();
+                    totalAmount += parseFloat(total_price);
+                });
+                var printContent = `
+    <div style="padding: 30px; font-family: Arial, sans-serif;">
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000;">
+            <h2 style="margin: 0; font-size: 28px; color: #2c3e50;">Star Communication</h2>
+            <p style="margin: 5px 0;">Sarkar Super Market, 2nd Floor</p>
+            <p style="margin: 5px 0;">Phone: +01757967432 | Email: info@rakibas.com</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h4 style="margin-bottom: 10px; font-size: 22px; color: #2c3e50;">Customer Information</h4>
+            <p><strong>Name:</strong> Rakib Mahmud</p>
+            <p><strong>Address:</strong> Kanora, Gouripur, Daudkandi, Cumilla</p>
+            <p><strong>Phone:</strong> +8801757967432</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <p><strong>Invoice No:</strong> INV-001234</p>
+            <p><strong>Date:</strong> 24 October 2024</p>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; border: 1px solid #ddd;">
+            <thead style="background-color: #f7f7f7; font-weight: bold;">
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Product List</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Qty</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Price</th>
+                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Total</th>
+                </tr>
+            </thead>
+            <tbody id="tableRow2">
+                 ${$("#tableRow").html()}
+            </tbody>
+        </table>
+
+        <div style="text-align: right; margin-bottom: 30px;">
+            <h4 style="margin: 0; font-size: 20px; color: #e74c3c;">Total Amount: ৳<span id="totalAmount">${totalAmount}</span></h4>
+        </div>
+
+        <div style="text-align: center; border-top: 2px solid #000; padding-top: 20px;">
+            <p>Thank you for your business!</p>
+            <p>If you have any questions about this invoice, please contact us at info@rakibas.com</p>
+        </div>
+    </div>
+`;
+
+                var originalContents = document.body.innerHTML;
+                
+                document.body.innerHTML = printContent;
+
+                window.print();
+
+                document.body.innerHTML = originalContents;
             });
             $(document).on('click', '.removeRow', function() {
                 $(this).closest('tr').remove();
