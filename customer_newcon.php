@@ -409,12 +409,13 @@ include("include/users_right.php");
                                                     <th>ID</th>
                                                     <th>Name</th>
                                                     <th>Package</th>
+                                                    <th>Create Date</th>
                                                     <th>Expired Date</th>
                                                     <th>User Name</th>
                                                     <th>Mobile no.</th>
                                                     <th>POP/Branch</th>
                                                     <th>Area/Location</th>
-                                                    <th>Create Date</th>
+                                                    
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -479,6 +480,12 @@ include("include/users_right.php");
 
                                                         </td>
                                                         <td>
+                                                            <?php 
+                                                           echo  date_format(date_create($rows["createdate"]), "Y-m-d"); 
+                                                            ?>
+
+                                                        </td>
+                                                        <td>
                                                             <?php
 
                                                             $expireDate = $rows["expiredate"];
@@ -512,12 +519,7 @@ include("include/users_right.php");
                                                             ?>
 
                                                         </td>
-                                                        <td>
-                                                            <?php 
-                                                           echo  date_format(date_create($rows["createdate"]), "Y-m-d"); 
-                                                            ?>
-
-                                                        </td>
+                                                        
 
                                                         <td>
                                                             <a class="btn btn-info" href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
