@@ -414,6 +414,7 @@ include("include/users_right.php");
                                                     <th>Mobile no.</th>
                                                     <th>POP/Branch</th>
                                                     <th>Area/Location</th>
+                                                    <th>Create Date</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -508,6 +509,12 @@ include("include/users_right.php");
                                                                 echo $popRow['name'];
                                                             }
 
+                                                            ?>
+
+                                                        </td>
+                                                        <td>
+                                                            <?php 
+                                                           echo  date_format(date_create($rows["createdate"]), "Y-m-d"); 
                                                             ?>
 
                                                         </td>
