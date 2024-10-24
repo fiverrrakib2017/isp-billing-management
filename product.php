@@ -79,8 +79,6 @@ include("include/pop_security.php");
                                        <tr>
                                           <th>ID</th>
                                           <th>Product Name</th>
-                                          <th>Category</th>
-                                          <th>Brand</th>
                                           <th>Purchase Price</th>
                                           <th>Sale Price</th>
                                           <th>unit</th>
@@ -103,26 +101,7 @@ include("include/pop_security.php");
                            <tr>
         <td><?php echo $rows['id']; ?></td>
         <td><a href="product_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $rows['name']; ?></a></td>
-        <td>
-            <?php 
-            $categoryId= $rows['category']; 
-            if ($categories = $con->query("SELECT * FROM product_cat WHERE id= '$categoryId' ")) {
-                while($row = $categories->fetch_array()){
-                    echo $row['name'];
-                }
-            }
-            ?>
-        </td>
-        <td>
-        <?php 
-            $brandId= $rows['brand']; 
-            if ($brands = $con->query("SELECT * FROM product_brand WHERE id= '$brandId' ")) {
-                while($row = $brands->fetch_array()){
-                    echo $row['name'];
-                }
-            }
-            ?>
-        </td>
+        
         <td><?php echo $rows['purchase_price']; ?></td>
         <td><?php echo $rows['sale_price']; ?></td>
         <td>
