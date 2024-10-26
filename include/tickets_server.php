@@ -374,7 +374,7 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 	if ($result && $row = $result->fetch_assoc()) {
 		$customer_ticket = $row['ticket_type'];
 		
-		if ($customer_ticket !== "Completed") {
+		if ($customer_ticket !== "Complete") {
 			$errors['customer_ticket'] = "You already have a ticket.";
 		}
 		

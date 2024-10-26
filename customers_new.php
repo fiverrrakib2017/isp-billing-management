@@ -646,6 +646,8 @@ include("include/users_right.php");
                             status_filter += '<option value="offline">Offline</option>';
                             status_filter += '<option value="expired">Expired</option>';
                             status_filter += ' <option value="unpaid">Unpaid</option>';
+                            status_filter += ' <option value="due">Due</option>';
+                            status_filter += ' <option value="free">Free</option>';
                             status_filter += ' <option value="active">Active</option>';
                             status_filter += ' <option value="disabled">Disabled</option>';
                             status_filter += '</select></label>';
@@ -661,6 +663,27 @@ include("include/users_right.php");
                     }
                 });
             }
+            $(document).on('change','.pop_filter',function(){
+                var pop_id = $(this).val();
+                $.ajax({
+                    url: 'include/area_server.php?get_area_data=1&pop_id='+pop_id, 
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success==true) {
+                            console.log(response);
+                            var areaOptions = '<option value="">--Select Area--</option>';
+                            $.each(response.data, function(key, data) {
+                                areaOptions += '<option value="'+data.id+'">'+data.name+'</option>';
+                            });
+                            setTimeout(() => {
+                                $('.area_filter').html(areaOptions);
+                                $('.area_filter').select2();
+                            }, 500);
+                        }
+                    }
+                });
+            });
             
 
                 table=$('#customers_table').DataTable( {
