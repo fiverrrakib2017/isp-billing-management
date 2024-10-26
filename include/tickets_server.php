@@ -351,6 +351,14 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (empty($priority)) {
 		$errors['ticket_priority'] = "Priority is required.";
 	}
+	if ($get_customer_ticket = $con->query("SELECT * FROM ticket WHERE customer_id=$customer_id")) {
+        $rows = $get_customer_ticket->fetch_assoc();
+        $customer_ticket = $rows['ticket_type'];
+
+		if ($customer_ticket !=="Completed") {
+			$errors['customer_ticket'] = "You have an already ticket.";
+		}
+    }
 	
 	/* If validation errors exist, return errors */
 	if (!empty($errors)) {
