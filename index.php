@@ -118,7 +118,7 @@ function timeAgo($startdate) {
                                             <span class="counter text-success">
                                                 <?php
                                                 if ($onlinecstmr = $con->query("SELECT * FROM radacct WHERE acctterminatecause=''")) {
-                                                echo $onlinecstmr->num_rows;
+                                                    echo $onlinecstmr->num_rows;
                                                 }
                                                 ?>
                                             </span>
@@ -274,6 +274,7 @@ function timeAgo($startdate) {
                         </div> <!-- End col -->
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
+                                <a href="allTickets.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
                                         <span class="mini-stat-icon bg-warning me-0 float-end"><i class="far fa-sticky-note"></i></span>
@@ -288,6 +289,7 @@ function timeAgo($startdate) {
                                         </div>
                                     </div>
                                 </div>
+                                </a>
                             </div>
                         </div><!--end col -->
                     </div> <!-- end row-->

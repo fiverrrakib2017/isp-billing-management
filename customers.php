@@ -460,6 +460,7 @@
          	//Search Customer by POP
          	$(document).on('change', '#srch_poplst', function() {
                     var searchdta = 'srch_poplst='+$(this).val() + '&srch_area_id='+$("#srch_area").val() + '&customer_sttssrch='+$("#customer_sttssrch").val();
+                  //   alert(searchdta);return false; 
                     $.ajax({
                         type: 'POST',
                         url: "include/customers_list_table.php",
