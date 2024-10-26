@@ -83,6 +83,65 @@
         } else {
             //$condition = "package = 5"; 
         }
+
+        /* If 'area_id' is provided, */
+        if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
+            $condition .= " AND area = '" . $_GET['area_id'] . "'";
+        }
+        /* If 'pop_id' is provided, */
+        if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
+            $condition .= " AND pop = '" . $_GET['pop_id'] . "'";
+        }
+        /* If Status is provided, */
+        if (isset($_GET['status']) && !empty($_GET['status'])) {
+            $status = $_GET['status'];
+
+            if ($status == 'expired') {
+                $status = "2";
+                $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+            } elseif ($status == 'disabled') {
+                $status = "0";
+                $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+            } elseif ($status == 'active') {
+                $status = "1";
+                $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+            } elseif ($status == 'online') {
+                $status = "1";
+                $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
+                                AND EXISTS (
+                                    SELECT 1 FROM radacct 
+                                    WHERE radacct.username = customers.username 
+                                    AND radacct.acctstoptime IS NULL
+                                )";
+            }elseif($status == 'free') {
+                $condition .= "package = 5"; 
+            }elseif($status == 'unpaid') {
+                $popID=$_SESSION['user_pop'] ?? 1;
+                /* Unpaid customers condition*/
+                    $condition .= (!empty($condition) ? " AND " : "") . "
+                    EXISTS (
+                        SELECT 1 FROM customer_rechrg 
+                        WHERE 
+                            DAY(expiredate) BETWEEN 1 AND 10 
+                            AND MONTH(expiredate) = MONTH(CURDATE()) 
+                            AND YEAR(expiredate) = YEAR(CURDATE())
+                            AND pop = '$popID'
+                    )
+                ";
+            }
+            elseif($status == 'offline') {
+                $status = "0";
+                $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
+                                AND NOT EXISTS (
+                                    SELECT 1 FROM radacct 
+                                    WHERE radacct.username = customers.username 
+                                    AND radacct.acctstoptime IS NOT NULL
+                                )";
+            }
+            else {
+                $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+            }
+        }
         /* Output JSON for DataTables to handle*/
         echo json_encode(
             SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)

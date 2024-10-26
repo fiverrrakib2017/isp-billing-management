@@ -641,7 +641,6 @@ include("include/users_right.php");
                             var status_filter = '<label style="margin-left: 10px;"> ';
                             status_filter += '<select class="status_filter form-select">';
                             status_filter += '<option value="">--Status--</option>';
-                            status_filter += ' <option value="All">All</option>';
                             status_filter += '<option value="online" >Online</option>';
                             status_filter += '<option value="offline">Offline</option>';
                             status_filter += '<option value="expired">Expired</option>';
@@ -697,6 +696,11 @@ include("include/users_right.php");
                     "ajax"				: {
                         url			: "include/customer_server_new.php?get_customers_data=true",
                         type		: 'GET',
+                        data: function(d) {
+                            // d.pop_id = $('.pop_filter').val();
+                            // d.area_id = $('.area_filter').val();
+                            d.status = $('.status_filter').val();
+                        },
                     },
                     "buttons": [			
                 {
@@ -740,13 +744,32 @@ include("include/users_right.php");
             });
             table.buttons().container().appendTo($('#export_buttonscc'));	
         });
-        // $("#customers_table_length").parent().addClass("col-md-12");
          /* POP filter change event*/
         $(document).on('change','.pop_filter',function(){
         
-        var pop_filter_result = $('.pop_filter').val() == null ? '' : $('.pop_filter').val();
+            var pop_filter_result = $('.pop_filter').val() == null ? '' : $('.pop_filter').val();
 
             table.columns(9).search(pop_filter_result).draw();
+        
+        });
+         /* Area change event*/
+        $(document).on('change','.area_filter',function(){
+        
+            var area_filter_result = $('.area_filter').val() == null ? '' : $('.area_filter').val();
+
+            table.columns(10).search(area_filter_result).draw();
+        
+        });
+         /* Area change event*/
+        $(document).on('change','.status_filter',function(){
+        
+            var status_filter_result = $('.status_filter').val() == null ? '' : $('.status_filter').val();
+            // alert(status_filter_result);
+            table.ajax.reload(null, false);
+        
+            // var area_filter_result = $('.area_filter').val() == null ? '' : $('.area_filter').val();
+
+            // table.columns(10).search(area_filter_result).draw();
         
         });
 
