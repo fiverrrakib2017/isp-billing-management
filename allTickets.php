@@ -286,6 +286,9 @@ include("include/users_right.php");
                 "ajax"				: {
                     url			: "include/tickets_server.php?get_tickets_data=1",
                     type		: 'GET',
+                    data: function(d) {
+                        d.area_id = $('.area_filter').val();
+                    },
                 },
                 "order": [[0, 'desc']], 
                 "buttons": [
@@ -332,8 +335,9 @@ include("include/users_right.php");
         });
         /* Area filter change event*/
         $(document).on('change', '.area_filter', function(){
-            var area_filter_result = $('.area_filter').val() || '';
-            table.columns(7).search(area_filter_result).draw();
+            // var area_filter_result = $('.area_filter').val() || '';
+            // table.columns(7).search(area_filter_result).draw();
+            table.ajax.reload(null, false);
         });          
         /* Status filter change event*/
         $(document).on('change', '.status_filter', function(){

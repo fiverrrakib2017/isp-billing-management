@@ -149,10 +149,16 @@ if (!isset($_SESSION)) {
 		
 		
 	);
+	$condition = "pop_id = 1"; // Default condition
+
+	/*Check if session 'user_pop' */ 
 	if (!empty($_SESSION['user_pop'])) {
 		$condition = "pop_id = '" . $_SESSION['user_pop'] . "'";
-	} else {
-		$condition = "pop_id = 1"; 
+	}
+
+	/* If 'area_id' is provided, */
+	if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
+		$condition .= " AND area_id = '" . $_GET['area_id'] . "'";
 	}
 	/* Output JSON for DataTables to handle*/
 	echo json_encode(
@@ -351,14 +357,28 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (empty($priority)) {
 		$errors['ticket_priority'] = "Priority is required.";
 	}
-	if ($get_customer_ticket = $con->query("SELECT * FROM ticket WHERE customer_id=$customer_id")) {
-        $rows = $get_customer_ticket->fetch_assoc();
-        $customer_ticket = $rows['ticket_type'];
+	// if ($get_customer_ticket = $con->query("SELECT * FROM ticket WHERE customer_id=$customer_id")) {
+    //     $rows = $get_customer_ticket->fetch_assoc();
+    //     $customer_ticket = $rows['ticket_type'];
 
-		if ($customer_ticket !=="Completed") {
-			$errors['customer_ticket'] = "You have an already ticket.";
+	// 	if ($customer_ticket =="Completed") {
+	// 		$errors['customer_ticket'] = "You have an already ticket.";
+	// 	}
+    // }
+	/* Validate if customer has a completed ticket */
+	$stmt = $con->prepare("SELECT ticket_type FROM ticket WHERE customer_id = ?");
+	$stmt->bind_param("i", $customer_id);
+	$stmt->execute();
+	$result = $stmt->get_result();
+
+	if ($result && $row = $result->fetch_assoc()) {
+		$customer_ticket = $row['ticket_type'];
+		
+		if ($customer_ticket !== "Completed") {
+			$errors['customer_ticket'] = "You already have a ticket.";
 		}
-    }
+		
+	}
 	
 	/* If validation errors exist, return errors */
 	if (!empty($errors)) {
@@ -368,16 +388,19 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 		]);
 		exit;
 	}
+
     /* If no errors, continue with processing*/
     $customerPopId = null;
-    if ($allCstmr = $con->query("SELECT pop FROM customers WHERE id=$customer_id")) {
+    $customerAreaId = null;
+    if ($allCstmr = $con->query("SELECT pop,area FROM customers WHERE id=$customer_id")) {
         $customerData = $allCstmr->fetch_assoc();
         $customerPopId = $customerData['pop'];
+       $customerAreaId = $customerData['area'];
     }
-
+	
     /*Insert query*/ 
-    $stmt = $con->prepare("INSERT INTO ticket (`customer_id`, `ticket_type`, `asignto`, `ticketfor`, `pop_id`, `complain_type`, `startdate`, `enddate`, `user_type`, `notes`, `parcent`, `priority`) VALUES (?, 'Active', ?, ?, ?, ?, NOW(), NULL, 1, ?, '0%', ?)");
-    $stmt->bind_param('iissssi', $customer_id, $assigned, $ticket_for, $customerPopId, $complain_type, $note, $priority);
+    $stmt = $con->prepare("INSERT INTO ticket (`customer_id`, `ticket_type`, `asignto`, `ticketfor`, `pop_id`,`area_id`, `complain_type`, `startdate`, `enddate`, `user_type`, `notes`, `parcent`, `priority`) VALUES (?, 'Active', ?, ?, ?, ?, ?, NOW(), NULL, 1, ?, '0%', ?)");
+    $stmt->bind_param('iisssssi', $customer_id, $assigned, $ticket_for, $customerPopId,$customerAreaId, $complain_type, $note, $priority);
 
     $result = $stmt->execute();
 
