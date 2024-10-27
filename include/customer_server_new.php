@@ -14,7 +14,7 @@
                 'db' => 'id', 
                 'dt' => 0,
                 'formatter' => function($d, $row) {
-                    return '<input type="checkbox" value="' . $d . '" name="checkAll[]" class="checkSingle">';
+                    return '<input type="checkbox" value="' . $d . '" name="checkAll[]" class="form-check-input customer-checkbox checkSingle">';
                 }
             ),
             array('db' => 'id', 'dt' => 1),

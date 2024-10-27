@@ -12,6 +12,8 @@ include("include/users_right.php");
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include 'style.php';?>
+    <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
 </head>
 
 <body data-sidebar="dark">
@@ -239,7 +241,7 @@ include("include/users_right.php");
                                         <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;" >
                                             <thead >
                                                 <tr>
-													<th><input type="checkbox" id="checkedAll" name="checkedAll"> All</th>
+													<th><input type="checkbox" id="checkedAll" name="checkedAll" class="form-check-input"></th>
                                                     <th>ID</th>
                                                     <th>Name</th>
                                                     <th>Package</th>
@@ -342,6 +344,13 @@ include("include/users_right.php");
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <?php include 'script.php';?>
+    <!-- DataTables JS -->
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
     <script type="text/javascript">
 	
 	$(document).ready(function() {
@@ -372,16 +381,25 @@ include("include/users_right.php");
                 document.body.removeChild(link);
             });
 			
-            $("#checkedAll").change(function() {
-                $(".checkSingle").prop('checked', $(this).prop("checked"));
-            });
-            $(".checkSingle").change(function() {
-                if ($(".checkSingle:checked").length == $(".checkSingle").length) {
-                    $("#checkedAll").prop("checked", true);
-                } else {
-                    $("#checkedAll").prop("checked", false);
-                }
-            });
+            // $("#checkedAll").change(function() {
+            //     var result=$(".checkSingle").prop('checked', $(this).prop("checked"));
+            //     console.log(result); 
+            // });
+            // $(".checkSingle").change(function() {
+            //     if ($(".checkSingle:checked").length == $(".checkSingle").length) {
+            //         $("#checkedAll").prop("checked", true);
+            //     } else {
+            //         $("#checkedAll").prop("checked", false);
+            //     }
+            // });
+            // $(document).on('change', '#checkedAll', function() {
+            //     var rows, checked;
+            //     rows = $('#customers_table').find('tbody tr');
+            //     checked = $(this).prop('checked');
+            //     $.each(rows, function() {
+            //         var checkbox = $($(this).find('td').eq(0)).find('input').prop('checked', checked);
+            //     });
+            // });
             $("#send_message_btn").click(function() {
                 var selectedCustomers = [];
                 $(".checkSingle:checked").each(function() {
@@ -586,6 +604,7 @@ include("include/users_right.php");
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
+            
             loadPopOptions();
             loadAreaOptions();
             function loadPopOptions() {
@@ -670,7 +689,6 @@ include("include/users_right.php");
                     dataType: 'json',
                     success: function(response) {
                         if (response.success==true) {
-                            console.log(response);
                             var areaOptions = '<option value="">--Select Area--</option>';
                             $.each(response.data, function(key, data) {
                                 areaOptions += '<option value="'+data.id+'">'+data.name+'</option>';
@@ -683,67 +701,82 @@ include("include/users_right.php");
                     }
                 });
             });
-            
-
-                table=$('#customers_table').DataTable( {
-                    "searching": true,
-                    "paging": true,
-                    "info": false,
-                    "lengthChange":true ,
-                    "processing"		: true,
-                    "serverSide"		: true,
-                    "zeroRecords":    "No matching records found",
-                    "ajax"				: {
-                        url			: "include/customer_server_new.php?get_customers_data=true",
-                        type		: 'GET',
-                        data: function(d) {
-                            // d.pop_id = $('.pop_filter').val();
-                            // d.area_id = $('.area_filter').val();
-                            d.status = $('.status_filter').val();
-                        },
+            var checkedBoxes = {};
+            table=$('#customers_table').DataTable( {
+                "searching": true,
+                "paging": true,
+                "info": true,
+                "order": [[ 0, "desc" ]],
+                "lengthChange":true ,
+                "processing"		: true,
+                "serverSide"		: true,
+                columnDefs: [ {
+                    orderable: false,
+                        className: 'select-checkbox',
+                        targets:  10,
+                } ],
+                select: {
+                    style:    'os',
+                    selector: 'td.select-checkbox'
+                },
+                "zeroRecords":    "No matching records found",
+                "ajax"				: {
+                    url			: "include/customer_server_new.php?get_customers_data=true",
+                    type		: 'GET',
+                    data: function(d) {
+                        d.status = $('.status_filter').val();
                     },
-                    "buttons": [			
-                {
-                    extend: 'copy',
-                    text: '<i class="fas fa-copy"></i> Copy',
-                    titleAttr: 'Copy',
-                    exportOptions: { columns: ':visible' }
-                }, 
-                {
-                    extend: 'excel',
-                    text: '<i class="fas fa-file-excel"></i> Excel',
-                    titleAttr: 'Excel',
-                    exportOptions: { columns: ':visible' }
-                }, 
-                {
-                    extend: 'csv',
-                    text: '<i class="fas fa-file-csv"></i> CSV',
-                    titleAttr: 'CSV',
-                    exportOptions: { columns: ':visible' }
-                }, 
-                {
-                    extend: 'pdf',
-                    exportOptions: { columns: ':visible' },
-                    orientation: 'landscape',
-                    pageSize: "LEGAL",
-                    text: '<i class="fas fa-file-pdf"></i> PDF',
-                    titleAttr: 'PDF'
-                }, 
-                {
-                    extend: 'print',
-                    text: '<i class="fas fa-print"></i> Print',
-                    titleAttr: 'Print',
-                    exportOptions: { columns: ':visible' }
-                }, 
-                {
-                    extend: 'colvis',
-                    text: '<i class="fas fa-list"></i> Column Visibility',
-                    titleAttr: 'Column Visibility'
-                }
-                ],
+                },
+                "drawCallback": function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                    /* Restore checked state*/
+                    $('.customer-checkbox').each(function() {
+                        var id = $(this).val();
+                        if (checkedBoxes[id]) {
+                            $(this).prop('checked', true);
+                        }
+                    });
+                },
+                "buttons": [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        titleAttr: 'Export to Excel',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    }
+                ],    
             });
-            table.buttons().container().appendTo($('#export_buttonscc'));	
+            table.buttons().container().appendTo($('#export_buttonscc'));
+            /* Check/Uncheck All Checkboxes*/
+            $(document).on('change','#checkedAll', function() {
+                var isChecked = $(this).is(':checked');
+                $('.customer-checkbox').prop('checked', isChecked);
+                $('.customer-checkbox').each(function() {
+                    var id = $(this).val();
+                    checkedBoxes[id] = isChecked;
+                });
+            });
+
+            /* Handle Individual Checkbox Change*/
+            $(document).on('change', '.customer-checkbox', function() {
+                var id = $(this).val();
+                checkedBoxes[id] = $(this).is(':checked');
+                
+                var allChecked = $('.customer-checkbox:checked').length === $('.customer-checkbox').length;
+                $('#checkedAll').prop('checked', allChecked);
+            });
         });
+      
          /* POP filter change event*/
         $(document).on('change','.pop_filter',function(){
         
@@ -762,17 +795,10 @@ include("include/users_right.php");
         });
          /* Area change event*/
         $(document).on('change','.status_filter',function(){
-        
             var status_filter_result = $('.status_filter').val() == null ? '' : $('.status_filter').val();
-            // alert(status_filter_result);
             table.ajax.reload(null, false);
-        
-            // var area_filter_result = $('.area_filter').val() == null ? '' : $('.area_filter').val();
-
-            // table.columns(10).search(area_filter_result).draw();
-        
         });
-
+        
     </script>
 </body>
 
