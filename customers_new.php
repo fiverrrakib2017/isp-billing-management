@@ -263,7 +263,9 @@ include("include/users_right.php");
                                 </div>
                                 <div class="card-footer" style="text-align: right;">
                                     <button class="btn btn-primary" id="send_message_btn" >Send Message</button>
-                                    <button class="btn btn-success" id="export_to_excel" >Export To Excel</button>
+                                    <button type="button" class="btn btn-success" name="export_to_excel" >Export To Excel</button>
+                                    <button type="button" onclick="printSelectedRows()" class="btn btn-danger"><i class="fas fa-solid fa-print"></i><abbr title="Print"></abbr></button>
+                                    <button type="button" class="btn btn-primary" name="Recharge_btn" >Recharge</button>
                                 </div>
                             </div>
                         </div>
@@ -344,62 +346,10 @@ include("include/users_right.php");
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <?php include 'script.php';?>
-    <!-- DataTables JS -->
-<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
     <script type="text/javascript">
 	
 	$(document).ready(function() {
-            $(document).on('click','#export_to_excel',function(){
-                    let csvContent = "data:text/csv;charset=utf-8,";
-                
-                /* Add header row*/
-                csvContent += [
-                    'ID', 'Name', 'Package', 'Expired Date', 'User Name', 'Mobile no.', 'POP/Branch', 'Area/Location'
-                ].join(",") + "\n";
-                
-                /*Add data rows*/ 
-                $('#customers_table tbody tr').each(function() {
-                    let row = [];
-                    $(this).find('td').each(function() {
-                        row.push($(this).text().trim());
-                    });
-                    csvContent += row.join(",") + "\n";
-                });
-
-                /* Create a link element and simulate click to download the CSV file*/
-                let encodedUri = encodeURI(csvContent);
-                let link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "customers.csv");
-                document.body.appendChild(link); // Required for Firefox
-                link.click();
-                document.body.removeChild(link);
-            });
-			
-            // $("#checkedAll").change(function() {
-            //     var result=$(".checkSingle").prop('checked', $(this).prop("checked"));
-            //     console.log(result); 
-            // });
-            // $(".checkSingle").change(function() {
-            //     if ($(".checkSingle:checked").length == $(".checkSingle").length) {
-            //         $("#checkedAll").prop("checked", true);
-            //     } else {
-            //         $("#checkedAll").prop("checked", false);
-            //     }
-            // });
-            // $(document).on('change', '#checkedAll', function() {
-            //     var rows, checked;
-            //     rows = $('#customers_table').find('tbody tr');
-            //     checked = $(this).prop('checked');
-            //     $.each(rows, function() {
-            //         var checkbox = $($(this).find('td').eq(0)).find('input').prop('checked', checked);
-            //     });
-            // });
+            
             $("#send_message_btn").click(function() {
                 var selectedCustomers = [];
                 $(".checkSingle:checked").each(function() {
@@ -768,7 +718,7 @@ include("include/users_right.php");
             });
 
             /* Handle Individual Checkbox Change*/
-            $(document).on('change', '.customer-checkbox', function() {
+            $(document).on('cilck', '.customer-checkbox', function() {
                 var id = $(this).val();
                 checkedBoxes[id] = $(this).is(':checked');
                 
@@ -798,7 +748,116 @@ include("include/users_right.php");
             var status_filter_result = $('.status_filter').val() == null ? '' : $('.status_filter').val();
             table.ajax.reload(null, false);
         });
-        
+        $(document).on('click', 'button[name="export_to_excel"]', function() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+
+            /* Add header row */
+            csvContent += [
+                'ID', 'Name', 'Package', 'Expired Date', 'User Name', 'Mobile no.', 'POP/Branch', 'Area/Location'
+            ].join(",") + "\n";
+            let selected = false; 
+            /* Add selected data rows */
+            $('#customers_table tbody tr').each(function() {
+                let checkbox = $(this).find('input[type="checkbox"]');
+                if (checkbox.is(':checked')) {  
+                    let row = [];
+                    $(this).find('td').each(function() {
+                        row.push($(this).text().trim());
+                    });
+                    csvContent += row.join(",") + "\n";
+                }
+            });
+            if (!selected) {
+                toastr.error('Please select at least one customer');
+                return; 
+            }
+            /* Create a link element and simulate click to download the CSV file */
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "customers.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        function printTable() {
+            var divToPrint = document.getElementById('customers_table');
+            var newWin = window.open('', '_blank');
+            newWin.document.write('<html><head><title>Customer</title>');
+            newWin.document.write('<style>');
+            newWin.document.write('table { width: 100%; border-collapse: collapse; }');
+            newWin.document.write('table, th, td { border: 1px solid black; padding: 10px; text-align: left; }');
+            newWin.document.write('a { text-decoration: none; color: black; }');
+            newWin.document.write('</style></head><body>');
+            newWin.document.write(divToPrint.outerHTML);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.focus();
+            newWin.print();
+            newWin.close();
+        }
+        function printSelectedRows() {
+            let selectedContent = `
+                <table class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Package</th>
+                            <th>Amount</th>
+                            <th>Expired Date</th>
+                            <th>Expired Date</th>
+                            <th>User Name</th>
+                            <th>Mobile no.</th>
+                            <th>POP/Branch</th>
+                            <th>Area/Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            let hasSelectedRows = false;
+
+            $('#customers_table tbody tr').each(function() {
+                let checkbox = $(this).find('input[type="checkbox"]');
+                if (checkbox.is(':checked')) {
+                    hasSelectedRows = true;
+                    selectedContent += "<tr>";
+                    $(this).find('td').each(function() {
+                        selectedContent += `<td>${$(this).text().trim()}</td>`;
+                    });
+                    selectedContent += "</tr>";
+                }
+            });
+
+            if (!hasSelectedRows) {
+                alert("Please select at least one row to print.");
+                return;
+            }
+
+            selectedContent += `
+                    </tbody>
+                </table>
+            `;
+
+           
+            let newWin = window.open('', '_blank');
+            newWin.document.write('<html><head><title>Customer Data</title>');
+            newWin.document.write('<style>');
+            newWin.document.write('table { width: 100%; border-collapse: collapse; }');
+            newWin.document.write('table, th, td { border: 1px solid black; padding: 10px; text-align: left; }');
+            newWin.document.write('</style></head><body>');
+            newWin.document.write(selectedContent);
+            newWin.document.write('</body></html>');
+            newWin.document.close();
+            newWin.focus();
+            newWin.print();
+            newWin.close();
+        }
+
+
     </script>
 </body>
 
