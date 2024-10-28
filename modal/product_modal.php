@@ -8,7 +8,7 @@
                 </div>
                 
                 <div class="card">
-                    <form action="#" id="productForm" enctype="multipart/form-data">
+                    <form action="#" id="productForm" enctype="multipart/form-data" method="POST">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col">
@@ -223,7 +223,7 @@
                         </div>
                         <div class="card-footer">
                             <button type="button" data-bs-dismiss="modal" class="btn btn-danger">Close</button>
-                            <button type="submit" id="addProductBtn" class=" btn btn-success">Add Now</button>
+                            <button type="submit"  class=" btn btn-success">Add Now</button>
                         </div>
                     </form>
                 </div>

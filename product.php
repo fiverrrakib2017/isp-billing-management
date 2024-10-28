@@ -151,20 +151,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
     </div>
     <!-- End Page-content -->
 
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6">
-                    <script>document.write(new Date().getFullYear())</script> © IT-FAST.
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end d-none d-sm-block">
-                        Development <i class="mdi mdi-heart text-danger"></i><a href="https://facebook.com/rakib56789">Rakib Mahmud</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include 'Footer.php';?>
 
 </div>
 <!-- end main content-->
