@@ -347,56 +347,6 @@ include("include/users_right.php");
     <div class="rightbar-overlay"></div>
     <?php include 'script.php';?>
     <script type="text/javascript">
-	
-	$(document).ready(function() {
-            
-            $("#send_message_btn").click(function() {
-                var selectedCustomers = [];
-                $(".checkSingle:checked").each(function() {
-                    selectedCustomers.push($(this).val());
-                });
-                var countText = "You have selected " + selectedCustomers.length + " customers.";
-                $("#selectedCustomerCount").text(countText);
-                console.log(selectedCustomers); 
-                $('#sendMessageModal').modal('show'); 
-
-            });
-            $('button[name="send_message_btn"]').on('click',function(e){
-                e.preventDefault(); 
-                 /*AJAX request to send selected customers to backend*/ 
-                 $.ajax({
-                    url: 'include/customers_server.php?send_message=true',
-                    method: 'POST',
-                    data: {
-                        /*sending the array of customer IDs*/ 
-                        customer_ids: selectedCustomers, 
-                        message: $("#message").val(),
-                    },
-                    success: function(response) {
-                        alert("Message sent successfully to selected customers.");
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("An error occurred: " + error);
-                        alert("There was an error sending the message.");
-                    }
-                });
-            });
-            $('select[name="message_template"]').on('change', function() {
-                var name=$(this).val();
-                var currentMsgTemp="0";
-                $.ajax({
-                    type:'POST',
-                    data:{name:name,currentMsgTemp:currentMsgTemp},
-                    url:'include/message.php',
-                    success:function(response){
-                        console.log(response);
-                        $("#message").val(response);
-                    }
-                });
-            });
-           
-            
-			});
 			
 			
 		
@@ -833,7 +783,7 @@ include("include/users_right.php");
             });
 
             if (!hasSelectedRows) {
-                alert("Please select at least one row to print.");
+                toastr.error("Please select at least one row to print.");
                 return;
             }
 
@@ -856,7 +806,58 @@ include("include/users_right.php");
             newWin.print();
             newWin.close();
         }
+        $(document).on('click','#send_message_btn',function(event){
+            event.preventDefault(); 
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+            var countText = "You have selected " + selectedCustomers.length + " customers.";
+            $("#selectedCustomerCount").text(countText);
+            $('#sendMessageModal').modal('show'); 
 
+        });
+        $(document).on('click','button[name="send_message_btn"]',function(e){
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+            
+            e.preventDefault(); 
+                $.ajax({
+                url: 'include/message_server.php?bulk_message=true',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    /*sending the array of customer IDs*/ 
+                    customer_ids: selectedCustomers, 
+                    message: $("#message").val(),
+                },
+                success: function(response) {
+                   if (response.success) {
+                       toastr.success(response.message);
+                       $('#sendMessageModal').modal('hide');
+                       $('#customers_table').DataTable().ajax.reload();
+                   }
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    alert("There was an error sending the message.");
+                }
+            });
+        });
+        $('select[name="message_template"]').on('change', function() {
+            var name=$(this).val();
+            var currentMsgTemp="0";
+            $.ajax({
+                type:'POST',
+                data:{name:name,currentMsgTemp:currentMsgTemp},
+                url:'include/message.php',
+                success:function(response){
+                    $("#message").val(response);
+                }
+            });
+        });
 
     </script>
 </body>

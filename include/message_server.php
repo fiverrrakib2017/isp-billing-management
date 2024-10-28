@@ -338,6 +338,92 @@ if (isset($_GET['send_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     exit;
 
 }
+if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $errors = [];
+
+    $customer_ids = isset($_POST['customer_ids']) ? $_POST['customer_ids'] : []; 
+
+    /* Input sanitize */
+    $message = isset($_POST["message"]) ? trim($_POST["message"]) : ''; 
+    
+    /* Validate data */
+    if (empty($message)) {
+        $errors['message'] = "Message is required.";
+    }
+
+    /* Return errors if validation fails */
+    if (!empty($errors)) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $errors
+        ]);
+        exit;
+    }
+    
+    /* SMS API details */
+    $url = "http://bulksmsbd.net/api/smsapimany";
+    $api_key = "WC1N6AFA4gVRZLtyf8z9";
+    $senderid = "8809617620311";
+
+    /* Prepare data */  
+    $messages = [];
+    foreach ($customer_ids as $customer_id) {
+        $customer_id = trim($customer_id);
+        
+
+        $all_customer = $con->query("SELECT * FROM customers WHERE id = $customer_id");
+        $customer = $all_customer->fetch_assoc();
+
+        if ($customer) {
+            $phone = $customer['mobile'];
+
+            $messages[] = [
+                "to" => $phone,
+                "message" => $message
+            ];
+        } else {
+            $errors[] = "Customer with ID $customer_id not found.";
+        }
+    }
+
+    $messagesJson = json_encode($messages);
+    
+    
+
+    /* Prepare data for SMS API */
+    $data = [
+        "api_key" => $api_key,
+        "senderid" => $senderid,
+        "messages" => $messagesJson
+    ];
+    
+    /* Initialize cURL */
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    /* Execute request */
+    $response = curl_exec($ch);
+    curl_close($ch);
+   
+    $responseData = json_decode($response, true);
+    /*Check response*/ 
+    if (isset($responseData['response_code']) && $responseData['response_code'] == 202) {
+        echo json_encode([
+            'success' => true,
+            'message' => "Messages sent successfully!"
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'error' => $responseData['error_message'] ?: 'An error occurred.'
+        ]);
+    }
+    exit;
+}
+
 
 
 ?>
