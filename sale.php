@@ -84,7 +84,7 @@ include("include/pop_security.php");
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="currentDate" class="form-label">Date</label>
-                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo $date = date('m/d/Y ', time()); ?>" name="date">
+                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo date('Y-m-d'); ?>" name="date">
                                                 </div>
                                             </div>
                                         </div>
@@ -183,10 +183,7 @@ include("include/pop_security.php");
                      </div>
                      <div class="modal-body">
                         <form id="paymentForm">
-                            <div class="form-group mb-2">
-                              <label>Ledger/Sub ledger </label>
-                              <select class="form-select select2" name="sub_ledger" type="text" style="width: 100%;" required></select>
-                           </div>
+                           
                            <div class="form-group mb-2">
                               <label>Total Amount </label>
                               <input readonly class="form-control table_total_amount" name="table_total_amount" type="text">
@@ -445,11 +442,6 @@ include("include/pop_security.php");
                         isValid = false; 
                         return false; 
                     }
-                    else if (field.name === 'sub_ledger' && field.value === '') {
-                        toastr.error("Please select a sub ledger!");
-                        isValid = false;
-                        return false; 
-                    }
                     else if (field.name === 'date' && field.value === '') {
                         toastr.error("Date is required!");
                         isValid = false; 
@@ -490,19 +482,19 @@ include("include/pop_security.php");
 
         $(document).on('click','button[name="finished_btn"]',function(){
             $('#invoiceModal').modal('show');
-            $.ajax({
-                url: "include/transactions_server.php?getLedger",
-                method: 'GET',
-                success: function(response) {
-                    $('select[name="sub_ledger"]').html(response);
-                    $('select[name="sub_ledger"]').select2({
-                        dropdownParent: $('#invoiceModal')
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
+            // $.ajax({
+            //     url: "include/transactions_server.php?getLedger",
+            //     method: 'GET',
+            //     success: function(response) {
+            //         $('select[name="sub_ledger"]').html(response);
+            //         $('select[name="sub_ledger"]').select2({
+            //             dropdownParent: $('#invoiceModal')
+            //         });
+            //     },
+            //     error: function(xhr, status, error) {
+            //         console.log(error);
+            //     }
+            // });
         });
 
        
