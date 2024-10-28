@@ -610,11 +610,17 @@ include("include/users_right.php");
                 "lengthChange":true ,
                 "processing"		: true,
                 "serverSide"		: true,
-                columnDefs: [ {
-                    orderable: false,
+                columnDefs: [ 
+                    {
+                        orderable: false,
                         className: 'select-checkbox',
                         targets:  10,
-                } ],
+                    }
+                ],
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
                 select: {
                     style:    'os',
                     selector: 'td.select-checkbox'
