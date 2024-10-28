@@ -61,10 +61,11 @@ include("include/pop_security.php");
                                                 </div>
                                             </div>
                                             <div class="col">
-                                                <div class="form-group">
-                                                    <label for="currentDate" class="form-label">Date</label>
-                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo $date = date('m/d/Y ', time()); ?>" name="date">
-                                                </div>
+                                            <div class="form-group">
+                                                <label for="currentDate" class="form-label">Date</label>
+                                                <input class="form-control" type="date" id="currentDate" value="<?php echo date('Y-m-d'); ?>" name="date">
+                                            </div>
+
                                             </div>
                                         </div>
                                         <div class="row mb-3">
@@ -131,7 +132,7 @@ include("include/pop_security.php");
                                 </table>
                                 <div class="form-group text-center">
                                     <!-- <button type="button" name="finished_btn"  data-bs-target="#invoiceModal" data-bs-toggle="modal" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button> -->
-                                    <button type="button" name="finished_btn" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button>
+                                    <button type="button" name="finished_btn" class="btn btn-success"><i class="fe fe-dollar"></i> Process</button>
                                 </div>
                             </div>
                         </div>
@@ -157,20 +158,13 @@ include("include/pop_security.php");
                      </div>
                      <div class="modal-body">
                         <form id="paymentForm">
-                           
-                           <div class="form-group mb-2">
-                              <label>Ledger/Sub ledger </label>
-                              <select class="form-select select2" name="sub_ledger" type="text" style="width: 100%;" required>
-
-                              </select>
-                           </div>
                            <div class="form-group mb-2">
                               <label>Total Amount </label>
                               <input readonly class="form-control table_total_amount" name="table_total_amount" type="text" required>
                            </div>
                            <div class="form-group mb-2">
                               <label>Paid Amount </label>
-                              <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" required>
+                              <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" value="00" required>
                            </div>
                            <div class="form-group mb-2">
                               <label> Discount Amount </label>
@@ -178,7 +172,7 @@ include("include/pop_security.php");
                            </div>
                            <div class="form-group mb-2">
                               <label> Due Amount </label>
-                              <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" >
+                              <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" value="00">
                            </div>
                            <div class="form-group mb-2">
                               <label>Type</label>
@@ -362,11 +356,6 @@ include("include/pop_security.php");
                         isValid = false; 
                         return false; 
                     }
-                    else if (field.name === 'sub_ledger' && field.value === '') {
-                        toastr.error("Please select a sub ledger!");
-                        isValid = false;
-                        return false; 
-                    }
                     else if (field.name === 'date' && field.value === '') {
                         toastr.error("Date is required!");
                         isValid = false; 
@@ -407,19 +396,19 @@ include("include/pop_security.php");
         });
         $(document).on('click','button[name="finished_btn"]',function(){
             $('#invoiceModal').modal('show');
-            $.ajax({
-                url: "include/transactions_server.php?getLedger",
-                method: 'GET',
-                success: function(response) {
-                    $('select[name="sub_ledger"]').html(response);
-                    $('select[name="sub_ledger"]').select2({
-                        dropdownParent: $('#invoiceModal')
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
+            // $.ajax({
+            //     url: "include/transactions_server.php?getLedger",
+            //     method: 'GET',
+            //     success: function(response) {
+            //         $('select[name="sub_ledger"]').html(response);
+            //         $('select[name="sub_ledger"]').select2({
+            //             dropdownParent: $('#invoiceModal')
+            //         });
+            //     },
+            //     error: function(xhr, status, error) {
+            //         console.log(error);
+            //     }
+            // });
         });
 
     

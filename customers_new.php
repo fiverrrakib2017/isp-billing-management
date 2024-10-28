@@ -709,24 +709,21 @@ include("include/users_right.php");
 
             /* Add header row */
             csvContent += [
-                'ID', 'Name', 'Package', 'Expired Date', 'User Name', 'Mobile no.', 'POP/Branch', 'Area/Location'
+                '','ID', 'Name', 'Package','Amount', 'Expired Date','Expired Date', 'Username', 'Mobile no.', 'POP/Branch', 'Area/Location'
             ].join(",") + "\n";
-            let selected = false; 
+
+            
+
             /* Add selected data rows */
             $('#customers_table tbody tr').each(function() {
-                let checkbox = $(this).find('input[type="checkbox"]');
-                if (checkbox.is(':checked')) {  
-                    let row = [];
-                    $(this).find('td').each(function() {
-                        row.push($(this).text().trim());
-                    });
-                    csvContent += row.join(",") + "\n";
-                }
+                let row = [];
+                $(this).find('td').each(function() {
+                    row.push($(this).text().trim());
+                });
+                csvContent += row.join(",") + "\n";
             });
-            if (!selected) {
-                toastr.error('Please select at least one customer');
-                return; 
-            }
+
+            
             /* Create a link element and simulate click to download the CSV file */
             let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
@@ -736,6 +733,7 @@ include("include/users_right.php");
             link.click();
             document.body.removeChild(link);
         });
+
 
         function printTable() {
             var divToPrint = document.getElementById('customers_table');

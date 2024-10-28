@@ -19,7 +19,7 @@ class Base_invoivce{
             'total_paid' => $data['table_paid_amount'] ?? null,
             'note' => $data['note'] ?? '',
             'status' => $data['table_status'] ?? '0',
-            'sub_ledger' => $data['sub_ledger'] ?? '0',
+            // 'sub_ledger' => $data['sub_ledger'] ?? '0',
 
             'product_ids' => $data['table_product_id'] ?? [],
             'qtys' => $data['table_qty'] ?? [],
@@ -28,26 +28,6 @@ class Base_invoivce{
         ]; 
     }
     protected function insert_invoice($table,$validator){
-
-        if ($table=="purchase" || $table=="sales") {
-            /* Insert data into `ledger_transaction ` table */
-            $sub_ledger = $validator['sub_ledger'];
-            if ($allSubLedger=self::$con->query("SELECT * FROM legder_sub WHERE id=$sub_ledger")) {
-                while ($rwos=$allSubLedger->fetch_array()) {
-                    $ledger_ID=$rwos['ledger_id'];
-                }
-            }
-            if ($getMasterLdg=self::$con->query("SELECT * FROM ledger WHERE id=$ledger_ID")) {
-                while ($rwos=$getMasterLdg->fetch_array()) {
-                    $mstr_ledger_id=$rwos['mstr_ledger_id'];
-                }
-            }
-             self::$con->query("INSERT INTO ledger_transactions (user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) 
-            VALUES ('".$validator['usr_id']."', '".$mstr_ledger_id."', '".$ledger_ID."', '".$sub_ledger."', '1', '".$validator['sub_total']."', '".$validator['sub_total']."', '1', '".$validator['note']."', '".$validator['date']."')");
-
-            
-        }
-
          $sql = "INSERT INTO $table (usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = self::$con->prepare($sql);
 
@@ -88,13 +68,41 @@ class Base_invoivce{
             $total_price = $validator['total_prices'][$index];
 
 
-            if ($table=="purchase_details") {
-                /*If Purchase quantity will be updated*/
-                self::$con->query("UPDATE products SET qty = qty + $qty WHERE id = $product_id");
+            if ($table=="purchase_details" &&  $validator['status']=='1') {
+               $_all=self::$con->query("SELECT * FROM products WHERE id = $product_id");
+               while($rows=$_all->fetch_array()){
+                   $sub_ledger=$rows['purchase_ac'];
+                   if ($allSubLedger=self::$con->query("SELECT * FROM legder_sub WHERE id=$sub_ledger")) {
+                        while ($rwos=$allSubLedger->fetch_array()) {
+                            $ledger_ID=$rwos['ledger_id'];
+                        }
+                    }
+                    if ($getMasterLdg=self::$con->query("SELECT * FROM ledger WHERE id=$ledger_ID")) {
+                        while ($rwos=$getMasterLdg->fetch_array()) {
+                            $mstr_ledger_id=$rwos['mstr_ledger_id'];
+                        }
+                    }
+                    self::$con->query("INSERT INTO ledger_transactions (user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) 
+                    VALUES ('".$validator['usr_id']."', '".$mstr_ledger_id."', '".$ledger_ID."', '".$sub_ledger."', '".$qty."', '".$price."', '".$total_price."', '1', '".$validator['note']."', '".$validator['date']."')");
+               }
             } 
-            if ($table == "sales_details") {
-                /*If Sales quantity will be updated*/
-                return  self::$con->query("UPDATE products SET qty = qty - $qty WHERE id = $product_id");
+            if ($table == "sales_details" &&  $validator['status']=='1') {
+                $_all=self::$con->query("SELECT * FROM products WHERE id = $product_id");
+                while($rows=$_all->fetch_array()){
+                   $sub_ledger=$rows['sales_ac'];
+                   if ($allSubLedger=self::$con->query("SELECT * FROM legder_sub WHERE id=$sub_ledger")) {
+                        while ($rwos=$allSubLedger->fetch_array()) {
+                            $ledger_ID=$rwos['ledger_id'];
+                        }
+                    }
+                    if ($getMasterLdg=self::$con->query("SELECT * FROM ledger WHERE id=$ledger_ID")) {
+                        while ($rwos=$getMasterLdg->fetch_array()) {
+                            $mstr_ledger_id=$rwos['mstr_ledger_id'];
+                        }
+                    }
+                    self::$con->query("INSERT INTO ledger_transactions (user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) 
+                    VALUES ('".$validator['usr_id']."', '".$mstr_ledger_id."', '".$ledger_ID."', '".$sub_ledger."', '".$qty."', '".$price."', '".$total_price."', '1', '".$validator['note']."', '".$validator['date']."')");
+               }
             }
 
             $details_stmt->bind_param("iiiii", $invoice_id, $product_id, $qty, $price, $total_price);
@@ -127,7 +135,7 @@ class Base_invoivce{
          
     }
     protected function  request_delete_invoice_details($table,$invoice_id){
-         self::$con->query("DELETE FROM $table WHERE invoice_id = $invoice_id");
+        self::$con->query("DELETE FROM $table WHERE invoice_id = $invoice_id");
     }
 }
 
