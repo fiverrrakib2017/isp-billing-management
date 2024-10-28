@@ -81,23 +81,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['check_product_qty'])) 
     $product_id = $_POST['product_id'];
     $requested_qty = $_POST['qty'];
 
-    $query = "SELECT qty FROM products WHERE id = ?";
+    $query = "SELECT 
+            IFNULL(purchase_qty.total_purchase_qty, 0) - IFNULL(sale_qty.total_sale_qty, 0) AS current_qty
+        FROM 
+            products p
+        LEFT JOIN 
+            (SELECT product_id, SUM(qty) AS total_purchase_qty 
+             FROM purchase_details 
+             GROUP BY product_id) AS purchase_qty 
+            ON p.id = purchase_qty.product_id
+        LEFT JOIN 
+            (SELECT product_id, SUM(qty) AS total_sale_qty 
+             FROM sales_details 
+             GROUP BY product_id) AS sale_qty 
+            ON p.id = sale_qty.product_id
+        WHERE 
+            p.id = ?
+    ";
+
     $stmt = $con->prepare($query);
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    $product = $result->fetch_assoc();
-    if ($product) {
-        $available_qty = $product['qty'];
-        if ($requested_qty>=$available_qty) {
-            //1800 > 3612
-            echo json_encode(['success' => false, 'message' => 'Not enough stock available.']);
+    $product_data = $result->fetch_assoc();
+
+    if ($product_data) {
+        $current_qty = $product_data['current_qty'];
+        
+        if ($current_qty >= $requested_qty) {
+            $response = array("success" => true, "message" => "Product is available");
         } else {
-            echo json_encode(['success' => true, 'message' => 'Sufficient stock available']);
+            $response = array("success" => false, "message" => "Product is not available");
         }
     } else {
-        echo json_encode(['success' => false]);
+        $response = array("success" => false, "message" => "Product not found");
     }
+
+    echo json_encode($response);
 }
+
 
 ?>
