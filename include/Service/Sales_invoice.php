@@ -16,10 +16,10 @@ class Sales_invoice extends Base_invoivce  implements InvoiceInterface{
 
         try {
             /* Insert data into `sales` table */
-           $invoice_id= self::insert_invoice('sales',$validator); 
+           $return_data= self::insert_invoice('sales',$validator); 
 
             /* Insert data into `sales_details` table */
-            self::insert_invoice_details('sales_details', $invoice_id, $validator);
+            self::insert_invoice_details('sales_details', $return_data['invoice_id'], $validator, $return_data['transaction_number']);
 
             /* Commit transaction */
              self::$con->commit();

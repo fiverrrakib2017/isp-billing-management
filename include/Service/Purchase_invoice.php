@@ -15,7 +15,7 @@ class Purchase_invoice extends Base_invoivce  implements InvoiceInterface{
 
         try {
             /* Insert data into `purchase` table */
-           $return_data= self::insert_invoice('purchase',$validator , self::get_transaction_number()); 
+           $return_data= self::insert_invoice('purchase',$validator); 
            
             /* Insert data into `purchase_details` table */
             self::insert_invoice_details('purchase_details', $return_data['invoice_id'], $validator , $return_data['transaction_number']);
@@ -43,14 +43,14 @@ class Purchase_invoice extends Base_invoivce  implements InvoiceInterface{
         
             try {
                 /* Update data in `purchase` table */
-                self::request_update_invoice('purchase',$invoice_id,$validator); 
-               
+                self::request_update_invoice('purchase',$invoice_id,$validator);
+                
                 /* Delete old details */
                self::request_delete_invoice_details('purchase_details',$invoice_id); 
               
                 /* Insert updated details */
                 self::insert_invoice_details('purchase_details',$invoice_id,$validator); 
-        
+                
                 /* Commit transaction */
                 self::$con->commit();
                 return ['success'=>true, 'message'=>'Invoice updated successfully.'];
@@ -63,11 +63,7 @@ class Purchase_invoice extends Base_invoivce  implements InvoiceInterface{
     public static function delete_invoice($id){
         /*Implementation for delete sales invoice*/
     } 
-    public static function get_transaction_number(){
-        /*Implementation for get transaction number*/
-        $transaction_number= "TRANSID-".strtoupper(uniqid());
-        return $transaction_number;
-    }
+    
 }
 
 

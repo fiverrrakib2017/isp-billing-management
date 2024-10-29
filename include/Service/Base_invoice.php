@@ -27,8 +27,8 @@ class Base_invoivce{
             'total_prices' => $data['table_total_price'] ?? []
         ]; 
     }
-    protected function insert_invoice($table,$validator,$transaction_number){
-        
+    protected function insert_invoice($table,$validator){
+        $transaction_number=self::get_transaction_number();
          $sql = "INSERT INTO $table (transaction_number,usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = self::$con->prepare($sql);
 
@@ -37,7 +37,7 @@ class Base_invoivce{
         }
 
         $stmt->bind_param("siisssssiss", 
-            $transaction_number,
+           $transaction_number,
             $validator['usr_id'], 
             $validator['client_id'], 
             $validator['date'], 
@@ -60,13 +60,27 @@ class Base_invoivce{
         ];
     }
     protected function insert_invoice_details($table, $invoice_id, $validator,$transaction_number=NULL){
+        
+        /********************Get Transaction Number ***********************/
+        if (is_null($transaction_number)) {
+            $transaction_table = $table === "purchase_details" ? "purchase" : "sales";
+            
+            $get_transaction_number = self::$con->query("SELECT transaction_number FROM `$transaction_table` WHERE id = $invoice_id");
+            if ($get_transaction_number && $row = $get_transaction_number->fetch_assoc()) {
+                $transaction_number = $row['transaction_number'];
+            } else {
+                throw new Exception("Transaction number not found for invoice ID: $invoice_id");
+            }
+        }
+        
+        /******************** Insert Details ***********************/
         $details_sql = "INSERT INTO $table (transaction_number,invoice_id, product_id, qty, value, total) VALUES (?,?, ?, ?, ?, ?)";
         $details_stmt =self::$con->prepare($details_sql);
 
         if (!$details_stmt) {
             throw new Exception('Prepare statement for details failed: ' . self::$con->error);
         }
-
+       
         foreach ($validator['product_ids'] as $index => $product_id) {
             $qty = $validator['qtys'][$index];
             $price = $validator['prices'][$index];
@@ -109,7 +123,7 @@ class Base_invoivce{
                     VALUES ('".$transaction_number."','".$validator['usr_id']."', '".$mstr_ledger_id."', '".$ledger_ID."', '".$sub_ledger."', '".$qty."', '".$price."', '".$total_price."', '1', '".$validator['note']."', '".$validator['date']."')");
                }
             }
-
+            
             $details_stmt->bind_param("siiiii", $transaction_number,$invoice_id, $product_id, $qty, $price, $total_price);
             
             if (!$details_stmt->execute()) {
@@ -140,7 +154,21 @@ class Base_invoivce{
          
     }
     protected function  request_delete_invoice_details($table,$invoice_id){
+
+        $get_transaction_number=self::$con->query("SELECT transaction_number FROM $table WHERE invoice_id = $invoice_id");
+        while($rows=$get_transaction_number->fetch_array()){
+            $transaction_number=$rows['transaction_number'];
+        }
+        if (!empty($transaction_number)) {
+            self::$con->query("DELETE FROM ledger_transactions WHERE transaction_number = '$transaction_number'");
+        }
         self::$con->query("DELETE FROM $table WHERE invoice_id = $invoice_id");
+    }
+
+    public static function get_transaction_number(){
+        /*Implementation for get transaction number*/
+        $transaction_number= "TRANSID-".strtoupper(uniqid());
+        return $transaction_number;
     }
 }
 
