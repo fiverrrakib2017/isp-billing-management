@@ -15,11 +15,10 @@ class Purchase_invoice extends Base_invoivce  implements InvoiceInterface{
 
         try {
             /* Insert data into `purchase` table */
-           $invoice_id= self::insert_invoice('purchase',$validator); 
-
-            
+           $return_data= self::insert_invoice('purchase',$validator , self::get_transaction_number()); 
+           
             /* Insert data into `purchase_details` table */
-            self::insert_invoice_details('purchase_details', $invoice_id, $validator);
+            self::insert_invoice_details('purchase_details', $return_data['invoice_id'], $validator , $return_data['transaction_number']);
 
             /* Commit transaction */
              self::$con->commit();
@@ -64,6 +63,11 @@ class Purchase_invoice extends Base_invoivce  implements InvoiceInterface{
     public static function delete_invoice($id){
         /*Implementation for delete sales invoice*/
     } 
+    public static function get_transaction_number(){
+        /*Implementation for get transaction number*/
+        $transaction_number= "TRANSID-".strtoupper(uniqid());
+        return $transaction_number;
+    }
 }
 
 

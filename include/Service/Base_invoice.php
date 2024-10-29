@@ -27,15 +27,17 @@ class Base_invoivce{
             'total_prices' => $data['table_total_price'] ?? []
         ]; 
     }
-    protected function insert_invoice($table,$validator){
-         $sql = "INSERT INTO $table (usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    protected function insert_invoice($table,$validator,$transaction_number){
+        
+         $sql = "INSERT INTO $table (transaction_number,usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = self::$con->prepare($sql);
 
         if (!$stmt) {
             throw new Exception('Prepare statement failed: ' . self::$con->error);
         }
 
-        $stmt->bind_param("iisssssiss", 
+        $stmt->bind_param("siisssssiss", 
+            $transaction_number,
             $validator['usr_id'], 
             $validator['client_id'], 
             $validator['date'], 
@@ -52,10 +54,13 @@ class Base_invoivce{
             throw new Exception('Execute statement failed: ' . $stmt->error);
         }
 
-        return self::$con->insert_id;
+        return [
+            'invoice_id' => self::$con->insert_id,
+            'transaction_number' => $transaction_number
+        ];
     }
-    protected function insert_invoice_details($table, $invoice_id, $validator){
-        $details_sql = "INSERT INTO $table (invoice_id, product_id, qty, value, total) VALUES (?, ?, ?, ?, ?)";
+    protected function insert_invoice_details($table, $invoice_id, $validator,$transaction_number=NULL){
+        $details_sql = "INSERT INTO $table (transaction_number,invoice_id, product_id, qty, value, total) VALUES (?,?, ?, ?, ?, ?)";
         $details_stmt =self::$con->prepare($details_sql);
 
         if (!$details_stmt) {
@@ -82,8 +87,8 @@ class Base_invoivce{
                             $mstr_ledger_id=$rwos['mstr_ledger_id'];
                         }
                     }
-                    self::$con->query("INSERT INTO ledger_transactions (user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) 
-                    VALUES ('".$validator['usr_id']."', '".$mstr_ledger_id."', '".$ledger_ID."', '".$sub_ledger."', '".$qty."', '".$price."', '".$total_price."', '1', '".$validator['note']."', '".$validator['date']."')");
+                    self::$con->query("INSERT INTO ledger_transactions (transaction_number,user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) 
+                    VALUES ('".$transaction_number."','".$validator['usr_id']."', '".$mstr_ledger_id."', '".$ledger_ID."', '".$sub_ledger."', '".$qty."', '".$price."', '".$total_price."', '1', '".$validator['note']."', '".$validator['date']."')");
                }
             } 
             if ($table == "sales_details" &&  $validator['status']=='1') {
@@ -100,12 +105,12 @@ class Base_invoivce{
                             $mstr_ledger_id=$rwos['mstr_ledger_id'];
                         }
                     }
-                    self::$con->query("INSERT INTO ledger_transactions (user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) 
-                    VALUES ('".$validator['usr_id']."', '".$mstr_ledger_id."', '".$ledger_ID."', '".$sub_ledger."', '".$qty."', '".$price."', '".$total_price."', '1', '".$validator['note']."', '".$validator['date']."')");
+                    self::$con->query("INSERT INTO ledger_transactions (transaction_number,user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) 
+                    VALUES ('".$transaction_number."','".$validator['usr_id']."', '".$mstr_ledger_id."', '".$ledger_ID."', '".$sub_ledger."', '".$qty."', '".$price."', '".$total_price."', '1', '".$validator['note']."', '".$validator['date']."')");
                }
             }
 
-            $details_stmt->bind_param("iiiii", $invoice_id, $product_id, $qty, $price, $total_price);
+            $details_stmt->bind_param("siiiii", $transaction_number,$invoice_id, $product_id, $qty, $price, $total_price);
             
             if (!$details_stmt->execute()) {
                 throw new Exception('Execute statement for details failed: ' . $details_stmt->error);
