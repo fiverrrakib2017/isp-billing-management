@@ -170,6 +170,28 @@ class Base_invoivce{
         $transaction_number= "TRANSID-".strtoupper(uniqid());
         return $transaction_number;
     }
+    public static function delete($table, $invoice_id) {
+        if (!empty($invoice_id) && !empty($table) && is_numeric($invoice_id)) {
+            if ($table == "sales") {
+                $get_transaction_number_result = self::$con->query("SELECT transaction_number FROM sales WHERE id = $invoice_id");
+                if ($get_transaction_number_result && $row = $get_transaction_number_result->fetch_assoc()) {
+                    $transaction_number = $row['transaction_number'];
+                    self::$con->query("DELETE FROM ledger_transactions WHERE transaction_number = '$transaction_number'");
+                    self::$con->query("DELETE FROM sales_details WHERE transaction_number = '$transaction_number'");
+                    self::$con->query("DELETE FROM sales WHERE id = $invoice_id");
+                }
+            } elseif ($table == "purchase") {
+                $get_transaction_number_result = self::$con->query("SELECT transaction_number FROM purchase WHERE id = $invoice_id");
+                if ($get_transaction_number_result && $row = $get_transaction_number_result->fetch_assoc()) {
+                    $transaction_number = $row['transaction_number'];
+                    self::$con->query("DELETE FROM ledger_transactions WHERE transaction_number = '$transaction_number'");
+                    self::$con->query("DELETE FROM purchase_details WHERE transaction_number = '$transaction_number'");
+                    self::$con->query("DELETE FROM purchase WHERE id = $invoice_id");
+                }
+            }
+        }
+    }
+    
 }
 
 

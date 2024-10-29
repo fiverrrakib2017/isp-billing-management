@@ -60,8 +60,9 @@ class Purchase_invoice extends Base_invoivce  implements InvoiceInterface{
                 return  ['success' => false, 'message' => $e->getMessage()];
             }
         }
-    public static function delete_invoice($id){
-        /*Implementation for delete sales invoice*/
+    public static function delete_invoice($invoice_id){
+        self::delete('purchase',$invoice_id);
+        return ['success'=>true, 'message'=>'Deleted successfully.'];
     } 
     
 }

@@ -142,3 +142,10 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $__response=Sales_invoice::update_invoice($invoice_id,$_POST);
     echo json_encode($__response);
 }
+
+if (isset($_GET['delete_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    new Sales_invoice($con); 
+    $invoice_id = intval($_GET['invoice_id']);
+    $__response=Sales_invoice::delete_invoice($invoice_id);
+    echo json_encode($__response);
+}

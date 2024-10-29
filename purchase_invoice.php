@@ -108,49 +108,7 @@ ini_set('display_errors', 1);
                                                 </tr>
                                             </thead>
                                             <tbody id="invoice-list">
-                                                <?php
-                                                $sql = "SELECT * FROM purchase ";
-                                                $result = mysqli_query($con, $sql);
-
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                ?>
-
-                                                    <tr>
-                                                        <td><?php echo $rows['id']; ?></td>
-                                                        <td>
-                                                            <?php
-                                                            $client_id = $rows['client_id'];
-                                                            $allSupplierData = $con->query("SELECT * FROM suppliers WHERE id=$client_id ");
-                                                            while ($supplier = $allSupplierData->fetch_array()) {
-                                                                echo $supplier['fullname'] . ' (' . $supplier['company'] . ')';
-                                                            }
-
-                                                            ?>
-                                                        </td>
-                                                        <td><?php echo $rows['sub_total']; ?></td>
-                                                        <td><?php echo $rows['grand_total']; ?></td>
-                                                        <td>
-                                                            <?php
-
-                                                            $date = $rows['date'];
-                                                            $formatted_date = date("d F Y", strtotime($date));
-                                                            echo $formatted_date;
-
-                                                            ?>
-                                                        </td>
-                                                        <td>
-
-                                                            <a class="btn-sm btn btn-primary" href="purchase_invoice_edit.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-
-                                                            <a class="btn-sm btn btn-success" href="invoice/purchase_inv_view.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i></a>
-
-                                                            <a class="btn-sm btn btn-danger"  onclick=" return confirm('Are You Sure');" href="purchase_inv_delete.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-trash"></i></a>
-
-                                                        </td>
-
-                                                    </tr>
-                                                <?php } ?>
+                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -238,6 +196,31 @@ ini_set('display_errors', 1);
                     }
                 });
             }
+
+            /*Delete Script*/
+            $(document).on('click',"button[name='delete_button']",function(){
+                var id=$(this).data('id');
+                if (confirm("Are you sure you want to delete this item?")) {
+                   
+                    $.ajax({
+                        type: 'POST', 
+                        url: 'include/purchase_server.php',
+                        data: { delete_invoice: true, invoice_id: id }, 
+                        dataType:'json',
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success("Deleted successfully!");
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                            toastr.error("Error deleting item! " + error);
+                        }
+                    });
+                }
+            });
             
         });
     </script>
