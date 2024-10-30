@@ -1,11 +1,23 @@
 <?php
-session_start();
+if (empty($_SESSION)) {
+  session_start();
+}
 include "db_connect.php";
-// include"users_right.php";
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
+if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD']=='POST') {
+  $selectedCustomers = json_decode($_POST['selectedCustomers'], true);
+
+  foreach ($selectedCustomers as $customer_id) {
+    $get_all_customer=$con->query("SELECT * FROM customers WHERE id=$customer_id");
+    while($rows=$get_all_customer->fetch_array()){
+        $customer_id=$rows['id'];
+        $customer_expiredate=$rows['expiredate'];
+        $customer_sales_price=$rows['s_price'];
+        $customer_purchase_price=$rows['p_price'];
+        $customer_pop_id=$rows['pop'];
+    }
+  }
+}
 if (isset($_POST['add_recharge_data'])) {
   $customer_id = $_POST['customer_id'];
   $chrg_mnths = $_POST['month'];

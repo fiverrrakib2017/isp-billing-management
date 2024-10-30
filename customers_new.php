@@ -309,11 +309,11 @@ include 'include/users_right.php';
                                         <i class="fas fa-print"></i>&nbsp;Print
                                     </button>
 
-                                    <button type="button" class="btn btn-info mb-2" name="Recharge_btn">
+                                    <button type="button" class="btn btn-info mb-2" name="recharge_btn">
                                         <i class="mdi mdi-battery-charging-20"></i>&nbsp;Recharge
                                     </button>
 
-                                    <button type="button" class="btn btn-danger mb-2" name="Recharge_btn">
+                                    <button type="button" class="btn btn-danger mb-2" name="">
                                         <i class="mdi mdi-cash-multiple"></i>&nbsp;Cash Received
                                     </button>
 
@@ -346,27 +346,6 @@ include 'include/users_right.php';
     </div>
     <!-- END layout-wrapper -->
 
-    <div id="deleteModal" class="modal fade">
-        <div class="modal-dialog modal-confirm">
-            <div class="modal-content">
-                <div class="modal-header flex-column">
-                    <div class="icon-box">
-                        <i class="fa fa-trash"></i>
-                    </div>
-                    <h4 class="modal-title w-100">Are you sure?</h4>
-                    <h4 class="modal-title w-100 " id="DeleteId">1</h4>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="True">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p>Do you really want to delete these records? This process cannot be undone.</p>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="DeleteConfirm">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Modal for Send Message -->
     <div class="modal fade bs-example-modal-lg" id="sendMessageModal" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -405,6 +384,63 @@ include 'include/users_right.php';
                                 Message</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for Recharge -->
+    <div class="modal fade" id="rechargeModal" tabindex="-1" role="dialog" aria-labelledby="ComplainModalCenterTitle" aria-hidden="true" >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                        <h5 class="modal-title">
+                           Recharge 
+                        </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <div class="alert alert-info" id="selectedCustomerCount"></div>
+                <form id="recharge-form" method="POST">
+                    <div id="holders">
+                        <div class="form-group mb-1">
+                            <label>Month</label>
+                            <select id="month" class="form-select" name='month'>
+                            <option value="">Select</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group mb-1 ">
+                        <label>Ref No.:</label>
+                        <input id="RefNo" type="text" class="form-control" name="RefNo" placeholder="Enter Ref No"/>
+                    </div>
+                    <div class="form-group mb-1">
+                        <label>Transaction Type:</label>
+                        <select id="tra_type" name="tra_type" class="form-select">
+                            <option>---Select---</option>
+                            <option value="1">Cash</option>
+                            <option value="0">On Credit</option>
+                            <option value="2">Bkash</option>
+                            <option value="3">Nagad</option>
+                            <option value="4">Due Payment</option>
+                        </select>
+                    </div>
+                </form>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                <button  type="button" name="recharge_submit_btn" class="btn btn-success">Recharge Now</button>
                 </div>
             </div>
         </div>
@@ -934,6 +970,45 @@ include 'include/users_right.php';
                 url: 'include/message.php',
                 success: function(response) {
                     $("#message").val(response);
+                }
+            });
+        });
+        $(document).on('click','button[name="recharge_btn"]',function(e){
+            event.preventDefault();
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+            if (selectedCustomers.length==0) {
+                toastr.error("Please select at least one customer to recharge.");
+                return false;
+            }
+            var countText = "You have selected " + selectedCustomers.length + " customers.";
+            $("#rechargeModal #selectedCustomerCount").text(countText);
+            $('#rechargeModal').modal('show');
+        });
+        $(document).on('click','button[name="recharge_submit_btn"]',function(e){
+            event.preventDefault();
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+            var data = $('#recharge-form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            $.ajax({
+                url: 'include/customer_recharge_server.php?add_customer_recharge=true',
+                method: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#rechargeModal').modal('hide');
+                        $('#customers_table').DataTable().ajax.reload();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    alert("There was an error sending the message.");
                 }
             });
         });
