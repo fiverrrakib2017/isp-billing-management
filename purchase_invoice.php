@@ -210,6 +210,9 @@ ini_set('display_errors', 1);
                         success: function(response) {
                             if (response.success) {
                                 toastr.success("Deleted successfully!");
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
                             } else {
                                 toastr.error(response.message);
                             }

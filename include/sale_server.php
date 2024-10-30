@@ -46,7 +46,7 @@ if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
 
             echo '<a class="btn-sm btn btn-primary" style="margin-right: 5px;" href="sales_inv_edit.php?clid=' . $rows['id'] . '"><i class="fas fa-edit"></i></a>';
             echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/sales_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
-            echo '<a class="btn-sm btn btn-danger" style="margin-right: 5px;" onclick=" return confirm(\'Are You Sure\');" href="sales_inv_delete.php?clid=' . $rows['id'] . '"><i class="fas fa-trash"></i></a>';
+            echo '<button type="button" name="delete_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-danger" style="margin-right: 5px;"><i class="fas fa-trash"></i></button>';
 
             echo "</td>";
             echo "</tr>";
@@ -143,9 +143,9 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($__response);
 }
 
-if (isset($_GET['delete_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+if (isset($_POST['delete_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     new Sales_invoice($con); 
-    $invoice_id = intval($_GET['invoice_id']);
+    $invoice_id = intval($_POST['invoice_id']);
     $__response=Sales_invoice::delete_invoice($invoice_id);
     echo json_encode($__response);
 }
