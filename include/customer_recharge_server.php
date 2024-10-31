@@ -6,10 +6,27 @@ include "db_connect.php";
 
 if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD']=='POST') {
   $selectedCustomers = json_decode($_POST['selectedCustomers'], true);
-  $chrg_mnths = $_POST['month'];
   $recharge_by = $_SESSION['uid'] ?? 0;
   $RefNo = $_POST['RefNo'];
-  $tra_type = $_POST['tra_type'];
+
+  $errors = []; 
+  $chrg_mnths = isset($_POST["month"]) ? trim($_POST["month"]) : '';
+  $tra_type = isset($_POST["tra_type"]) ? trim($_POST["tra_type"]) : '';
+  /* Validate Filds */
+  if (empty($chrg_mnths) && $chrg_mnths !== '0') {
+    $errors['chrg_mnths'] = "Month is required.";
+  }
+  if (empty($tra_type)) {
+    $errors['tra_type'] = "Transaction Type is required.";
+  }
+  /* If validation errors exist, return errors */
+  if (!empty($errors)) {
+    echo json_encode([
+      'success' => false,
+      'errors' => $errors,
+    ]);
+    exit;
+  }
   /* Get Customer id, pop id,package id*/
   if (count($selectedCustomers) !== 0 && !empty($selectedCustomers)) {
 
@@ -49,22 +66,24 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD']=='POST')
             $package_id=$rows['package'];
             $expiredDate = $rows['expiredate'];
             $username = $rows['username'];
+            $customer_package_price = $rows['price'];
           }
         }
         /****************GET package purchase sales price******************************/ 
         $package_sales_price=NULL;
-        $package_purchase_price=NULL; 
+        $package_purchase_price=$customer_package_price * intval($chrg_mnths); 
+        
         if ($get_all_customer=$con->query("SELECT s_price , p_price from branch_package WHERE id=$package_id")) {
           while($rows=$get_all_customer->fetch_assoc()){
-            $package_sales_price=$rows['s_price'];
-            $package_purchase_price = $rows['p_price'];
+            $package_sales_price = $rows['s_price'];
           }
         }
         if (!empty($package_sales_price) && isset($package_sales_price) && !empty($package_purchase_price) && isset($package_purchase_price)) {
           /***********Ensure sufficient balance ************/ 
           if($package_purchase_price > $_current_pop_balance){
-              echo json_encode(['success' => false, 'message' => 'Please Recharge This POP/Branch.']);
-              continue; 
+              //echo json_encode(['success' => false, 'message' => 'Please Recharge This POP/Branch.']);
+              echo json_encode(['success' => false, 'message' => 'Please Recharge This POP/Branch. <br>This POP Avaiable Balance is '.$_current_pop_balance]);
+              exit; 
           }
         }
        
@@ -274,9 +293,9 @@ if (isset($_POST['customer_temp_recharge'])) {
 
     while ($rows = $cstmr->fetch_array()) {
 		$username = $rows["username"];
-        $expiredDate = $rows["expiredate"];
+      $expiredDate = $rows["expiredate"];
 	    $package = $rows["package"];
-        $package_name = $rows["package_name"];
+      $package_name = $rows["package_name"];
     }
   }
 

@@ -42,87 +42,91 @@ if (isset($_POST['addTransactionData'])) {
 
 
 
-// Generate Report by Master Ledger
-
+/* Generate Report by Master Ledger*/
 if (isset($_POST['getReport'])) {
-    $mstr_ledger_id="";
     $masterLedgerId = $_POST['masterLedger'];
     $fromDate = $_POST['fromDate'];
     $endDate = $_POST['endDate'];
-    $total = 0;
     $increment = 1;
-    echo '<table class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">';
-    echo '<thead><tr><th>No</th><th>Ledger</th><th>Amount</th></tr></thead>';
+
+    echo '<button type="button" onclick="printTable()" class="btn btn-primary"><i class="fas fa-print"></i></button> <br><br>';
+    echo '
+    <table id="reportTable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">';
+    echo '<thead><tr><th>No</th><th class="text-center">Accounts Titles And Explanations</th><th>Amount</th></tr></thead>';
     echo '<tbody>';
 
-    if ($details = $con->query("SELECT * FROM ledger WHERE mstr_ledger_id= $masterLedgerId ")) {
-        while ($rows = $details->fetch_array()) {
-            $mstr_ledger_id = $rows["id"];
-            $ledger_name = $rows["ledger_name"];
+    $ledgerQuery = "SELECT DISTINCT ledger_id FROM ledger_transactions 
+                    WHERE mstr_ledger_id = $masterLedgerId 
+                    AND date BETWEEN '$fromDate' AND '$endDate'";
+    $ledgerResult = $con->query($ledgerQuery);
 
-                    
+    if ($ledgerResult && $ledgerResult->num_rows > 0) {
+        while ($ledgerRow = $ledgerResult->fetch_assoc()) {
+            $ledger_id = $ledgerRow["ledger_id"];
 
-            
-            echo '<tr>
-                    <td>' . $increment++ . '</td>';
+            /* Fetch ledger name from the ledger table*/
+            $ledgerNameQuery = "SELECT ledger_name FROM ledger WHERE id = $ledger_id";
+            $ledgerNameResult = $con->query($ledgerNameQuery);
+            $ledger_name = $ledgerNameResult->fetch_assoc()['ledger_name'] ?? 'N/A';
 
-                    
-?>
+            echo '<tr>';
+            echo '<td>' . $increment++ . '</td>';
+            echo '<td><b>' . $ledger_name . ' </b><br>';
 
+            $ledgerTotal = 0;
 
-<td>
-<?php
-             
-// echo $ledger_name    .'<br>';
-echo '<b>'.$ledger_name.'</b>' .'<br>';
+            /* Fetch sub-ledgers and their amounts from transactions*/
+            $subLedgerQuery = "SELECT sub_ledger_id, 
+                                      SUM(total) AS sub_total, 
+                                      GROUP_CONCAT(note SEPARATOR ', ') AS notes,
+                                      (SELECT item_name FROM legder_sub WHERE id = sub_ledger_id) AS sub_ledger_name 
+                               FROM ledger_transactions 
+                               WHERE ledger_id = $ledger_id 
+                               AND date BETWEEN '$fromDate' AND '$endDate' 
+                               GROUP BY sub_ledger_id";
+            $subLedgerResult = $con->query($subLedgerQuery);
 
-                        if ($allLedger = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$mstr_ledger_id'")) {
-                        while ($rowss = $allLedger->fetch_array()) {
-                            $id=$rowss['id'];
-                            echo "&nbsp&nbsp&nbsp&nbsp&nbsp". $item_name = $rowss['item_name'] .'-';
-                            
+            if ($subLedgerResult && $subLedgerResult->num_rows > 0) {
+                while ($subLedgerRow = $subLedgerResult->fetch_assoc()) {
+                    $sub_ledger_name = $subLedgerRow['sub_ledger_name'] ?? 'N/A';
+                    $sub_total = $subLedgerRow['sub_total'] ?? 0;
+                    $notes = $subLedgerRow['notes'] ?? '';
 
-
-// Total Sum Qeuery would be heres
-if($allTran =$con->query("SELECT SUM(total)as totalPayment FROM `ledger_transactions` WHERE `sub_ledger_id`=$id  AND `date` BETWEEN '$fromDate' AND '$endDate';")){
-    while($rowpp=$allTran->fetch_array()){
-        echo '<span style=float:right>'.$rowpp['totalPayment'].'</span><br>';
-       
-    }
-}
-
-
-
-
-
-                        }
-                        
+                    /* Check if the date is today to show notes*/
+                    if (date('Y-m-d') === date('Y-m-d', strtotime($fromDate))) {
+                        echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $sub_ledger_name . ' - <span style="float:right">' . round($sub_total, 2) . '</span> ' . ($notes ? '(' . $notes . ')' : '') . '<br>';
+                    } else {
+                        echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $sub_ledger_name . ' - <span style="float:right">' . round($sub_total, 2) . '</span><br>';
                     }
-?>
-</td>
-<?php
-                    
-                   
-                   echo '</tr>';
 
-          
+                    $ledgerTotal += $sub_total;
+                }
+            }
 
-
-
+            echo '</td>';
+            echo '<td>' . round($ledgerTotal, 2) . '</td>';
+            echo '</tr>';
         }
+    } else {
+        echo '<tr><td colspan="3">No records found.</td></tr>';
     }
 
-    
-    // Total Amount
-if($TotalLdgramt =$con->query("SELECT SUM(total)as totalldgramount FROM ledger_transactions WHERE mstr_ledger_id='$masterLedgerId' AND date BETWEEN '$fromDate' AND '$endDate';")){
-    while($rowttlpp=$TotalLdgramt->fetch_array()){
-        echo '<tr><td></td><td><span style=float:right>'.$rowttlpp['totalldgramount'].'</span></td></tr>';
-       
-    }
+    $grandTotalQuery = "SELECT SUM(total) AS grandTotal FROM ledger_transactions 
+                        WHERE mstr_ledger_id = $masterLedgerId 
+                        AND date BETWEEN '$fromDate' AND '$endDate'";
+    $grandTotalResult = $con->query($grandTotalQuery);
+    $grandTotal = $grandTotalResult->fetch_assoc()['grandTotal'] ?? 0;
+
+    echo '<tr><td colspan="2" style="text-align: right;"><b>Total:</b></td>';
+    echo '<td><b>' . round($grandTotal, 2) . '</b></td></tr>';
+
+    echo '</tbody></table>';
+
+    $con->close();
 }
-/**/
-    echo '</table>';
-}
+
+
+
 if (isset($_GET['show'])) {
     $total = 0;
     $increment = 1;
@@ -234,3 +238,19 @@ if (isset($_POST['addSubLedgerData'])) {
         echo 0;
     }
 }
+
+
+?>
+
+
+
+<script>
+function printTable() {
+    var printContents = document.getElementById("reportTable").outerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    window.print();
+    document.body.innerHTML = originalContents;
+}
+</script>

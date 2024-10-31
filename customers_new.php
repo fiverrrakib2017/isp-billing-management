@@ -806,7 +806,7 @@ include 'include/users_right.php';
             var area_filter_result = $('.area_filter').val() == null ? '' : $('.area_filter').val();
 
             // table.columns(10).search(area_filter_result).draw();
-            
+
             table.ajax.reload(null, false);
 
         });
@@ -994,6 +994,10 @@ include 'include/users_right.php';
         });
         $(document).on('click','button[name="recharge_submit_btn"]',function(e){
             event.preventDefault();
+            var $button = $(this);
+            $button.prop('disabled', true); 
+            $button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
+            
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
@@ -1009,11 +1013,24 @@ include 'include/users_right.php';
                         toastr.success(response.message);
                         $('#rechargeModal').modal('hide');
                         $('#customers_table').DataTable().ajax.reload();
+                    }else if (response.success==false) {
+                        if (response.errors) {
+                            $.each(response.errors, function(key, error) {
+                                toastr.error(error);
+                            });
+                        } else {
+                            toastr.error(response.message);
+                        }
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error("An error occurred: " + error);
                     alert("There was an error sending the message.");
+                },
+                complete: function() {
+                  
+                    $button.prop('disabled', false); 
+                    $button.html('Recharge Now'); 
                 }
             });
         });
