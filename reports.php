@@ -29,24 +29,7 @@ if (isset($_SESSION['uid'])) {
     <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
     <link href="assets/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css">
-    <style type="text/css">
-        /* div#sub_ledgr_table_length {
-            display: none;
-        } */
-
-        /* div#sub_ledgr_table_filter {
-         display: none;
-         } */
-        /* .row {
-            margin-left: 0px !important;
-            margin-right: 0px !important;
-        }
-
-        .vl {
-            border-bottom: 6px solid green;
-            height: 500px;
-        } */
-    </style>
+    
 </head>
 
 <body data-sidebar="dark">

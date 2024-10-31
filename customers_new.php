@@ -738,6 +738,8 @@ include 'include/users_right.php';
                     type: 'GET',
                     data: function(d) {
                         d.status = $('.status_filter').val();
+                        d.pop_id = $('.pop_filter').val();
+                        d.area_id = $('.area_filter').val();
                     },
                 },
                 "drawCallback": function() {
@@ -794,7 +796,8 @@ include 'include/users_right.php';
 
             var pop_filter_result = $('.pop_filter').val() == null ? '' : $('.pop_filter').val();
 
-            table.columns(9).search(pop_filter_result).draw();
+            // table.columns(9).search(pop_filter_result).draw();
+            table.ajax.reload(null, false);
 
         });
         /* Area change event*/
@@ -802,7 +805,9 @@ include 'include/users_right.php';
 
             var area_filter_result = $('.area_filter').val() == null ? '' : $('.area_filter').val();
 
-            table.columns(10).search(area_filter_result).draw();
+            // table.columns(10).search(area_filter_result).draw();
+            
+            table.ajax.reload(null, false);
 
         });
         /* Area change event*/

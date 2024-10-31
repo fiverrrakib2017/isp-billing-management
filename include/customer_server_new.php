@@ -78,6 +78,7 @@
             )
         );
         $condition="";
+
         if (!empty($_SESSION['user_pop'])) {
             $condition = "pop = '" . $_SESSION['user_pop'] . "'";
         } else {
@@ -86,16 +87,17 @@
 
         /* If 'area_id' is provided, */
         if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
-            $condition .= " AND area = '" . $_GET['area_id'] . "'";
+            $condition .= (!empty($condition) ? " AND " : ""). "area = '" . $_GET['area_id'] . "'";
         }
         /* If 'pop_id' is provided, */
         if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
-            $condition .= " AND pop = '" . $_GET['pop_id'] . "'";
+            // $condition .= " AND pop = '" . $_GET['pop_id'] . "'";
+            $condition .= (!empty($condition) ? " AND " : ""). "pop = '" . $_GET['pop_id'] . "'";
         }
         /* If Status is provided, */
         if (isset($_GET['status']) && !empty($_GET['status'])) {
             $status = $_GET['status'];
-
+        
             if ($status == 'expired') {
                 $status = "2";
                 $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
@@ -113,12 +115,11 @@
                                     WHERE radacct.username = customers.username 
                                     AND radacct.acctstoptime IS NULL
                                 )";
-            }elseif($status == 'free') {
-                $condition .= "package = 5"; 
-            }elseif($status == 'unpaid') {
-                $popID=$_SESSION['user_pop'] ?? 1;
-                /* Unpaid customers condition*/
-                    $condition .= (!empty($condition) ? " AND " : "") . "
+            } elseif ($status == 'free') {
+                $condition .= (!empty($condition) ? " AND " : "") . "package = 5"; 
+            } elseif ($status == 'unpaid') {
+                $popID = $_SESSION['user_pop'] ?? 1;
+                $condition .= (!empty($condition) ? " AND " : "") . "
                     EXISTS (
                         SELECT 1 FROM customer_rechrg 
                         WHERE 
@@ -128,8 +129,7 @@
                             AND pop = '$popID'
                     )
                 ";
-            }
-            elseif($status == 'offline') {
+            } elseif ($status == 'offline') {
                 $status = "0";
                 $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
                                 AND NOT EXISTS (
@@ -137,8 +137,7 @@
                                     WHERE radacct.username = customers.username 
                                     AND radacct.acctstoptime IS NOT NULL
                                 )";
-            }
-            else {
+            } else {
                 $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
             }
         }
