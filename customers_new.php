@@ -323,7 +323,7 @@ include 'include/users_right.php';
                                         Import Excel File
                                     </button>
 
-                                    <button type="button" class="btn btn-info mb-2" name="Recharge_btn">
+                                    <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal" data-bs-target="#ticketModal">
                                         <i class="mdi mdi-ticket"></i>&nbsp;Add Ticket
                                     </button>
 
@@ -538,10 +538,13 @@ include 'include/users_right.php';
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
+    <!------------------ Modal Customer Tickets ------------------>
+    <?php require 'modal/tickets_modal.php';?>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <?php include 'script.php'; ?>
+    <script src="js/tickets.js"></script>
     <script type="text/javascript">
         $(document).on('keyup', '#customer_username', function() {
             var customer_username = $("#customer_username").val();
@@ -1323,7 +1326,12 @@ include 'include/users_right.php';
 
                 }
             });
-        });
+        }); 
+        /************************** Add ticket Modal Script **************************/
+        ticket_modal();
+        loadCustomers();
+        ticket_assign();
+        ticket_complain_type();
     </script>
 </body>
 
