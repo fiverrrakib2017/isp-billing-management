@@ -146,4 +146,122 @@
             SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
         );
     }
+
+    if (isset($_GET['change_pop_request']) && !empty($_GET['change_pop_request']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+        $selectedCustomers = json_decode($_POST['selectedCustomers'], true);
+        $updated_by = $_SESSION['uid'] ?? 0;
+       
+        $errors = [];
+        $pop_id = isset($_POST['pop_id']) ? trim($_POST['pop_id']) : '';
+        /* Validate Filds */
+        if (empty($pop_id) && $pop_id !== '0') {
+          $errors['pop_id'] = 'POP/Branch is required.';
+        }
+        /* If validation errors exist, return errors */
+        if (!empty($errors)) {
+            echo json_encode([
+                'success' => false,
+                'errors' => $errors,
+            ]);
+            exit();
+        }
+        /* Get Customer id, pop id,package id*/
+        if (count($selectedCustomers) !== 0 && !empty($selectedCustomers)) {
+            foreach ($selectedCustomers as $customer_id) {
+                if ($get_customer_list = $con->query('SELECT * FROM customers WHERE id=' . $customer_id . ' ')) {
+                    while ($rows = $get_customer_list->fetch_assoc()) {
+                        $customer_id = $rows['id'];
+
+                    }
+                }
+                $con->query("UPDATE customers SET pop = '$pop_id' WHERE id = '$customer_id'");
+            }
+            echo json_encode(['success' => true, 'message' => 'POP/Branch Changed successfully.']);
+            exit();
+        }
+    }
+
+    if (isset($_GET['import_file_data']) && $_SERVER['REQUEST_METHOD']=='POST' && !empty($_FILES['import_file_name']['name']) && $_FILES['import_file_name']['error'] == 0) {
+        // if (isset($_FILES['import_file_name']) && $_FILES['import_file_name']['error'] == 0) {
+        //     $fileName = $_FILES['import_file_name']['tmp_name'];
+    
+        //     if (($handle = fopen($fileName, 'r')) !== false) {
+        //         /*Skip the header row*/ 
+        //         fgetcsv($handle);
+    
+        //         while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+        //             list(
+        //                 $id, $user_type, $fullname, $username, $password, $package, $package_name,
+        //                 $expiredate, $rchg_amount, $paid_amount, $balance_amount, $grace_days,
+        //                 $grace_expired, $status, $mobile, $address, $pop, $area, $createdate,
+        //                 $profile_pic, $nid, $con_charge, $price, $remarks
+        //             ) = $data;
+        //             /*Check if record already exists*/ 
+        //             $checkStmt = $con->prepare("SELECT id FROM customers WHERE username = ? OR mobile = ?");
+        //             $checkStmt->bind_param('ss', $username, $mobile);
+        //             $checkStmt->execute();
+        //             $checkStmt->store_result();
+        //             if ($checkStmt->num_rows > 0) {
+        //                 echo json_encode(['success' => false, 'message' => 'Duplicate entry found for username: "'.$username.'" or mobile: "'.$mobile.'"']);
+        //                 exit();
+        //             } else {
+
+        //             }
+        //             exit; 
+        //             /* Prepare and execute the SQL insert statement*/
+        //             $stmt = $con->prepare("INSERT INTO customers (
+        //                 id, user_type, fullname, username, password, package, package_name,
+        //                 expiredate, rchg_amount, paid_amount, balance_amount, grace_days,
+        //                 grace_expired, status, mobile, address, pop, area, createdate,
+        //                 profile_pic, nid, con_charge, price, remarks
+        //             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    
+        //             $stmt->bind_param(
+        //                 'iisssissdddisissssssdsd',
+        //                 $id, $user_type, $fullname, $username, $password, $package, $package_name,
+        //                 $expiredate, $rchg_amount, $paid_amount, $balance_amount, $grace_days,
+        //                 $grace_expired, $status, $mobile, $address, $pop, $area, $createdate,
+        //                 $profile_pic, $nid, $con_charge, $price, $remarks
+        //             );
+    
+        //             if (!$stmt->execute()) {
+        //                 $response['errors'][] = "Error inserting row: " . $stmt->error;
+        //             }
+        //         }
+    
+        //         fclose($handle);
+        //         echo json_encode(['success' => true, 'message' => 'Data imported successfully']);
+        //         exit();
+        //     } else {
+        //         echo json_encode(['success' => false, 'message' => 'Failed to open the file.']);
+        //         exit();
+        //     }
+        // } else {
+        //     echo json_encode(['success' => false, 'message' => 'File upload error.']);
+        //     exit();
+        // }
+        if (isset($_FILES['import_file_name']) && $_FILES['import_file_name']['error'] == 0) {
+            $fileName = $_FILES['import_file_name']['name'];
+            $file_ext = pathinfo($fileName, PATHINFO_EXTENSION);
+            $allowed_ext = ['csv']; 
+            if (in_array($file_ext, $allowed_ext)) {
+                $inputFileNamePath  = $_FILES['import_file_name']['tmp_name'];
+                if (($handle = fopen($inputFileNamePath, 'r')) !== false) {
+                    $count = 0;
+                    while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                        if ($count > 0) { 
+                            print_r($data); 
+                            exit;
+                        } else {
+                            $count = 1; 
+                        }
+                    }
+                }
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'File upload error.']);
+            exit();
+        }
+    } 
+    
 ?>

@@ -316,8 +316,8 @@ include 'include/users_right.php';
                                     <button type="button" class="btn btn-danger mb-2" name="cash_received_btn">
                                         <i class="mdi mdi-cash-multiple"></i>&nbsp;Cash Received
                                     </button>
-
-                                    <button type="button" class="btn btn-success mb-2" name="import_excel">
+                                    
+                                    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#fileImportModal">
                                         <img src="https://img.icons8.com/?size=100&id=117561&format=png&color=000000"
                                             class="img-fluid icon-img" style="height: 20px !important;">
                                         Import Excel File
@@ -327,7 +327,7 @@ include 'include/users_right.php';
                                         <i class="mdi mdi-ticket"></i>&nbsp;Add Ticket
                                     </button>
 
-                                    <button type="button" class="btn btn-success mb-2" name="Recharge_btn">
+                                    <button type="button" class="btn btn-success mb-2" name="pop_change_btn">
                                         <i class="fas fa-angle-double-right"></i>&nbsp;Change POP/Branch
                                     </button>
                                 </div>
@@ -388,7 +388,7 @@ include 'include/users_right.php';
             </div>
         </div>
     </div>
-    <!-- Modal for Recharge -->
+    <!------------------ Modal for Recharge ------------------>
     <div class="modal fade " id="rechargeModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -483,6 +483,58 @@ include 'include/users_right.php';
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     <button type="button" name="cash_received_submit_btn" class="btn btn-success"><i class="mdi mdi-cash"></i> Payment Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--------------------CSV File Import Modal---------------------------->
+    <div class="modal fade " id="fileImportModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                    <i class="mdi mdi-upload"></i>  File Import
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <form id="file_import_form" method="POST">
+                        <div class="form-group mb-2">
+                            <label>Upload Your File:</label>
+                            <input type="file" name="import_file_name" class="form-control" />
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" name="file_upload_submit_btn" class="btn btn-success"><i class="mdi mdi-upload"></i> Upload Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!------------------ Modal for Change Customer POP/Branch ------------------>
+    <div class="modal fade " id="changePopModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                    <i class="mdi mdi-swap-horizontal"></i>  Change POP/Branch
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" id="selectedCustomerCount"></div>
+                    <form id="change_pop_form" method="POST">
+                        <div class="form-group mb-1">
+                            <label>Transfer To POP/Branch</label>
+                            <select type="text" name="pop_id" class="form-select" style="width: 100%;"></select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" name="pop_change_submit_btn" class="btn btn-success"> <i class="mdi mdi-swap-horizontal"></i>  Change POP/Branch</button>
                 </div>
             </div>
         </div>
@@ -1020,6 +1072,7 @@ include 'include/users_right.php';
                 }
             });
         });
+         /************************** Customer Recharage Section **************************/
         $(document).on('click', 'button[name="recharge_btn"]', function(e) {
             event.preventDefault();
             var selectedCustomers = [];
@@ -1099,6 +1152,7 @@ include 'include/users_right.php';
             $("#addPaymentModal #selectedCustomerCount").text(countText);
             $('#addPaymentModal').modal('show');
         });
+        
         $(document).on('click', 'button[name="cash_received_submit_btn"]', function(e) {
             event.preventDefault();
             var $button = $(this);
@@ -1140,6 +1194,133 @@ include 'include/users_right.php';
 
                     $button.prop('disabled', false);
                     $button.html('<i class="mdi mdi-cash"></i>Payment Now');
+                }
+            });
+        });
+        /************************** CSV File Upload **************************/
+        $(document).on('click', 'button[name="file_upload_submit_btn"]', function(e) {
+            event.preventDefault();
+            var $button = $(this);
+            $button.prop('disabled', true);
+            $button.html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
+            );
+            var formData = new FormData($('#file_import_form')[0]);
+            
+            $.ajax({
+                url: 'include/customer_server_new.php?import_file_data=true',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#fileImportModal').modal('hide');
+                        $('#customers_table').DataTable().ajax.reload();
+                    } else {
+                        if (response.errors) {
+                            $.each(response.errors, function(key, error) {
+                                toastr.error(error);
+                            });
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    alert("There was an error sending the message.");
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    $button.html('<i class="mdi mdi-upload"></i> Upload Now');
+                }
+            });
+            
+        });
+        /************************** Charge Customer POP/Branch **************************/
+        $(document).on('click', 'button[name="pop_change_btn"]', function(e) {
+            event.preventDefault();
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+            var countText = "You have selected " + selectedCustomers.length + " customers.";
+            $("#changePopModal #selectedCustomerCount").text(countText);
+            if (selectedCustomers.length == 0) {
+                toastr.error("Please select at least one customer");
+                return false; 
+            }
+            $.ajax({
+                url: 'include/pop_server.php?get_pop_data=1',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success == true) {
+                        var popOptions = '<option value="">--Select POP--</option>';
+
+                        $.each(response.data, function(key, data) {
+                            popOptions += '<option value="' + data.id + '">' + data.pop + '</option>';
+                        });
+
+                        $('select[name="pop_id"]').html(popOptions);
+                        $('#changePopModal').modal('show');
+                        $('#changePopModal').on('shown.bs.modal', function () {
+                            if (!$('select[name="pop_id"]').hasClass("select2-hidden-accessible")) {
+                                $('select[name="pop_id"]').select2({
+                                    dropdownParent: $('#changePopModal')
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        $(document).on('click', 'button[name="pop_change_submit_btn"]', function(e) {
+            event.preventDefault();
+            var $button = $(this);
+            $button.prop('disabled', true);
+            $button.html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
+                );
+
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+            var data = $('#change_pop_form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            $.ajax({
+                url: 'include/customer_server_new.php?change_pop_request=true',
+                method: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#changePopModal').modal('hide');
+                        $('#customers_table').DataTable().ajax.reload();
+                    } else if (response.success == false) {
+                        if (response.errors) {
+                            $.each(response.errors, function(key, error) {
+                                toastr.error(error);
+                            });
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    alert("There was an error sending the message.");
+                },
+                complete: function() {
+
+                    $button.prop('disabled', false);
+                    $button.html('<i class="mdi mdi-swap-horizontal"></i> Change POP/Branch');
+
                 }
             });
         });
