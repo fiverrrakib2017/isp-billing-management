@@ -313,7 +313,7 @@ include 'include/users_right.php';
                                         <i class="mdi mdi-battery-charging-20"></i>&nbsp;Recharge
                                     </button>
 
-                                    <button type="button" class="btn btn-danger mb-2" name="">
+                                    <button type="button" class="btn btn-danger mb-2" name="cash_received_btn">
                                         <i class="mdi mdi-cash-multiple"></i>&nbsp;Cash Received
                                     </button>
 
@@ -389,58 +389,100 @@ include 'include/users_right.php';
         </div>
     </div>
     <!-- Modal for Recharge -->
-    <div class="modal fade " id="rechargeModal" tabindex="-1" role="dialog" aria-hidden="true" >
+    <div class="modal fade " id="rechargeModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                        <h5 class="modal-title">
-                           Recharge 
-                        </h5>
+                    <h5 class="modal-title">
+                        Recharge
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                <div class="alert alert-info" id="selectedCustomerCount"></div>
-                <form id="recharge-form" method="POST">
-                    <div id="holders">
+                    <div class="alert alert-info" id="selectedCustomerCount"></div>
+                    <form id="recharge-form" method="POST">
+                        <div id="holders">
+                            <div class="form-group mb-1">
+                                <label>Month</label>
+                                <select id="month" class="form-select" name='month'>
+                                    <option value="">Select</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group mb-1 ">
+                            <label>Ref No.:</label>
+                            <input id="RefNo" type="text" class="form-control" name="RefNo"
+                                placeholder="Enter Ref No" />
+                        </div>
                         <div class="form-group mb-1">
-                            <label>Month</label>
-                            <select id="month" class="form-select" name='month'>
-                            <option value="">Select</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                            <option value="7">7</option>
-                            <option value="8">8</option>
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
+                            <label>Transaction Type:</label>
+                            <select id="tra_type" name="tra_type" class="form-select">
+                                <option>---Select---</option>
+                                <option value="1">Cash</option>
+                                <option value="0">On Credit</option>
+                                <option value="2">Bkash</option>
+                                <option value="3">Nagad</option>
+                                <option value="4">Due Payment</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="form-group mb-1 ">
-                        <label>Ref No.:</label>
-                        <input id="RefNo" type="text" class="form-control" name="RefNo" placeholder="Enter Ref No"/>
-                    </div>
-                    <div class="form-group mb-1">
-                        <label>Transaction Type:</label>
-                        <select id="tra_type" name="tra_type" class="form-select">
-                            <option>---Select---</option>
-                            <option value="1">Cash</option>
-                            <option value="0">On Credit</option>
-                            <option value="2">Bkash</option>
-                            <option value="3">Nagad</option>
-                            <option value="4">Due Payment</option>
-                        </select>
-                    </div>
-                </form>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                <button  type="button" name="recharge_submit_btn" class="btn btn-success">Recharge Now</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" name="recharge_submit_btn" class="btn btn-success">Recharge Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--------------------Add Payment received Modal---------------------------->
+    <div class="modal fade " id="addPaymentModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Payment Received
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" id="selectedCustomerCount"></div>
+                    <form id="cash_received_form" method="POST">
+                        <div class="form-group mb-2">
+                            <label>Amount:</label>
+                            <input type="text" name="received_amount" placeholder="Enter Your Amount"
+                                class="form-control" required>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Transaction Type:</label>
+                            <select id="received_tra_type" class="form-select" required>
+                                <option>---Select---</option>
+                                <option value="1">Cash</option>
+                                <option value="2">Bkash</option>
+                                <option value="3">Nagad</option>
+                                <option value="4">Bank</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Remarks</label>
+                            <textarea name="received_remarks" class="form-control" placeholder="Enter Remarks"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" name="cash_received_submit_btn" class="btn btn-success"><i class="mdi mdi-cash"></i> Payment Now</button>
                 </div>
             </div>
         </div>
@@ -978,13 +1020,13 @@ include 'include/users_right.php';
                 }
             });
         });
-        $(document).on('click','button[name="recharge_btn"]',function(e){
+        $(document).on('click', 'button[name="recharge_btn"]', function(e) {
             event.preventDefault();
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
             });
-            if (selectedCustomers.length==0) {
+            if (selectedCustomers.length == 0) {
                 toastr.error("Please select at least one customer to recharge.");
                 return false;
             }
@@ -992,12 +1034,15 @@ include 'include/users_right.php';
             $("#rechargeModal #selectedCustomerCount").text(countText);
             $('#rechargeModal').modal('show');
         });
-        $(document).on('click','button[name="recharge_submit_btn"]',function(e){
+
+        $(document).on('click', 'button[name="recharge_submit_btn"]', function(e) {
             event.preventDefault();
             var $button = $(this);
-            $button.prop('disabled', true); 
-            $button.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
-            
+            $button.prop('disabled', true);
+            $button.html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
+                );
+
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
@@ -1013,7 +1058,7 @@ include 'include/users_right.php';
                         toastr.success(response.message);
                         $('#rechargeModal').modal('hide');
                         $('#customers_table').DataTable().ajax.reload();
-                    }else if (response.success==false) {
+                    } else if (response.success == false) {
                         if (response.errors) {
                             $.each(response.errors, function(key, error) {
                                 toastr.error(error);
@@ -1028,9 +1073,73 @@ include 'include/users_right.php';
                     alert("There was an error sending the message.");
                 },
                 complete: function() {
-                  
-                    $button.prop('disabled', false); 
-                    $button.html('Recharge Now'); 
+
+                    $button.prop('disabled', false);
+                    $button.html('Recharge Now');
+                }
+            });
+        });
+        /************************** Cash Received **************************/
+        $(document).on('click', 'button[name="cash_received_btn"]', function(e) {
+            event.preventDefault();
+            var customers = [];
+            $(".checkSingle:checked").each(function() {
+                customers.push($(this).val());
+            });
+            if (customers.length == 0) {
+                toastr.error("Please select at least one customer");
+                return false;
+            }
+            if (customers.length > 1) {
+                toastr.error("Sorry!! You Don't Selected One More");
+                return false;
+            }
+
+            var countText = "You have selected " + customers.length + " customer.";
+            $("#addPaymentModal #selectedCustomerCount").text(countText);
+            $('#addPaymentModal').modal('show');
+        });
+        $(document).on('click', 'button[name="cash_received_submit_btn"]', function(e) {
+            event.preventDefault();
+            var $button = $(this);
+            $button.prop('disabled', true);
+            $button.html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
+                );
+
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+            var data = $('#cash_received_form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            $.ajax({
+                url: 'include/customer_recharge_server.php?cash_received=true',
+                method: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#addPaymentModal').modal('hide');
+                        $('#customers_table').DataTable().ajax.reload();
+                    } else if (response.success == false) {
+                        if (response.errors) {
+                            $.each(response.errors, function(key, error) {
+                                toastr.error(error);
+                            });
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    alert("There was an error sending the message.");
+                },
+                complete: function() {
+
+                    $button.prop('disabled', false);
+                    $button.html('<i class="mdi mdi-cash"></i>Payment Now');
                 }
             });
         });
