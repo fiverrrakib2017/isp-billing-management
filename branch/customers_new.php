@@ -1,8 +1,20 @@
 <?php
-include 'include/security_token.php';
-include 'include/db_connect.php';
-include 'include/pop_security.php';
-include 'include/users_right.php';
+if (!isset($_SESSION)) {
+    session_start();
+}
+$rootPath = $_SERVER['DOCUMENT_ROOT'];  
+
+$db_connect_path = $rootPath . '/include/db_connect.php';  
+$users_right_path = $rootPath . '/include/users_right.php';
+
+if (file_exists($db_connect_path)) {
+    require($db_connect_path);
+}
+
+if (file_exists($users_right_path)) {
+    require($users_right_path);
+}
+
 ?>
 
 <!doctype html>
@@ -12,7 +24,7 @@ include 'include/users_right.php';
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include 'style.php'; ?>
+    <?php include '../style.php'; ?>
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
 </head>
@@ -23,7 +35,7 @@ include 'include/users_right.php';
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php include 'Header.php'; ?>
+        <?php include '../Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -159,18 +171,19 @@ include 'include/users_right.php';
                                                                     <div class="form-group mb-2">
                                                                         <label>POP/Branch</label>
                                                                         <select id="customer_pop" class="form-select">
-                                                                            <option value="">Select Pop/Branch
-                                                                            </option>
-                                                                            <?php
-                                                                            if ($pop = $con->query('SELECT * FROM add_pop ')) {
-                                                                                while ($rows = $pop->fetch_array()) {
-                                                                                    $id = $rows['id'];
-                                                                                    $name = $rows['pop'];
-                                                                            
-                                                                                    echo '<option value="' . $id . '">' . $name . '</option>';
-                                                                                }
-                                                                            }
-                                                                            ?>
+                                                                        <option value="">Select Pop/Branch</option>
+                                                        <?php
+                                                        if ($pop = $con->query("SELECT * FROM add_pop WHERE id=$auth_usr_POP_id")) {
+                                                            while ($rows = $pop->fetch_array()) {
+
+
+                                                                $id = $rows["id"];
+                                                                $name = $rows["pop"];
+
+                                                                echo '<option value="' . $id . '">' . $name . '</option>';
+                                                            }
+                                                        }
+                                                        ?>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -539,18 +552,77 @@ include 'include/users_right.php';
             </div>
         </div>
     </div> 
-    <!------------------ Modal Customer Tickets ------------------>
-    <?php require 'modal/tickets_modal.php';?>
+    <!------------------ Modal for Create Ticket For POP/Branch ------------------>
+    <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header  bg-success">
+                    <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="mdi mdi-account-plus"></i></h5>
+                    
+                </div>
+                <form action="../include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
+                    <div class="modal-body">
+                        <div class="from-group mb-2">
+                            <label>Customer Name</label>
+                            <select class="form-select" name="customer_id" id="ticket_customer_id" style="width: 100%;"></select>
+						</div>
+                        <div class="from-group mb-2">
+                            <label for="">Ticket For</label>
+                            <select id="ticket_for" name="ticket_for" class="form-select" required>
+                                <option value="Home Connection">Home Connection</option>
+                                <option value="POP">POP Support</option>
+                                <option value="Corporate">Corporate</option>
+                                
+                            </select>
+                        </div>
+                        <div class="from-group mb-2">
+                            <label for=""> Complain Type </label>
+                            <select id="ticket_complain_type" name="ticket_complain_type" class="form-select" style="width: 100%;" ></select>
+
+                        </div>
+                        <div class="from-group mb-2">
+                            <label for="">Ticket Priority</label>
+                            <select id="ticket_priority" name="ticket_priority" type="text" class="form-select" style="width: 100%;">
+                            <option >---Select---</option>
+                            <option value="1">Low</option>
+                            <option value="2">Normal</option>
+                            <option value="3">Standard</option>
+                            <option value="4">Medium</option>
+                            <option value="5">High</option>
+                            <option value="6">Very High</option>
+                            </select>
+						</div>
+                        <div class="from-group mb-2">
+                            <label for="">Assigned To</label>
+                            <select id="ticket_assigned" name="assigned" class="form-select" style="width: 100%;"></select>
+                        </div>
+                        <div class="from-group mb-2">
+                            <label for="">Note</label>
+                            <input id="notes" type="text" name="notes" class="form-control" placeholder="Enter Your Note">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
-    <?php include 'script.php'; ?>
-    <script src="js/tickets.js"></script>
+    <?php 
+        $page_title = "Customers";
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
+        echo file_get_contents($url);
+    ?>
     <script type="text/javascript">
         $(document).on('keyup', '#customer_username', function() {
             var customer_username = $("#customer_username").val();
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: "../include/customers_server.php",
                 data: {
                     current_username: customer_username
                 },
@@ -565,7 +637,7 @@ include 'include/users_right.php';
             // alert(pop_id);
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: "../include/customers_server.php",
                 data: {
                     current_pop_name: pop_id
                 },
@@ -579,7 +651,7 @@ include 'include/users_right.php';
             // alert(pop_id);
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: "../include/customers_server.php",
                 data: {
                     pop_name: pop_id,
                     getCustomerPackage: 0
@@ -595,7 +667,7 @@ include 'include/users_right.php';
             // alert(pop_id);
             $.ajax({
                 type: 'POST',
-                url: "include/customers_server.php",
+                url: "../include/customers_server.php",
                 data: {
                     package_id: packageId,
                     pop_id: pop_id,
@@ -662,7 +734,7 @@ include 'include/users_right.php';
                 var addCustomerData = 0;
                 $.ajax({
                     type: 'POST',
-                    url: 'include/customers_server.php',
+                    url: '../include/customers_server.php',
                     data: {
                         addCustomerData: addCustomerData,
                         fullname: fullname,
@@ -707,19 +779,21 @@ include 'include/users_right.php';
 
             function loadPopOptions() {
                 $.ajax({
-                    url: 'include/pop_server.php?get_pop_data=1',
+                    url: '../include/pop_server.php?get_pop_data=1',
                     type: 'GET',
                     dataType: 'json',
                     success: function(response) {
                         if (response.success == true) {
+                            var pop_id = '<?php echo $auth_usr_POP_id;?>'; 
                             var popOptions = '<label style="margin-left: 10px;"> ';
                             popOptions += '<select class="pop_filter">';
                             popOptions += '<option value="">--Select POP--</option>';
 
 
                             $.each(response.data, function(key, data) {
-                                popOptions += '<option value="' + data.id + '">' + data.pop +
-                                    '</option>';
+                                if (data.id == pop_id) {
+                                    popOptions += '<option value="' + data.id + '">' + data.pop + '</option>';
+                                }
                             });
 
                             popOptions += '</select></label>';
@@ -736,7 +810,7 @@ include 'include/users_right.php';
 
             function loadAreaOptions() {
                 $.ajax({
-                    url: 'include/area_server.php?get_area_data=1',
+                    url: '../include/area_server.php?get_area_data=1',
                     type: 'GET',
                     dataType: 'json',
                     success: function(response) {
@@ -787,7 +861,7 @@ include 'include/users_right.php';
             $(document).on('change', '.pop_filter', function() {
                 var pop_id = $(this).val();
                 $.ajax({
-                    url: 'include/area_server.php?get_area_data=1&pop_id=' + pop_id,
+                    url: '../include/area_server.php?get_area_data=1&pop_id=' + pop_id,
                     type: 'GET',
                     dataType: 'json',
                     success: function(response) {
@@ -806,6 +880,8 @@ include 'include/users_right.php';
                 });
             });
             var checkedBoxes = {};
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_server_new.php?get_customers_data=true';
             table = $('#customers_table').DataTable({
                 "searching": true,
                 "paging": true,
@@ -831,7 +907,7 @@ include 'include/users_right.php';
                 },
                 "zeroRecords": "No matching records found",
                 "ajax": {
-                    url: "include/customer_server_new.php?get_customers_data=true",
+                    url: url,
                     type: 'GET',
                     data: function(d) {
                         d.status = $('.status_filter').val();
@@ -1031,15 +1107,16 @@ include 'include/users_right.php';
             $('#sendMessageModal').modal('show');
 
         });
-        $(document).on('click', 'button[name="send_message_btn"]', function(e) {
+        $(document).on('click', 'button[name="send_message_btn"]', function(e) { 
+            e.preventDefault();
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
             });
-
-            e.preventDefault();
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/message_server.php?bulk_message=true';
             $.ajax({
-                url: 'include/message_server.php?bulk_message=true',
+                url: url,
                 method: 'POST',
                 dataType: 'json',
                 data: {
@@ -1063,13 +1140,15 @@ include 'include/users_right.php';
         $('select[name="message_template"]').on('change', function() {
             var name = $(this).val();
             var currentMsgTemp = "0";
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/message.php';
             $.ajax({
                 type: 'POST',
                 data: {
                     name: name,
                     currentMsgTemp: currentMsgTemp
                 },
-                url: 'include/message.php',
+                url: url,
                 success: function(response) {
                     $("#message").val(response);
                 }
@@ -1104,8 +1183,10 @@ include 'include/users_right.php';
                 selectedCustomers.push($(this).val());
             });
             var data = $('#recharge-form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_recharge_server.php?add_customer_recharge=true';
             $.ajax({
-                url: 'include/customer_recharge_server.php?add_customer_recharge=true',
+                url: url,
                 method: 'POST',
                 data: data,
                 dataType: 'json',
@@ -1169,8 +1250,10 @@ include 'include/users_right.php';
                 selectedCustomers.push($(this).val());
             });
             var data = $('#cash_received_form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_recharge_server.php?cash_received=true';
             $.ajax({
-                url: 'include/customer_recharge_server.php?cash_received=true',
+                url: url,
                 method: 'POST',
                 data: data,
                 dataType: 'json',
@@ -1256,8 +1339,10 @@ include 'include/users_right.php';
                 toastr.error("Please select at least one customer");
                 return false; 
             }
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/pop_server.php?get_pop_data=1';
             $.ajax({
-                url: 'include/pop_server.php?get_pop_data=1',
+                url: url,
                 type: 'GET',
                 dataType: 'json',
                 success: function(response) {
@@ -1295,8 +1380,10 @@ include 'include/users_right.php';
                 selectedCustomers.push($(this).val());
             });
             var data = $('#change_pop_form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_server_new.php?change_pop_request=true';
             $.ajax({
-                url: 'include/customer_server_new.php?change_pop_request=true',
+                url: url,
                 method: 'POST',
                 data: data,
                 dataType: 'json',
@@ -1327,11 +1414,162 @@ include 'include/users_right.php';
                 }
             });
         }); 
-        /************************** Add ticket Modal Script **************************/
-        ticket_modal();
-        loadCustomers();
-        ticket_assign();
-        ticket_complain_type();
+       /******************************** Tickets Script*************************************/
+            /* Customers load function*/
+            ticket_modal()
+            function ticket_modal(){
+                $("#ticketModal").on('show.bs.modal', function (event) {
+                    /*Check if select2 is already initialized*/
+                    if (!$('#ticket_customer_id').hasClass("select2-hidden-accessible")) {
+                        $("#ticket_customer_id").select2({
+                            dropdownParent: $("#ticketModal"),
+                            placeholder: "Select Customer"
+                        });
+                        $("#ticket_assigned").select2({
+                            dropdownParent: $("#ticketModal"),
+                            placeholder: "---Select---"
+                        });
+                        $("#ticket_complain_type").select2({
+                            dropdownParent: $("#ticketModal"),
+                            placeholder: "---Select---"
+                        });
+                        $("#ticket_priority").select2({
+                            dropdownParent: $("#ticketModal"),
+                            placeholder: "---Select---"
+                        });
+                    }
+                }); 
+            }
+
+            function loadCustomers(selectedCustomerId) {
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_all_customer=true';
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success == true) {
+                            let customerSelect = $("#ticket_customer_id");
+                            customerSelect.empty();
+                            customerSelect.append('<option value="">---Select Customer---</option>');
+                            $.each(response.data, function (index, customer) {
+                                customerSelect.append('<option value="' + customer.id + '">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>');
+                            });
+                        }
+                        if (selectedCustomerId) {
+                            $("#ticket_customer_id").val(selectedCustomerId);
+                        }
+                    }
+                });
+            }
+
+            /*Ticket assign function*/ 
+            function ticket_assign(customerId) {
+                if (customerId) {
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: {
+                            customer_id: customerId,
+                            get_area: true,
+                        },
+                        success: function(response) {
+                            $("#ticket_assigned").html(response);
+                        }
+                    });
+                }else{
+                    $(document).on('change','#ticket_customer_id',function(){
+                        var protocol = location.protocol;
+                        var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
+                        $.ajax({
+                            url: url, 
+                            type: "POST",
+                            data: {
+                                customer_id: $(this).val(),
+                                get_area:true,
+                            },
+                            success: function(response) {
+                                /* Handle the response from the server*/
+                                $("#ticket_assigned").html(response);
+                            }
+                        });
+                    });
+                }
+            }
+
+            /* Ticket complain type function*/
+            function ticket_complain_type() {
+                var protocol = location.protocol;
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
+                $.ajax({
+                    url: url,
+                    type: "POST",
+                    data: {
+                        get_complain_type: true,
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success == true) {
+                            let ticket_complain_type = $("#ticket_complain_type");
+                            ticket_complain_type.empty();
+                            ticket_complain_type.append('<option value="">---Select---</option>');
+                            $.each(response.data, function (index, item) {
+                                ticket_complain_type.append('<option value="' + item.id + '">'+item.topic_name+'</option>');
+                            });
+                        }
+                    }
+                });
+            }
+
+
+            $("#ticket_modal_form").submit(function(e) {
+                e.preventDefault();
+
+                /* Get the submit button */
+                var submitBtn = $(this).find('button[type="submit"]');
+                var originalBtnText = submitBtn.html();
+
+                submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden"></span>');
+                submitBtn.prop('disabled', true);
+
+                var form = $(this);
+                var formData = new FormData(this);
+
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    dataType:'json',
+                    success: function(response) {
+                        if (response.success) {
+                            $("#ticketModal").fadeOut(500, function() {
+                                $(this).modal('hide');
+                                toastr.success(response.message);
+                                $('#tickets_datatable').DataTable().ajax.reload();
+                            });
+
+                        } else if (!response.success && response.errors) {
+                            $.each(response.errors, function(field, message) {
+                                toastr.error(message);
+                            });
+                        }
+                    },
+                    complete: function() {
+                        submitBtn.html(originalBtnText);
+                        submitBtn.prop('disabled', false);
+                    }
+                });
+            });
+
+            //ticket_modal();
+            loadCustomers();
+            ticket_assign();
+            ticket_complain_type();
     </script>
 </body>
 
