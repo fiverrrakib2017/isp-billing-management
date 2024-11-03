@@ -12,6 +12,30 @@
                  <span> Dashboard </span>
              </a>
          </li>
+         <li >
+            <?php
+            
+
+            // if (isset($page_title)) {
+            //     if ($page_title="Branch Dashboard") {
+            //         echo ' <select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
+            //     }else if($page_title="Customer Profile"){
+            //         echo ' <select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
+            //     }
+            // }
+            if (isset($page_title)) {
+                if ($page_title=="Branch Dashboard") {
+                    echo ' <select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
+                } 
+                if ($page_title=="Customer Profile") {
+                    echo ' <select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
+                } 
+
+            }
+            ?>
+           
+            
+        </li> 
 
          <li>
              <a href="javascript: void(0);" class="has-arrow waves-effect">

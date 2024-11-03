@@ -185,7 +185,7 @@ if (isset($_GET['clid'])) {
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center text-center profile">
-                                                    <img src="profileImages/avatar.png" class="rounded-circle"
+                                                    <img src="../profileImages/avatar.png" class="rounded-circle"
                                                         width="150" />
                                                     <div class="mt-3">
                                                         <h5>
@@ -1530,6 +1530,49 @@ while ($rows = mysqli_fetch_assoc($result)) {
         ticket_assign(<?php echo $lstid; ?>);
         ticket_complain_type();
     </script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var protocol = location.protocol;
+        var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_all_customer=true';
+
+        async function loadCustomerOptions() {
+            try {
+                let response = await $.ajax({
+                    url: url,
+                    type: 'GET',
+                    dataType: 'json'
+                });
+                if (response.success === true) {
+                    var customerOptions = '<option value="">--- Select Customer ---</option>'; 
+
+                    $.each(response.data, function(key, customer) {
+                        customerOptions += '<option value="' + customer.id + '">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>';
+                    });
+
+                    $('select[name="menu_select_box"]').html(customerOptions);
+                    $('select[name="menu_select_box"]').select2({
+                        placeholder: '---Select Customer---',
+                    });
+                }
+
+            } catch (error) {
+                console.error('Error fetching customer options:', error);
+            }
+        }
+
+        if ($('select[name="menu_select_box"]').length > 0) {
+            loadCustomerOptions(); 
+        }
+
+        $('select[name="menu_select_box"]').on('change', function() {
+            var customerId = $(this).val(); 
+            if(customerId) {
+                window.location.href = 'profile.php?clid=' + customerId;
+            }
+        });
+
+    });
+    </script> 
 </body>
 
 </html>
