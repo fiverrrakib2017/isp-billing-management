@@ -293,6 +293,13 @@ include("include/users_right.php");
                     data: function(d) {
                         d.area_id = $('.area_filter').val();
                     },
+                    beforeSend: function() {
+                        $(".dataTables_empty").html('<img src="assets/images/loading.gif" style="background-color: transparent"/>');
+                    },
+                    complete: function() {
+                        // Hide loading spinner
+                        $('#tickets_datatable').unblock();
+                    },
                 },
                 "order": [[0, 'desc']], 
                 "buttons": [
