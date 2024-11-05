@@ -12,7 +12,7 @@ include("include/users_right.php");
 	
 	<?php include 'style.php'; ?>
 	<style>
-        div#tickets_datatable_filter {
+        /* div#tickets_datatable_filter {
             display: none;
         }
         div#tickets_datatable_length {
@@ -26,7 +26,7 @@ include("include/users_right.php");
                 width: 200px !important; 
             }
             
-        }
+        } */
     </style>
 
 
@@ -203,7 +203,7 @@ include("include/users_right.php");
         var table;
         $(document).ready(function(){
             loadAreaOptions();
-            loadCustomerOptions(); 
+            //loadCustomerOptions(); 
 
             function loadAreaOptions() {
                 $.ajax({
@@ -240,6 +240,10 @@ include("include/users_right.php");
 
 
                             setTimeout(() => {
+                                $('.dataTables_length').parent().removeClass(
+                                    'col-sm-12 col-md-6');
+                                $('.dataTables_filter').parent().removeClass(
+                                    'col-sm-12 col-md-6');
                             $('.dataTables_length').append(status_filter);
                             $('.select2').select2();
                             }, 500);
@@ -249,39 +253,39 @@ include("include/users_right.php");
                 });
             }
            
-            function loadCustomerOptions() {
-                $.ajax({
-                url: 'include/tickets_server.php?get_all_customer=true',
-                type: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success==true) {
-                            var customerOptions = '<label style="margin-left: 10px;"> ';
-                            customerOptions += '<select class="customer_filter form-select select2">';
-                            customerOptions += '<option value="">--Select Customer--</option>';
+            // function loadCustomerOptions() {
+            //     $.ajax({
+            //     url: 'include/tickets_server.php?get_all_customer=true',
+            //     type: 'GET',
+            //     dataType: 'json',
+            //     success: function (response) {
+            //         if (response.success==true) {
+            //                 var customerOptions = '<label style="margin-left: 10px;"> ';
+            //                 customerOptions += '<select class="customer_filter form-select select2">';
+            //                 customerOptions += '<option value="">--Select Customer--</option>';
                             
                         
-                            $.each(response.data, function(key, customer) {
-                                customerOptions += '<option value="'+customer.id+'">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>';
-                            });
+            //                 $.each(response.data, function(key, customer) {
+            //                     customerOptions += '<option value="'+customer.id+'">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>';
+            //                 });
 
-                            customerOptions += '</select></label>';
+            //                 customerOptions += '</select></label>';
                             
-                            setTimeout(() => {
-                                $('.dataTables_length').append(customerOptions);
-                                $('.select2').select2();
-                            }, 500);
-                        }
-                }
-            });
-            }
+            //                 setTimeout(() => {
+            //                     $('.dataTables_length').append(customerOptions);
+            //                     $('.select2').select2();
+            //                 }, 500);
+            //             }
+            //     }
+            // });
+            // }
             table=$('#tickets_datatable').DataTable( {
                "searching": true,
                 "paging": true,
                 "info": false,
                 "lengthChange":true ,
-                "processing"		: true,
-                "serverSide"		: true,
+                "processing"		: false,
+                "serverSide"		: false,
                 "zeroRecords":    "No matching records found",
                 "ajax"				: {
                     url			: "include/tickets_server.php?get_tickets_data=1",
