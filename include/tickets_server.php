@@ -357,28 +357,27 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (empty($priority)) {
 		$errors['ticket_priority'] = "Priority is required.";
 	}
-	// if ($get_customer_ticket = $con->query("SELECT * FROM ticket WHERE customer_id=$customer_id")) {
-    //     $rows = $get_customer_ticket->fetch_assoc();
-    //     $customer_ticket = $rows['ticket_type'];
-
-	// 	if ($customer_ticket =="Completed") {
-	// 		$errors['customer_ticket'] = "You have an already ticket.";
-	// 	}
-    // }
 	/* Validate if customer has a completed ticket */
 	$stmt = $con->prepare("SELECT ticket_type FROM ticket WHERE customer_id = ?");
 	$stmt->bind_param("i", $customer_id);
 	$stmt->execute();
 	$result = $stmt->get_result();
 
-	if ($result && $row = $result->fetch_assoc()) {
-		$customer_ticket = $row['ticket_type'];
-		
-		if ($customer_ticket !== "Complete") {
-			$errors['customer_ticket'] = "You already have a ticket.";
+	$allComplete = true;
+
+	if ($result) {
+		while ($row = $result->fetch_assoc()) {
+			if ($row['ticket_type'] !== "Complete") {
+				$allComplete = false; 
+				break;
+			}
 		}
-		
 	}
+
+	if (!$allComplete) {
+		$errors['customer_ticket'] = "You already have a ticket.";
+	}
+
 	
 	/* If validation errors exist, return errors */
 	if (!empty($errors)) {
@@ -388,7 +387,6 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 		]);
 		exit;
 	}
-
     /* If no errors, continue with processing*/
     $customerPopId = null;
     $customerAreaId = null;
