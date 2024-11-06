@@ -63,7 +63,7 @@ include("include/pop_security.php");
                                             <div class="col">
                                             <div class="form-group">
                                                 <label for="currentDate" class="form-label">Date</label>
-                                                <input class="form-control" type="date" id="currentDate" value="<?php echo date('Y-m-d'); ?>" name="date">
+                                                <input class="form-control" type="date" id="currentDate"  name="date">
                                             </div>
 
                                             </div>

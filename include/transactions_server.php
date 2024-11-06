@@ -244,7 +244,7 @@ if (isset($_POST['addSubLedgerData'])) {
 
 
 
-<script>
+<!-- <script type="text/javascript">
 function printTable() {
     var printContents = document.getElementById("reportTable").outerHTML;
     var originalContents = document.body.innerHTML;
@@ -253,4 +253,4 @@ function printTable() {
     window.print();
     document.body.innerHTML = originalContents;
 }
-</script>
+</script> -->
