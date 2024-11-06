@@ -35,9 +35,12 @@ if (isset($_POST['addTransactionData'])) {
 
     if ($result==true) {
         echo 1;
+        exit; 
     }else{
         echo "Error: ".$con->error;
     }
+
+    exit; 
 }
 
 
@@ -92,8 +95,14 @@ if (isset($_POST['getReport'])) {
                     $sub_total = $subLedgerRow['sub_total'] ?? 0;
                     $notes = $subLedgerRow['notes'] ?? '';
 
+                    // /* Check if the date is today to show notes*/
+                    // if (date('Y-m-d') === date('Y-m-d', strtotime($fromDate))) {
+                    //     echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $sub_ledger_name . ' - <span style="float:right">' . round($sub_total, 2) . '</span> ' . ($notes ? '(' . $notes . ')' : '') . '<br>';
+                    // } else {
+                    //     echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $sub_ledger_name . ' - <span style="float:right">' . round($sub_total, 2) . '</span><br>';
+                    // }
                     /* Check if the date is today to show notes*/
-                    if (date('Y-m-d') === date('Y-m-d', strtotime($fromDate))) {
+                    if ($fromDate===$endDate) {
                         echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $sub_ledger_name . ' - <span style="float:right">' . round($sub_total, 2) . '</span> ' . ($notes ? '(' . $notes . ')' : '') . '<br>';
                     } else {
                         echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . $sub_ledger_name . ' - <span style="float:right">' . round($sub_total, 2) . '</span><br>';
@@ -123,6 +132,7 @@ if (isset($_POST['getReport'])) {
     echo '</tbody></table>';
 
     $con->close();
+    //exit; 
 }
 
 
@@ -178,6 +188,7 @@ if (isset($_GET["finishedTransaction"])) {
 
     $con->query("UPDATE `ledger_transactions` SET status='1' ");
     echo 1;
+    exit; 
 }
 if (isset($_GET["sub_transaction_add"])) {
     $id = $_GET['id'];
@@ -185,6 +196,7 @@ if (isset($_GET["sub_transaction_add"])) {
     $description = $_GET['description'];
 
     $con->query("INSERT INTO  sub_transaction(transaction_id,item_name,description)VALUES('$id','$name','$description')");
+    exit; 
 }
 
 
@@ -217,6 +229,7 @@ if (isset($_GET['getLedger'])) {
             echo '</optgroup>';
         }
     }
+    exit; 
 }
 
 
@@ -234,6 +247,7 @@ if (isset($_POST['addSubLedgerData'])) {
 
     if ($result) {
         echo 1;
+        exit; 
     } else {
         echo 0;
     }
@@ -244,7 +258,7 @@ if (isset($_POST['addSubLedgerData'])) {
 
 
 
-<!-- <script type="text/javascript">
+<script type="text/javascript">
 function printTable() {
     var printContents = document.getElementById("reportTable").outerHTML;
     var originalContents = document.body.innerHTML;
@@ -253,4 +267,4 @@ function printTable() {
     window.print();
     document.body.innerHTML = originalContents;
 }
-</script> -->
+</script>

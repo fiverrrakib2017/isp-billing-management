@@ -11,7 +11,7 @@ class Base_invoivce{
         return [
             'usr_id' => isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0,
             'client_id' => $data['client_id'] ?? null,
-            'date' => date('Y-m-d'),
+            'date' =>$data['date']?? date('Y-m-d'),
             'sub_total' => $data['table_total_amount'] ?? null,
             'discount' => $data['table_discount_amount'] ?? 0,
             'grand_total' => $data['table_total_amount'] - ($data['table_discount_amount'] ?? 0),
