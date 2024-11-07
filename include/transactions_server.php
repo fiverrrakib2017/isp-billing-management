@@ -166,7 +166,7 @@ if (isset($_GET['show'])) {
             <td>' . $value . '</td>
             <td>' . $total_value  . '</td>
             <td>
-            <a onclick="deleteTransaction('.$id.')"  class="btn-sm btn btn-danger" ><i class="fas fa-trash"></i></a>
+            <button type="button" data-id="'.$id.'"  class="btn-sm btn btn-danger delete-button" ><i class="fas fa-trash"></i></button>
             </td>
             
             

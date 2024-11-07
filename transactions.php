@@ -349,7 +349,7 @@ include("include/pop_security.php");
                     }
                 });
             });
-            $(document).on('click',"#transaction_deleteBtn",function(){
+            $(document).on('click',".delete-button",function(){
                 var id=$(this).data('id');
                 alert(id);
                 // $.ajax({
@@ -368,9 +368,7 @@ include("include/pop_security.php");
                 //     }
                 // });
             });
-            function deleteTransaction(dataid){
-                alert(dataid);
-            }
+            
         });
     </script>
 

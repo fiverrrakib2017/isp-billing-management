@@ -56,7 +56,7 @@ class Base_invoivce{
 
         return [
             'invoice_id' => self::$con->insert_id,
-            'transaction_number' => $transaction_number
+            'transaction_number' => $transaction_number,
         ];
     }
     protected function insert_invoice_details($table, $invoice_id, $validator,$transaction_number=NULL){
@@ -74,7 +74,7 @@ class Base_invoivce{
         }
         
         /******************** Insert Details ***********************/
-        $details_sql = "INSERT INTO $table (transaction_number,invoice_id, product_id, qty, value, total) VALUES (?,?, ?, ?, ?, ?)";
+        $details_sql = "INSERT INTO $table (transaction_number,invoice_id, product_id, qty, value, total,status) VALUES (?,?, ?, ?, ?, ?, ?)";
         $details_stmt =self::$con->prepare($details_sql);
 
         if (!$details_stmt) {
@@ -124,7 +124,7 @@ class Base_invoivce{
                }
             }
             
-            $details_stmt->bind_param("siiiii", $transaction_number,$invoice_id, $product_id, $qty, $price, $total_price);
+            $details_stmt->bind_param("siiiiii", $transaction_number,$invoice_id, $product_id, $qty, $price, $total_price,$validator['status']);
             
             if (!$details_stmt->execute()) {
                 throw new Exception('Execute statement for details failed: ' . $details_stmt->error);

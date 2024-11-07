@@ -91,49 +91,61 @@ include("include/pop_security.php");
                                        
                                         <?php
                                         
-$sql = "SELECT   p.id, p.name, p.purchase_price, p.sale_price, u.unit_name,s.name AS store_name, IFNULL(purchase_qty.total_purchase_qty, 0) - IFNULL(sale_qty.total_sale_qty, 0) AS current_qty
-    FROM 
-        products p
-    LEFT JOIN 
-        units u ON p.unit_id = u.id
-    LEFT JOIN 
-        store s ON p.store = s.id
-    LEFT JOIN 
-        (SELECT product_id, SUM(qty) AS total_purchase_qty 
-         FROM purchase_details 
-         GROUP BY product_id) AS purchase_qty 
-        ON p.id = purchase_qty.product_id
-    LEFT JOIN 
-        (SELECT product_id, SUM(qty) AS total_sale_qty 
-         FROM sales_details 
-         GROUP BY product_id) AS sale_qty 
-        ON p.id = sale_qty.product_id";
-
-$result = mysqli_query($con, $sql);
-
-while ($rows = mysqli_fetch_assoc($result)) {
-?>
-
-    <tr>
-        <td><?php echo $rows['id']; ?></td>
-        <td><a href="product_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $rows['name']; ?></a></td>
-        <td><?php echo $rows['purchase_price']; ?></td>
-        <td><?php echo $rows['sale_price']; ?></td>
-        <td><?php echo $rows['unit_name']; ?></td>
-        <td><?php echo $rows['store_name']; ?></td>
-        <td><?php echo $rows['current_qty']; ?></td>
-        <td style="text-align:right">
-            <a class="btn-sm btn btn-info" href="product_profile_edit.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-            <a class="btn-sm btn btn-success" href="product_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i></a>
-            <a onclick=" return confirm('Are You Sure');" class="btn-sm btn btn-danger" href="product_delete.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-trash"></i></a>
-        </td>
-    </tr>
-
-<?php 
-} 
-
-                                        
-                                        
+                                        $sql = "SELECT  p.id, 
+                                        p.name, 
+                                        p.purchase_price, 
+                                        p.sale_price, 
+                                        u.unit_name,
+                                        s.name AS store_name, 
+                                        IFNULL(purchase_qty.total_purchase_qty, 0) - IFNULL(sale_qty.total_sale_qty, 0) AS current_qty
+                                    FROM 
+                                        products p
+                                    LEFT JOIN 
+                                        units u ON p.unit_id = u.id
+                                    LEFT JOIN 
+                                        store s ON p.store = s.id
+                                    LEFT JOIN 
+                                        (SELECT product_id, SUM(qty) AS total_purchase_qty 
+                                         FROM purchase_details 
+                                         WHERE status = 1  -- এখানে স্ট্যাটাস চেক করা হচ্ছে
+                                         GROUP BY product_id) AS purchase_qty 
+                                        ON p.id = purchase_qty.product_id
+                                    LEFT JOIN 
+                                        (SELECT product_id, SUM(qty) AS total_sale_qty 
+                                         FROM sales_details 
+                                         WHERE status = 1  -- এখানে স্ট্যাটাস চেক করা হচ্ছে
+                                         GROUP BY product_id) AS sale_qty 
+                                        ON p.id = sale_qty.product_id";
+                            
+                            $result = mysqli_query($con, $sql);
+                            
+                            while ($rows = mysqli_fetch_assoc($result)) {
+                            ?>
+                            
+                                <tr>
+                                    <td><?php echo $rows['id']; ?></td>
+                                    <td><a href="product_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $rows['name']; ?></a></td>
+                                    <td><?php echo $rows['purchase_price']; ?></td>
+                                    <td><?php echo $rows['sale_price']; ?></td>
+                                    <td><?php echo $rows['unit_name']; ?></td>
+                                    <td><?php echo $rows['store_name']; ?></td>
+                                    <td>
+                                        <?php if ($rows['current_qty'] == 0) { ?>
+                                            <span class="badge bg-danger">0</span>
+                                        <?php } else { ?>
+                                            <?php echo $rows['current_qty']; ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td style="text-align:right">
+                                        <a class="btn-sm btn btn-info" href="product_profile_edit.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
+                                        <a class="btn-sm btn btn-success" href="product_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i></a>
+                                        <a onclick=" return confirm('Are You Sure');" class="btn-sm btn btn-danger" href="product_delete.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            
+                            <?php 
+                            } 
+                            
                                         
                                         ?> 
 
