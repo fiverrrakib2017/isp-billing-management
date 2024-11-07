@@ -59,20 +59,24 @@ include("include/pop_security.php");
                                             <div class="col">
                                                 <div class="form-group mt-2">
                                                     <label>Client Name</label>
-                                                    <select type="text" id="client_name" name="client_id" class="form-select select2">
+                                                    <div class="input-group">
+                                                    <select type="text" id="client_name" name="client_id" class="form-select">
                                                         <option value="">---Select---</option>
-                                    <?php 
+                                                            <?php 
 
-                                    if($allClient=$con->query("select * from clients")){
-                                        while($rows=$allClient->fetch_array()){
-                                            $id=$rows['id']; 
-                                            $fullname=$rows['fullname']; 
-                                           echo '<option value='.$id.'>'.$fullname.'</option>'; 
-                                        }
-                                    }
-                                    
-                                    ?>
+                                                            if($allClient=$con->query("select * from clients")){
+                                                                while($rows=$allClient->fetch_array()){
+                                                                    $id=$rows['id']; 
+                                                                    $fullname=$rows['fullname']; 
+                                                                echo '<option value='.$id.'>'.$fullname.'</option>'; 
+                                                                }
+                                                            }
+                                                            
+                                                            ?>
                                                     </select>
+                                                        <button type="button" class="btn btn-primary add-client-btn" data-bs-toggle="modal" data-bs-target="#addClientModal"><span>+</span>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col">
@@ -157,7 +161,7 @@ include("include/pop_security.php");
                                 </table>
                                 <div class="form-group text-center">
                                     <button type="button" name="finished_btn" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button>
-                                    <button type="button" name="print_btn" class="btn btn-success"><i class="fe fe-dollar"></i>Print</button>
+                                    <!-- <button type="button" name="print_btn" class="btn btn-success"><i class="fe fe-dollar"></i>Print</button> -->
                                 </div>
                             </div>
                         </div>
@@ -172,6 +176,60 @@ include("include/pop_security.php");
         <!-- end main content-->
     </div>
     <?php include 'modal/product_modal.php'; ?>
+     <!-- Add Client Modal-->
+    <div class="modal fade bs-example-modal-lg" id="addClientModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+        <div class="modal-content col-md-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span
+                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Client</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="include/client_backend.php" method="POST" enctype="multipart/form-data">
+                    <div class="form-group mb-2 d-none">
+                        <input name="add_client_data" class="form-control" type="text" >
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Fullname</label>
+                        <input name="fullname" placeholder="Enter Fullname" class="form-control" type="text" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Company</label>
+                        <input name="company" placeholder="Enter Company" class="form-control" type="text" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Phone Number</label>
+                        <input class="form-control" type="text" name="phone_number" id="phone_number" placeholder="Type Phone Number" required/>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Email</label>
+                        <input class="form-control" type="email" name="email" id="email" placeholder="Type Your Email" required/>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Address</label>
+                        <input class="form-control" type="text" name="address" id="address" placeholder="Type Your Address" required/>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Status</label>
+                        <select class="form-control" type="text" name="status">
+                            <option value="">---Select---</option>
+                            <option value="1">Active</option>
+                            <option value="0">Expire</option>
+                        </select>
+                    </div>
+                                    
+                    <div class="modal-footer ">
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+     <!-- Add Inovice Modal-->
     <div class="modal fade bs-example-modal-lg" id="invoiceModal" tabindex="-1" role="dialog"
                aria-labelledby="exampleModalLabel" aria-hidden="true">
                <div class="modal-dialog " role="document">
@@ -190,7 +248,7 @@ include("include/pop_security.php");
                            </div>
                            <div class="form-group mb-2">
                               <label>Paid Amount </label>
-                              <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" >
+                              <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" value="0">
                            </div>
                            <div class="form-group mb-2">
                               <label> Discount Amount </label>
@@ -198,7 +256,7 @@ include("include/pop_security.php");
                            </div>
                            <div class="form-group mb-2">
                               <label> Due Amount </label>
-                              <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" >
+                              <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" value="0">
                            </div>
                            <div class="form-group mb-2">
                               <label>Type</label>
@@ -342,65 +400,7 @@ include("include/pop_security.php");
                     }
                 });
             });
-            $(document).on('click', 'button[name="print_btn"]', function() {
-                var totalAmount = 0;
-                $('#tableRow tr').each(function() {
-                    var total_price = $(this).find('input[name="table_total_price[]"]').val();
-                    totalAmount += parseFloat(total_price);
-                });
-                var printContent = `
-    <div style="padding: 30px; font-family: Arial, sans-serif;">
-        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #000;">
-            <h2 style="margin: 0; font-size: 28px; color: #2c3e50;">Star Communication</h2>
-            <p style="margin: 5px 0;">Sarkar Super Market, 2nd Floor</p>
-            <p style="margin: 5px 0;">Phone: +01757967432 | Email: info@rakibas.com</p>
-        </div>
-
-        <div style="margin-bottom: 30px;">
-            <h4 style="margin-bottom: 10px; font-size: 22px; color: #2c3e50;">Customer Information</h4>
-            <p><strong>Name:</strong> Rakib Mahmud</p>
-            <p><strong>Address:</strong> Kanora, Gouripur, Daudkandi, Cumilla</p>
-            <p><strong>Phone:</strong> +8801757967432</p>
-        </div>
-
-        <div style="margin-bottom: 30px;">
-            <p><strong>Invoice No:</strong> INV-001234</p>
-            <p><strong>Date:</strong> 24 October 2024</p>
-        </div>
-
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; border: 1px solid #ddd;">
-            <thead style="background-color: #f7f7f7; font-weight: bold;">
-                <tr>
-                    <th style="border: 1px solid #ddd; padding: 10px; text-align: left;">Product List</th>
-                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Qty</th>
-                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Price</th>
-                    <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Total</th>
-                </tr>
-            </thead>
-            <tbody id="tableRow2">
-                 ${$("#tableRow").html()}
-            </tbody>
-        </table>
-
-        <div style="text-align: right; margin-bottom: 30px;">
-            <h4 style="margin: 0; font-size: 20px; color: #e74c3c;">Total Amount: ৳<span id="totalAmount">${totalAmount}</span></h4>
-        </div>
-
-        <div style="text-align: center; border-top: 2px solid #000; padding-top: 20px;">
-            <p>Thank you for your business!</p>
-            <p>If you have any questions about this invoice, please contact us at info@rakibas.com</p>
-        </div>
-    </div>
-`;
-
-                var originalContents = document.body.innerHTML;
-                
-                document.body.innerHTML = printContent;
-
-                window.print();
-
-                document.body.innerHTML = originalContents;
-            });
+            
             $(document).on('click', '.removeRow', function() {
                 $(this).closest('tr').remove();
                 calculateTotalAmount(); 
@@ -444,6 +444,11 @@ include("include/pop_security.php");
                     }
                     else if (field.name === 'date' && field.value === '') {
                         toastr.error("Date is required!");
+                        isValid = false; 
+                        return false;
+                    }
+                    else if (field.name === 'table_status' && field.value === '') {
+                        toastr.error("Type is required!");
                         isValid = false; 
                         return false;
                     }
@@ -496,6 +501,55 @@ include("include/pop_security.php");
             //     }
             // });
         });
+
+    /** Client The data from the database table **/
+	  $('#addClientModal form').submit(function(e){
+		e.preventDefault();
+
+		var form = $(this);
+		var url = form.attr('action');
+		var formData = form.serialize();
+		/** Use Ajax to send the delete request **/
+		$.ajax({
+		  type:'POST',
+		  'url':url,
+		  data: formData,
+		 success: function (response) {
+			/*Parse the JSON response*/ 
+			const jsonResponse = JSON.parse(response);
+
+			/* Check if the request was successful*/
+			if (jsonResponse.success) {
+				/*Hide the modal*/ 
+				$('#addClientModal').modal('hide'); 
+				 /*Reset the form*/ 
+				$('#addClientModal form')[0].reset();
+				/* Show success message*/
+				toastr.success(jsonResponse.message); 
+
+				/*Reload the page after a short delay*/ 
+				setTimeout(() => {
+					location.reload();
+				}, 500);
+			} else {
+				/*Show error message if success is false*/ 
+				toastr.error(jsonResponse.message); 
+			}
+		},
+
+
+		  error: function (xhr, status, error) {
+			 /** Handle  errors **/
+			if (xhr.status === 422) {
+				var errors = xhr.responseJSON.errors;
+				$.each(errors, function(key, value) {
+					toastr.error(value[0]); 
+				});
+			}
+		  }
+		});
+	  });
+    
 
        
 

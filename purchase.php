@@ -361,6 +361,11 @@ include("include/pop_security.php");
                         isValid = false; 
                         return false;
                     }
+                    else if (field.name === 'table_status' && field.value === '') {
+                        toastr.error("Type is required!");
+                        isValid = false; 
+                        return false;
+                    }
                 });
 
                 if (!isValid) {
