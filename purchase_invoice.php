@@ -103,6 +103,7 @@ ini_set('display_errors', 1);
                                                     <th>Discount</th>
                                                     <th>Total Due</th>
                                                     <th>Grand Total</th>
+                                                    <th>Status</th>
                                                     <th>Create Date</th>
                                                     <th></th>
                                                 </tr>
