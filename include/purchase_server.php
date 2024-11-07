@@ -43,17 +43,8 @@ if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
 
             echo "</td>";
 
-            echo "<td>";
+            echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
 
-            $created_at = $rows['created_at'];
-            if (!empty($created_at)) {
-                $created_at = date("d F Y", strtotime($created_at));
-            }else{
-                echo $created_at;
-            }
-          
-
-            echo "</td>";
 
             echo "<td>";
 

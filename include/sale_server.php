@@ -47,19 +47,10 @@ if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             echo $formatted_date;
 
             echo "</td>";
+
+            echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
+
             echo "<td>";
-
-            $created_at = $rows['created_at'];
-            if (!empty($created_at)) {
-                $created_at = date("d F Y", strtotime($created_at));
-            }else{
-                echo $created_at;
-            }
-          
-
-            echo "</td>";
-            echo "<td>";
-
             echo '<a class="btn-sm btn btn-primary" style="margin-right: 5px;" href="sales_inv_edit.php?clid=' . $rows['id'] . '"><i class="fas fa-edit"></i></a>';
             echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/sales_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
             echo '<button type="button" name="delete_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-danger" style="margin-right: 5px;"><i class="fas fa-trash"></i></button>';
