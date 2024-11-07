@@ -153,58 +153,7 @@ include("include/pop_security.php");
         <!-- end main content-->
     </div>
     <?php include 'modal/product_modal.php'; ?>
-    <div class="modal fade bs-example-modal-lg" id="addSupplierModal" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog " role="document">
-        <div class="modal-content col-md-12">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel"><span
-                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Supplier</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="include/supplier_backend.php" method="POST" enctype="multipart/form-data">
-                    <div class="form-group mb-2 d-none">
-                        <input name="add_supplier_data" class="form-control" type="text" >
-                    </div>
-                    <div class="form-group mb-2">
-                        <label>Fullname</label>
-                        <input name="fullname" placeholder="Enter Fullname" class="form-control" type="text" >
-                    </div>
-                    <div class="form-group mb-2">
-                        <label>Company</label>
-                        <input name="company" placeholder="Enter Company" class="form-control" type="text" >
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">Phone Number</label>
-                        <input class="form-control" type="text" name="phone_number" id="phone_number" placeholder="Type Phone Number"/>
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">Email</label>
-                        <input class="form-control" type="email" name="email" id="email" placeholder="Type Your Email"/>
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">Address</label>
-                        <input class="form-control" type="text" name="address" id="address" placeholder="Type Your Address"/>
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">Status</label>
-                        <select class="form-control" type="text" name="status">
-                            <option value="">---Select---</option>
-                            <option value="1">Active</option>
-                            <option value="0">Expire</option>
-                        </select>
-                    </div>
-                                    
-                    <div class="modal-footer ">
-                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
-                        <button type="submit" class="btn btn-success">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        </div>
-    </div>
+    <?php include 'modal/supplier_modal.php'; ?>
     <div class="modal fade bs-example-modal-lg" id="invoiceModal" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog " role="document">
@@ -256,6 +205,7 @@ include("include/pop_security.php");
     <?php include 'script.php';?>
 
     <script src="modal/product_modal.js"></script>
+    <script src="modal/supplier_modal.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -472,57 +422,10 @@ include("include/pop_security.php");
             //         console.log(error);
             //     }
             // });
-        });
-        /** Client The data from the database table **/
-	  $('#addSupplierModal form').submit(function(e){
-		e.preventDefault();
-
-		var form = $(this);
-		var url = form.attr('action');
-		var formData = form.serialize();
-		/** Use Ajax to send the delete request **/
-		$.ajax({
-		  type:'POST',
-		  'url':url,
-		  data: formData,
-		 success: function (response) {
-			/*Parse the JSON response*/ 
-			const jsonResponse = JSON.parse(response);
-
-			/* Check if the request was successful*/
-			if (jsonResponse.success) {
-				/*Hide the modal*/ 
-				$('#addSupplierModal').modal('hide'); 
-				 /*Reset the form*/ 
-				$('#addSupplierModal form')[0].reset();
-				/* Show success message*/
-				toastr.success(jsonResponse.message); 
-
-				/*Reload the page after a short delay*/ 
-				setTimeout(() => {
-					location.reload();
-				}, 500);
-			} else {
-				/*Show error message if success is false*/ 
-				toastr.error(jsonResponse.message); // Show error message
-			}
-		},
-
-
-		  error: function (xhr, status, error) {
-			 /** Handle  errors **/
-			if (xhr.status === 422) {
-				var errors = xhr.responseJSON.errors;
-				$.each(errors, function(key, value) {
-					toastr.error(value[0]); 
-				});
-			}
-		  }
-		});
-	  });
-
+        });     
     
     </script>
+
 
 
 </body>
