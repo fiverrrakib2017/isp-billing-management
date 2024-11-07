@@ -49,9 +49,15 @@ include("include/pop_security.php");
                                             <div class="col">
                                                 <div class="form-group mt-2">
                                                     <label>Suppliers Name</label>
+                                                    
+                                                    <div class="input-group">
                                                     <select type="text" id="supplier_name" name="client_id" class="form-select select2" required>
                                                         <option>---Select---</option>
                                                     </select>
+                                                    <button type="button" class="btn btn-primary add-supplier-btn" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                                                        <span>+</span>
+                                                    </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col">
@@ -147,51 +153,103 @@ include("include/pop_security.php");
         <!-- end main content-->
     </div>
     <?php include 'modal/product_modal.php'; ?>
-    <div class="modal fade bs-example-modal-lg" id="invoiceModal" tabindex="-1" role="dialog"
-               aria-labelledby="exampleModalLabel" aria-hidden="true">
-               <div class="modal-dialog " role="document">
-                  <div class="modal-content col-md-12">
-                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"><span
-                           class="mdi mdi-account-check mdi-18px"></span> &nbsp;Invoice Summery</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                     </div>
-                     <div class="modal-body">
-                        <form id="paymentForm">
-                           <div class="form-group mb-2">
-                              <label>Total Amount </label>
-                              <input readonly class="form-control table_total_amount" name="table_total_amount" type="text" required>
-                           </div>
-                           <div class="form-group mb-2">
-                              <label>Paid Amount </label>
-                              <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" value="00" required>
-                           </div>
-                           <div class="form-group mb-2">
-                              <label> Discount Amount </label>
-                              <input  type="text" class="form-control table_discount_amount" name="table_discount_amount" value="00">
-                           </div>
-                           <div class="form-group mb-2">
-                              <label> Due Amount </label>
-                              <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" value="00">
-                           </div>
-                           <div class="form-group mb-2">
-                              <label>Type</label>
-                              <select type="text" class="form-select table_status" name="table_status">
-                                <option value="">---Select---</option>
-                                <option value="0">Draf</option>
-                                <option value="1">Completed</option>
-                                <option value="2">Print Invoice</option>
-                            </select>
-                           </div>
-                           <div class="modal-footer ">
-                              <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
-                              <button type="button" id="save_invoice_btn" class="btn btn-success">Save Invoice</button>
-                           </div>
-                        </form>
-                     </div>
-                  </div>
-               </div>
+    <div class="modal fade bs-example-modal-lg" id="addSupplierModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+        <div class="modal-content col-md-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span
+                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Supplier</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                <form action="include/supplier_backend.php" method="POST" enctype="multipart/form-data">
+                    <div class="form-group mb-2 d-none">
+                        <input name="add_supplier_data" class="form-control" type="text" >
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Fullname</label>
+                        <input name="fullname" placeholder="Enter Fullname" class="form-control" type="text" >
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Company</label>
+                        <input name="company" placeholder="Enter Company" class="form-control" type="text" >
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Phone Number</label>
+                        <input class="form-control" type="text" name="phone_number" id="phone_number" placeholder="Type Phone Number"/>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Email</label>
+                        <input class="form-control" type="email" name="email" id="email" placeholder="Type Your Email"/>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Address</label>
+                        <input class="form-control" type="text" name="address" id="address" placeholder="Type Your Address"/>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="">Status</label>
+                        <select class="form-control" type="text" name="status">
+                            <option value="">---Select---</option>
+                            <option value="1">Active</option>
+                            <option value="0">Expire</option>
+                        </select>
+                    </div>
+                                    
+                    <div class="modal-footer ">
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="modal fade bs-example-modal-lg" id="invoiceModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content col-md-12">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span
+                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;Invoice Summery</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <form id="paymentForm">
+                    <div class="form-group mb-2">
+                        <label>Total Amount </label>
+                        <input readonly class="form-control table_total_amount" name="table_total_amount" type="text" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Paid Amount </label>
+                        <input  type="text" class="form-control table_paid_amount" name="table_paid_amount" value="00" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label> Discount Amount </label>
+                        <input  type="text" class="form-control table_discount_amount" name="table_discount_amount" value="00">
+                    </div>
+                    <div class="form-group mb-2">
+                        <label> Due Amount </label>
+                        <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" value="00">
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Type</label>
+                        <select type="text" class="form-select table_status" name="table_status">
+                        <option value="">---Select---</option>
+                        <option value="0">Draf</option>
+                        <option value="1">Completed</option>
+                        <option value="2">Print Invoice</option>
+                    </select>
+                    </div>
+                    <div class="modal-footer ">
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                        <button type="button" id="save_invoice_btn" class="btn btn-success">Save Invoice</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- END layout-wrapper -->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
@@ -415,6 +473,53 @@ include("include/pop_security.php");
             //     }
             // });
         });
+        /** Client The data from the database table **/
+	  $('#addSupplierModal form').submit(function(e){
+		e.preventDefault();
+
+		var form = $(this);
+		var url = form.attr('action');
+		var formData = form.serialize();
+		/** Use Ajax to send the delete request **/
+		$.ajax({
+		  type:'POST',
+		  'url':url,
+		  data: formData,
+		 success: function (response) {
+			/*Parse the JSON response*/ 
+			const jsonResponse = JSON.parse(response);
+
+			/* Check if the request was successful*/
+			if (jsonResponse.success) {
+				/*Hide the modal*/ 
+				$('#addSupplierModal').modal('hide'); 
+				 /*Reset the form*/ 
+				$('#addSupplierModal form')[0].reset();
+				/* Show success message*/
+				toastr.success(jsonResponse.message); 
+
+				/*Reload the page after a short delay*/ 
+				setTimeout(() => {
+					location.reload();
+				}, 500);
+			} else {
+				/*Show error message if success is false*/ 
+				toastr.error(jsonResponse.message); // Show error message
+			}
+		},
+
+
+		  error: function (xhr, status, error) {
+			 /** Handle  errors **/
+			if (xhr.status === 422) {
+				var errors = xhr.responseJSON.errors;
+				$.each(errors, function(key, value) {
+					toastr.error(value[0]); 
+				});
+			}
+		  }
+		});
+	  });
 
     
     </script>
