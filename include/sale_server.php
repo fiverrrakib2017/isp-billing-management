@@ -33,8 +33,13 @@ if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
 
             echo "</td>";
             echo "<td>" . $rows['sub_total'] . "</td>";
-            echo "<td>" . $rows['grand_total'] . "</td>";
+            echo "<td>" . $rows['total_paid'] . "</td>";
+            echo "<td>" . $rows['discount'] . "</td>";
             echo "<td>" . $rows['total_due'] . "</td>";
+            echo "<td>" . $rows['grand_total'] . "</td>";
+          
+            $status_badge = ($rows['status'] == '1') ? '<span class="badge bg-success">Completed</span>' : '<span class="badge bg-danger">Draft Invoice</span>';
+            echo "<td>" . $status_badge . "</td>";
             echo "<td>";
 
             $date = $rows['date'];

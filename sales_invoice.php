@@ -98,8 +98,11 @@ include("include/users_right.php");
                                                     <th>Invoice id</th>
                                                     <th>Customer Name</th>
                                                     <th>Sub Total</th>
-                                                    <th>Grand Total</th>
+                                                    <th>Paid Amount</th>
+                                                    <th>Discount</th>
                                                     <th>Due Balance</th>
+                                                    <th>Grand Total</th>
+                                                    <th>Status</th>
                                                     <th>Create Date</th>
                                                     <th></th>
                                                 </tr>
