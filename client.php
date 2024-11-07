@@ -65,7 +65,7 @@ include "include/pop_security.php";
                         </div>
                         <div class="d-flex justify-content-between align-items-end flex-wrap">
                             <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"
-                            data-bs-toggle="modal" data-bs-target="#addModal" style="margin-bottom: 12px;">&nbsp;&nbsp;New
+                            data-bs-toggle="modal" data-bs-target="#addClientModal" style="margin-bottom: 12px;">&nbsp;&nbsp;New
                         Client</button>
                     </div>
                     </div>
@@ -77,58 +77,7 @@ include "include/pop_security.php";
 
 
 
-                <div class="modal fade bs-example-modal-lg" id="addModal" tabindex="-1" role="dialog"
-                     aria-labelledby="exampleModalLabel" aria-hidden="true">
-                     <div class="modal-dialog " role="document">
-                        <div class="modal-content col-md-12">
-                           <div class="modal-header">
-                              <h5 class="modal-title" id="exampleModalLabel"><span
-                                 class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Client</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                           </div>
-						   <div class="modal-body">
-							  <form action="include/client_backend.php" method="POST" enctype="multipart/form-data">
-									<div class="form-group mb-2 d-none">
-										<input name="add_client_data" class="form-control" type="text" >
-									</div>
-									<div class="form-group mb-2">
-										<label>Fullname</label>
-										<input name="fullname" placeholder="Enter Fullname" class="form-control" type="text" required>
-									</div>
-									<div class="form-group mb-2">
-										<label>Company</label>
-										<input name="company" placeholder="Enter Company" class="form-control" type="text" required >
-									</div>
-                                    <div class="form-group mb-2">
-                                        <label for="">Phone Number</label>
-                                        <input class="form-control" type="text" name="phone_number" id="phone_number" placeholder="Type Phone Number" required/>
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="">Email</label>
-                                        <input class="form-control" type="email" name="email" id="email" placeholder="Type Your Email" required/>
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="">Address</label>
-                                        <input class="form-control" type="text" name="address" id="address" placeholder="Type Your Address" required/>
-                                    </div>
-                                    <div class="form-group mb-2">
-                                        <label for="">Status</label>
-                                        <select class="form-control" type="text" name="status">
-                                            <option value="">---Select---</option>
-                                            <option value="1">Active</option>
-                                            <option value="0">Expire</option>
-                                        </select>
-                                    </div>
-									              
-									<div class="modal-footer ">
-										<button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
-										<button type="submit" class="btn btn-success">Save Changes</button>
-									</div>
-								</form>
-							</div>
-                        </div>
-                     </div>
-                  </div>
+                <?php include 'modal/client_modal.php'; ?>
 
 
 				 <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
@@ -268,6 +217,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
         
     <!-- JAVASCRIPT -->
     <?php include 'script.php';?>
+    <script type="text/javascript" src="modal/client_modal.js"></script>
      <script type="text/javascript">
     $(document).ready(function() {
         $("#users_table").DataTable();
@@ -299,53 +249,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
         }
     });
 
-       /** Client The data from the database table **/
-	  $('#addModal form').submit(function(e){
-		e.preventDefault();
-
-		var form = $(this);
-		var url = form.attr('action');
-		var formData = form.serialize();
-		/** Use Ajax to send the delete request **/
-		$.ajax({
-		  type:'POST',
-		  'url':url,
-		  data: formData,
-		 success: function (response) {
-			/*Parse the JSON response*/ 
-			const jsonResponse = JSON.parse(response);
-
-			/* Check if the request was successful*/
-			if (jsonResponse.success) {
-				/*Hide the modal*/ 
-				$('#addModal').modal('hide'); 
-				 /*Reset the form*/ 
-				$('#addModal form')[0].reset();
-				/* Show success message*/
-				toastr.success(jsonResponse.message); 
-
-				/*Reload the page after a short delay*/ 
-				setTimeout(() => {
-					location.reload();
-				}, 500);
-			} else {
-				/*Show error message if success is false*/ 
-				toastr.error(jsonResponse.message); // Show error message
-			}
-		},
-
-
-		  error: function (xhr, status, error) {
-			 /** Handle  errors **/
-			if (xhr.status === 422) {
-				var errors = xhr.responseJSON.errors;
-				$.each(errors, function(key, value) {
-					toastr.error(value[0]); 
-				});
-			}
-		  }
-		});
-	  });
+    
     
     	/** Handle edit button click**/
         $('#datatable tbody').on('click', '.edit-btn', function () {
