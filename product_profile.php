@@ -1,488 +1,414 @@
 <?php
-include "include/db_connect.php";
-include("include/security_token.php");
-include("include/users_right.php");
-include("include/pop_security.php");
-if(isset($_GET['id'])){
-    
-  $productId =$_GET['id'];
-if ($product = $con -> query("SELECT * FROM products WHERE id='$productId'")) {
-  while($rows= $product->fetch_array()){
-    $id=$rows["id"];
-    $pd_name=$rows["name"];
-    $desc = $rows["description"];
-    $category = $rows["category"];
-    $brand=$rows["brand"];
-    $p_ac = $rows["purchase_ac"];
-    $sales_ac = $rows["sales_ac"];
-    $p_price = $rows["purchase_price"];
-    $s_price = $rows["sale_price"];
-    $store = $rows["store"];
+include 'include/db_connect.php';
+include 'include/security_token.php';
+include 'include/users_right.php';
+include 'include/pop_security.php';
+if (isset($_GET['id'])) {
+    $productId = $_GET['id'];
+    if ($product = $con->query("SELECT * FROM products WHERE id='$productId'")) {
+        while ($rows = $product->fetch_array()) {
+            $id = $rows['id'];
+            $pd_name = $rows['name'];
+            $desc = $rows['description'];
+            $category = $rows['category'];
+            $brand = $rows['brand'];
+            $p_ac = $rows['purchase_ac'];
+            $sales_ac = $rows['sales_ac'];
+            $p_price = $rows['purchase_price'];
+            $s_price = $rows['sale_price'];
+            $store = $rows['store'];
+        }
     }
-  }
 }
 ?>
 <!doctype html>
 <html lang="en">
-    <head>
-    
-        <meta charset="utf-8">
-        <title>FAST-ISP-BILLING-SOFTWARE</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-        <meta content="Themesbrand" name="author">
-        <!-- App favicon -->
-        <link rel="shortcut icon" href="assets/images/favicon.ico">
-        <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
-        <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
-        <!-- C3 Chart css -->
-        <link href="assets/libs/c3/c3.min.css" rel="stylesheet" type="text/css">
-    
-        <!-- Bootstrap Css -->
-        <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
-        <!-- Icons Css -->
-        <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
-        <!-- App Css-->
-        <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-        <link href="assets/css/custom.css" id="app-style" rel="stylesheet" type="text/css">
-    
-    </head>
 
-    <body data-sidebar="dark">
+<head>
+
+    <meta charset="utf-8">
+    <title>FAST-ISP-BILLING-SOFTWARE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= include 'style.php' ?>
+
+</head>
+
+<body data-sidebar="dark">
 
 
-        <!-- Loader -->
-            <div id="preloader"><div id="status"><div class="spinner"></div></div></div>
-
-        <!-- Begin page -->
-        <div id="layout-wrapper">
-        
-             <header id="page-topbar">
-                <div class="navbar-header">
-                    <div class="d-flex">
-                        <!-- LOGO -->
-                        <div class="navbar-brand-box">
-                            <a href="index.php" class="logo logo-dark">
-                                <span class="logo-sm">
-                                    <img src="assets/images/it-fast.png" alt="" height="22">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="assets/images/it-fast.png" alt="" height="17">
-                                </span>
-                            </a>
-
-                            <a href="index.php" class="logo logo-light">
-                                <span class="logo-sm">
-                                    <img src="assets/images/it-fast.png" alt="" height="22">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="assets/images/it-fast.png" alt="" height="36">
-                                </span>
-                            </a>
-                        </div>
-
-                        <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
-                            <i class="mdi mdi-menu"></i>
-                        </button>
-
-                        <div class="d-none d-sm-block ms-2">
-                            <h4 class="page-title">Product Profile</h4>
-                        </div>
-                    </div>
-
-                    
-
-                    <div class="d-flex">
-
-                       
-
-                        
-
-                        <div class="dropdown d-none d-md-block me-2">
-                            <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="font-size-16">
-                                    <?php if (isset($_SESSION['fullname'])) {
-                                        echo $_SESSION['fullname'];
-                                    } ?>
-                                </span> 
-                            </button>
-                        </div>
 
 
-                        <div class="dropdown d-inline-block">
-                            <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <!-- item-->
-                                <a class="dropdown-item text-danger" href="logout.php">Logout</a>
-                            </div>
-                        </div>
+    <!-- Begin page -->
+    <div id="layout-wrapper">
 
-                        <div class="dropdown d-inline-block me-2">
-                            <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="ion ion-md-notifications"></i>
-                                <span class="badge bg-danger rounded-pill">3</span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
-                                <div class="p-3">
-                                    <div class="row align-items-center">
-                                        <div class="col">
-                                            <h5 class="m-0 font-size-16"> Notification (3) </h5>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div data-simplebar style="max-height: 230px;">
-                                    <a href="" class="text-reset notification-item">
-                                        <div class="d-flex">
-                                            <div class="avatar-xs me-3">
-                                                <span class="avatar-title bg-success rounded-circle font-size-16">
-                                                    <i class="mdi mdi-cart-outline"></i>
-                                                </span>
-                                            </div>
-                                            <div class="flex-1">
-                                                <h6 class="mt-0 font-size-15 mb-1">Your order is placed</h6>
-                                                <div class="font-size-12 text-muted">
-                                                    <p class="mb-1">Dummy text of the printing and typesetting industry.</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
+        <?php $page_title = 'Product Profile';
+        include 'Header.php'; ?>
 
-                                    <a href="" class="text-reset notification-item">
-                                        <div class="d-flex">
-                                            <div class="avatar-xs me-3">
-                                                <span class="avatar-title bg-warning rounded-circle font-size-16">
-                                                    <i class="mdi mdi-message-text-outline"></i>
-                                                </span>
-                                            </div>
-                                            <div class="flex-1">
-                                                <h6 class="mt-0 font-size-15 mb-1">New Message received</h6>
-                                                <div class="font-size-12 text-muted">
-                                                    <p class="mb-1">You have 87 unread messages</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="vertical-menu">
 
-                                    <a href="" class="text-reset notification-item">
-                                        <div class="d-flex">
-                                            <div class="avatar-xs me-3">
-                                                <span class="avatar-title bg-info rounded-circle font-size-16">
-                                                    <i class="mdi mdi-glass-cocktail"></i>
-                                                </span>
-                                            </div>
-                                            <div class="flex-1">
-                                                <h6 class="mt-0 font-size-15 mb-1">Your item is shipped</h6>
-                                                <div class="font-size-12 text-muted">
-                                                    <p class="mb-1">It is a long established fact that a reader will</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
+            <div data-simplebar class="h-100">
 
-                                </div>
-                                <div class="p-2 border-top">
-                                    <div class="d-grid">
-                                        <a class="btn btn-sm btn-link font-size-14  text-center" href="javascript:void(0)">
-                                            View all
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </header>
-        
-            <!-- ========== Left Sidebar Start ========== -->
-            <div class="vertical-menu">
-
-                <div data-simplebar class="h-100">
-
-                    <!--- Sidemenu -->
-                    <?php include 'Sidebar_menu.php'; ?>
-                    <!-- Sidebar -->
-                </div>
+                <!--- Sidemenu -->
+                <?php include 'Sidebar_menu.php'; ?>
+                <!-- Sidebar -->
             </div>
-            <!-- Left Sidebar End -->
-        
-            <!-- ============================================================== -->
-            <!-- Start right Content here -->
-            <!-- ============================================================== -->
-<div class="main-content">
+        </div>
+        <!-- Left Sidebar End -->
 
-    <div class="page-content">
-        <div class="container-fluid">
-           <div class="row gutters-sm">
-                            <div class="col-md-4 mb-3">
-                                <div class="card">
-                                        <img class="img-fluid" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSkdGbj-QrUuNqhXP7DtY3-t8yD6H1Tk4uFg&s">
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+
+            <div class="page-content">
+                <div class="container-fluid">
+                    <div class="row gutters-sm">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <img class="img-fluid"
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSkdGbj-QrUuNqhXP7DtY3-t8yD6H1Tk4uFg&s">
+                            </div>
+                            <div class="card mt-3">
+                                <div class="card-title text-center mt-1">
+                                    <h5>About This Product</h5>
                                 </div>
-                                <div class="card mt-3">
-                                    <div class="card-title text-center mt-1">
-                                        <h5>About This Product</h5>
-                                    </div>
-                                    <div class="card-body">
-                                       <p>this is the nast timethis is the nast timethis is the nast timethis is the nast timethis is the nast timethis is the nast timethis is the nast time</p>
-                                    </div>
+                                <div class="card-body">
+                                    <p>this is the nast timethis is the nast timethis is the nast timethis is the nast
+                                        timethis is the nast timethis is the nast timethis is the nast time</p>
                                 </div>
                             </div>
-                            <div class="col-md-8">
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <h6 class="mb-0">Product Name:</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                                <?php echo $pd_name; ?>
-                                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Product Name:</h6>
                                         </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <h6 class="mb-0">Category</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                                <?php 
-                                                
-                                                if ($categories = $con->query("SELECT * FROM product_cat WHERE id= '$category' ")) {
-                                                    while($row = $categories->fetch_array()){
-                                                        echo $row['name'];
-                                                    }
+                                        <div class="col-sm-9 text-secondary">
+                                            <?php echo $pd_name; ?>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Category</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <?php
+                                            
+                                            if ($categories = $con->query("SELECT * FROM product_cat WHERE id= '$category' ")) {
+                                                while ($row = $categories->fetch_array()) {
+                                                    echo $row['name'];
                                                 }
-                                                
-                                                ?>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <h6 class="mb-0">Brand</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                                <?php 
-                                                if ($brands = $con->query("SELECT * FROM product_brand WHERE id= '$brand' ")) {
-                                                    while($row = $brands->fetch_array()){
-                                                        echo $row['name'];
-                                                    }
-                                                }
-                                                ?>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <h6 class="mb-0">Purchase Account No:</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                                <?php 
-                 if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE id='$p_ac'")) {
-                    while ($rowssb = $ledgrsubitm->fetch_array()) {
-                        echo $rowssb['item_name'];
-                    }
-                }
+                                            }
+                                            
                                             ?>
-                                            </div>
                                         </div>
-                                        <hr>
-
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <h6 class="mb-0">Sales Account:</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                              <?php 
-                                              if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE id='$sales_ac'")) {
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Brand</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <?php
+                                            if ($brands = $con->query("SELECT * FROM product_brand WHERE id= '$brand' ")) {
+                                                while ($row = $brands->fetch_array()) {
+                                                    echo $row['name'];
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Purchase Account No:</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <?php
+                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE id='$p_ac'")) {
                                                 while ($rowssb = $ledgrsubitm->fetch_array()) {
                                                     echo $rowssb['item_name'];
                                                 }
                                             }
-                                               ?>
-                                            </div>
+                                            ?>
                                         </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <h6 class="mb-0">Purchase Price:</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                                <?php echo $p_price; ?>
-                                            </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Sales Account:</h6>
                                         </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <h6 class="mb-0">Sale's Price:</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                                <?php echo $s_price; ?>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-sm-3">
-                                                <h6 class="mb-0">Store</h6>
-                                            </div>
-                                            <div class="col-sm-9 text-secondary">
-                                                <?php
-                                                if ($allstore = $con->query("SELECT `name` FROM store WHERE id='$store'")) {
-                                                    while ($rowssb = $allstore->fetch_array()) {
-                                                        echo $rowssb['name'];
-                                                    }
+                                        <div class="col-sm-9 text-secondary">
+                                            <?php
+                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE id='$sales_ac'")) {
+                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                    echo $rowssb['item_name'];
                                                 }
-                                                
-                                                ?>
-                                            </div>
+                                            }
+                                            ?>
                                         </div>
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <a class="btn btn-info "
-                                                    href="product_profile_edit.php?id=<?php echo $id;?>">Edit</a>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Purchase Price:</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <?php echo $p_price; ?>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Sale's Price:</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <?php echo $s_price; ?>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Store</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary">
+                                            <?php
+                                            if ($allstore = $con->query("SELECT `name` FROM store WHERE id='$store'")) {
+                                                while ($rowssb = $allstore->fetch_array()) {
+                                                    echo $rowssb['name'];
+                                                }
+                                            }
+                                            
+                                            ?>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="row">
+                                        <div class="card">
+                                            <div class="card-body">
+                                            <!-- Nav tabs -->
+                                             <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                                <li class="nav-item">
+                                                   <button class="nav-link active" data-bs-toggle="tab" href="#purchase_history" role="tab">
+                                                   <span class="d-none d-md-block">Purchase History</span><span class="d-block d-md-none">Purchase History</span>
+                                                   </button>
+                                                </li>
+                                                <li class="nav-item">
+                                                   <button class="nav-link" data-bs-toggle="tab" href="#sales_history" role="tab">
+                                                   <span class="d-none d-md-block">Sales History
+                                                   </span><span class="d-block d-md-none">Sales History</span>
+                                                   </button>
+                                                </li>
+                                             </ul>
+                                             <!-- Tab panes -->
+                                             <div class="tab-content">
+                                                <div class="tab-pane p-3 tab-pane p-3 active" id="purchase_history" role="tabpanel">
+                                                    <div class="table table-responsive">
+                                                    <table id="purchase_history_table" class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Invoice id</th>
+                                                                <th>Supplier Name</th>
+                                                                <th>Sub Total</th>
+                                                                <th>Discount</th>
+                                                                <th>Total Due</th>
+                                                                <th>Grand Total</th>
+                                                                <th>Status</th>
+                                                                <th>Invoice Date</th>
+                                                                <th>Create Date</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <?php
+                        $sales_invoices = $con->query("SELECT * FROM purchase_details WHERE product_id='$productId'");
+                        while ($row = $sales_invoices->fetch_assoc()) {
+                           $purchase_invoice_id=$row['invoice_id'];
+                           $query = "SELECT * FROM purchase WHERE id=$purchase_invoice_id";
+                           $result = mysqli_query($con, $query);
+                           if (mysqli_num_rows($result) > 0) {
+                               while ($rows = mysqli_fetch_assoc($result)) {
+                                   echo "<tr>";
+                                   echo "<td>" . $rows['id'] . "</td>";
+                                   echo "<td>";
+                       
+                                   $client_id = $rows['client_id'];
+                                   $allCustomerData = $con->query("SELECT * FROM suppliers WHERE id=$client_id");
+                                   while ($client_loop = $allCustomerData->fetch_array()) {
+                                       echo '<a href="supplier_profile.php?clid=' . $client_id . '" >' . $client_loop['fullname'] . '</a>';
+                                   }
+                       
+                                   echo "</td>";
+                                   echo "<td>" . $rows['sub_total'] . "</td>";
+                                   echo "<td>" . $rows['discount'] . "</td>";
+                                   echo "<td>" . $rows['total_due'] . "</td>";
+                                   echo "<td>" . $rows['grand_total'] . "</td>";
+                                   $status_badge = ($rows['status'] == '1') ? '<span class="badge bg-success">Completed</span>' : '<span class="badge bg-danger">Draft Invoice</span>';
+                                   echo "<td>" . $status_badge . "</td>";
+                                   echo "<td>";
+                       
+                                   $date = $rows['date'];
+                                   $formatted_date = date("d F Y", strtotime($date));
+                                   echo $formatted_date;
+                       
+                                   echo "</td>";
+                       
+                                   echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
+                       
+                       
+                                   echo "<td>";
+                       
+                                   echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/purchase_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
+                                 
+                       
+                                   echo "</td>";
+                                   echo "</tr>";
+                               }
+                           } 
+                        }
+                        ?>
+                                                        </tbody>
+                                                    </table>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane p-3" id="sales_history" role="tabpanel">
+                                                    <div class="table table-responsive">
+                                                    <table id="sales_history_table" class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                        <thead>
+                                                            <tr>
+                                                            <th>Invoice id</th>
+                                                            <th>Customer Name</th>
+                                                            <th>Sub Total</th>
+                                                            <th>Paid Amount</th>
+                                                            <th>Discount</th>
+                                                            <th>Due Balance</th>
+                                                            <th>Grand Total</th>
+                                                            <th>Status</th>
+                                                            <th>Invoice Date</th>
+                                                            <th>Create Date</th>
+                                                            <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <?php
+                        $sales_invoices = $con->query("SELECT * FROM sales_details WHERE product_id='$productId'");
+                        while ($row = $sales_invoices->fetch_assoc()) {
+                           $sales_invoice_id=$row['invoice_id'];
+                           $query = "SELECT * FROM sales WHERE id=$sales_invoice_id";
+
+                           
+                           $result = mysqli_query($con, $query);
+                       
+                           if (mysqli_num_rows($result) > 0) {
+                               while ($rows = mysqli_fetch_assoc($result)) {
+                                   echo "<tr>";
+                                   echo "<td>" . $rows['id'] . "</td>";
+                                   echo "<td>";
+                       
+                                   $client_id = $rows['client_id'];
+                                   $allCustomerData = $con->query("SELECT * FROM clients WHERE id=$client_id");
+                                   while ($client_loop = $allCustomerData->fetch_array()) {
+                                       echo '<a href="client_profile.php?clid=' . $client_id . '" >' . $client_loop['fullname'] . '</a>';
+                                   }
+                       
+                                   echo "</td>";
+                                   echo "<td>" . $rows['sub_total'] . "</td>";
+                                   echo "<td>" . $rows['total_paid'] . "</td>";
+                                   echo "<td>" . $rows['discount'] . "</td>";
+                                   echo "<td>" . $rows['total_due'] . "</td>";
+                                   echo "<td>" . $rows['grand_total'] . "</td>";
+                                 
+                                   $status_badge = ($rows['status'] == '1') ? '<span class="badge bg-success">Completed</span>' : '<span class="badge bg-danger">Draft Invoice</span>';
+                                   echo "<td>" . $status_badge . "</td>";
+                                   echo "<td>";
+                       
+                                   $date = $rows['date'];
+                                   $formatted_date = date("d F Y", strtotime($date));
+                                   echo $formatted_date;
+                       
+                                   echo "</td>";
+                       
+                                   echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
+                       
+                                   echo "<td>";
+                                  
+                                   echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/sales_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
+                       
+                                   echo "</td>";
+                                   echo "</tr>";
+                               }
+                           } 
+                           
+                        }
+                        ?>
+                                                        </tbody>
+                                                    </table>
+                                                    </div>
+                                                </div>
+                                             </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-
-                               
-
                             </div>
+
+
+
+
                         </div>
-         </div>
-      </div>
+                    </div>
+                </div>
+            </div>
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
 
-    <footer class="footer">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-6">
-                    <script>document.write(new Date().getFullYear())</script> © IT-FAST.
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end d-none d-sm-block">
-                        Development <i class="mdi mdi-heart text-danger"></i><a href="https://facebook.com/rakib56789">Rakib Mahmud</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <?php include 'Footer.php'; ?>
 
-</div>
-<!-- end main content-->
-        
-        </div>
-        <!-- END layout-wrapper -->
+    </div>
+    <!-- end main content-->
 
-        <!-- Right Sidebar -->
-        <div class="right-bar">
-            <div data-simplebar class="h-100">
-                <div class="rightbar-title px-3 py-4">
-                    <a href="javascript:void(0);" class="right-bar-toggle float-end">
-                        <i class="mdi mdi-close noti-icon"></i>
-                    </a>
-                    <h5 class="m-0">Settings</h5>
-                </div>
+    </div>
+    <!-- END layout-wrapper -->
 
-                <!-- Settings -->
-                <hr class="mt-0">
-                <h6 class="text-center mb-0">Choose Layouts</h6>
 
-                <div class="p-4">
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-1.jpg" class="img-fluid img-thumbnail" alt="Layouts-1">
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch">
-                        <label class="form-check-label" for="light-mode-switch">Light Mode</label>
-                    </div>
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
 
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-2.jpg" class="img-fluid img-thumbnail" alt="Layouts-2">
-                    </div>
 
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css">
-                        <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
-                    </div>
-    
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-3.jpg" class="img-fluid img-thumbnail" alt="Layouts-3">
-                    </div>
+    <!-- JAVASCRIPT -->
+    <?php include 'script.php'; ?>
+    <script type="text/javascript">
+        $("#purchase_history_table").DataTable();
+        $("#sales_history_table").DataTable();
 
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input theme-choice" type="checkbox"  id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css">
-                        <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
-                    </div>
-            
-            
-                </div>
+        $(document).ready(function() {
+            $("#update_button").click(function(e) {
+                e.preventDefault();
+                var formData = $("#update_product").serialize();
+                $.ajax({
+                    type: "GET",
+                    url: "include/product.php?update",
+                    data: formData,
+                    cache: false,
+                    success: function() {
+                        $("#alertMsg").show();
+                        setTimeout(function() {
+                            $("#alertMsg").hide();
+                        }, 5000);
+                    }
+                });
+            });
+        });
+    </script>
 
-            </div> <!-- end slimscroll-menu-->
-        </div>
-        <!-- /Right-bar -->
+</body>
 
-        <!-- Right bar overlay-->
-        <div class="rightbar-overlay"></div>
-        
-        
-        <!-- JAVASCRIPT -->
-        <script src="assets/libs/jquery/jquery.min.js"></script>
-        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-        <script src="assets/libs/simplebar/simplebar.min.js"></script>
-        <script src="assets/libs/node-waves/waves.min.js"></script>
-        
-        
-        <!-- Peity chart-->
-        <script src="assets/libs/peity/jquery.peity.min.js"></script>
-        
-        <!--C3 Chart-->
-        <script src="assets/libs/d3/d3.min.js"></script>
-        <script src="assets/libs/c3/c3.min.js"></script> 
-        <script src="assets/libs/jquery-knob/jquery.knob.min.js"></script>
-        
-        <script src="assets/js/pages/dashboard.init.js"></script>
-        
-        <script src="assets/js/app.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-
-        <!-- Required datatable js -->
-        <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-        <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-        
-        <!-- Responsive examples -->
-        <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-        <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
-        <!-- Datatable init js -->
-        <script src="assets/js/pages/datatables.init.js"></script> 
-
-        <script src="assets/js/app.js"></script>
-        <script type="text/javascript" src="assets/js/js-fluid-meter.js"></script>
-        <script type="text/javascript">
-    $(document).ready(function(){
-       $("#update_button").click(function(e){
-           e.preventDefault();
-           var formData=$("#update_product").serialize();
-           $.ajax({
-            type:"GET",
-            url:"include/product.php?update",
-            data:formData,
-            cache:false,
-            success:function(){
-                 $("#alertMsg").show();
-                 setTimeout(function() { $("#alertMsg").hide(); }, 5000);
-                }
-           });
-       });
-    });
-</script>
-
-    </body>
 </html>
