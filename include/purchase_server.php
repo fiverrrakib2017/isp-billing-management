@@ -42,6 +42,19 @@ if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             echo $formatted_date;
 
             echo "</td>";
+
+            echo "<td>";
+
+            $created_at = $rows['created_at'];
+            if (!empty($created_at)) {
+                $created_at = date("d F Y", strtotime($created_at));
+            }else{
+                echo $created_at;
+            }
+          
+
+            echo "</td>";
+
             echo "<td>";
 
             echo '<a class="btn-sm btn btn-primary" style="margin-right: 5px;" href="purchase_invoice_edit.php?id=' . $rows['id'] . '"><i class="fas fa-edit"></i></a>';

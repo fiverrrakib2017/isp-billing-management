@@ -68,7 +68,7 @@ include("include/pop_security.php");
                                             </div>
                                             <div class="col">
                                             <div class="form-group">
-                                                <label for="currentDate" class="form-label">Date</label>
+                                                <label for="currentDate" class="form-label">Invoice Date</label>
                                                 <input class="form-control" type="date" id="currentDate"  name="date">
                                             </div>
 

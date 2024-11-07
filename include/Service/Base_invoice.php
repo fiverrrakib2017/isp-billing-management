@@ -29,7 +29,7 @@ class Base_invoivce{
     }
     protected function insert_invoice($table,$validator){
         $transaction_number=self::get_transaction_number();
-         $sql = "INSERT INTO $table (transaction_number,usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+         $sql = "INSERT INTO $table (transaction_number,usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status,created_at) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         $stmt = self::$con->prepare($sql);
 
         if (!$stmt) {

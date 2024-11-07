@@ -87,7 +87,7 @@ include("include/pop_security.php");
                                             </div>
                                             <div class="col">
                                                 <div class="form-group">
-                                                    <label for="currentDate" class="form-label">Date</label>
+                                                    <label for="currentDate" class="form-label">Invoice Date</label>
                                                     <input class="form-control" type="date" id="currentDate" name="date">
                                                 </div>
                                             </div>
@@ -96,12 +96,6 @@ include("include/pop_security.php");
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="product_item" class="form-label">Product</label>
-                                                    <!-- <div class="input-group">
-                                                        <select type="text" id="product_name"  class="form-control" >
-                                                            <option>---Select---</option>
-                                                        </select>
-                                                        <button  type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
-                                                    </div> -->
                                                     <div class="input-group">
                                                         <select id="product_name" class="form-select select2" aria-label="Product Name">
                                                             <option value="">---Select---</option>

@@ -103,6 +103,7 @@ include("include/users_right.php");
                                                     <th>Due Balance</th>
                                                     <th>Grand Total</th>
                                                     <th>Status</th>
+                                                    <th>Invoice Date</th>
                                                     <th>Create Date</th>
                                                     <th></th>
                                                 </tr>

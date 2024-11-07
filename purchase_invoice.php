@@ -104,6 +104,7 @@ ini_set('display_errors', 1);
                                                     <th>Total Due</th>
                                                     <th>Grand Total</th>
                                                     <th>Status</th>
+                                                    <th>Invoice Date</th>
                                                     <th>Create Date</th>
                                                     <th></th>
                                                 </tr>
