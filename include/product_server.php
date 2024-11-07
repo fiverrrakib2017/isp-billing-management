@@ -88,11 +88,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['check_product_qty'])) 
         LEFT JOIN 
             (SELECT product_id, SUM(qty) AS total_purchase_qty 
              FROM purchase_details 
+             WHERE status = 1  
              GROUP BY product_id) AS purchase_qty 
             ON p.id = purchase_qty.product_id
         LEFT JOIN 
             (SELECT product_id, SUM(qty) AS total_sale_qty 
              FROM sales_details 
+             WHERE status = 1  
              GROUP BY product_id) AS sale_qty 
             ON p.id = sale_qty.product_id
         WHERE 
@@ -119,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['check_product_qty'])) 
 
     echo json_encode($response);
 }
+
 
 
 ?>

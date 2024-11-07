@@ -205,7 +205,7 @@ include("include/pop_security.php");
                     </div>
                     <div class="form-group mb-2">
                         <label for="">Email</label>
-                        <input class="form-control" type="email" name="email" id="email" placeholder="Type Your Email" required/>
+                        <input class="form-control" type="email" name="email" id="email" placeholder="Type Your Email" />
                     </div>
                     <div class="form-group mb-2">
                         <label for="">Address</label>
@@ -353,6 +353,20 @@ include("include/pop_security.php");
 
                 if(!selectedProductId || !quantity || !price || !totalPrice) {
                     toastr.error('Please fill in all fields');
+                    return;
+                }
+                /*Check if the product is already added to the table*/ 
+                var isProductAdded = false;
+                $('#tableRow tr').each(function() {
+                    var tableProductId = $(this).find('input[name="table_product_id[]"]').val();
+                    if (tableProductId == selectedProductId) {
+                        isProductAdded = true;
+                        return false; 
+                    }
+                });
+
+                if (isProductAdded) {
+                    toastr.error('Product is already added. <br> Please update the quantity instead.');
                     return;
                 }
                 $('#submitButton').html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden">Loading...</span>`).prop('disabled', true);
