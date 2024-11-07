@@ -215,11 +215,7 @@ if (isset($_GET['id'])) {
                                                             <tr>
                                                                 <th>Invoice id</th>
                                                                 <th>Supplier Name</th>
-                                                                <th>Sub Total</th>
-                                                                <th>Discount</th>
-                                                                <th>Total Due</th>
-                                                                <th>Grand Total</th>
-                                                                <th>Status</th>
+                                                                <th>Quantity</th>
                                                                 <th>Invoice Date</th>
                                                                 <th>Create Date</th>
                                                                 <th></th>
@@ -227,52 +223,49 @@ if (isset($_GET['id'])) {
                                                         </thead>
                                                         <tbody>
                                                         <?php
-                        $sales_invoices = $con->query("SELECT * FROM purchase_details WHERE product_id='$productId'");
-                        while ($row = $sales_invoices->fetch_assoc()) {
-                           $purchase_invoice_id=$row['invoice_id'];
-                           $query = "SELECT * FROM purchase WHERE id=$purchase_invoice_id";
-                           $result = mysqli_query($con, $query);
-                           if (mysqli_num_rows($result) > 0) {
-                               while ($rows = mysqli_fetch_assoc($result)) {
-                                   echo "<tr>";
-                                   echo "<td>" . $rows['id'] . "</td>";
-                                   echo "<td>";
-                       
-                                   $client_id = $rows['client_id'];
-                                   $allCustomerData = $con->query("SELECT * FROM suppliers WHERE id=$client_id");
-                                   while ($client_loop = $allCustomerData->fetch_array()) {
-                                       echo '<a href="supplier_profile.php?clid=' . $client_id . '" >' . $client_loop['fullname'] . '</a>';
-                                   }
-                       
-                                   echo "</td>";
-                                   echo "<td>" . $rows['sub_total'] . "</td>";
-                                   echo "<td>" . $rows['discount'] . "</td>";
-                                   echo "<td>" . $rows['total_due'] . "</td>";
-                                   echo "<td>" . $rows['grand_total'] . "</td>";
-                                   $status_badge = ($rows['status'] == '1') ? '<span class="badge bg-success">Completed</span>' : '<span class="badge bg-danger">Draft Invoice</span>';
-                                   echo "<td>" . $status_badge . "</td>";
-                                   echo "<td>";
-                       
-                                   $date = $rows['date'];
-                                   $formatted_date = date("d F Y", strtotime($date));
-                                   echo $formatted_date;
-                       
-                                   echo "</td>";
-                       
-                                   echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
-                       
-                       
-                                   echo "<td>";
-                       
-                                   echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/purchase_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
-                                 
-                       
-                                   echo "</td>";
-                                   echo "</tr>";
-                               }
-                           } 
-                        }
-                        ?>
+        $sales_invoices = $con->query("SELECT * FROM purchase_details WHERE product_id='$productId' AND status='1'");
+        while ($row = $sales_invoices->fetch_assoc()) {
+            $purchase_invoice_id = $row['invoice_id'];
+            $product_quantity = $row['qty'];
+
+            $query = "SELECT * FROM purchase WHERE id=$purchase_invoice_id";
+            $result = mysqli_query($con, $query);
+
+            if (mysqli_num_rows($result) > 0) {
+                while ($rows = mysqli_fetch_assoc($result)) {
+                    echo "<tr>";
+                    echo "<td>" . $rows['id'] . "</td>";
+
+                    echo "<td>";
+                    $client_id = $rows['client_id'];
+                    $allCustomerData = $con->query("SELECT * FROM suppliers WHERE id=$client_id");
+                    while ($client_loop = $allCustomerData->fetch_array()) {
+                        echo '<a href="supplier_profile.php?clid=' . $client_id . '">' . $client_loop['fullname'] . '</a>';
+                    }
+                    echo "</td>";
+
+                    echo "<td>" . $product_quantity . "</td>";
+
+                    /*Display Invoice Date*/ 
+                    echo "<td>";
+                    $date = $rows['date'];
+                    $formatted_date = date("d F Y", strtotime($date));
+                    echo $formatted_date;
+                    echo "</td>";
+
+                    /* Display Create Date*/
+                    echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
+
+                    /*Display Action buttons*/ 
+                    echo "<td>";
+                    echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/purchase_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
+                    echo "</td>";
+
+                    echo "</tr>";
+                }
+            }
+        }
+        ?>
                                                         </tbody>
                                                     </table>
                                                     </div>
@@ -280,76 +273,67 @@ if (isset($_GET['id'])) {
                                                 <div class="tab-pane p-3" id="sales_history" role="tabpanel">
                                                     <div class="table table-responsive">
                                                     <table id="sales_history_table" class="table table-bordered dt-responsive nowrap"
-                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                        <thead>
-                                                            <tr>
-                                                            <th>Invoice id</th>
-                                                            <th>Customer Name</th>
-                                                            <th>Sub Total</th>
-                                                            <th>Paid Amount</th>
-                                                            <th>Discount</th>
-                                                            <th>Due Balance</th>
-                                                            <th>Grand Total</th>
-                                                            <th>Status</th>
-                                                            <th>Invoice Date</th>
-                                                            <th>Create Date</th>
-                                                            <th></th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <?php
-                        $sales_invoices = $con->query("SELECT * FROM sales_details WHERE product_id='$productId'");
-                        while ($row = $sales_invoices->fetch_assoc()) {
-                           $sales_invoice_id=$row['invoice_id'];
-                           $query = "SELECT * FROM sales WHERE id=$sales_invoice_id";
+       style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+    <thead>
+        <tr>
+            <th>Invoice id</th>
+            <th>Customer Name</th>
+            <th>Quantity</th>
+            <th>Invoice Date</th>
+            <th>Create Date</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $sales_invoices = $con->query("SELECT * FROM sales_details WHERE product_id='$productId' AND status='1'");
+        while ($row = $sales_invoices->fetch_assoc()) {
+            $sales_invoice_id = $row['invoice_id'];
+            $product_quantity = $row['qty'];
 
-                           
-                           $result = mysqli_query($con, $query);
-                       
-                           if (mysqli_num_rows($result) > 0) {
-                               while ($rows = mysqli_fetch_assoc($result)) {
-                                   echo "<tr>";
-                                   echo "<td>" . $rows['id'] . "</td>";
-                                   echo "<td>";
-                       
-                                   $client_id = $rows['client_id'];
-                                   $allCustomerData = $con->query("SELECT * FROM clients WHERE id=$client_id");
-                                   while ($client_loop = $allCustomerData->fetch_array()) {
-                                       echo '<a href="client_profile.php?clid=' . $client_id . '" >' . $client_loop['fullname'] . '</a>';
-                                   }
-                       
-                                   echo "</td>";
-                                   echo "<td>" . $rows['sub_total'] . "</td>";
-                                   echo "<td>" . $rows['total_paid'] . "</td>";
-                                   echo "<td>" . $rows['discount'] . "</td>";
-                                   echo "<td>" . $rows['total_due'] . "</td>";
-                                   echo "<td>" . $rows['grand_total'] . "</td>";
-                                 
-                                   $status_badge = ($rows['status'] == '1') ? '<span class="badge bg-success">Completed</span>' : '<span class="badge bg-danger">Draft Invoice</span>';
-                                   echo "<td>" . $status_badge . "</td>";
-                                   echo "<td>";
-                       
-                                   $date = $rows['date'];
-                                   $formatted_date = date("d F Y", strtotime($date));
-                                   echo $formatted_date;
-                       
-                                   echo "</td>";
-                       
-                                   echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
-                       
-                                   echo "<td>";
-                                  
-                                   echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/sales_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
-                       
-                                   echo "</td>";
-                                   echo "</tr>";
-                               }
-                           } 
-                           
-                        }
-                        ?>
-                                                        </tbody>
-                                                    </table>
+            $query = "SELECT * FROM sales WHERE id=$sales_invoice_id";
+            $result = mysqli_query($con, $query);
+
+            if (mysqli_num_rows($result) > 0) {
+                while ($rows = mysqli_fetch_assoc($result)) {
+                    echo "<tr>";
+                    echo "<td>" . $rows['id'] . "</td>";
+
+                    /* Display Customer Name*/
+                    echo "<td>";
+                    $client_id = $rows['client_id'];
+                    $allCustomerData = $con->query("SELECT * FROM clients WHERE id=$client_id");
+                    while ($client_loop = $allCustomerData->fetch_array()) {
+                        echo '<a href="client_profile.php?clid=' . $client_id . '">' . $client_loop['fullname'] . '</a>';
+                    }
+                    echo "</td>";
+
+                    /* Display Product Quantity in this invoice*/
+                    echo "<td>" . $product_quantity . "</td>";
+
+                    /*Display Invoice Date*/ 
+                    echo "<td>";
+                    $date = $rows['date'];
+                    $formatted_date = date("d F Y", strtotime($date));
+                    echo $formatted_date;
+                    echo "</td>";
+
+                    /*Display Create Date*/ 
+                    echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
+
+                    /* Display Action buttons*/
+                    echo "<td>";
+                    echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/sales_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
+                    echo "</td>";
+
+                    echo "</tr>";
+                }
+            }
+        }
+        ?>
+    </tbody>
+</table>
+
                                                     </div>
                                                 </div>
                                              </div>
