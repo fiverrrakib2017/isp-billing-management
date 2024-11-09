@@ -129,8 +129,8 @@ include("include/pop_security.php");
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="details" class="form-label">Details</label>
-                                                    <input id="details" type="text" class="form-control" placeholder="Details">
+                                                    <label for="details" class="form-label">Notes</label>
+                                                    <input id="details" type="text" class="form-control" placeholder="Notes">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
