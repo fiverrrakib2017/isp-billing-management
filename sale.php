@@ -48,8 +48,8 @@ include("include/pop_security.php");
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card shadow-sm mb-4">
-                                    <div class="card-body">
-                                        <div class="row mb-3">
+                                    <div class="card-header">
+                                    <div class="row mb-3">
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="refer_no" class="form-label">Refer No:</label>
@@ -92,6 +92,9 @@ include("include/pop_security.php");
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="card-body">
+                                       
                                         <div class="row mb-3">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -132,7 +135,7 @@ include("include/pop_security.php");
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group mt-1">
-                                                <button type="button" id="submitButton" class="btn btn-primary mt-4">Submit Now</button>
+                                                <button type="button" id="submitButton" class="btn btn-primary mt-4">Add Now</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -153,9 +156,8 @@ include("include/pop_security.php");
                                 <tbody id="tableRow"></tbody>
                                 
                                 </table>
-                                <div class="form-group text-center">
-                                    <button type="button" name="finished_btn" class="btn btn-success"><i class="fe fe-dollar"></i> Finished</button>
-                                    <!-- <button type="button" name="print_btn" class="btn btn-success"><i class="fe fe-dollar"></i>Print</button> -->
+                                <div class="form-group text-end">
+                                    <button type="button" name="finished_btn" class="btn btn-success"><i class="fe fe-dollar"></i>Process</button>
                                 </div>
                             </div>
                         </div>
