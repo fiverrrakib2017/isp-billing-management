@@ -233,6 +233,8 @@ if(isset($_GET["inactive"]))
                                                     <th>POP/Branch</th>
 
                                                     <th>Total Users</th>
+                                                    <th>Online Users</th>
+                                                    <th>Expired Users</th>
                                                     <th>Total Due</th>
                                                     <th>Available Balance</th>
                                                     <th>Action</th>
@@ -259,6 +261,38 @@ if(isset($_GET["inactive"]))
                                                             if ($pop_usr = $con->query("SELECT * FROM customers WHERE pop='$popId'  ")) {
                                                                 echo $popttlusr = $pop_usr->num_rows;
                                                             }
+
+                                                            ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php
+
+                                                                $sql = "SELECT radacct.username FROM radacct
+                                                                INNER JOIN customers
+                                                                ON customers.username=radacct.username
+                                                                
+                                                                WHERE customers.pop='$popId' AND radacct.acctstoptime IS NULL";
+                                                                $countpoponlnusr = mysqli_query($con, $sql);
+
+                                                                echo $countpoponlnusr->num_rows;
+
+                                                            ?>
+
+                                                        </td>
+                                                        <td>
+                                                            <?php
+                                                               $sql = "SELECT * FROM customers WHERE pop='$popId' AND NOW() > expiredate";
+                                                               $countxprd = mysqli_query($con, $sql);
+                                                                $totalexprs = $countxprd->num_rows;
+                                                               if($totalexprs == 0)
+                                                               {
+                                                                   echo $totalexprs;   
+
+                                                               }
+                                                               else{
+
+                                                                   echo "<span class='badge bg-danger'>$totalexprs</span>";
+                                                               }
 
                                                             ?>
                                                         </td>
