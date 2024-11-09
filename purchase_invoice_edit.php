@@ -57,8 +57,8 @@ if (isset($_GET["id"])) {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card shadow-sm mb-4">
-                                    <div class="card-body">
-                                        <div class="row mb-3">
+                                    <div class="card-header">
+                                    <div class="row mb-3">
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="refer_no" class="form-label">Refer No:</label>
@@ -67,10 +67,16 @@ if (isset($_GET["id"])) {
                                             </div>
                                             <div class="col">
                                                 <div class="form-group mt-2">
-                                                    <label>Client Name</label>
-                                                    <select type="text" id="supplier_name" name="client_id" class="form-select select2">
-                                                        <option>---Select---</option>
-                                                    </select>
+                                                    <label>Suppliers Name</label>
+                                                    <div class="input-group">
+                                                        <select type="text" id="supplier_name" name="client_id" class="form-select select2">
+                                                            <option>---Select---</option>
+                                                        </select>
+                                                        <button type="button" class="btn btn-primary add-supplier-btn" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                                                        <span>+</span>
+                                                    </button>
+                                                    </div>
+                                                   
                                                 </div>
                                             </div>
                                             <div class="col">
@@ -81,11 +87,14 @@ if (isset($_GET["id"])) {
                                             </div>
                                             <div class="col">
                                                 <div class="form-group">
-                                                    <label for="currentDate" class="form-label">Date</label>
-                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo date('Y-m-d'); ?>" name="date">
+                                                    <label for="currentDate" class="form-label">Invoice Date</label>
+                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo $date; ?>" name="date">
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="card-body">
+                                       
                                         <div class="row mb-3">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -94,7 +103,7 @@ if (isset($_GET["id"])) {
                                                         <select type="text" id="product_name"  class="form-control">
                                                             <option>---Select---</option>
                                                         </select>
-                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
+                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -118,13 +127,13 @@ if (isset($_GET["id"])) {
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="details" class="form-label">Details</label>
-                                                    <input id="details" type="text" class="form-control" placeholder="Details">
+                                                    <label for="details" class="form-label">Notes</label>
+                                                    <input id="details" type="text" class="form-control" placeholder="Notes">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
-                                                <div class="form-group mt-1">
-                                                <button type="button" id="submitButton" class="btn btn-primary mt-4">Submit Now</button>
+                                                <div class="form-group mt-1 ">
+                                                <button type="button" id="submitButton" class="btn btn-primary mt-4">Add Now</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -187,7 +196,7 @@ if (isset($_GET["id"])) {
 
                                 </tbody>
                                 </table>
-                                <div class="form-group text-center">
+                                <div class="form-group text-end">
                                 <button type="button"  data-bs-target="#invoiceModal" data-bs-toggle="modal" class="btn btn-success"><i class="fe fe-dollar"></i> Process Invoice</button>
                                 </div>
                             </div>
@@ -203,6 +212,7 @@ if (isset($_GET["id"])) {
         <!-- end main content-->
     </div>
     <?php include 'modal/product_modal.php'; ?>
+    <?php include 'modal/supplier_modal.php'; ?>
     <div class="modal fade bs-example-modal-lg" id="invoiceModal" tabindex="-1" role="dialog"
                aria-labelledby="exampleModalLabel" aria-hidden="true">
                <div class="modal-dialog " role="document">
@@ -250,51 +260,13 @@ if (isset($_GET["id"])) {
                </div>
             </div>
     <!-- END layout-wrapper -->
-    <!-- Right Sidebar -->
-    <div class="right-bar">
-        <div data-simplebar class="h-100">
-            <div class="rightbar-title px-3 py-4">
-                <a href="javascript:void(0);" class="right-bar-toggle float-end">
-                    <i class="mdi mdi-close noti-icon"></i>
-                </a>
-                <h5 class="m-0">Settings</h5>
-            </div>
-            <!-- Settings -->
-            <hr class="mt-0">
-            <h6 class="text-center mb-0">Choose Layouts</h6>
-            <div class="p-4">
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-1.jpg" class="img-fluid img-thumbnail" alt="Layouts-1">
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch">
-                    <label class="form-check-label" for="light-mode-switch">Light Mode</label>
-                </div>
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-2.jpg" class="img-fluid img-thumbnail" alt="Layouts-2">
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css">
-                    <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
-                </div>
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-3.jpg" class="img-fluid img-thumbnail" alt="Layouts-3">
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css">
-                    <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
-                </div>
-            </div>
-        </div>
-        <!-- end slimscroll-menu-->
-    </div>
-    <!-- /Right-bar -->
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
 
     <?php include 'script.php'; ?>
     <script src="modal/product_modal.js"></script>
+    <script src="modal/supplier_modal.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#supplier_name").select2(); 
