@@ -9,7 +9,7 @@ if (isset($_GET["clid"])) {
             $id = $rows['id'];
             $usr_id = $rows['usr_id'];
             $client_id = $rows['client_id'];
-            $date = $rows['date'];
+            $invoice_date = $rows['date'];
             $sub_total = $rows['sub_total'];
             $discount = $rows['discount'];
             $grand_total = $rows['grand_total'];
@@ -58,8 +58,8 @@ if (isset($_GET["clid"])) {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card shadow-sm mb-4">
-                                    <div class="card-body">
-                                        <div class="row mb-3">
+                                    <div class="card-header">
+                                    <div class="row ">
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="refer_no" class="form-label">Refer No:</label>
@@ -69,6 +69,7 @@ if (isset($_GET["clid"])) {
                                             <div class="col">
                                                 <div class="form-group mt-2">
                                                     <label>Client Name</label>
+                                                    <div class="input-group">
                                                     <select type="text" id="client_name" name="client_id" class="form-select select2">
                                                         <option>---Select---</option>
                                                         <?php 
@@ -88,6 +89,8 @@ if (isset($_GET["clid"])) {
 
                                                         ?>
                                                     </select>
+                                                    <button  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClientModal">+</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col">
@@ -99,11 +102,14 @@ if (isset($_GET["clid"])) {
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="currentDate" class="form-label">Date</label>
-                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo  date("Y-m-d"); ?>" name="date">
+                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo date('Y-m-d', strtotime($invoice_date)); ?>" name="date">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
+                                    </div>
+                                    <div class="card-body">
+                                       
+                                        <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="product_item" class="form-label">Product</label>
@@ -111,7 +117,7 @@ if (isset($_GET["clid"])) {
                                                         <select type="text" id="product_name"  class="form-control">
                                                             <option>---Select---</option>
                                                         </select>
-                                                        <button  type="button" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
+                                                        <button  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addproductModal">+</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -124,24 +130,24 @@ if (isset($_GET["clid"])) {
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="price" class="form-label">Price</label>
-                                                    <input type="text" class="form-control price" id="price">
+                                                    <input type="text" class="form-control price" id="price" value="0">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="total_price" class="form-label">Total Price</label>
-                                                    <input id="total_price" type="text" class="form-control total_price">
+                                                    <input id="total_price" type="text" class="form-control total_price" value="0">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="details" class="form-label">Details</label>
-                                                    <input id="details" type="text" class="form-control" placeholder="Details">
+                                                    <label for="details" class="form-label">Notes</label>
+                                                    <input id="details" type="text" class="form-control" placeholder="Notes">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group mt-1">
-                                                <button type="button" id="submitButton" class="btn btn-primary mt-4">Submit Now</button>
+                                                <button type="button" id="submitButton" class="btn btn-primary mt-4">Add Now</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -207,7 +213,7 @@ if (isset($_GET["clid"])) {
                                
                                 </tbody>
                                 </table>
-                                <div class="form-group text-center">
+                                <div class="form-group text-end">
                                     <button type="button"  data-bs-target="#invoiceModal" data-bs-toggle="modal" class="btn btn-success"><i class="fe fe-dollar"></i> Process</button>
                                 </div>
                             </div>
@@ -223,6 +229,7 @@ if (isset($_GET["clid"])) {
         <!-- end main content-->
     </div>
     <?php include 'modal/product_modal.php'; ?>
+    <?php include 'modal/client_modal.php'; ?>
     <div class="modal fade bs-example-modal-lg" id="invoiceModal" tabindex="-1" role="dialog"
                aria-labelledby="exampleModalLabel" aria-hidden="true">
                <div class="modal-dialog " role="document">
@@ -276,6 +283,7 @@ if (isset($_GET["clid"])) {
 
    <?php include 'script.php';?>
     <script src="modal/product_modal.js"></script>
+    <script src="modal/client_modal.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#client_name").select2(); 
@@ -348,32 +356,64 @@ if (isset($_GET["clid"])) {
                     toastr.error('Please fill in all fields');
                     return;
                 }
-                var row = `<tr>
-                    <td><input type="hidden" name="table_product_id[]"value="`+ selectedProductId +`">${productName}</td>
+                /*Check if the product is already added to the table*/ 
+                var isProductAdded = false;
+                $('#tableRow tr').each(function() {
+                    var tableProductId = $(this).find('input[name="table_product_id[]"]').val();
+                    if (tableProductId == selectedProductId) {
+                        isProductAdded = true;
+                        return false; 
+                    }
+                });
 
-                    <td><input type="hidden" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty">${quantity}</td>
+                if (isProductAdded) {
+                    toastr.error('Product is already added. <br> Please update the quantity instead.');
+                    return;
+                }
+                $('#submitButton').html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden">Loading...</span>`).prop('disabled', true);
+                $.ajax({
+                    url: 'include/product_server.php?check_product_qty=true', 
+                    method: 'POST',
+                    data: { product_id: selectedProductId, qty: quantity },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success==true) {
+                            var row = `<tr>
+                                <td><input type="hidden" name="table_product_id[]" value="`+ selectedProductId +`">${productName}</td>
+                                <td><input type="hidden" min="1" name="table_qty[]" value="${quantity}" class="form-control table_qty">${quantity}</td>
+                                <td><input type="hidden" name="table_price[]" class="form-control table_price" value="${price}">${price}</td>
+                                <td><input type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="${totalPrice}">${totalPrice}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm removeRow">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>`;
+                            $("#tableRow").append(row);
+                            
 
-                    <td><input  type="hidden" name="table_price[]" class="form-control table_price" value="${price}">${price}</td>
+                            calculateTotalAmount(); 
 
-                    <td><input  type="hidden" id="table_total_price" name="table_total_price[]" class="form-control" value="${totalPrice}">${totalPrice}</td>
+                            /*Clear The Fild*/
+                            $('#product_name').val('');
+                            $('#qty').val('1');
+                            $('#price').val('');
+                            $('#total_price').val('');
+                            selectedProductId = null;
+                        } else if(response.success==false) {
+                            /*IF The Stock Is Not Available*/
+                            toastr.error(response.message);
+                        }
+                       
+                    },
+                    error: function() {
+                      //  toastr.error('Error checking product stock.');
 
-                   <td>
-                   <button class="btn btn-danger btn-sm removeRow">
-
-                    <i class="fas fa-times"></i>
-                   
-                   </button>
-                   </td>
-                  </tr>`;
-
-
-                $("#tableRow").append(row);
-                calculateTotalAmount(); 
-                 $('#product_name').val('');
-                 $('#qty').val('1');
-                 $('#price').val('');
-                 $('#total_price').val('');
-                 selectedProductId = null;
+                    },
+                    complete:function(){
+                        $('#submitButton').html('Submit').prop('disabled', false);
+                    }
+                });
             });
             $(document).on('click', '.removeRow', function() {
                 $(this).closest('tr').remove();

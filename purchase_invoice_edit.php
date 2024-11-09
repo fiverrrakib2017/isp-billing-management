@@ -9,7 +9,7 @@ if (isset($_GET["id"])) {
             $id = $rows['id'];
             $usr_id = $rows['usr_id'];
             $client_id = $rows['client_id'];
-            $date = $rows['date'];
+            $invoice_date = $rows['date'];
             $sub_total = $rows['sub_total'];
             $discount = $rows['discount'];
             $grand_total = $rows['grand_total'];
@@ -88,7 +88,7 @@ if (isset($_GET["id"])) {
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="currentDate" class="form-label">Invoice Date</label>
-                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo $date; ?>" name="date">
+                                                    <input class="form-control" type="date" id="currentDate" value="<?php echo date('Y-m-d', strtotime($invoice_date)); ?>" name="date">
                                                 </div>
                                             </div>
                                         </div>
