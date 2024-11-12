@@ -408,17 +408,32 @@ function timeAgo($startdate) {
                                 <button style="float: right;">
                                                 <a href="allTickets.php">+</a>
                                             </button>
-    <?php 
+                                            <?php 
+    $badge_colors = ['bg-primary', 'bg-purple', 'bg-success', 'bg-warning']; 
+    $color_index = 0;
+    $is_first = true; 
+
     if($get_best_area = $con->query("SELECT area_id, COUNT(*) AS ticket_count FROM ticket GROUP BY area_id ORDER BY ticket_count DESC LIMIT 5")) {
         while($rows = $get_best_area->fetch_assoc()) {
             $area_id = $rows['area_id'];
             $ticket_count = $rows['ticket_count'];
             $area_name_result = $con->query("SELECT name FROM area_list WHERE id = $area_id");
+            
             if ($area_name_result && $area_row = $area_name_result->fetch_assoc()) {
                 $area_name = $area_row['name'];
-                echo '<span class="badge bg-primary me-2">' . htmlspecialchars($area_name) . ' (' . $ticket_count . ')</span>';
+                
+                if ($is_first) {
+                    echo '<span class="badge bg-danger me-2">' . htmlspecialchars($area_name) . ' (' . $ticket_count . ')</span>';
+                    $is_first = false;
+                } else {
+                    echo '<span class="badge ' . $badge_colors[$color_index] . ' me-2">' . htmlspecialchars($area_name) . ' (' . $ticket_count . ')</span>';
+                    $color_index++;
+                }
             } else {
                 echo '<span class="badge bg-secondary me-2">Unknown (' . $ticket_count . ')</span>';
+            }
+            if ($color_index >= count($badge_colors)) {
+                $color_index = 0;
             }
         }
     } else {
