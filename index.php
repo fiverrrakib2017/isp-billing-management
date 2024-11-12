@@ -403,17 +403,34 @@ function timeAgo($startdate) {
 
                         <div class="col-xl-6">
                             <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <p>Tickets</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button style="float: right;">
+                            <div class="card-header">
+                                <h4 class="card-title">Tickets</h4>
+                                <button style="float: right;">
                                                 <a href="allTickets.php">+</a>
                                             </button>
-                                        </div>
-                                    </div>
+    <?php 
+    if($get_best_area = $con->query("SELECT area_id, COUNT(*) AS ticket_count FROM ticket GROUP BY area_id ORDER BY ticket_count DESC LIMIT 5")) {
+        while($rows = $get_best_area->fetch_assoc()) {
+            $area_id = $rows['area_id'];
+            $ticket_count = $rows['ticket_count'];
+            $area_name_result = $con->query("SELECT name FROM area_list WHERE id = $area_id");
+            if ($area_name_result && $area_row = $area_name_result->fetch_assoc()) {
+                $area_name = $area_row['name'];
+                echo '<span class="badge bg-primary me-2">' . htmlspecialchars($area_name) . ' (' . $ticket_count . ')</span>';
+            } else {
+                echo '<span class="badge bg-secondary me-2">Unknown (' . $ticket_count . ')</span>';
+            }
+        }
+    } else {
+        echo '<span class="badge bg-danger">Error fetching areas</span>';
+    }
+    ?>
+</div>
+
+
+
+                                <div class="card-body">
+                                    
                                     <div class="table-responsive">
                                         <table id="tickets_table" class="table">
                                             <thead>
