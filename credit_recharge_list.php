@@ -8,6 +8,7 @@ $sql = "
     SELECT 
         c.id AS customer_id, 
         c.username, 
+        c.mobile, 
         COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
         COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
         (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
@@ -306,6 +307,7 @@ $result = $con->query($sql);
                                             <thead>
                                                 <tr>
                                                     <th>Customer Username</th>
+                                                    <th>Phone Number</th>
                                                     <th>Recharged</th>
                                                     <th>Total Paid</th>
                                                     <th>Total Due</th>
@@ -319,6 +321,7 @@ $result = $con->query($sql);
                                                         $total_due_sum += $row['total_due'];
                                                         echo "<tr>";
                                                         echo "<td> <a href='profile.php?clid=" . $row['customer_id'] . "'>" . $row['username'] . "</a> </td>";
+                                                        echo "<td>" . $row['mobile'] . "</td>";
                                                         echo "<td>" . $row['total_recharge'] . "</td>";
                                                         echo "<td>" . $row['total_paid'] . "</td>";
                                                         echo "<td>" . $row['total_due'] . "</td>";
@@ -327,20 +330,21 @@ $result = $con->query($sql);
                                                     }
                                                     
                                                 } else {
-                                                    echo "<tr><td colspan='5'>No customers with due amounts found</td></tr>";
+                                                    echo "<tr><td colspan='4'>No customers with due amounts found</td></tr>";
                                                 }
                                                 ?>
                                                 
                                             </tbody>
                                             <tfooter>
                                             <tr>
-                                                <td colspan="3"><strong>Total Due</strong></td>
+                                                <td colspan="4"><strong>Total Due</strong></td>
                                                 <td><strong><?php echo $total_due_sum; ?></strong></td>
                                                 <td></td>
                                             </tr>
                                             </tfooter>
                                         </table>
-                                        <button class="btn-sm btn btn-success" onclick="printTable()">Print</button>
+                                        <!-- <button class="btn-sm btn btn-success" onclick="printTable()">Print</button> -->
+                                        <button class="btn btn btn-success" id="export_to_excel">Export</button>
                                     </div>
                                 </div>
                             </div>
@@ -379,6 +383,35 @@ $result = $con->query($sql);
             newWin.print();
             newWin.close();
         }
+
+
+
+        $(document).on('click','#export_to_excel',function(){
+                    let csvContent = "data:text/csv;charset=utf-8,";
+                
+                /* Add header row*/
+                csvContent += [
+                     'Username', 'Phone Number', 'Recharged', 'Total Paid', 'Total Due'
+                ].join(",") + "\n";
+                
+                /*Add data rows*/ 
+                $('#customers_table tbody tr').each(function() {
+                    let row = [];
+                    $(this).find('td').each(function() {
+                        row.push($(this).text().trim());
+                    });
+                    csvContent += row.join(",") + "\n";
+                });
+
+                /* Create a link element and simulate click to download the CSV file*/
+                let encodedUri = encodeURI(csvContent);
+                let link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "customers.csv");
+                document.body.appendChild(link); // Required for Firefox
+                link.click();
+                document.body.removeChild(link);
+            });
     </script>
 	
 </body>
