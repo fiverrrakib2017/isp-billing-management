@@ -95,7 +95,7 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                         $exp_date = date('Y-m-d', strtotime("+$chrg_mnths month", strtotime($today)));
                     }
                     /*Insert Recharge Data*/
-                    $con->query("INSERT INTO customer_rechrg(customer_id, pop_id, months, sales_price, purchase_price, ref, rchrg_until, type, rchg_by, datetm) VALUES('$customer_id', '$pop_id', '$chrg_mnths', '$package_sales_price', '$package_purchase_price', '$RefNo', '$exp_date', '$tra_type', '$recharge_by', NOW())");
+                    $con->query("INSERT INTO customer_rechrg(customer_id, pop_id, months, sales_price, purchase_price,discount, ref, rchrg_until, type, rchg_by, datetm) VALUES('$customer_id', '$pop_id', '$chrg_mnths', '$package_sales_price', '$package_purchase_price','0.00', '$RefNo', '$exp_date', '$tra_type', '$recharge_by', NOW())");
 
                     /*Update Customer New Balance AND Expire Date */
                     $_customer_total_paid_amount = 0;
@@ -189,7 +189,7 @@ if (isset($_GET['cash_received']) && !empty($_GET['cash_received']) && $_SERVER[
           }
         
           /* Insert Recharge Data */
-          $result = $con->query("INSERT INTO `customer_rechrg`( `customer_id`, `pop_id`, `months`, `sales_price`, `purchase_price`, `ref`, `rchrg_until`, `type`, `rchg_by`, `datetm`, `status`) VALUES ('$customer_id', '$pop_id', '0', '0', '$received_amount', '$received_remarks', '2023-06-02', '4', '$recharge_by',  NOW() , '0')"); 
+          $result = $con->query("INSERT INTO `customer_rechrg`( `customer_id`, `pop_id`, `months`, `sales_price`, `purchase_price`,`discount`, `ref`, `rchrg_until`, `type`, `rchg_by`, `datetm`, `status`) VALUES ('$customer_id', '$pop_id', '0', '0', '$received_amount', '0.00', '$received_remarks', '2023-06-02', '4', '$recharge_by',  NOW() , '0')"); 
           if ($result) {
               /* Update Customer Balance */
               $result_paid = $con->query("SELECT SUM(purchase_price) as customer_total_paid_amount FROM customer_rechrg WHERE customer_id = $customer_id AND type != '0' ");
@@ -317,7 +317,7 @@ if (isset($_POST['addCustomerDuePayment'])) {
     $date = date('Y-m-d');
     $recharge_by = $_SESSION['uid'];
 
-    $result = $con->query("INSERT INTO `customer_rechrg` (`id`, `customer_id`, `pop_id`, `months`, `sales_price`,`purchase_price`, `ref`, `rchrg_until`, `type`, `rchg_by`, `datetm`) VALUES (NULL, '$customer_id', '$pop_id', '', '00','$amount', '$remarks', '2023-06-02', '$transaction_type', '$recharge_by', '$date');");
+    $result = $con->query("INSERT INTO `customer_rechrg` (`id`, `customer_id`, `pop_id`, `months`, `sales_price`,`purchase_price`,`discount`, `ref`, `rchrg_until`, `type`, `rchg_by`, `datetm`) VALUES (NULL, '$customer_id', '$pop_id', '', '00','$amount','0.00', '$remarks', '2023-06-02', '$transaction_type', '$recharge_by', '$date');");
     if ($result == true) {
         // Total Paid amount
         if ($ttlpdamt = $con->query("SELECT SUM(purchase_price) AS TotalPaidAmt FROM customer_rechrg WHERE customer_id='$customer_id' AND type!='0'")) {

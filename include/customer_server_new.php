@@ -69,8 +69,19 @@
                 }
             ),
             array(
-                'db' => 'id',
+                'db' => 'liablities',
                 'dt' => 11,
+                'formatter' => function($d, $row) use ($con) {
+                   if ($d==1) {
+                    return '<span class="badge bg-success">Yes</span>';
+                   }else{
+                    return '<span class="badge bg-danger">No</span>';
+                   }
+                }
+            ),
+            array(
+                'db' => 'id',
+                'dt' => 12,
                 'formatter' => function($d, $row) {
                     return '<a class="btn btn-info" href="profile_edit.php?clid=' . $d . '"><i class="fas fa-edit"></i></a>
                             <a class="btn btn-success" href="profile.php?clid=' . $d . '"><i class="fas fa-eye"></i></a>';

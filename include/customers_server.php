@@ -150,6 +150,7 @@ if (isset($_POST['addCustomerData'])) {
     $con_charge = $_POST['con_charge'];
     $price = $_POST['price'];
     $remarks = $_POST['remarks'];
+    $liablities = $_POST['liablities'];
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
     //$chrg_mnths = "5";
@@ -184,14 +185,14 @@ if (isset($_POST['addCustomerData'])) {
         Please Recharge POP/Branch ";
     } else {
 
-    $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,createdate,profile_pic,nid,con_charge,price,remarks,rchg_amount,paid_amount,balance_amount) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$price','$price', '0')");
+    $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0')");
     if ($result == true) {
 
         //Update account recharge and transection
         $custID = $con->insert_id;
         $recharge_by=isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
-        $con->query("INSERT INTO customer_rechrg(customer_id, pop_id,months, sales_price, purchase_price,ref,rchrg_until,type,rchg_by,datetm) 
-          VALUES('$custID','$pop','1','$package_sales_price','$package_purchase_price', 'On Connection', '$exp_date','1','$recharge_by',NOW())");
+        $con->query("INSERT INTO customer_rechrg(customer_id, pop_id,months, sales_price, purchase_price,discount,ref,rchrg_until,type,rchg_by,datetm) 
+          VALUES('$custID','$pop','1','$package_sales_price','$package_purchase_price','0.00', 'On Connection', '$exp_date','1','$recharge_by',NOW())");
         echo 1;
     } else {
         echo "Problem Is : " . $con->error;
