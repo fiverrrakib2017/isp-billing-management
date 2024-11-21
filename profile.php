@@ -584,13 +584,25 @@ if ($rchdamt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_r
                                                 <div class="col mr-2">
                                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Paid</div>
                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                      <?php
-if ($dueamt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type !='0'")) {
-    while ($r_due_rows = $dueamt->fetch_array()) {
-        $totalpaid = $r_due_rows["Amount"];
+                                                   <?php
+
+$totalpaid = 0.00;
+$discount_amount = 0.00;
+
+if ($dueamt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type != '0'")) {
+    if ($r_due_rows = $dueamt->fetch_array()) {
+        $totalpaid = $r_due_rows["Amount"] ?? 0.00; 
     }
-    echo $totalpaid;
 }
+
+if ($discount_query = $con->query("SELECT SUM(discount) AS discount_amount FROM customer_rechrg WHERE customer_id='$clid'")) {
+    if ($discount_row = $discount_query->fetch_array()) {
+        $discount_amount = $discount_row["discount_amount"] ?? 0.00;
+    }
+}
+
+// Calculate and output the net value
+echo $totalpaid - $discount_amount ?? 0.00;
 ?>
                                                    </div>
                                                 </div>
@@ -627,6 +639,28 @@ if ($duepmt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_re
         $totalpmtpaid = $pmt_rows["Amount"];
     }
     echo $totalpmtpaid;
+}
+?>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <!-- Pending Requests Card Example -->
+                                    <div class="col-xl-3 col-md-6 mb-4">
+                                       <div class="card shadow  py-2" style="border-left:3px solid red;">
+                                          <div class="card-body">
+                                             <div class="row no-gutters align-items-center">
+                                                <div class="col mr-2">
+                                                   <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Discount</div>
+                                                   <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                      <?php
+if ($duepmt = $con->query("SELECT SUM(discount) AS discount_amount FROM customer_rechrg WHERE customer_id='$clid'")) {
+    while ($discount_amount_rows = $duepmt->fetch_array()) {
+        $_discount_amount = $discount_amount_rows["discount_amount"] ?? 0;
+    }
+    echo $_discount_amount;
 }
 ?>
                                                    </div>

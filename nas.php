@@ -324,8 +324,9 @@ require('routeros/routeros_api.class.php');
                     <table id="customers_table" class="table table-striped table-bordered  nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                            <tr>
-                                <th>Name</th>
-                                <th>IP</th>
+                                <th>NAS Details</th>
+                                <th>Online Users</th>
+								<th>IP</th>
                                 <th>Secret</th>
                                 <th>Api User</th>
                                 <th>Description</th>
@@ -342,40 +343,49 @@ require('routeros/routeros_api.class.php');
                             $nasname = $rows['nasname'];
                             $api_usr = $rows['api_user'];
                             $api_pswd = $rows['api_password'];
-                            //$api_usr = $rows['api_user'];
+                            $api_server = $rows['server'];
+							$api_port = $rows['ports'];
                            ?>
 
-                           
-                           
-                            
-                            
 
                            <tr>
                             <td>
                             <?php echo $rows['shortname']."<br>";
-                            //print_r($READ);
-                            /*
-                            echo $READ['0']['uptime']."<br>";
-                            echo $READ['0']['platform']."<br>";
-                            echo $READ['0']['version']."<br>";
-                            echo $READ['0']['architecture-name']."<br>";
-                            echo $READ['0']['cpu']."<br>";
-                            echo $READ['0']['cpu-count']."Core <br>";
-                            echo $READ['0']['cpu-frequency']/(1000)." GHz <br>";
-                            */
-                            $API = new RouterosAPI();
-                            if ($API->connect($nasname, $api_usr, $api_pswd)) {
-                            $API->write('/system/resource/print');
+                            
+                            
+                            ////////////////////////////////////
+							$API = new RouterosAPI();
 
-                            $READ = $API->read(true);   
-                            echo "Platform-".$READ['0']['platform'].", Version-".$READ['0']['version']."<br/> CPU-".$READ['0']['architecture-name']." ".$READ['0']['cpu-count']."Core ".$READ['0']['cpu-frequency']/(1000)."GHz <br>";
-                            }
-                            $API->disconnect();
-                            
-                            
-                            
+							//$API->debug = true;
+							//$port = 8727;
+							if ($API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
+
+							   //$API->write('/interface/getall');
+							   $API->write('/system/resource/print');
+
+							   $READ = $API->read(true);
+
+							   $ARRAY = $API->parseResponse($READ);
+
+							   
+							    echo "Uptime: ".$READ['0']['uptime']."<br>";
+								echo "Version: ".$READ['0']['version']."<br>";
+								echo "Hardware: ".$READ['0']['board-name']."<br>";
+								echo "CPU: ".$READ['0']['cpu'].", ";
+								echo "Core: ".$READ['0']['cpu-count']." Core, ";
+								echo "Speed: ".$READ['0']['cpu-frequency']/(1000)." GHz";
+								
+								// Online users
+								$NAS_Online = $ARRAY = $API->comm("/ppp/active/print", array("count-only"=> "",));
+   
+								//print_r($ARRAY);
+
+							   $API->disconnect();
+							}
+							   /////////////////////////////////
                             ?>
                             </td>
+							<td><?php echo $NAS_Online;?>
                             <td><?php echo $host=$rows['nasname'];?>
                             <br/>
                             <div id="pingchk"></div>
@@ -389,8 +399,8 @@ require('routeros/routeros_api.class.php');
                             <td><?php echo $rows['description']; ?></td>
                             <td><?php echo $rows['server']; ?></td>
                             <td>
-                                <a href="include/nas_delete.php?clid=<?php echo $rows['id']; ?>" class="btn-sm btn btn-danger" onclick=" return confirm('Are You Sure');">Delete
-                                </a>
+                                <!-- <a href="include/nas_delete.php?clid=<?php echo $rows['id']; ?>" class="btn-sm btn btn-danger" onclick=" return confirm('Are You Sure');">Delete
+                                </a> -->
                             </td>
                         </tr>
                        <?php } ?>

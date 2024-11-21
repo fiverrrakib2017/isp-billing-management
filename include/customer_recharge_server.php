@@ -81,7 +81,6 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                 if (!empty($package_sales_price) && isset($package_sales_price) && !empty($package_purchase_price) && isset($package_purchase_price)) {
                     /***********Ensure sufficient balance ************/
                     if ($package_purchase_price > $_current_pop_balance) {
-                        //echo json_encode(['success' => false, 'message' => 'Please Recharge This POP/Branch.']);
                         echo json_encode(['success' => false, 'message' => 'Please Recharge This POP/Branch. <br>This POP Avaiable Balance is ' . $_current_pop_balance]);
                         exit();
                     }
@@ -217,12 +216,24 @@ if (isset($_POST['add_recharge_data'])) {
     $RefNo = $_POST['RefNo'];
     $tra_type = $_POST['tra_type'];
 
+    /* Initialize variables*/
+    $packageId = null;
+    $_price = 0;
+
     //how to get customer package of customers table
     if ($allCstmr = $con->query("SELECT * FROM customers WHERE id=$customer_id")) {
         while ($rows = $allCstmr->fetch_array()) {
             $packageId = $rows['package'];
+            $_price = $rows['price'];
         }
     }
+     
+    /*Get DISCOUNT Amount*/
+    if (!empty($chrg_mnths) && isset($chrg_mnths) && !empty($package_purchase_price) && isset($package_purchase_price)) {
+        $main_amount=$chrg_mnths * $_price;
+        $discount_amount=$main_amount - $package_purchase_price ?? 0;
+    }
+    
     //get customer sale's price
     if ($allPackg = $con->query("SELECT * FROM branch_package WHERE id=$packageId")) {
         while ($rows = $allPackg->fetch_array()) {
@@ -265,8 +276,8 @@ if (isset($_POST['add_recharge_data'])) {
             // Increase recharge monthe from current expired date
             $exp_date = date('Y-m-d', strtotime('+' . $chrg_mnths . ' month', strtotime($expiredDate)));
         }
-
-        $con->query("INSERT INTO customer_rechrg(customer_id,pop_id,months,sales_price,purchase_price,ref,rchrg_until,type,rchg_by,datetm) VALUES('$customer_id','$pop_id','$chrg_mnths','$package_sales_price','$package_purchase_price','$RefNo','$exp_date','$tra_type','$recharge_by',NOW())");
+        
+        $con->query("INSERT INTO customer_rechrg(customer_id,pop_id,months,sales_price,purchase_price,discount,ref,rchrg_until,type,rchg_by,datetm) VALUES('$customer_id','$pop_id','$chrg_mnths','$package_sales_price','$main_amount','$discount_amount','$RefNo','$exp_date','$tra_type','$recharge_by',NOW())");
 
         $con->query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
         // Total Paid amount

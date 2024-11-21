@@ -113,11 +113,11 @@ function timeAgo($startdate) {
                             <div class="card">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-success me-0 float-end"><i class="fas fa-user-check"></i></span>
+                                        <span class="mini-stat-icon bg-primary me-0 float-end"><i class="fas fa-user-check"></i></span>
                                         <div class="mini-stat-info">
-                                            <span class="counter text-success">
+                                            <span class="counter text-primary">
                                                 <?php
-                                                if ($onlinecstmr = $con->query("SELECT * FROM radacct WHERE acctterminatecause=''")) {
+                                                if ($onlinecstmr = $con->query("SELECT * FROM radacct WHERE acctstoptime IS NULL")) {
                                                     echo $onlinecstmr->num_rows;
                                                 }
                                                 ?>
@@ -134,16 +134,17 @@ function timeAgo($startdate) {
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-primary me-0 float-end"><i class="fas fa-users"></i></span>
+                                            <span class="mini-stat-icon bg-success me-0 float-end"><i class="fas fa-users"></i></span>
                                             <div class="mini-stat-info">
-                                                <span class="counter text-purple">
-                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM customers")) {
-                                                        echo  $totalCustomer->num_rows;
+                                                <span class="counter text-success">
+                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1'")) {
+                                                        echo  $totalcstmr = $totalCustomer->num_rows;
+														
                                                     }
 
                                                     ?>
                                                 </span>
-                                                Total Customers
+                                                Active Customers
                                             </div>
                                         </div>
                                     </div>
@@ -160,7 +161,7 @@ function timeAgo($startdate) {
                                 <a href="customer_expire.php">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-warning me-0 float-end"><i class="fas fa-exclamation-triangle"></i></span>
+                                            <span class="mini-stat-icon bg-danger me-0 float-end"><i class="fas fa-exclamation-triangle"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
                                                     <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate")) {
@@ -181,9 +182,9 @@ function timeAgo($startdate) {
                             <a href="customer_disabled.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-danger me-0 float-end"><i class="fas fa-user-slash"></i></span>
+                                        <span class="mini-stat-icon bg-secondary me-0 float-end"><i class="fas fa-user-slash"></i></span>
                                         <div class="mini-stat-info">
-                                            <span class="counter text-teal">
+                                            <span class="counter text-secondary">
                                                 <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0'")) {
                                                     echo  $dsblcstmr->num_rows;
                                                 }
@@ -204,10 +205,13 @@ function timeAgo($startdate) {
                     <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <div class="card-body">
+								<a href="pop_branch.php">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-brown me-0 float-end"><i class="fas fa-code-branch"></i></span>
+									
+                                        <span class="mini-stat-icon bg-brown me-0 float-end"><i class="fas fa-project-diagram"></i></span>
                                         <div class="mini-stat-info">
-                                            <span class="counter text-success">
+                                            
+											<span class="counter text-brown">
                                                 <?php
                                                 if ($onlinecstmr = $con->query("SELECT * FROM add_pop")) {
                                                 echo $onlinecstmr->num_rows;
@@ -215,11 +219,10 @@ function timeAgo($startdate) {
                                                 ?>
                                             </span>
                                             POP/Branch
-											<br/>
-											<a href="pop_branch.php">View</a>
+											
                                         </div>
                                     </div>
-                                </div>
+                                </div></a>
                             </div>
                         </div> <!-- End col -->
 
@@ -227,10 +230,11 @@ function timeAgo($startdate) {
                             
                                 <div class="card">
                                     <div class="card-body">
+									<a href="pop_area.php">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-teal me-0 float-end"><i class="fas fa-search-location"></i></span>
                                             <div class="mini-stat-info">
-                                                <span class="counter text-purple">
+                                                <span class="counter text-teal">
                                                     <?php if ($totalCustomer = $con->query("SELECT * FROM area_list")) {
                                                         echo  $totalCustomer->num_rows;
                                                     }
@@ -238,10 +242,10 @@ function timeAgo($startdate) {
                                                     ?>
                                                 </span>
                                                 Area
-												<br/>
-											<a href="pop_area.php">View</a>
+												
+											
                                             </div>
-                                        </div>
+                                        </div></a>
                                     </div>
                                 </div>
                             
@@ -253,19 +257,18 @@ function timeAgo($startdate) {
 
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
-                                <a href="customer_expire.php">
+                                <a href="allTickets.php">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-success me-0 float-end"><i class="fas fa-money-bill-wave"></i></span>
+                                            <span class="mini-stat-icon bg-warning me-0 float-end"><i class="fas fa-notes-medical"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
-                                                    <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate")) {
-                                                        echo  $AllExcstmr->num_rows;
-                                                    }
-
-                                                    ?>
+                                                    <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket")) {
+                                                    echo  $dsblcstmr->num_rows;
+                                                }
+                                                ?>
                                                 </span>
-                                                Revenew
+                                                Tickets
                                             </div>
                                         </div>
                                     </div>
@@ -274,18 +277,18 @@ function timeAgo($startdate) {
                         </div> <!-- End col -->
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
-                                <a href="allTickets.php">
+                                <a href="nas.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-warning me-0 float-end"><i class="far fa-sticky-note"></i></span>
+                                        <span class="mini-stat-icon bg-purple me-0 float-end"><i class="fas fa-network-wired"></i></span>
                                         <div class="mini-stat-info">
                                             <span class="counter text-teal">
-                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket")) {
+                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM nas")) {
                                                     echo  $dsblcstmr->num_rows;
                                                 }
                                                 ?>
                                             </span>
-                                            Tickets
+                                            Routers
                                         </div>
                                     </div>
                                 </div>
