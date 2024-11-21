@@ -2,17 +2,17 @@
 if (!isset($_SESSION)) {
     session_start();
 }
-$rootPath = $_SERVER['DOCUMENT_ROOT'];  
+$rootPath = $_SERVER['DOCUMENT_ROOT'];
 
-$db_connect_path = $rootPath . '/include/db_connect.php';  
+$db_connect_path = $rootPath . '/include/db_connect.php';
 $users_right_path = $rootPath . '/include/users_right.php';
 
 if (file_exists($db_connect_path)) {
-    require($db_connect_path);
+    require $db_connect_path;
 }
 
 if (file_exists($users_right_path)) {
-    require($users_right_path);
+    require $users_right_path;
 }
 
 ?>
@@ -82,7 +82,7 @@ if (file_exists($users_right_path)) {
 
                                 <div class="modal fade bs-example-modal-lg" tabindex="-1"
                                     aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="exampleModalLabel"><span
@@ -171,19 +171,18 @@ if (file_exists($users_right_path)) {
                                                                     <div class="form-group mb-2">
                                                                         <label>POP/Branch</label>
                                                                         <select id="customer_pop" class="form-select">
-                                                                        <option value="">Select Pop/Branch</option>
-                                                        <?php
-                                                        if ($pop = $con->query("SELECT * FROM add_pop WHERE id=$auth_usr_POP_id")) {
-                                                            while ($rows = $pop->fetch_array()) {
-
-
-                                                                $id = $rows["id"];
-                                                                $name = $rows["pop"];
-
-                                                                echo '<option value="' . $id . '">' . $name . '</option>';
-                                                            }
-                                                        }
-                                                        ?>
+                                                                            <option value="">Select Pop/Branch
+                                                                            </option>
+                                                                            <?php
+                                                                            if ($pop = $con->query("SELECT * FROM add_pop WHERE id=$auth_usr_POP_id")) {
+                                                                                while ($rows = $pop->fetch_array()) {
+                                                                                    $id = $rows['id'];
+                                                                                    $name = $rows['pop'];
+                                                                            
+                                                                                    echo '<option value="' . $id . '">' . $name . '</option>';
+                                                                                }
+                                                                            }
+                                                                            ?>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -238,13 +237,13 @@ if (file_exists($users_right_path)) {
                                                                 </div>
                                                             </div>
                                                             <div class="row">
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>Remarks</label>
                                                                         <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-md-6">
+                                                                <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label>Status</label>
                                                                         <select id="customer_status"
@@ -255,6 +254,19 @@ if (file_exists($users_right_path)) {
                                                                             <option value="1">Active</option>
                                                                             <option value="2">Expire</option>
                                                                             <option value="3">Request</option>
+                                                                        </select>
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Liablities</label>
+                                                                        <select id="customer_liablities"
+                                                                            class="form-select">
+                                                                            <option value="">---Select---
+                                                                            </option>
+                                                                            <option value="0">No</option>
+                                                                            <option value="1">Yes</option>
                                                                         </select>
                                                                     </div>
 
@@ -298,6 +310,7 @@ if (file_exists($users_right_path)) {
                                                     <th>Mobile no.</th>
                                                     <th>POP/Branch</th>
                                                     <th>Area/Location</th>
+                                                    <th>Liablities</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -329,14 +342,16 @@ if (file_exists($users_right_path)) {
                                     <button type="button" class="btn btn-danger mb-2" name="cash_received_btn">
                                         <i class="mdi mdi-cash-multiple"></i>&nbsp;Cash Received
                                     </button>
-                                    
-                                    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#fileImportModal">
+
+                                    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal"
+                                        data-bs-target="#fileImportModal">
                                         <img src="https://img.icons8.com/?size=100&id=117561&format=png&color=000000"
                                             class="img-fluid icon-img" style="height: 20px !important;">
                                         Import Excel File
                                     </button>
 
-                                    <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal" data-bs-target="#ticketModal">
+                                    <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal"
+                                        data-bs-target="#ticketModal">
                                         <i class="mdi mdi-ticket"></i>&nbsp;Add Ticket
                                     </button>
 
@@ -495,7 +510,8 @@ if (file_exists($users_right_path)) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" name="cash_received_submit_btn" class="btn btn-success"><i class="mdi mdi-cash"></i> Payment Now</button>
+                    <button type="button" name="cash_received_submit_btn" class="btn btn-success"><i
+                            class="mdi mdi-cash"></i> Payment Now</button>
                 </div>
             </div>
         </div>
@@ -506,12 +522,12 @@ if (file_exists($users_right_path)) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                    <i class="mdi mdi-upload"></i>  File Import
+                        <i class="mdi mdi-upload"></i> File Import
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    
+
                     <form id="file_import_form" method="POST">
                         <div class="form-group mb-2">
                             <label>Upload Your File:</label>
@@ -521,7 +537,8 @@ if (file_exists($users_right_path)) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" name="file_upload_submit_btn" class="btn btn-success"><i class="mdi mdi-upload"></i> Upload Now</button>
+                    <button type="button" name="file_upload_submit_btn" class="btn btn-success"><i
+                            class="mdi mdi-upload"></i> Upload Now</button>
                 </div>
             </div>
         </div>
@@ -532,7 +549,7 @@ if (file_exists($users_right_path)) {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                    <i class="mdi mdi-swap-horizontal"></i>  Change POP/Branch
+                        <i class="mdi mdi-swap-horizontal"></i> Change POP/Branch
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -547,58 +564,67 @@ if (file_exists($users_right_path)) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" name="pop_change_submit_btn" class="btn btn-success"> <i class="mdi mdi-swap-horizontal"></i>  Change POP/Branch</button>
+                    <button type="button" name="pop_change_submit_btn" class="btn btn-success"> <i
+                            class="mdi mdi-swap-horizontal"></i> Change POP/Branch</button>
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
     <!------------------ Modal for Create Ticket For POP/Branch ------------------>
-    <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header  bg-success">
-                    <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="mdi mdi-account-plus"></i></h5>
-                    
+                    <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i
+                            class="mdi mdi-account-plus"></i></h5>
+
                 </div>
-                <form action="../include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
+                <form action="../include/tickets_server.php?add_ticket_data=true" method="POST"
+                    id="ticket_modal_form">
                     <div class="modal-body">
                         <div class="from-group mb-2">
                             <label>Customer Name</label>
-                            <select class="form-select" name="customer_id" id="ticket_customer_id" style="width: 100%;"></select>
-						</div>
+                            <select class="form-select" name="customer_id" id="ticket_customer_id"
+                                style="width: 100%;"></select>
+                        </div>
                         <div class="from-group mb-2">
                             <label for="">Ticket For</label>
                             <select id="ticket_for" name="ticket_for" class="form-select" required>
                                 <option value="Home Connection">Home Connection</option>
                                 <option value="POP">POP Support</option>
                                 <option value="Corporate">Corporate</option>
-                                
+
                             </select>
                         </div>
                         <div class="from-group mb-2">
                             <label for=""> Complain Type </label>
-                            <select id="ticket_complain_type" name="ticket_complain_type" class="form-select" style="width: 100%;" ></select>
+                            <select id="ticket_complain_type" name="ticket_complain_type" class="form-select"
+                                style="width: 100%;"></select>
 
                         </div>
                         <div class="from-group mb-2">
                             <label for="">Ticket Priority</label>
-                            <select id="ticket_priority" name="ticket_priority" type="text" class="form-select" style="width: 100%;">
-                            <option >---Select---</option>
-                            <option value="1">Low</option>
-                            <option value="2">Normal</option>
-                            <option value="3">Standard</option>
-                            <option value="4">Medium</option>
-                            <option value="5">High</option>
-                            <option value="6">Very High</option>
+                            <select id="ticket_priority" name="ticket_priority" type="text" class="form-select"
+                                style="width: 100%;">
+                                <option>---Select---</option>
+                                <option value="1">Low</option>
+                                <option value="2">Normal</option>
+                                <option value="3">Standard</option>
+                                <option value="4">Medium</option>
+                                <option value="5">High</option>
+                                <option value="6">Very High</option>
                             </select>
-						</div>
+                        </div>
                         <div class="from-group mb-2">
                             <label for="">Assigned To</label>
-                            <select id="ticket_assigned" name="assigned" class="form-select" style="width: 100%;"></select>
+                            <select id="ticket_assigned" name="assigned" class="form-select"
+                                style="width: 100%;"></select>
                         </div>
                         <div class="from-group mb-2">
                             <label for="">Note</label>
-                            <input id="notes" type="text" name="notes" class="form-control" placeholder="Enter Your Note">
+                            <input id="notes" type="text" name="notes" class="form-control"
+                                placeholder="Enter Your Note">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -611,11 +637,11 @@ if (file_exists($users_right_path)) {
     </div>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
-    <?php 
-        $page_title = "Customers";
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
-        echo file_get_contents($url);
+    <?php
+    $page_title = 'Customers';
+    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
+    echo file_get_contents($url);
     ?>
     <script type="text/javascript">
         $(document).on('keyup', '#customer_username', function() {
@@ -697,15 +723,16 @@ if (file_exists($users_right_path)) {
             var price = $("#customer_price").val();
             var remarks = $("#customer_remarks").val();
             var status = $("#customer_status").val();
+            var liablities = $("#customer_liablities").val();
             var user_type = <?php echo $auth_usr_type; ?>;
 
             customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
-                con_charge, price, remarks, nid, status)
+                con_charge, price, remarks, liablities, nid, status)
 
         });
 
         function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
-            con_charge, price, remarks, nid, status) {
+            con_charge, price, remarks, liablities, nid, status) {
             if (fullname.length == 0) {
                 toastr.error("Customer name is require");
             } else if (package.length == 0) {
@@ -728,6 +755,8 @@ if (file_exists($users_right_path)) {
                 toastr.error("price is require");
             } else if (status.length == 0) {
                 toastr.error("Status is require");
+            } else if (liablities.length == 0) {
+                toastr.error("liablities is require");
             } else {
                 $("#customer_add").html(
                     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
@@ -749,6 +778,7 @@ if (file_exists($users_right_path)) {
                         con_charge: con_charge,
                         price: price,
                         remarks: remarks,
+                        liablities: liablities,
                         nid: nid,
                         status: status,
                         user_type: user_type,
@@ -784,7 +814,7 @@ if (file_exists($users_right_path)) {
                     dataType: 'json',
                     success: function(response) {
                         if (response.success == true) {
-                            var pop_id = '<?php echo $auth_usr_POP_id;?>'; 
+                            var pop_id = '<?php echo $auth_usr_POP_id; ?>';
                             var popOptions = '<label style="margin-left: 10px;"> ';
                             popOptions += '<select class="pop_filter">';
                             popOptions += '<option value="">--Select POP--</option>';
@@ -792,7 +822,8 @@ if (file_exists($users_right_path)) {
 
                             $.each(response.data, function(key, data) {
                                 if (data.id == pop_id) {
-                                    popOptions += '<option value="' + data.id + '">' + data.pop + '</option>';
+                                    popOptions += '<option value="' + data.id + '">' + data
+                                        .pop + '</option>';
                                 }
                             });
 
@@ -881,7 +912,8 @@ if (file_exists($users_right_path)) {
             });
             var checkedBoxes = {};
             var protocol = location.protocol;
-            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_server_new.php?get_customers_data=true';
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' +
+                '/include/customer_server_new.php?get_customers_data=true';
             table = $('#customers_table').DataTable({
                 "searching": true,
                 "paging": true,
@@ -1107,7 +1139,7 @@ if (file_exists($users_right_path)) {
             $('#sendMessageModal').modal('show');
 
         });
-        $(document).on('click', 'button[name="send_message_btn"]', function(e) { 
+        $(document).on('click', 'button[name="send_message_btn"]', function(e) {
             e.preventDefault();
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
@@ -1154,7 +1186,7 @@ if (file_exists($users_right_path)) {
                 }
             });
         });
-         /************************** Customer Recharage Section **************************/
+        /************************** Customer Recharage Section **************************/
         $(document).on('click', 'button[name="recharge_btn"]', function(e) {
             event.preventDefault();
             var selectedCustomers = [];
@@ -1176,7 +1208,7 @@ if (file_exists($users_right_path)) {
             $button.prop('disabled', true);
             $button.html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
-                );
+            );
 
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
@@ -1184,7 +1216,8 @@ if (file_exists($users_right_path)) {
             });
             var data = $('#recharge-form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
             var protocol = location.protocol;
-            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_recharge_server.php?add_customer_recharge=true';
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' +
+                '/include/customer_recharge_server.php?add_customer_recharge=true';
             $.ajax({
                 url: url,
                 method: 'POST',
@@ -1236,22 +1269,24 @@ if (file_exists($users_right_path)) {
             $("#addPaymentModal #selectedCustomerCount").text(countText);
             $('#addPaymentModal').modal('show');
         });
-        
+
         $(document).on('click', 'button[name="cash_received_submit_btn"]', function(e) {
             event.preventDefault();
             var $button = $(this);
             $button.prop('disabled', true);
             $button.html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
-                );
+            );
 
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
             });
-            var data = $('#cash_received_form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            var data = $('#cash_received_form').serialize() + '&selectedCustomers=' + JSON.stringify(
+                selectedCustomers);
             var protocol = location.protocol;
-            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_recharge_server.php?cash_received=true';
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' +
+                '/include/customer_recharge_server.php?cash_received=true';
             $.ajax({
                 url: url,
                 method: 'POST',
@@ -1292,7 +1327,7 @@ if (file_exists($users_right_path)) {
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
             );
             var formData = new FormData($('#file_import_form')[0]);
-            
+
             $.ajax({
                 url: 'include/customer_server_new.php?import_file_data=true',
                 method: 'POST',
@@ -1324,7 +1359,7 @@ if (file_exists($users_right_path)) {
                     $button.html('<i class="mdi mdi-upload"></i> Upload Now');
                 }
             });
-            
+
         });
         /************************** Charge Customer POP/Branch **************************/
         $(document).on('click', 'button[name="pop_change_btn"]', function(e) {
@@ -1337,7 +1372,7 @@ if (file_exists($users_right_path)) {
             $("#changePopModal #selectedCustomerCount").text(countText);
             if (selectedCustomers.length == 0) {
                 toastr.error("Please select at least one customer");
-                return false; 
+                return false;
             }
             var protocol = location.protocol;
             var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/pop_server.php?get_pop_data=1';
@@ -1350,13 +1385,15 @@ if (file_exists($users_right_path)) {
                         var popOptions = '<option value="">--Select POP--</option>';
 
                         $.each(response.data, function(key, data) {
-                            popOptions += '<option value="' + data.id + '">' + data.pop + '</option>';
+                            popOptions += '<option value="' + data.id + '">' + data.pop +
+                                '</option>';
                         });
 
                         $('select[name="pop_id"]').html(popOptions);
                         $('#changePopModal').modal('show');
-                        $('#changePopModal').on('shown.bs.modal', function () {
-                            if (!$('select[name="pop_id"]').hasClass("select2-hidden-accessible")) {
+                        $('#changePopModal').on('shown.bs.modal', function() {
+                            if (!$('select[name="pop_id"]').hasClass(
+                                    "select2-hidden-accessible")) {
                                 $('select[name="pop_id"]').select2({
                                     dropdownParent: $('#changePopModal')
                                 });
@@ -1373,15 +1410,17 @@ if (file_exists($users_right_path)) {
             $button.prop('disabled', true);
             $button.html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
-                );
+            );
 
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
             });
-            var data = $('#change_pop_form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            var data = $('#change_pop_form').serialize() + '&selectedCustomers=' + JSON.stringify(
+                selectedCustomers);
             var protocol = location.protocol;
-            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customer_server_new.php?change_pop_request=true';
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' +
+                '/include/customer_server_new.php?change_pop_request=true';
             $.ajax({
                 url: url,
                 method: 'POST',
@@ -1413,163 +1452,169 @@ if (file_exists($users_right_path)) {
 
                 }
             });
-        }); 
-       /******************************** Tickets Script*************************************/
-            /* Customers load function*/
-            ticket_modal()
-            function ticket_modal(){
-                $("#ticketModal").on('show.bs.modal', function (event) {
-                    /*Check if select2 is already initialized*/
-                    if (!$('#ticket_customer_id').hasClass("select2-hidden-accessible")) {
-                        $("#ticket_customer_id").select2({
-                            dropdownParent: $("#ticketModal"),
-                            placeholder: "Select Customer"
-                        });
-                        $("#ticket_assigned").select2({
-                            dropdownParent: $("#ticketModal"),
-                            placeholder: "---Select---"
-                        });
-                        $("#ticket_complain_type").select2({
-                            dropdownParent: $("#ticketModal"),
-                            placeholder: "---Select---"
-                        });
-                        $("#ticket_priority").select2({
-                            dropdownParent: $("#ticketModal"),
-                            placeholder: "---Select---"
-                        });
-                    }
-                }); 
-            }
+        });
+        /******************************** Tickets Script*************************************/
+        /* Customers load function*/
+        ticket_modal()
 
-            function loadCustomers(selectedCustomerId) {
-                var protocol = location.protocol;
-                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_all_customer=true';
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.success == true) {
-                            let customerSelect = $("#ticket_customer_id");
-                            customerSelect.empty();
-                            customerSelect.append('<option value="">---Select Customer---</option>');
-                            $.each(response.data, function (index, customer) {
-                                customerSelect.append('<option value="' + customer.id + '">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>');
-                            });
-                        }
-                        if (selectedCustomerId) {
-                            $("#ticket_customer_id").val(selectedCustomerId);
-                        }
-                    }
-                });
-            }
-
-            /*Ticket assign function*/ 
-            function ticket_assign(customerId) {
-                if (customerId) {
-                    var protocol = location.protocol;
-                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
-                    $.ajax({
-                        url: url,
-                        type: "POST",
-                        data: {
-                            customer_id: customerId,
-                            get_area: true,
-                        },
-                        success: function(response) {
-                            $("#ticket_assigned").html(response);
-                        }
+        function ticket_modal() {
+            $("#ticketModal").on('show.bs.modal', function(event) {
+                /*Check if select2 is already initialized*/
+                if (!$('#ticket_customer_id').hasClass("select2-hidden-accessible")) {
+                    $("#ticket_customer_id").select2({
+                        dropdownParent: $("#ticketModal"),
+                        placeholder: "Select Customer"
                     });
-                }else{
-                    $(document).on('change','#ticket_customer_id',function(){
-                        var protocol = location.protocol;
-                        var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
-                        $.ajax({
-                            url: url, 
-                            type: "POST",
-                            data: {
-                                customer_id: $(this).val(),
-                                get_area:true,
-                            },
-                            success: function(response) {
-                                /* Handle the response from the server*/
-                                $("#ticket_assigned").html(response);
-                            }
-                        });
+                    $("#ticket_assigned").select2({
+                        dropdownParent: $("#ticketModal"),
+                        placeholder: "---Select---"
+                    });
+                    $("#ticket_complain_type").select2({
+                        dropdownParent: $("#ticketModal"),
+                        placeholder: "---Select---"
+                    });
+                    $("#ticket_priority").select2({
+                        dropdownParent: $("#ticketModal"),
+                        placeholder: "---Select---"
                     });
                 }
-            }
+            });
+        }
 
-            /* Ticket complain type function*/
-            function ticket_complain_type() {
+        function loadCustomers(selectedCustomerId) {
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_all_customer=true';
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success == true) {
+                        let customerSelect = $("#ticket_customer_id");
+                        customerSelect.empty();
+                        customerSelect.append('<option value="">---Select Customer---</option>');
+                        $.each(response.data, function(index, customer) {
+                            customerSelect.append('<option value="' + customer.id + '">[' + customer
+                                .id + '] - ' + customer.username + ' || ' + customer.fullname +
+                                ', (' + customer.mobile + ')</option>');
+                        });
+                    }
+                    if (selectedCustomerId) {
+                        $("#ticket_customer_id").val(selectedCustomerId);
+                    }
+                }
+            });
+        }
+
+        /*Ticket assign function*/
+        function ticket_assign(customerId) {
+            if (customerId) {
                 var protocol = location.protocol;
                 var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
                 $.ajax({
                     url: url,
                     type: "POST",
                     data: {
-                        get_complain_type: true,
+                        customer_id: customerId,
+                        get_area: true,
                     },
-                    dataType: 'json',
                     success: function(response) {
-                        if (response.success == true) {
-                            let ticket_complain_type = $("#ticket_complain_type");
-                            ticket_complain_type.empty();
-                            ticket_complain_type.append('<option value="">---Select---</option>');
-                            $.each(response.data, function (index, item) {
-                                ticket_complain_type.append('<option value="' + item.id + '">'+item.topic_name+'</option>');
-                            });
-                        }
+                        $("#ticket_assigned").html(response);
                     }
+                });
+            } else {
+                $(document).on('change', '#ticket_customer_id', function() {
+                    var protocol = location.protocol;
+                    var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: {
+                            customer_id: $(this).val(),
+                            get_area: true,
+                        },
+                        success: function(response) {
+                            /* Handle the response from the server*/
+                            $("#ticket_assigned").html(response);
+                        }
+                    });
                 });
             }
+        }
 
-
-            $("#ticket_modal_form").submit(function(e) {
-                e.preventDefault();
-
-                /* Get the submit button */
-                var submitBtn = $(this).find('button[type="submit"]');
-                var originalBtnText = submitBtn.html();
-
-                submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden"></span>');
-                submitBtn.prop('disabled', true);
-
-                var form = $(this);
-                var formData = new FormData(this);
-
-                $.ajax({
-                    type: form.attr('method'),
-                    url: form.attr('action'),
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    dataType:'json',
-                    success: function(response) {
-                        if (response.success) {
-                            $("#ticketModal").fadeOut(500, function() {
-                                $(this).modal('hide');
-                                toastr.success(response.message);
-                                $('#tickets_datatable').DataTable().ajax.reload();
-                            });
-
-                        } else if (!response.success && response.errors) {
-                            $.each(response.errors, function(field, message) {
-                                toastr.error(message);
-                            });
-                        }
-                    },
-                    complete: function() {
-                        submitBtn.html(originalBtnText);
-                        submitBtn.prop('disabled', false);
+        /* Ticket complain type function*/
+        function ticket_complain_type() {
+            var protocol = location.protocol;
+            var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php';
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: {
+                    get_complain_type: true,
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success == true) {
+                        let ticket_complain_type = $("#ticket_complain_type");
+                        ticket_complain_type.empty();
+                        ticket_complain_type.append('<option value="">---Select---</option>');
+                        $.each(response.data, function(index, item) {
+                            ticket_complain_type.append('<option value="' + item.id + '">' + item
+                                .topic_name + '</option>');
+                        });
                     }
-                });
+                }
             });
+        }
 
-            //ticket_modal();
-            loadCustomers();
-            ticket_assign();
-            ticket_complain_type();
+
+        $("#ticket_modal_form").submit(function(e) {
+            e.preventDefault();
+
+            /* Get the submit button */
+            var submitBtn = $(this).find('button[type="submit"]');
+            var originalBtnText = submitBtn.html();
+
+            submitBtn.html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden"></span>'
+            );
+            submitBtn.prop('disabled', true);
+
+            var form = $(this);
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $("#ticketModal").fadeOut(500, function() {
+                            $(this).modal('hide');
+                            toastr.success(response.message);
+                            $('#tickets_datatable').DataTable().ajax.reload();
+                        });
+
+                    } else if (!response.success && response.errors) {
+                        $.each(response.errors, function(field, message) {
+                            toastr.error(message);
+                        });
+                    }
+                },
+                complete: function() {
+                    submitBtn.html(originalBtnText);
+                    submitBtn.prop('disabled', false);
+                }
+            });
+        });
+
+        //ticket_modal();
+        loadCustomers();
+        ticket_assign();
+        ticket_complain_type();
     </script>
 </body>
 
