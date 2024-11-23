@@ -64,7 +64,7 @@ if (isset($_SESSION['uid'])) {
                                                 <option value="2">Expense</option>
                                                 <option value="3">Asset</option>
                                                 <option value="4">Liabilities</option>
-
+                                                <option value="5">Income Vs Expense</option>
                                             </select>
                                         </div>
                                     </div>
