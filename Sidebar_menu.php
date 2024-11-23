@@ -105,6 +105,7 @@
                                     <li><a href="ledger.php">Leger</a></li>
                                     <li><a href="transactions.php">Transactions</a></li>
                                     <li><a href="reports.php">Reports</a></li>
+                                    <li><a href="balance_sheet.php">Balance Sheet</a></li>
                                     <li><a href="#">Settings</a></li>
                                     <li><a href="cash_bank.php"> Cash/Bank List </a></li>
                                     <li><a href="voucher.php">Voucher Entry</a></li>
