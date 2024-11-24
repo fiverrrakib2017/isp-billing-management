@@ -15,6 +15,11 @@ $('#addproductModal').on('shown.bs.modal', function () {
             dropdownParent: $('#addproductModal')
         });
     }
+    if (!$('#assets_ac').hasClass("select2-hidden-accessible")) {
+        $("#assets_ac").select2({
+            dropdownParent: $('#addproductModal')
+        });
+    }
     if (!$('#sales_ac').hasClass("select2-hidden-accessible")) {
         $("#sales_ac").select2({
             dropdownParent: $('#addproductModal')
@@ -25,6 +30,7 @@ $('#addproductModal').on('shown.bs.modal', function () {
             dropdownParent: $('#addproductModal')
         });
     }
+    
 });
 
 $('#productForm').submit(function(e) {

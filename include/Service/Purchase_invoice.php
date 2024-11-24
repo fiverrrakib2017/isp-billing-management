@@ -4,7 +4,7 @@ include 'Base_invoice.php';
 
 class Purchase_invoice extends Base_invoivce  implements InvoiceInterface{
 
-    public static function add_invoice($data){
+    public static function add_invoice($data){ 
        $validator = self::request_validation($data);
         if (is_null($validator['client_id']) || is_null($validator['sub_total']) || is_null($validator['total_paid']) || is_null($validator['total_due']) || empty($validator['product_ids'])) {
             return ['success'=>false, 'message'=>'Invalid input data.'];

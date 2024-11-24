@@ -22,7 +22,7 @@ if (isset($_SESSION['uid'])) {
 <body data-sidebar="dark">
     <!-- Begin page -->
     <div id="layout-wrapper">
-       <?php $page_title="Reports"; include 'Header.php';?>
+       <?php $page_title="Balance Sheet"; include 'Header.php';?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">

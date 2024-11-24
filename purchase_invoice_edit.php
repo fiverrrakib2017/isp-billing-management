@@ -250,6 +250,12 @@ if (isset($_GET["id"])) {
                                 <option value="2" <?php echo ($status == 2) ? 'selected' : ''; ?>>Print Invoice</option>
                             </select>
                            </div>
+                           <div class="form-check">
+                                <input class="form-check-input" type="checkbox"  name="table_assets">
+                                <label class="form-check-label" for="flexCheckChecked">
+                                    Assets
+                                </label>
+                            </div>
                            <div class="modal-footer ">
                               <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
                               <button type="button" id="save_invoice_btn" class="btn btn-success">Save Invoice</button>

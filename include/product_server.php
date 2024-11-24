@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
     $purchase_ac = $_POST['purchase_ac'];
     $unit_id = $_POST['unit_id'];
     $sales_ac = $_POST['sales_ac'];
+    $assets_ac = $_POST['assets_ac'] ?? 0;
     $purchase_price = $_POST['p_price'];
     $sale_price = $_POST['s_price'];
     $store = $_POST['store'];
@@ -18,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['add_product'])) {
     //print_r($_POST); exit;
 
     /* Prepare an SQL statement*/
-    $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`,`unit_id`, `purchase_price`, `sale_price`, `store`,`note`,`qty`) VALUES(?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)");
+    $stmt = $con->prepare("INSERT INTO products(`name`, `category`, `brand`, `purchase_ac`, `sales_ac`,`assets_ac`,`unit_id`, `purchase_price`, `sale_price`, `store`,`note`,`qty`) VALUES(?, ?, ?, ?, ?,?, ?,?, ?, ?, ?, ?)");
 
     /* Bind parameters*/
-    $stmt->bind_param("siiiiiiiisi", $name, $category, $brand, $purchase_ac, $sales_ac, $unit_id, $purchase_price, $sale_price, $store, $note, $qty);
+    $stmt->bind_param("siiiiiiiiisi", $name, $category, $brand, $purchase_ac, $sales_ac,$assets_ac, $unit_id, $purchase_price, $sale_price, $store, $note, $qty);
 
     /* Execute the statement*/
     if ($stmt->execute()) {

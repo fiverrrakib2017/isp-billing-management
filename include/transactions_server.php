@@ -217,149 +217,23 @@ if (isset($_POST['getReport'])) {
 if (isset($_POST['get_balance_sheet_report'])) {
     $fromDate=$_POST['fromDate'];
     $endDate=$_POST['endDate'];
-     // Queries for each category
-    //  $categories = [
-    //     'Income' => 1,
-    //     'Expense' => 2,
-    //     'Asset' => 3,
-    //     'Liabilities' => 4
-    // ];
-    
-    // $data = [];
-    
-    // foreach ($categories as $categoryName => $categoryId) {
-    //     $query = "SELECT ledger_id, SUM(total) AS total_amount FROM ledger_transactions 
-    //               WHERE mstr_ledger_id = $categoryId 
-    //               AND date BETWEEN '$fromDate' AND '$endDate' 
-    //               GROUP BY ledger_id";
-    //     $result = $con->query($query);
-        
-    //     $data[$categoryName] = $result->fetch_all(MYSQLI_ASSOC);
-    // }
-
-    // echo '<button type="button" onclick="printTable()" class="btn btn-primary"><i class="fas fa-print"></i></button> <br><br>';
-    // echo '
-    // <table id="masterReportTable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-    //     <thead>
-    //         <tr>
-    //             <th>No</th>
-    //             <th class="text-center">Income</th>
-    //             <th>Amount</th>
-    //             <th class="text-center">Expense</th>
-    //             <th>Amount</th>
-    //             <th class="text-center">Asset</th>
-    //             <th>Amount</th>
-    //             <th class="text-center">Liabilities</th>
-    //             <th>Amount</th>
-    //         </tr>
-    //     </thead>
-    //     <tbody>';
-    
-    // // Find the maximum rows required
-    // $maxRows = max(
-    //     count($data['Income']),
-    //     count($data['Expense']),
-    //     count($data['Asset']),
-    //     count($data['Liabilities'])
-    // );
-
-    // for ($i = 0; $i < $maxRows; $i++) {
-    //     echo '<tr>';
-    //     echo '<td>' . ($i + 1) . '</td>';
-        
-    //     // Income
-    //     $incomeLedger = $data['Income'][$i]['ledger_id'] ?? null;
-    //     $incomeTotal = $data['Income'][$i]['total_amount'] ?? 0;
-    //     $incomeName = 'N/A';
-    //     if ($incomeLedger) {
-    //         $incomeNameQuery = "SELECT ledger_name FROM ledger WHERE id = $incomeLedger";
-    //         $incomeNameResult = $con->query($incomeNameQuery);
-    //         $incomeName = $incomeNameResult->fetch_assoc()['ledger_name'] ?? 'N/A';
-    //     }
-    //     echo '<td>' . $incomeName . '</td>';
-    //     echo '<td>' . round($incomeTotal, 2) . '</td>';
-        
-    //     // Expense
-    //     $expenseLedger = $data['Expense'][$i]['ledger_id'] ?? null;
-    //     $expenseTotal = $data['Expense'][$i]['total_amount'] ?? 0;
-    //     $expenseName = 'N/A';
-    //     if ($expenseLedger) {
-    //         $expenseNameQuery = "SELECT ledger_name FROM ledger WHERE id = $expenseLedger";
-    //         $expenseNameResult = $con->query($expenseNameQuery);
-    //         $expenseName = $expenseNameResult->fetch_assoc()['ledger_name'] ?? 'N/A';
-    //     }
-    //     echo '<td>' . $expenseName . '</td>';
-    //     echo '<td>' . round($expenseTotal, 2) . '</td>';
-        
-    //     // Asset
-    //     $assetLedger = $data['Asset'][$i]['ledger_id'] ?? null;
-    //     $assetTotal = $data['Asset'][$i]['total_amount'] ?? 0;
-    //     $assetName = 'N/A';
-    //     if ($assetLedger) {
-    //         $assetNameQuery = "SELECT ledger_name FROM ledger WHERE id = $assetLedger";
-    //         $assetNameResult = $con->query($assetNameQuery);
-    //         $assetName = $assetNameResult->fetch_assoc()['ledger_name'] ?? 'N/A';
-    //     }
-    //     echo '<td>' . $assetName . '</td>';
-    //     echo '<td>' . round($assetTotal, 2) . '</td>';
-        
-    //     // Liabilities
-    //     $liabilityLedger = $data['Liabilities'][$i]['ledger_id'] ?? null;
-    //     $liabilityTotal = $data['Liabilities'][$i]['total_amount'] ?? 0;
-    //     $liabilityName = 'N/A';
-    //     if ($liabilityLedger) {
-    //         $liabilityNameQuery = "SELECT ledger_name FROM ledger WHERE id = $liabilityLedger";
-    //         $liabilityNameResult = $con->query($liabilityNameQuery);
-    //         $liabilityName = $liabilityNameResult->fetch_assoc()['ledger_name'] ?? 'N/A';
-    //     }
-    //     echo '<td>' . $liabilityName . '</td>';
-    //     echo '<td>' . round($liabilityTotal, 2) . '</td>';
-        
-    //     echo '</tr>';
-    // }
-    
-    // // Grand Totals
-    // $grandTotals = [];
-    // foreach ($categories as $categoryName => $categoryId) {
-    //     $grandTotalQuery = "SELECT SUM(total) AS grandTotal FROM ledger_transactions 
-    //                         WHERE mstr_ledger_id = $categoryId 
-    //                         AND date BETWEEN '$fromDate' AND '$endDate'";
-    //     $grandTotalResult = $con->query($grandTotalQuery);
-    //     $grandTotals[$categoryName] = $grandTotalResult->fetch_assoc()['grandTotal'] ?? 0;
-    // }
-
-    // echo '<tr>';
-    // echo '<td colspan="2" style="text-align: right;"><b>Grand Total:</b></td>';
-    // echo '<td><b>' . round($grandTotals['Income'], 2) . '</b></td>';
-    // echo '<td colspan="2" style="text-align: right;"><b>' . round($grandTotals['Expense'], 2) . '</b></td>';
-    // echo '<td colspan="2" style="text-align: right;"><b>' . round($grandTotals['Asset'], 2) . '</b></td>';
-    // echo '<td colspan="2" style="text-align: right;"><b>' . round($grandTotals['Liabilities'], 2) . '</b></td>';
-    // echo '</tr>';
-
-    // echo '</tbody></table>';
-    // Queries for each category
+    /* Queries for each category*/
     $categories = [
         'Income' => 1,
         'Expense' => 2,
         'Asset' => 3,
         'Liabilities' => 4
     ];
-    
-    $data = [];
-    
-    foreach ($categories as $categoryName => $categoryId) {
-        $query = "SELECT ledger_id, SUM(total) AS total_amount FROM ledger_transactions 
-                  WHERE mstr_ledger_id = $categoryId 
-                  AND date BETWEEN '$fromDate' AND '$endDate' 
-                  GROUP BY ledger_id";
-        $result = $con->query($query);
-        
-        $data[$categoryName] = $result->fetch_all(MYSQLI_ASSOC);
-    }
+    $data=[]; 
 
+    foreach($categories as $categoryName=> $categoryId){
+        $result = $con->query("SELECT ledger_id, SUM(total) AS total_amount FROM ledger_transactions WHERE mstr_ledger_id =$categoryId AND date BETWEEN '$fromDate' AND '$endDate' GROUP BY ledger_id"); 
+        $data[$categoryName] = $result->fetch_all(MYSQLI_ASSOC);
+
+    }
     echo '<button type="button" onclick="printTable()" class="btn btn-primary"><i class="fas fa-print"></i></button> <br><br>';
     echo '
-    <table id="masterReportTable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+    <table id="reportTable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
         <thead>
             <tr>
                 <th>No</th>
@@ -368,20 +242,17 @@ if (isset($_POST['get_balance_sheet_report'])) {
             </tr>
         </thead>
         <tbody>';
-    
     $rowCount = 1;
-
-    foreach ($categories as $categoryName => $categoryId) {
-        // Add category title row
-        echo '<tr><td colspan="3" style="font-weight: bold; text-align: center;" backedground-color: #f2f2f2>' . $categoryName . '</td></tr>';
-        
-        foreach ($data[$categoryName] as $entry) {
+    foreach($categories as $categoryName=> $categoryId){
+        echo '<tr><td colspan="3" style="font-weight: bold; text-align: center;">' . $categoryName . '</td></tr>';
+        foreach($data[$categoryName] as $entry){
             $ledgerId = $entry['ledger_id'];
             $totalAmount = round($entry['total_amount'], 2);
             
-            $ledgerNameQuery = "SELECT ledger_name FROM ledger WHERE id = $ledgerId";
-            $ledgerNameResult = $con->query($ledgerNameQuery);
-            $ledgerName = $ledgerNameResult->fetch_assoc()['ledger_name'] ?? 'N/A';
+            $ledgerNameQuery="SELECT ledger_name FROM ledger WHERE id=$ledgerId";
+            $ledgerNameResult=$con->query($ledgerNameQuery);
+            $ledgerName=$ledgerNameResult->fetch_assoc()['ledger_name'] ?? 'N/A';
+        
             
             echo '<tr>';
             echo '<td>' . $rowCount++ . '</td>';
@@ -390,16 +261,15 @@ if (isset($_POST['get_balance_sheet_report'])) {
             echo '</tr>';
         }
     }
-
-    // Total Row for Each Category
-    foreach ($categories as $categoryName => $categoryId) {
+      /* Total Row for Each Category*/
+      foreach ($categories as $categoryName => $categoryId) {
         $grandTotalQuery = "SELECT SUM(total) AS grandTotal FROM ledger_transactions 
                             WHERE mstr_ledger_id = $categoryId 
                             AND date BETWEEN '$fromDate' AND '$endDate'";
         $grandTotalResult = $con->query($grandTotalQuery);
         $grandTotal = $grandTotalResult->fetch_assoc()['grandTotal'] ?? 0;
 
-        // Display Category Total Row
+        /* Display Category Total Row*/
         echo '<tr style="font-weight: bold;">';
         echo '<td colspan="2">Total ' . $categoryName . '</td>';
         echo '<td>' . round($grandTotal, 2) . '</td>';
@@ -407,7 +277,6 @@ if (isset($_POST['get_balance_sheet_report'])) {
     }
 
     echo '</tbody></table>';
-
 }
 
 if (isset($_GET['show'])) {

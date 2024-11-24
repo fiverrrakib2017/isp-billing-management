@@ -160,27 +160,64 @@
                                     ?>
                                         </select>
                                     </div>
-                                </div>            
+                                </div>  
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                <div class="form-group mb-4">
+                                        <label>Assets</label>
+                                        <select id="assets_ac" type="text" class="form-select" name="assets_ac"  style="width: 100%;">
+                                        <?php
+                                    if ($ledgr = $con->query("SELECT * FROM ledger Where `mstr_ledger_id`=3")) {
+                                        echo '<option value="">Select</option>';
+
+                                        while ($rowsitm = $ledgr->fetch_array()) {
+                                            $ldgritmsID = $rowsitm["id"];
+                                            $ledger_name = $rowsitm["ledger_name"];
+
+                                            echo '<optgroup label="' . $ledger_name . '">';
+
+
+                                            // Sub Ledger items list
+                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+
+
+                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                    $sub_ldgrid = $rowssb["id"];
+                                                    $ldgr_items = $rowssb["item_name"];
+
+                                                    echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                                }
+                                            }
+
+
+
+                                            echo '</optgroup>';
+                                        }
+                                    }
+                                    ?>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="col">
                                     <div class="form-group mb-4">
                                         <label for="">Purchase Price</label>
                                         <input type="number" class="form-control" id="p_price"  name="p_price" placeholder="Enter Your Price" required/>
                                     </div>
-                                </div>            
-                                
-                            </div>
-
-
-                            
-
-
-                            <div class="row">
+                                </div> 
                                 <div class="col">
                                     <div class="form-group mb-4">
                                         <label for="">Sale's Price</label>
                                         <input type="number" class="form-control" id="s_price"  name="s_price" placeholder="Enter Your Sale's Price" required/>
                                     </div>
-                                </div>
+                                </div>  
+                            </div>
+
+                            
+
+
+                            <div class="row">
+                                
                                 <div class="col">
                                     <div class="form-group mb-4">
                                         <label for="">Store</label>
