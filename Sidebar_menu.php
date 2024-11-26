@@ -28,12 +28,12 @@
                                     <span>Customer </span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="customers.php">Total Customer List</a></li>
+                                    <!-- <li><a href="customers.php">Total Customer List</a></li> -->
                                     <li><a href="customers_new.php">Total Customer <span class="badge rounded-pill bg-success">New</span></a></li>
                                     <li><a href="bulk_payment.php">Bulk Recharge</a></li>
-                                    <li><a href="active_cstmr_list.php">Active Customer List</a></li>
+                                    <!-- <li><a href="active_cstmr_list.php">Active Customer List</a></li>
                                     <li><a href="customer_expire.php">Expired Customer List</a></li>
-                                    <li><a href="customer_free_con.php">Free Customer List</a></li>
+                                    <li><a href="customer_free_con.php">Free Customer List</a></li> -->
                                   
 
                                     <li>
@@ -53,7 +53,7 @@
                                                  ?>
                                         </a>
                                     </li>
-                                    <li><a href="customer_dues.php">Customer Unpaid</a></li>
+                                    <!-- <li><a href="customer_dues.php">Customer Unpaid</a></li> -->
                                     <li><a href="customer_recharge.php">Customer Recharge</a></li>
                                     <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
                                     <li><a href="package_add.php">Customer Packages</a></li>

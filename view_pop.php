@@ -91,22 +91,7 @@ if(isset($_GET["inactive"]))
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-    <meta content="Themesbrand" name="author">
-    <!-- DataTables -->
-    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
-    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
-
-    <!-- Responsive datatable examples -->
-    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
-
-    <!-- Bootstrap Css -->
-    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
+    <?php include 'style.php'; ?>
 </head>
 
 <body data-sidebar="dark">
@@ -145,9 +130,10 @@ if(isset($_GET["inactive"]))
                               <div class="mr-md-3 mr-xl-5">
                                  <div class="d-flex">
                                     <i class="mdi mdi-home text-muted hover-cursor"></i>
-                                    <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
+                                    <p class="text-muted mb-0 hover-cursor">
+                                        <a href="index.php">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;</a>
                                     </p>
-                                    <p class="text-primary mb-0 hover-cursor">POP&nbsp;/&nbsp; <?php echo $pop_name; ?></p>
+                                    <p class="text-primary mb-0 hover-cursor"><a href="pop_branch.php">POP&nbsp;/&nbsp; </a><?php echo $pop_name; ?></p>
                                  </div>
                               </div>
                               <br>
@@ -233,58 +219,85 @@ if(isset($_GET["inactive"]))
 
 
 
-                    <div class="row mt-3">
+                    <div class="row">
+
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-purple me-0 float-end"><i class=" fas fa-globe"></i></span>
+                                        <span class="mini-stat-icon bg-primary me-0 float-end"><i class="fas fa-user-check"></i></span>
                                         <div class="mini-stat-info">
-                                            <span class="counter text-purple">
+                                            <span class="counter text-primary">
                                                 <?php
-
-                                                        $sql = "SELECT radacct.username FROM radacct
-                                                        INNER JOIN customers
-                                                        ON customers.username=radacct.username
-                                                        WHERE customers.pop='$popid' AND radacct.acctstoptime IS NULL";
-                                                        $countpoponlnusr = mysqli_query($con, $sql);
-
-                                                        echo $countpoponlnusr->num_rows;
-                                                ?>
-                                            </span>
-                                            Online Users
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> <!--End col -->
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-warning me-0 float-end"><i class="fas fa-exclamation-triangle"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-warning">
-                                                <?php if ($AllExcstmr = $con->query("SELECT * FROM customers WHERE pop=$popid AND expiredate < NOW() ")) {
-                                                    echo  $AllExcstmr->num_rows;
+                                                if ($onlinecstmr = $con->query("SELECT * FROM radacct WHERE acctstoptime IS NULL")) {
+                                                    echo $onlinecstmr->num_rows;
                                                 }
-
                                                 ?>
                                             </span>
-                                            Expired
+                                            Online
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div> <!-- End col -->
+
+                        <div class="col-md-6 col-xl-3">
+                            <a href="customers.php">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-success me-0 float-end"><i class="fas fa-users"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-success">
+                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1' AND pop=$popid")) {
+                                                        echo  $totalcstmr = $totalCustomer->num_rows;
+														
+                                                    }
+
+                                                    ?>
+                                                </span>
+                                                Active Customers
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div> <!--End col -->
+
+
+                        
+                        
+
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
+                                <a href="customer_expire.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-danger me-0 float-end"><i class="fas fa-exclamation-triangle"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-danger">
+                                                    <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate AND pop=$popid")) {
+                                                        echo  $AllExcstmr->num_rows;
+                                                    }
+
+                                                    ?>
+                                                </span>
+                                                Expired
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div> <!-- End col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                            <a href="customer_disabled.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-danger me-0 float-end"><i class=" fas fa-calendar-times"></i></span>
+                                        <span class="mini-stat-icon bg-secondary me-0 float-end"><i class="fas fa-user-slash"></i></span>
                                         <div class="mini-stat-info">
-                                            <span class="counter text-danger">
-                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND user_type=2 AND pop=$popid")) {
+                                            <span class="counter text-secondary">
+                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND pop=$popid")) {
                                                     echo  $dsblcstmr->num_rows;
                                                 }
                                                 ?>
@@ -293,25 +306,7 @@ if(isset($_GET["inactive"]))
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div><!--end col -->
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-primary me-0 float-end"><i class=" fas fa-user"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-primary">
-                                            <?php if ($totalCustomers = $con->query("SELECT * FROM customers WHERE   pop=$popid ")) {
-                                                    echo  $totalCustomers->num_rows;
-                                                }
-
-                                                ?>
-                                            </span>
-                                            Total Users
-                                        </div>
-                                    </div>
-                                </div>
+                            </a>
                             </div>
                         </div><!--end col -->
                     </div> <!-- end row-->
@@ -471,7 +466,7 @@ if(isset($_GET["inactive"]))
 
                 </div> <!-- container-fluid -->
 
-                <div class="container">
+                <div class="">
                     <div class="row">
                         <div class="card">
                             <div class="card-body">
@@ -524,81 +519,27 @@ if(isset($_GET["inactive"]))
                                         <div class="card">
                                             
                                             <div class="card-body">
-                                                <table id="branch_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
+                                                            <th><input type="checkbox" id="checkedAll" name="checkedAll"
+                                                                    class="form-check-input"></th>
                                                             <th>ID</th>
-                                                            <th>Full Name</th>
+                                                            <th>Name</th>
                                                             <th>Package</th>
+                                                            <th>Amount</th>
+                                                            <th>Expired Date</th>
                                                             <th>Expired Date</th>
                                                             <th>User Name</th>
                                                             <th>Mobile no.</th>
-                                                            <th>Create Date</th>
+                                                            <th>POP/Branch</th>
+                                                            <th>Area/Location</th>
+                                                            <th>Liablities</th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody id="transaction-list">
-                                                        <?php
-                                                        $sql = "SELECT * FROM customers WHERE pop='$popid'  ";
-                                                        $result = mysqli_query($con, $sql);
+                                                    <tbody id="customer-list">
 
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-                                                            $username = $rows['username'];
-
-                                                        ?>
-
-                                                            <tr>
-                                                                <td><?php echo $rows['id']; ?></td>
-                                                                <td><a target="blank" href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                                
-                                                                <?php 
-                                                                
-                                                                $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                                $chkc = $onlineusr->num_rows;
-                                                                if($chkc==1)
-                                                                {
-                                                                    echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                                } else{
-                                                                    echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-        
-                                                                }
-                                                                
-                                                                
-                                                                
-                                                                
-                                                                
-                                                                echo" ".$rows["fullname"]; ?></a></td>
-                                                                <td>
-
-                                                                    <?php
-                                                                    $popID = $rows["package"];
-                                                                    $allPOP = $con->query("SELECT * FROM radgroupcheck WHERE id=$popID ");
-                                                                    while ($popRow = $allPOP->fetch_array()) {
-                                                                        echo $popRow['groupname'];
-                                                                    }
-
-                                                                    ?>
-
-
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-
-                                                                    $expireDate = $rows["expiredate"];
-                                                                    $todayDate = date("Y-m-d");
-                                                                    if ($expireDate <= $todayDate) {
-                                                                        echo "<span class='badge bg-danger'>Expired</span>";
-                                                                    } else {
-                                                                        //echo date("d-m-Y", strtotime($expireDate));
-                                                                        echo date("d M Y", strtotime($expireDate));
-                                                                    }
-                                                                    ?>
-
-                                                                </td>
-                                                                <td><?php echo $rows["username"]; ?></td>
-                                                                <td><?php echo $rows["mobile"]; ?></td>
-                                                                <td><?php echo  date("d M Y", strtotime($rows["createdate"])) ?></td>
-                                                            </tr>
-                                                        <?php } ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -615,52 +556,7 @@ if(isset($_GET["inactive"]))
                                                             <th>Form Date</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody id="ticket-list">
-                                                        <?php
-                                                        $sql = "SELECT * FROM ticket WHERE pop_id='$popid' ";
-                                                        $result = mysqli_query($con, $sql);
-
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                        ?>
-
-                                                            <tr>
-
-                                                                <td>
-                                                                    <?php
-                                                                    $complain_typeId = $rows["complain_type"];
-                                                                    $ticketsId = $rows["id"];
-                                                                    if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                        while ($rowss = $allCom->fetch_array()) {
-                                                                            $topicName = $rowss['topic_name'];
-                                                                            echo '<a href="tickets_edit.php?id=' . $ticketsId . '">' . $topicName . '</a>';
-                                                                        }
-                                                                    }
-                                                                    ?>
-
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-                                                                    $ticketType = $rows['ticket_type'];
-                                                                    if ($ticketType == "Active") {
-                                                                        echo "<span class='badge bg-success'>Active</span>";
-                                                                    } else if ($ticketType == "Open") {
-                                                                        echo "<span class='badge bg-info'>Open</span>";
-                                                                    } else if ($ticketType == "New") {
-                                                                        echo "<span class='badge bg-danger'>New</span>";
-                                                                    } else if ($ticketType == "Complete") {
-                                                                        echo "<span class='badge bg-success'>Complete</span>";
-                                                                    }
-
-                                                                    ?>
-
-                                                                </td>
-
-                                                                <td><?php echo  date("d M Y", strtotime($rows["startdate"])) ?></td>
-
-                                                            </tr>
-                                                        <?php } ?>
-                                                    </tbody>
+                                                    <tbody></tbody>
                                                 </table>
                                             </div>
                                         </div>
@@ -680,7 +576,7 @@ if(isset($_GET["inactive"]))
                                                             <th>Amount</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <!-- <tbody>
                                                         <?php
                                                         $sql = "SELECT * FROM customer_rechrg WHERE pop_id='$popid'  ";
                                                         $result = mysqli_query($con, $sql);
@@ -719,7 +615,7 @@ if(isset($_GET["inactive"]))
 
                                                             </tr>
                                                         <?php } ?>
-                                                    </tbody>
+                                                    </tbody> -->
                                                 </table>
                                             </div>
                                         </div>
@@ -1262,22 +1158,7 @@ if(isset($_GET["inactive"]))
 
 
 
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script> © IT-FAST.
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-end d-none d-sm-block">
-                                Development <i class="mdi mdi-heart text-danger"></i><a href="https://facebook.com/rakib56789">Rakib Mahmud</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <?php include 'Footer.php';?>
 
         </div>
         <!-- end main content-->
@@ -1285,143 +1166,78 @@ if(isset($_GET["inactive"]))
     </div>
     <!-- END layout-wrapper -->
 
-    <!-- Right Sidebar -->
-    <div class="right-bar">
-        <div data-simplebar class="h-100">
-            <div class="rightbar-title px-3 py-4">
-                <a href="javascript:void(0);" class="right-bar-toggle float-end">
-                    <i class="mdi mdi-close noti-icon"></i>
-                </a>
-                <h5 class="m-0">Settings</h5>
-            </div>
-
-            <!-- Settings -->
-            <hr class="mt-0">
-            <h6 class="text-center mb-0">Choose Layouts</h6>
-
-            <div class="p-4">
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-1.jpg" class="img-fluid img-thumbnail" alt="Layouts-1">
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch">
-                    <label class="form-check-label" for="light-mode-switch">Light Mode</label>
-                </div>
-
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-2.jpg" class="img-fluid img-thumbnail" alt="Layouts-2">
-                </div>
-
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css">
-                    <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
-                </div>
-
-                <div class="mb-2">
-                    <img src="assets/images/layouts/layout-3.jpg" class="img-fluid img-thumbnail" alt="Layouts-3">
-                </div>
-
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input theme-choice" type="checkbox" id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css">
-                    <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
-                </div>
-
-
-            </div>
-
-        </div> <!-- end slimscroll-menu-->
-    </div>
-    <!-- /Right-bar -->
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
 
-    <!-- JAVASCRIPT -->
-    <script src="assets/libs/jquery/jquery.min.js"></script>
-    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/libs/metismenu/metisMenu.min.js"></script>
-    <script src="assets/libs/simplebar/simplebar.min.js"></script>
-    <script src="assets/libs/node-waves/waves.min.js"></script>
-
-    <!-- Required datatable js -->
-    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <!-- Buttons examples -->
-    <script src="assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-    <script src="assets/libs/jszip/jszip.min.js"></script>
-    <script src="assets/libs/pdfmake/build/pdfmake.min.js"></script>
-    <script src="assets/libs/pdfmake/build/vfs_fonts.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-    <!-- Responsive examples -->
-    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-    <script src="js/toastr/toastr.min.js"></script>
-    <script src="js/toastr/toastr.init.js"></script>
-    <!-- Datatable init js -->
-    <script src="assets/js/pages/datatables.init.js"></script>
-
-    <script src="assets/js/app.js"></script>
-
-    <!-- Peity chart-->
-    <script src="assets/libs/peity/jquery.peity.min.js"></script>
-
-    <!--C3 Chart-->
-    <script src="assets/libs/d3/d3.min.js"></script>
-    <script src="assets/libs/c3/c3.min.js"></script>
-    <script src="assets/libs/jquery-knob/jquery.knob.min.js"></script>
-
-    <script src="assets/js/pages/dashboard.init.js"></script>
-
-    <script src="assets/js/app.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-
-    <!-- Required datatable js -->
-    <script src="assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Responsive examples -->
-    <script src="assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-
-    <!-- Datatable init js -->
-    <script src="assets/js/pages/datatables.init.js"></script>
-
-    <script src="assets/js/app.js"></script>
-    <script type="text/javascript" src="assets/js/js-fluid-meter.js"></script>
+    <?php include 'script.php'; ?>
     <script type="text/javascript">
+        var table;
         $(document).ready(function() {
-
-            $("#checkedAll").change(function() {
-                if (this.checked) {
-                    $(".checkSingle").each(function() {
-                        this.checked = true;
-                    })
-                } else {
-                    $(".checkSingle").each(function() {
-                        this.checked = false;
-                    })
-                }
-            });
-
-            $(".checkSingle").click(function() {
-                if ($(this).is(":checked")) {
-                    var isAllChecked = 0;
-                    $(".checkSingle").each(function() {
-                        if (!this.checked)
-                            isAllChecked = 1;
-                    })
-                    if (isAllChecked == 0) {
-                        $("#checkedAll").prop("checked", true);
+         
+            table = $('#customers_table').DataTable({
+                "searching": true,
+                "paging": true,
+                "info": true,
+                "order": [
+                    [0, "desc"]
+                ],
+                "lengthChange": true,
+                "processing": true,
+                "serverSide": true,
+                columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 10,
+                }],
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                select: {
+                    style: 'os',
+                    selector: 'td.select-checkbox'
+                },
+                "zeroRecords": "No matching records found",
+                "ajax": {
+                    url: "include/customer_server_new.php?get_customers_data=true",
+                    type: 'GET',
+                    data: function(d) {
+                        d.status = $('.status_filter').val();
+                        // d.pop_id = $('.pop_filter').val();
+                        d.pop_id = <?php echo  $popid; ?>;
+                        d.area_id = $('.area_filter').val();
+                    },
+                },
+                "drawCallback": function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                    /* Restore checked state*/
+                    // $('.customer-checkbox').each(function() {
+                    //     var id = $(this).val();
+                    //     if (checkedBoxes[id]) {
+                    //         $(this).prop('checked', true);
+                    //     }
+                    // });
+                },
+                "buttons": [{
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel"></i> Excel',
+                        titleAttr: 'Export to Excel',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Print',
+                        titleAttr: 'Print',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
                     }
-                } else {
-                    $("#checkedAll").prop("checked", false);
-                }
+                ],
             });
-
 
             $("#btnRchgProcs").click(function() {
 

@@ -109,7 +109,7 @@ function timeAgo($startdate) {
                     </div>
                     <div class="row">
 
-                    <div class="col-md-6 col-xl-3">
+                        <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="mini-stat">
