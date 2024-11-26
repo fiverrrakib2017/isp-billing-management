@@ -1,16 +1,16 @@
 <?php
-include("include/security_token.php");
-include("include/db_connect.php");
-include("include/users_right.php");
-include("include/pop_security.php");
-if (isset($_GET["id"])) {
-    $popid = $_GET["id"];
+include 'include/security_token.php';
+include 'include/db_connect.php';
+include 'include/users_right.php';
+include 'include/pop_security.php';
+if (isset($_GET['id'])) {
+    $popid = $_GET['id'];
 }
 if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
     while ($rows = $pop_list->fetch_array()) {
-        $lstid = $rows["id"];
-        $pop_name = $rows["pop"];
-        $pop_status = $rows["status"];
+        $lstid = $rows['id'];
+        $pop_name = $rows['pop'];
+        $pop_status = $rows['status'];
         $fullname = $rows['fullname'];
         $username = $rows['username'];
         $password = $rows['password'];
@@ -21,65 +21,45 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
         $note = $rows['note'];
     }
 
-// Enable /disable POP Users
-if(isset($_GET["inactive"]))
-{
-    if($_GET["inactive"]=="true")
-    {
-        $popID = $_GET["id"];
+    // Enable /disable POP Users
+    if (isset($_GET['inactive'])) {
+        if ($_GET['inactive'] == 'true') {
+            $popID = $_GET['id'];
 
-        $custmrs = $con->query("SELECT * FROM customers WHERE pop=$popID");
-        while ($rowsct = mysqli_fetch_assoc($custmrs)) 
-            {
-                $custmr_usrname = $rowsct["username"];
+            $custmrs = $con->query("SELECT * FROM customers WHERE pop=$popID");
+            while ($rowsct = mysqli_fetch_assoc($custmrs)) {
+                $custmr_usrname = $rowsct['username'];
 
                 // Deleting users from Radius user list
                 $con->query("DELETE FROM radcheck WHERE username = '$custmr_usrname'");
                 $con->query("DELETE FROM radreply WHERE username = '$custmr_usrname'");
                 $con->query("UPDATE customers SET status='0' WHERE username='$custmr_usrname'");
                 $con->query("UPDATE add_pop SET status='0' WHERE id='$popID'");
-
             }
 
-            header('Location: '.$_SERVER['PHP_SELF'].'?id='.$popID);
-            die;
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $popID);
+            die();
+        } elseif ($_GET['inactive'] == 'false') {
+            $popID = $_GET['id'];
 
+            $custmrs = $con->query("SELECT * FROM customers WHERE pop=$popID");
+            while ($rowsct = mysqli_fetch_assoc($custmrs)) {
+                $custmr_usrname = $rowsct['username'];
+                $custmr_password = $rowsct['password'];
+                $custmr_package = $rowsct['package_name'];
 
-    }
-    else if($_GET["inactive"]=="false")
-    {
-        $popID = $_GET["id"];
-
-        $custmrs = $con->query("SELECT * FROM customers WHERE pop=$popID");
-        while ($rowsct = mysqli_fetch_assoc($custmrs)) 
-            {
-                $custmr_usrname = $rowsct["username"];
-                $custmr_password = $rowsct["password"];
-                $custmr_package = $rowsct["package_name"];
-                
                 // Deleting users from Radius user list
                 $con->query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$custmr_usrname','Cleartext-Password',':=','$custmr_password')");
                 $con->query("INSERT INTO radreply (username,attribute,op,value) VALUES('$custmr_usrname','MikroTik-Group',':=','$custmr_package')");
                 $con->query("UPDATE customers SET status='1' WHERE username='$custmr_usrname'");
                 $con->query("UPDATE add_pop SET status='1' WHERE id='$popID'");
-
             }
 
-            header('Location: '.$_SERVER['PHP_SELF'].'?id='.$popID);
-            die;
-
-
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $popID);
+            die();
+        }
     }
-
-
-
 }
-
-
-
-
-}
-
 
 ?>
 
@@ -97,12 +77,13 @@ if(isset($_GET["inactive"]))
 <body data-sidebar="dark">
 
 
-   
+
 
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-       <?php $page_title="POP/Branch"; include 'Header.php'; ?>
+        <?php $page_title = 'POP/Branch';
+        include 'Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -124,93 +105,103 @@ if(isset($_GET["inactive"]))
             <div class="page-content">
                 <div class="container-fluid">
                     <div class="row">
-                    <div class="col-md-12 grid-margin">
-                        <div class="d-flex justify-content-between flex-wrap">
-                           <div class="d-flex align-items-end flex-wrap">
-                              <div class="mr-md-3 mr-xl-5">
-                                 <div class="d-flex">
-                                    <i class="mdi mdi-home text-muted hover-cursor"></i>
-                                    <p class="text-muted mb-0 hover-cursor">
-                                        <a href="index.php">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;</a>
-                                    </p>
-                                    <p class="text-primary mb-0 hover-cursor"><a href="pop_branch.php">POP&nbsp;/&nbsp; </a><?php echo $pop_name; ?></p>
-                                 </div>
-                              </div>
-                              <br>
-                           </div>
-                           <div class="d-flex justify-content-between align-items-end flex-wrap">
-                              
-                           <div class="d-flex py-2" style="float:right;">
-                           <abbr title="Recharge All">
-                                <button type="button" class="btn-sm btn btn-success" style="float:right;" type="button" id="RchgMdlBtn"><i class="ion ion-ios-people"></i></button>
-                                </abbr>
-                                &nbsp;
-                                <abbr title="Add Package">
-                                <button type="button" class="btn-sm btn btn-danger" style="float:right;" type="button" id="packageAddBtn"><i class="mdi mdi-briefcase-plus"></i></button>
-                                </abbr>
-                                &nbsp;
-                                <abbr title="Add Customer">
-                                <button type="button" data-bs-target="#addCustomerModal" data-bs-toggle="modal" class="btn-sm btn btn-primary" style="float:right;" type="button" id=""><i class="mdi mdi-account-plus"></i></button>
-                            </abbr>
-                                &nbsp;
-                                <abbr title="Complain">
-                                    <button type="button" data-bs-target="#ComplainModalCenter" data-bs-toggle="modal" class="btn-sm btn btn-warning ">
-                                        <i class="mdi mdi-alert-outline"></i>
-                                    </button></abbr>
-                                &nbsp;
-                                <abbr title="Recharge">
-                                    <button type="button" id="rechargeBtn" class="btn-sm btn btn-primary " data-bs-target="#addRechargeModal" data-bs-toggle="modal">
-                                        <i class="mdi mdi mdi-battery-charging-90"></i>
-                                    </button></abbr>
-                                &nbsp;
-                                <abbr title="Recharge">
-                                    <button type="button" id="" class="btn-sm btn btn-success " data-bs-target="#addPaymentModal" data-bs-toggle="modal">
-                                        <i class=" mdi mdi-cash-multiple"></i>
-                                    </button></abbr>
-                                &nbsp;
+                        <div class="col-md-12 grid-margin">
+                            <div class="d-flex justify-content-between flex-wrap">
+                                <div class="d-flex align-items-end flex-wrap">
+                                    <div class="mr-md-3 mr-xl-5">
+                                        <div class="d-flex">
+                                            <i class="mdi mdi-home text-muted hover-cursor"></i>
+                                            <p class="text-muted mb-0 hover-cursor">
+                                                <a href="index.php">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;</a>
+                                            </p>
+                                            <p class="text-primary mb-0 hover-cursor"><a
+                                                    href="pop_branch.php">POP&nbsp;/&nbsp; </a><?php echo $pop_name; ?></p>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-end flex-wrap">
 
-                                <?php
-                                                            //echo $pop_status;
-                                                            if($pop_status=='0')
-                                                            {
-                                                                $checkd = "";
-                                                               echo '<a href="?inactive=false&id='.$lstid.'"><abbr title="Make Enable POP"><button type="button" class="btn-sm btn btn-success">
-                                                               <i class="mdi mdi mdi-wifi-off "></i>
-                                                           </button></abbr></a>';
+                                    <div class="d-flex py-2" style="float:right;">
+                                        <abbr title="Recharge All">
+                                            <button type="button" class="btn-sm btn btn-success" style="float:right;"
+                                                type="button" id="RchgMdlBtn"><i
+                                                    class="ion ion-ios-people"></i></button>
+                                        </abbr>
+                                        &nbsp;
+                                        <abbr title="Add Package">
+                                            <button type="button" class="btn-sm btn btn-danger" style="float:right;"
+                                                type="button" id="packageAddBtn"><i
+                                                    class="mdi mdi-briefcase-plus"></i></button>
+                                        </abbr>
+                                        &nbsp;
+                                        <abbr title="Add Customer">
+                                            <button type="button" data-bs-target="#addCustomerModal"
+                                                data-bs-toggle="modal" class="btn-sm btn btn-primary"
+                                                style="float:right;" type="button" id=""><i
+                                                    class="mdi mdi-account-plus"></i></button>
+                                        </abbr>
+                                        &nbsp;
+                                        <abbr title="Complain">
+                                            <button type="button" data-bs-target="#ComplainModalCenter"
+                                                data-bs-toggle="modal" class="btn-sm btn btn-warning ">
+                                                <i class="mdi mdi-alert-outline"></i>
+                                            </button></abbr>
+                                        &nbsp;
+                                        <abbr title="Recharge">
+                                            <button type="button" id="rechargeBtn" class="btn-sm btn btn-primary "
+                                                data-bs-target="#addRechargeModal" data-bs-toggle="modal">
+                                                <i class="mdi mdi mdi-battery-charging-90"></i>
+                                            </button></abbr>
+                                        &nbsp;
+                                        <abbr title="Recharge">
+                                            <button type="button" id="" class="btn-sm btn btn-success "
+                                                data-bs-target="#addPaymentModal" data-bs-toggle="modal">
+                                                <i class=" mdi mdi-cash-multiple"></i>
+                                            </button></abbr>
+                                        &nbsp;
 
-                                                            }
-                                                            elseif($pop_status=='1')
-                                                            {
-                                                                echo '<a href="?inactive=true&id='.$lstid.'"><abbr title="Make Disable POP"><button type="button" class="btn-sm btn btn-danger">
-                                                                <i class="mdi mdi mdi-wifi-off "></i>
-                                                            </button></abbr></a>';
-                                                                $checkd = "checked";
-                                                            }
-                                                            
-                                                            
-                                                            ?>
-
-                                
-                                &nbsp;
-                                <abbr title="Edit Customer">
-                                    <a href="#">
-                                        <button type="button" class="btn-sm btn btn-info">
-                                            <i class="mdi mdi-account-edit"></i>
-                                        </button></a>
-                                </abbr>
-                            </div>   
-                           
-
+                                        <?php
+                                        //echo $pop_status;
+                                        if ($pop_status == '0') {
+                                            $checkd = '';
+                                            echo '<a href="?inactive=false&id=' .
+                                                $lstid .
+                                                '"><abbr title="Make Enable POP"><button type="button" class="btn-sm btn btn-success">
+                                                                                                       <i class="mdi mdi mdi-wifi-off "></i>
+                                                                                                   </button></abbr></a>';
+                                        } elseif ($pop_status == '1') {
+                                            echo '<a href="?inactive=true&id=' .
+                                                $lstid .
+                                                '"><abbr title="Make Disable POP"><button type="button" class="btn-sm btn btn-danger">
+                                                                                                        <i class="mdi mdi mdi-wifi-off "></i>
+                                                                                                    </button></abbr></a>';
+                                            $checkd = 'checked';
+                                        }
+                                        
+                                        ?>
 
 
+                                        &nbsp;
+                                        <abbr title="Edit Customer">
+                                            <a href="#">
+                                                <button type="button" class="btn-sm btn btn-info">
+                                                    <i class="mdi mdi-account-edit"></i>
+                                                </button></a>
+                                        </abbr>
+                                    </div>
 
 
 
-                           </div>
+
+
+
+
+                                </div>
+                            </div>
                         </div>
-                     </div>
 
-                        
+
                     </div>
 
 
@@ -225,11 +216,12 @@ if(isset($_GET["inactive"]))
                             <div class="card">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-primary me-0 float-end"><i class="fas fa-user-check"></i></span>
+                                        <span class="mini-stat-icon bg-primary me-0 float-end"><i
+                                                class="fas fa-user-check"></i></span>
                                         <div class="mini-stat-info">
                                             <span class="counter text-primary">
                                                 <?php
-                                                if ($onlinecstmr = $con->query("SELECT * FROM radacct WHERE acctstoptime IS NULL")) {
+                                                if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
                                                     echo $onlinecstmr->num_rows;
                                                 }
                                                 ?>
@@ -246,14 +238,14 @@ if(isset($_GET["inactive"]))
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-success me-0 float-end"><i class="fas fa-users"></i></span>
+                                            <span class="mini-stat-icon bg-success me-0 float-end"><i
+                                                    class="fas fa-users"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-success">
                                                     <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1' AND pop=$popid")) {
-                                                        echo  $totalcstmr = $totalCustomer->num_rows;
-														
+                                                        echo $totalcstmr = $totalCustomer->num_rows;
                                                     }
-
+                                                    
                                                     ?>
                                                 </span>
                                                 Active Customers
@@ -265,21 +257,22 @@ if(isset($_GET["inactive"]))
                         </div> <!--End col -->
 
 
-                        
-                        
+
+
 
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <a href="customer_expire.php">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-danger me-0 float-end"><i class="fas fa-exclamation-triangle"></i></span>
+                                            <span class="mini-stat-icon bg-danger me-0 float-end"><i
+                                                    class="fas fa-exclamation-triangle"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
                                                     <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate AND pop=$popid")) {
-                                                        echo  $AllExcstmr->num_rows;
+                                                        echo $AllExcstmr->num_rows;
                                                     }
-
+                                                    
                                                     ?>
                                                 </span>
                                                 Expired
@@ -291,22 +284,99 @@ if(isset($_GET["inactive"]))
                         </div> <!-- End col -->
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
-                            <a href="customer_disabled.php">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-secondary me-0 float-end"><i class="fas fa-user-slash"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-secondary">
-                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND pop=$popid")) {
-                                                    echo  $dsblcstmr->num_rows;
-                                                }
-                                                ?>
-                                            </span>
-                                            Disabled
+                                <a href="customer_disabled.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-secondary me-0 float-end"><i
+                                                    class="fas fa-user-slash"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-secondary">
+                                                    <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND pop=$popid")) {
+                                                        echo $dsblcstmr->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                Disabled
+                                            </div>
                                         </div>
                                     </div>
+                                </a>
+                            </div>
+                        </div><!--end col -->
+                    </div> <!-- end row-->
+                    <!-- New Row-->
+                    <div class="row">
+                        <div class="col-md-6 col-xl-3">
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="pop_area.php">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="fas fa-search-location"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                    <?php if ($totalarea = $con->query("SELECT * FROM area_list WHERE pop_id=$popid")) {
+                                                        echo $totalarea->num_rows;
+                                                    }
+                                                    
+                                                    ?>
+                                                </span>
+                                                Area
+
+
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
-                            </a>
+                            </div>
+
+                        </div> <!--End col -->
+
+
+
+
+
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <a href="allTickets.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-warning me-0 float-end"><i
+                                                    class="fas fa-notes-medical"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-danger">
+                                                    <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$popid")) {
+                                                        echo $dsblcstmr->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                Tickets
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div> <!-- End col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <a href="nas.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-purple me-0 float-end"><i
+                                                    class="fas fa-network-wired"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                    <?php if ($dsblcstmr = $con->query('SELECT * FROM nas')) {
+                                                        echo $dsblcstmr->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                Routers
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </div><!--end col -->
                     </div> <!-- end row-->
@@ -317,21 +387,22 @@ if(isset($_GET["inactive"]))
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Current Balance</div>
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Current Balance</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
                                                 if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$popid' ")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
-                                                        $currentBal += $rows["balance"];
+                                                        $currentBal += $rows['balance'];
                                                     }
                                                     if ($pop_payment = $con->query(" SELECT `purchase_price` FROM `customer_rechrg` WHERE pop_id='$popid' ")) {
                                                         while ($rows = $pop_payment->fetch_array()) {
-                                                            $totalpaid += $rows["purchase_price"];
+                                                            $totalpaid += $rows['purchase_price'];
                                                         }
-                                                        echo  $currentBal - $totalpaid;
+                                                        echo $currentBal - $totalpaid;
                                                     }
                                                 }
-
+                                                
                                                 ?>
                                             </div>
                                         </div>
@@ -348,13 +419,14 @@ if(isset($_GET["inactive"]))
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Paid</div>
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Total Paid</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
-
+                                                
                                                 if ($pop_payment = $con->query(" SELECT `paid_amount` FROM `pop_transaction` WHERE pop_id='$popid'")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
-                                                        $stotalpaid += $rows["paid_amount"];
+                                                        $stotalpaid += $rows['paid_amount'];
                                                     }
                                                     echo $stotalpaid;
                                                 }
@@ -374,23 +446,24 @@ if(isset($_GET["inactive"]))
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Due</div>
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Total Due</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                 <?php
                                                 if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM `pop_transaction` WHERE pop_id=$popid  ")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
-                                                        $totalAmount += $rows["balance"];
+                                                        $totalAmount += $rows['balance'];
                                                     }
                                                     $totalAmount;
                                                 }
-
+                                                
                                                 if ($pop_payment = $con->query("SELECT SUM(paid_amount) AS amount FROM `pop_transaction` WHERE pop_id=$popid")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
-                                                        $paidAmount += $rows["amount"];
+                                                        $paidAmount += $rows['amount'];
                                                     }
                                                 }
                                                 echo $totalAmount - $paidAmount;
-
+                                                
                                                 ?>
                                             </div>
                                         </div>
@@ -407,17 +480,18 @@ if(isset($_GET["inactive"]))
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Due Paid</div>
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Due
+                                                Paid</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <?php
-
-                                            if ($pop_dupayment = $con->query(" SELECT paid_amount FROM pop_transaction WHERE pop_id='$popid' AND transaction_type='5' ")) {
-                                                while ($rowsdp = $pop_dupayment->fetch_array()) {
-                                                    $stotalDupaid += $rowsdp["paid_amount"];
+                                                <?php
+                                                
+                                                if ($pop_dupayment = $con->query(" SELECT paid_amount FROM pop_transaction WHERE pop_id='$popid' AND transaction_type='5' ")) {
+                                                    while ($rowsdp = $pop_dupayment->fetch_array()) {
+                                                        $stotalDupaid += $rowsdp['paid_amount'];
+                                                    }
+                                                    echo $stotalDupaid;
                                                 }
-                                                echo $stotalDupaid;
-                                            }
-                                            ?>
+                                                ?>
                                             </div>
                                         </div>
                                         <div class="col-auto">
@@ -435,19 +509,24 @@ if(isset($_GET["inactive"]))
                                 <div class="card-body">
                                     <div class="col-12 bg-white p-0 px-2 pb-3 mb-3">
                                         <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class="mdi mdi-marker-check"></i> Incharge Fullname:</p> <a href="#"><?php echo $fullname; ?></a>
+                                            <p><i class="mdi mdi-marker-check"></i> Incharge Fullname:</p> <a
+                                                href="#"><?php echo $fullname; ?></a>
                                         </div>
                                         <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class="mdi mdi-account-circle"></i> Incharge Username:</p> <a href="#"><?php echo $username; ?></a>
+                                            <p><i class="mdi mdi-account-circle"></i> Incharge Username:</p> <a
+                                                href="#"><?php echo $username; ?></a>
                                         </div>
                                         <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class=" fas fa-dollar-sign"></i> Opening Balance:</p> <a href="#"><?php echo $opening_bal; ?></a>
+                                            <p><i class=" fas fa-dollar-sign"></i> Opening Balance:</p> <a
+                                                href="#"><?php echo $opening_bal; ?></a>
                                         </div>
                                         <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class="mdi mdi-phone"></i> Mobile:</p> <a href="#"><?php echo $mobile_num1; ?></a>
+                                            <p><i class="mdi mdi-phone"></i> Mobile:</p> <a
+                                                href="#"><?php echo $mobile_num1; ?></a>
                                         </div>
                                         <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class=" fas fa-envelope"></i> Email Address:</p> <a href="#"><?php echo $email_address; ?></a>
+                                            <p><i class=" fas fa-envelope"></i> Email Address:</p> <a
+                                                href="#"><?php echo $email_address; ?></a>
                                         </div>
                                     </div>
                                 </div>
@@ -473,41 +552,51 @@ if(isset($_GET["inactive"]))
 
                                 <!-- Nav tabs -->
                                 <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                                <li class="nav-item">
-                                        <a class="nav-link active" data-bs-toggle="tab" href="#branch_user" role="tab">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#branch_user"
+                                            role="tab">
                                             <span class="d-none d-md-block">Users (
 
                                                 <?php if ($totalCustomers = $con->query("SELECT * FROM customers WHERE pop=$popid ")) {
-                                                    echo  $totalCustomers->num_rows;
+                                                    echo $totalCustomers->num_rows;
                                                 }
-
+                                                
                                                 ?>
 
-                                                )</span><span class="d-block d-md-none"><i class="mdi mdi-account-check h5"></i></span>
+                                                )</span><span class="d-block d-md-none"><i
+                                                    class="mdi mdi-account-check h5"></i></span>
                                         </a>
                                     </li>
-                                    
-                                
-                                <li class="nav-item">
+
+
+                                    <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#tickets" role="tab">
                                             <span class="d-none d-md-block">Tickets
-                                            </span><span class="d-block d-md-none"><i class="mdi mdi-home-variant h5"></i></span>
+                                            </span><span class="d-block d-md-none"><i
+                                                    class="mdi mdi-home-variant h5"></i></span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#recharge_history" role="tab">
-                                            <span class="d-none d-md-block">Recharge History</span><span class="d-block d-md-none"><i class="mdi mdi-battery-charging h5"></i></span>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#recharge_history"
+                                            role="tab">
+                                            <span class="d-none d-md-block">Recharge History</span><span
+                                                class="d-block d-md-none"><i
+                                                    class="mdi mdi-battery-charging h5"></i></span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#packages" role="tab">
-                                            <span class="d-none d-md-block">Package</span><span class="d-block d-md-none"><i class="mdi mdi-package h5"></i></span>
+                                            <span class="d-none d-md-block">Package</span><span
+                                                class="d-block d-md-none"><i class="mdi mdi-package h5"></i></span>
                                         </a>
                                     </li>
-                                    
+
                                     <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#pop_transaction" role="tab">
-                                            <span class="d-none d-md-block">Transaction Statment</span><span class="d-block d-md-none"><i class="mdi mdi-currency-bdt h5"></i></span>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#pop_transaction"
+                                            role="tab">
+                                            <span class="d-none d-md-block">Transaction Statment</span><span
+                                                class="d-block d-md-none"><i
+                                                    class="mdi mdi-currency-bdt h5"></i></span>
                                         </a>
                                     </li>
                                 </ul>
@@ -515,15 +604,17 @@ if(isset($_GET["inactive"]))
                                 <!-- Tab panes -->
                                 <div class="tab-content">
 
-                                <div class="tab-pane active p-3" id="branch_user" role="tabpanel">
+                                    <div class="tab-pane active p-3" id="branch_user" role="tabpanel">
                                         <div class="card">
-                                            
+
                                             <div class="card-body">
-                                                <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="customers_table"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
-                                                            <th><input type="checkbox" id="checkedAll" name="checkedAll"
-                                                                    class="form-check-input"></th>
+                                                            <th><input type="checkbox" id="checkedAll"
+                                                                    name="checkedAll" class="form-check-input"></th>
                                                             <th>ID</th>
                                                             <th>Name</th>
                                                             <th>Package</th>
@@ -548,7 +639,9 @@ if(isset($_GET["inactive"]))
                                     <div class="tab-pane p-3" id="tickets" role="tabpanel">
                                         <div class="card">
                                             <div class="card-body">
-                                                <table id="ticket_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="ticket_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
                                                             <th>Complain Type</th>
@@ -565,7 +658,9 @@ if(isset($_GET["inactive"]))
                                         <div class="card">
 
                                             <div class="card-body">
-                                                <table id="recharge_history_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="recharge_history_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
 
@@ -591,13 +686,13 @@ if(isset($_GET["inactive"]))
                                                                     $recharge_date_time = $rows['datetm'];
                                                                     $dateTm = new DateTime($recharge_date_time);
                                                                     //echo $dateTm->format("H:i A, d-M-Y");
-                                                                    echo $dateTm->format("d-M-Y");
+                                                                    echo $dateTm->format('d-M-Y');
                                                                     ?>
                                                                 </td>
 
                                                                 <td>
                                                                     <?php
-                                                                    $getCstmrId = $rows["customer_id"];
+                                                                    $getCstmrId = $rows['customer_id'];
                                                                     if ($allCom = $con->query("SELECT * FROM customers WHERE id='$getCstmrId' ")) {
                                                                         while ($rowss = $allCom->fetch_array()) {
                                                                             $customerName = $rowss['fullname'];
@@ -609,9 +704,9 @@ if(isset($_GET["inactive"]))
                                                                 </td>
 
 
-                                                                <td><?php echo $rows["months"]; ?></td>
-                                                                <td><?php echo $rows["rchrg_until"]; ?></td>
-                                                                <td><?php echo $rows["purchase_price"]; ?></td>
+                                                                <td><?php echo $rows['months']; ?></td>
+                                                                <td><?php echo $rows['rchrg_until']; ?></td>
+                                                                <td><?php echo $rows['purchase_price']; ?></td>
 
                                                             </tr>
                                                         <?php } ?>
@@ -623,9 +718,11 @@ if(isset($_GET["inactive"]))
                                     </div>
                                     <div class="tab-pane p-3" id="packages" role="tabpanel">
                                         <div class="card">
-                                            
+
                                             <div class="card-body">
-                                                <table id="package_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="package_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
                                                             <th>ID</th>
@@ -644,15 +741,15 @@ if(isset($_GET["inactive"]))
 
                                                         ?>
 
-                                                            <tr>
-                                                                <td><?php echo $increment++; ?></td>
-                                                                
-                                                                <td><?php echo $rows["package_name"]; ?></td>
-                                                                <td><?php echo $rows["p_price"]; ?></td>
-                                                                <td><?php echo $rows["s_price"]; ?></td>
+                                                        <tr>
+                                                            <td><?php echo $increment++; ?></td>
+
+                                                            <td><?php echo $rows['package_name']; ?></td>
+                                                            <td><?php echo $rows['p_price']; ?></td>
+                                                            <td><?php echo $rows['s_price']; ?></td>
 
 
-                                                            </tr>
+                                                        </tr>
                                                         <?php } ?>
                                                     </tbody>
                                                 </table>
@@ -660,11 +757,13 @@ if(isset($_GET["inactive"]))
                                         </div>
 
                                     </div>
-                           
+
                                     <div class="tab-pane p-3" id="pop_transaction" role="tabpanel">
                                         <div class="card">
                                             <div class="card-body">
-                                                <table id="transaction_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="transaction_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
                                                             <th>ID</th>
@@ -684,53 +783,50 @@ if(isset($_GET["inactive"]))
 
                                                         ?>
 
-                                                            <tr>
-                                                                <td><?php echo $rows['id']; ?></td>
-                                                                <td> <?php echo  $rows["amount"]; ?></td>
-                                                                <td> <?php echo  $rows["paid_amount"]; ?></td>
+                                                        <tr>
+                                                            <td><?php echo $rows['id']; ?></td>
+                                                            <td> <?php echo $rows['amount']; ?></td>
+                                                            <td> <?php echo $rows['paid_amount']; ?></td>
 
 
-                                                                <td>
-                                                                    <?php
-                            $transaction_action = $rows["action"];
-                            $transaction_type=$rows["transaction_type"];
-
-                            if ($transaction_action == 'Recharge' && $transaction_type=='1') {
-                                echo  '<span class="badge bg-danger">Recharged</span> <br> <span class="badge bg-success">Paid</span>';
-                            } else if($transaction_action == 'Recharge' && $transaction_type=='0'){
-                                echo  '<span class="badge bg-danger">Recharged </span>';
-                            }else if($transaction_action == 'paid'){
-                                echo  '<span class="badge bg-success">Paid</span>';
-                            }else if($transaction_action == 'Return'){
-                                echo  '<span class="badge bg-warning">Return</span>';
-                            }
-                            
-
-
-                                                                    
-                                                                    ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-                                                                    $transaction_type = $rows["transaction_type"];
-                                                                    if ($transaction_type == 1) {
-                                                                        echo  '<button class="btn-sm btn btn-outline-success">Cash</button>';
-                                                                    } elseif ($transaction_type == 0) {
-                                                                        echo  '<button class="btn-sm btn btn-outline-danger">Credit</button>';
-                                                                    } elseif ($transaction_type == 2) {
-                                                                        echo 'Bkash';
-                                                                    } elseif ($transaction_type == 3) {
-                                                                        echo 'Nagad';
-                                                                    } elseif ($transaction_type == 4) {
-                                                                        echo 'Bank';
-                                                                    }elseif ($transaction_type == 5) {
-                                                                        echo '<button class="btn-sm btn btn-outline-primary">Payment Rcvd</button>';
-                                                                    }
-
-                                                                    ?>
-                                                                </td>
-                                                                <td> <?php echo  $rows["date"]; ?></td>
-                                                            </tr>
+                                                            <td>
+                                                                <?php
+                                                                $transaction_action = $rows['action'];
+                                                                $transaction_type = $rows['transaction_type'];
+                                                                
+                                                                if ($transaction_action == 'Recharge' && $transaction_type == '1') {
+                                                                    echo '<span class="badge bg-danger">Recharged</span> <br> <span class="badge bg-success">Paid</span>';
+                                                                } elseif ($transaction_action == 'Recharge' && $transaction_type == '0') {
+                                                                    echo '<span class="badge bg-danger">Recharged </span>';
+                                                                } elseif ($transaction_action == 'paid') {
+                                                                    echo '<span class="badge bg-success">Paid</span>';
+                                                                } elseif ($transaction_action == 'Return') {
+                                                                    echo '<span class="badge bg-warning">Return</span>';
+                                                                }
+                                                                
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                $transaction_type = $rows['transaction_type'];
+                                                                if ($transaction_type == 1) {
+                                                                    echo '<button class="btn-sm btn btn-outline-success">Cash</button>';
+                                                                } elseif ($transaction_type == 0) {
+                                                                    echo '<button class="btn-sm btn btn-outline-danger">Credit</button>';
+                                                                } elseif ($transaction_type == 2) {
+                                                                    echo 'Bkash';
+                                                                } elseif ($transaction_type == 3) {
+                                                                    echo 'Nagad';
+                                                                } elseif ($transaction_type == 4) {
+                                                                    echo 'Bank';
+                                                                } elseif ($transaction_type == 5) {
+                                                                    echo '<button class="btn-sm btn btn-outline-primary">Payment Rcvd</button>';
+                                                                }
+                                                                
+                                                                ?>
+                                                            </td>
+                                                            <td> <?php echo $rows['date']; ?></td>
+                                                        </tr>
                                                         <?php } ?>
                                                     </tbody>
                                                 </table>
@@ -746,20 +842,24 @@ if(isset($_GET["inactive"]))
             </div>
             <!-- End Page-content -->
             <!-----modal--->
-            <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addRechargeModal">
+            <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                aria-hidden="true" id="addRechargeModal">
                 <div class="modal-dialog" role="document">
                     <form id="FormData">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Add POP Recharge</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="card">
                                 <div class="card-body">
-                                    <input class="d-none" type="text" name="pop_id" value="<?php echo $popid; ?>">
+                                    <input class="d-none" type="text" name="pop_id"
+                                        value="<?php echo $popid; ?>">
                                     <div class="form-group mb-2">
                                         <label>Amount:</label>
-                                        <input type="text" id="addPopAmount" placeholder="Enter Your Amount" class="form-control">
+                                        <input type="text" id="addPopAmount" placeholder="Enter Your Amount"
+                                            class="form-control">
                                     </div>
                                     <div class="form-group mb-2">
                                         <label>Action:</label>
@@ -779,32 +879,39 @@ if(isset($_GET["inactive"]))
                                     </div>
                                     <div class="form-group d-none">
                                         <label>Transaction Type:</label>
-                                        <input type="text" id="recharge_by" class="form-control" value="<?php echo $_SESSION['username']; ?>" />
+                                        <input type="text" id="recharge_by" class="form-control"
+                                            value="<?php echo $_SESSION['username']; ?>" />
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-danger">Cancle</button>
-                                <button id="submitBtn" type="button" name="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" data-bs-dismiss="modal" aria-label="Close"
+                                    class="btn btn-danger">Cancle</button>
+                                <button id="submitBtn" type="button" name="submit"
+                                    class="btn btn-primary">Submit</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addPaymentModal">
+            <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                aria-hidden="true" id="addPaymentModal">
                 <div class="modal-dialog" role="document">
                     <form id="FormData">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLabel">Payment Received</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="card">
                                 <div class="card-body">
-                                    <input class="d-none" type="text" name="pop_id" value="<?php echo $popid; ?>">
+                                    <input class="d-none" type="text" name="pop_id"
+                                        value="<?php echo $popid; ?>">
                                     <div class="form-group mb-2">
                                         <label>Amount:</label>
-                                        <input type="text" id="addPopRechargeAmount" placeholder="Enter Your Amount" class="form-control">
+                                        <input type="text" id="addPopRechargeAmount"
+                                            placeholder="Enter Your Amount" class="form-control">
                                     </div>
                                     <div class="form-group mb-2">
                                         <label>Transaction Type:</label>
@@ -821,40 +928,45 @@ if(isset($_GET["inactive"]))
                                     </div>
                                     <div class="form-group d-none">
                                         <label>Recharge By:</label>
-                                        <input type="text" id="recharge_by" class="form-control" value="<?php echo $_SESSION['username']; ?>" />
+                                        <input type="text" id="recharge_by" class="form-control"
+                                            value="<?php echo $_SESSION['username']; ?>" />
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-danger">Cancle</button>
-                                <button type="button" id="addPaymentBtn" class="btn btn-primary"><i class="mdi mdi-cash"></i> Add Payment</button>
+                                <button type="button" data-bs-dismiss="modal" aria-label="Close"
+                                    class="btn btn-danger">Cancle</button>
+                                <button type="button" id="addPaymentBtn" class="btn btn-primary"><i
+                                        class="mdi mdi-cash"></i> Add Payment</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addPackageModal">
+            <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
+                aria-hidden="true" id="addPackageModal">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Add Package</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
                         <div class="card">
                             <div class="card-body">
                                 <input class="d-none" type="text" id="pop_id" value="<?php echo $popid; ?>">
                                 <div class="form-group mb-2">
                                     <label>Package Name</label>
-                                    <select id="p_name" id="p_name" class="form-select" onchange="getPackagePrice()">
+                                    <select id="p_name" id="p_name" class="form-select"
+                                        onchange="getPackagePrice()">
                                         <option>Select Package</option>
                                         <?php
-                                        if ($allPackage = $con->query("SELECT * FROM radgroupcheck")) {
+                                        if ($allPackage = $con->query('SELECT * FROM radgroupcheck')) {
                                             while ($rows = $allPackage->fetch_array()) {
                                                 echo '<option value=' . $rows['id'] . '>' . $rows['groupname'] . '</option>';
                                             }
                                         }
-
-
+                                        
                                         ?>
 
 
@@ -862,16 +974,19 @@ if(isset($_GET["inactive"]))
                                 </div>
                                 <div class="form-group mb-2">
                                     <label>Purchase Price</label>
-                                    <input type="text" id="p_price" name="p_price" placeholder="Enter Your Amount" class="form-control">
+                                    <input type="text" id="p_price" name="p_price"
+                                        placeholder="Enter Your Amount" class="form-control">
                                 </div>
                                 <div class="form-group mb-2">
                                     <label>Sale's Price</label>
-                                    <input type="text" id="s_price" name="s_price" placeholder="Enter Your Amount" class="form-control">
+                                    <input type="text" id="s_price" name="s_price"
+                                        placeholder="Enter Your Amount" class="form-control">
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-danger">Cancle</button>
+                            <button type="button" data-bs-dismiss="modal" aria-label="Close"
+                                class="btn btn-danger">Cancle</button>
                             <button id="PackageSubmitBtn" type="button" class="btn btn-primary">Submit</button>
                         </div>
                     </div>
@@ -879,286 +994,9 @@ if(isset($_GET["inactive"]))
             </div>
 
 
-
-            <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel"><span class="mdi mdi-account-check mdi-18px"></span> &nbsp;New customer</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="">
-                                                <form id="customer_form">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Full Name</label>
-                                                                        <input id="customer_fullname" type="text" class="form-control " placeholder="Enter Your Fullname" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Username <span id="usernameCheck"></span></label>
-                                                                        <input id="customer_username" type="text" class="form-control " name="username" placeholder="Enter Your Username" oninput="checkUsername();" />
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Password</label>
-                                                                        <input id="customer_password" type="password" class="form-control " name="password" placeholder="Enter Your Password" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Mobile no.</label>
-                                                                        <input id="customer_mobile" type="text" class="form-control " name="mobile" placeholder="Enter Your Mobile Number" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Expired Date</label>
-                                                                        <select id="customer_expire_date" class="form-select">
-                                                                            <option value="<?php echo date("d"); ?>"><?php echo date("d"); ?></option>
-                                                                            <?php
-                                                                            if ($exp_cstmr = $con->query("SELECT * FROM customer_expires")) {
-                                                                                while ($rowsssss = $exp_cstmr->fetch_array()) {
-
-
-                                                                                    $exp_date = $rowsssss["days"];
-
-                                                                                    echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
-                                                                                }
-                                                                            }
-
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Address</label>
-                                                                        <input id="customer_address" type="text" class="form-control" name="address" placeholder="Enter Your Addres" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6 ">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>POP/Branch</label>
-                                                                        <select id="customer_pop" class="form-select">
-                                                                            <option value="">Select Pop/Branch</option>
-                                                                            <?php
-                                                                            if ($pop = $con->query("SELECT * FROM add_pop WHERE id=$popid")) {
-                                                                                while ($rows = $pop->fetch_array()) {
-
-
-                                                                                    $id = $rows["id"];
-                                                                                    $name = $rows["pop"];
-
-                                                                                    echo '<option value="' . $id . '">' . $name . '</option>';
-                                                                                }
-                                                                            }
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6 ">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Area/Location</label>
-                                                                        <select id="customer_area" class="form-select" name="area">
-                                                                            <option>Select Area</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Nid Card Number</label>
-                                                                        <input id="customer_nid" type="text" class="form-control" name="nid" placeholder="Enter Your Nid Number" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Package</label>
-                                                                        <select id="customer_package" class="form-select">
-
-
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Connection Charge</label>
-                                                                        <input id="customer_con_charge" type="text" class="form-control" name="con_charge" placeholder="Enter Connection Charge" value="500" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Package Price</label>
-                                                                        <input disabled id="customer_price" type="text" class="form-control" value="00" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Remarks</label>
-                                                                        <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Status</label>
-                                                                        <select id="customer_status" class="form-select">
-                                                                            <option value="">Select Status</option>
-                                                                            <option value="0">Disable</option>
-                                                                            <option value="1">Active</option>
-                                                                            <option value="2">Expire</option>
-                                                                            <option value="3">Request</option>
-                                                                        </select>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-success" id="customer_add">Add Customer</button>
-                                            </div>
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal-dialog -->
-                                </div>
-            <!-------->
-
-
-
-
-            <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" id="RchgCustomerModal" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel"><span class="mdi mdi-account-check mdi-18px"></span> &nbsp;Recharge All</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="">
-                                                
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <div class="row">
-                                                                
-                                                          
-                                                    <table id="branch_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th><input type="checkbox" id="checkedAll" name="checkedAll" value="Bike"> All</th>
-                                                            <th>User Name</th>
-                                                            <th>Exp. Date</th>
-                                                            <th>Status</th>
-                                                            
-                                                            
-                                                        </tr>
-                                                    </thead>
-                                                    <form name="ALLRchFrm" id="ALLRchFrm" method="get" target="load_iframe">
-                                                        <input type="hidden" name="rchPOP" value="<?php echo $popid; ?>"/>
-                                                    <tbody id="transaction-list">
-                                                        <?php
-                                                        $sql = "SELECT * FROM customers WHERE pop='$popid'  ";
-                                                        $result = mysqli_query($con, $sql);
-
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-                                                            $username = $rows['username'];
-
-                                                        ?>
-
-                                                            <tr>
-                                                                <td><input type="checkbox" Value="<?php echo $rows["id"]; ?>" name="checkAll[]" class="checkSingle"></td>
-                                                                <td><a href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                                
-                                                                <?php 
-                                                                
-                                                                $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                                $chkc = $onlineusr->num_rows;
-                                                                if($chkc==1)
-                                                                {
-                                                                    echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                                } else{
-                                                                    echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-        
-                                                                }
-                                                                
-                                                                echo" ".$rows["fullname"]; ?></a></td>
-                                                                <td> <?php echo $rows['expiredate'];?></td>
-                                                                <td>
-                                                                    <?php
-
-                                                                    $expireDate = $rows["expiredate"];
-                                                                    $todayDate = date("Y-m-d");
-                                                                    if ($expireDate <= $todayDate) {
-                                                                        echo "<span class='badge bg-danger'>Expired</span>";
-                                                                    } else {
-                                                                        //echo date("d-m-Y", strtotime($expireDate));
-                                                                        echo date("d M Y", strtotime($expireDate));
-                                                                    }
-                                                                    ?>
-
-                                                                </td>
-                                                                
-                                                                
-                                                            </tr>
-                                                        <?php } ?>
-                                                    </tbody>
-                                               
-                                                    <tfoot>
-                                                <tr>
-                                                    <th colspan="8"><button style="float:right" id="btnRchgProcs" class="btn btn-success">Process Recharge</button></th>
-                                                </tr>
-                                            </tfoot>
-                                         </table>
-                                      
-
-                                                            </div>
-                                                            
-                                                            
-                                                            
-
-
-
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-success" id="customer_add">Add Customer</button>
-                                            </div>
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal-dialog -->
-                                </div>
-            <!-------->
-
-
-
-
-
-
-
-            <?php include 'Footer.php';?>
+            <!----------------Customer MODAL---------------->
+            <?php include 'modal/customer_modal.php'; ?>
+            <?php include 'Footer.php'; ?>
 
         </div>
         <!-- end main content-->
@@ -1172,10 +1010,11 @@ if(isset($_GET["inactive"]))
 
 
     <?php include 'script.php'; ?>
+    <script type="text/javascript" src="js/customer.js"></script>
     <script type="text/javascript">
         var table;
         $(document).ready(function() {
-         
+
             table = $('#customers_table').DataTable({
                 "searching": true,
                 "paging": true,
@@ -1206,7 +1045,7 @@ if(isset($_GET["inactive"]))
                     data: function(d) {
                         d.status = $('.status_filter').val();
                         // d.pop_id = $('.pop_filter').val();
-                        d.pop_id = <?php echo  $popid; ?>;
+                        d.pop_id = <?php echo $popid; ?>;
                         d.area_id = $('.area_filter').val();
                     },
                 },
@@ -1239,56 +1078,20 @@ if(isset($_GET["inactive"]))
                 ],
             });
 
-            $("#btnRchgProcs").click(function() {
-
-                    var rchformdata = $("#ALLRchFrm").serialize();
-
-                    var rchgcnfrm = confirm("Are you sure selected accounts to be recharged?");
-                    
-                    if(rchgcnfrm == true)
-                    {
-                    $.ajax({
-                            url: "include/bulk_recharge.php?recharge",
-                            method: 'get',
-                            data: rchformdata,
-
-                    success: function(rspnsrchg) {
-                        //alert(rspnsrchg);
-                        if(rspnsrchg==0)
-                        {
-                            toastr.error("Balance Empty, Please recharge POP</br> Recharge failed!");
-                            //$("#RchgCustomerModal").modal('hide');
-
-                        }
-                        if(rspnsrchg==1)
-                        {
-                            toastr.success("Recharge done successfully...");
-                            $("#RchgCustomerModal").modal('hide');
-
-                        }
-                        
-                    }
-                    
-                    });}else{}
-
-                });
 
 
             //$("#package-list-table").DataTable();
             $("#ticket_datatable").DataTable();
             $("#transaction_datatable").DataTable();
             $("#package_datatable").DataTable();
-            $("#branch_datatable").DataTable();
             $("#recharge_history_datatable").DataTable();
 
 
             $("#packageAddBtn").click(function() {
                 $("#addPackageModal").modal('show');
             });
-            
-            $("#RchgMdlBtn").click(function() {
-                $("#RchgCustomerModal").modal('show');
-            });
+
+
             $("#PackageSubmitBtn").click(function() {
                 var pop_id = $("#pop_id").val();
                 var p_name = $("#p_name").val();
@@ -1447,156 +1250,9 @@ if(isset($_GET["inactive"]))
                 }
             }
         });
-        //add customer script
-        $(document).on('keyup', '#customer_username', function() {
-            var customer_username = $("#customer_username").val();
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    current_username: customer_username
-                },
-                success: function(response) {
-                    $("#usernameCheck").html(response);
-                }
-            });
-        });
-        
-        $(document).on('change', '#customer_pop', function() {
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    current_pop_name: pop_id
-                },
-                success: function(response) {
-                     $("#customer_area").html(response);
-                }
-            });
-        });
-        $(document).on('change', '#customer_pop', function() {
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    pop_name: pop_id,
-                    getCustomerPackage:0
-                },
-                success: function(response) {
-                     $("#customer_package").html(response);
-                }
-            });
-        });
-        $(document).on('change', '#customer_package', function() {
-            var packageId = $("#customer_package").val();
-            var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "include/customers_server.php",
-                data: {
-                    package_id: packageId,
-                    pop_id: pop_id,
-                    getPackagePrice:0
-                },
-                success: function(response) {
-                     $("#customer_price").val(response);
-                }
-            });
-        });
-
-
-
-
-        $("#customer_add").click(function() {
-            var fullname = $("#customer_fullname").val();
-            var package = $("#customer_package").val();
-            var username = $("#customer_username").val();
-            var password = $("#customer_password").val();
-            var mobile = $("#customer_mobile").val();
-            var address = $("#customer_address").val();
-            var expire_date = $("#customer_expire_date").val();
-            var area = $("#customer_area").val();
-            var pop = $("#customer_pop").val();
-            var nid = $("#customer_nid").val();
-            var con_charge = $("#customer_con_charge").val();
-            var price = $("#customer_price").val();
-            var remarks = $("#customer_remarks").val();
-            var status = $("#customer_status").val();
-            var user_type = <?php echo $auth_usr_type; ?>;
-
-            customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status)
-
-        });
-
-        function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status) {
-            if (fullname.length == 0) {
-                toastr.error("Customer name is require");
-            } else if (package.length == 0) {
-                toastr.error("Customer Package is require");
-            } else if (username.length == 0) {
-                toastr.error("Username is require");
-            } else if (password.length == 0) {
-                toastr.error("Password is require");
-            } else if (mobile.length == 0) {
-                toastr.error("Mobile number is require");
-            } else if (expire_date.length == 0) {
-                toastr.error("Expire Date is require");
-            } else if (pop.length == 0) {
-                toastr.error("POP/Branch is require");
-            } else if (area.length == 0) {
-                toastr.error("Area is require");
-            } else if (con_charge.length == 0) {
-                toastr.error("Connection Charge is require");
-            } else if (price.length == 0) {
-                toastr.error("price is require");
-            } else if (status.length == 0) {
-                toastr.error("Status is require");
-            } else {
-                $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-                var addCustomerData = 0;
-                $.ajax({
-                    type: 'POST',
-                    url: 'include/customers_server.php',
-                    data: {
-                        addCustomerData: addCustomerData,
-                        fullname: fullname,
-                        package: package,
-                        username: username,
-                        password: password,
-                        mobile: mobile,
-                        address: address,
-                        expire_date: expire_date,
-                        area: area,
-                        pop: pop,
-                        con_charge: con_charge,
-                        price: price,
-                        remarks: remarks,
-                        nid: nid,
-                        status: status,
-                        user_type: user_type,
-                    },
-                    success: function(responseData) {
-                        if (responseData == 1) {
-                            toastr.success("Added Successfully");
-                            $("#addCustomerModal").modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            toastr.error(responseData);
-                        }
-                    }
-                });
-            }
-        }
     </script>
 
-<iframe name="load_iframe" style="height:0px, width:0px, border:0px"></iframe>
+    <iframe name="load_iframe" style="height:0px, width:0px, border:0px"></iframe>
 </body>
 
 </html>

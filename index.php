@@ -202,7 +202,7 @@ function timeAgo($startdate) {
 					<!-- New Row-->
 					 <div class="row">
 
-                    <div class="col-md-6 col-xl-3">
+                        <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <div class="card-body">
 								<a href="pop_branch.php">
