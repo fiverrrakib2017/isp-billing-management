@@ -1,19 +1,20 @@
 <?php
-date_default_timezone_set("Asia/Dhaka");
-include("include/security_token.php");
-include("include/db_connect.php");
-include("include/users_right.php");
-include("include/pop_security.php");
+date_default_timezone_set('Asia/Dhaka');
+include 'include/security_token.php';
+include 'include/db_connect.php';
+include 'include/users_right.php';
+include 'include/pop_security.php';
 
-function timeAgo($startdate) {
-    /*Convert startdate to a timestamp*/ 
+function timeAgo($startdate)
+{
+    /*Convert startdate to a timestamp*/
     $startTimestamp = strtotime($startdate);
     $currentTimestamp = time();
-    
+
     /* Calculate the difference in seconds*/
     $difference = $currentTimestamp - $startTimestamp;
 
-    /*Define time intervals*/ 
+    /*Define time intervals*/
     $units = [
         'year' => 31536000,
         'month' => 2592000,
@@ -21,21 +22,19 @@ function timeAgo($startdate) {
         'day' => 86400,
         'hour' => 3600,
         'min' => 60,
-        'second' => 1
+        'second' => 1,
     ];
 
-    /*Check for each time unit*/ 
+    /*Check for each time unit*/
     foreach ($units as $unit => $value) {
         if ($difference >= $value) {
             $time = floor($difference / $value);
-            return '<img src="images/icon/online.png" height="10" width="10"/>'.' '.$time . ' ' . $unit . ($time > 1 ? 's' : '') . '';
+            return '<img src="images/icon/online.png" height="10" width="10"/>' . ' ' . $time . ' ' . $unit . ($time > 1 ? 's' : '') . '';
         }
     }
     /*If the difference is less than a second*/
-    return '<img src="images/icon/online.png" height="10" width="10"/> just now';  
+    return '<img src="images/icon/online.png" height="10" width="10"/> just now';
 }
-
-
 
 ?>
 
@@ -46,10 +45,10 @@ function timeAgo($startdate) {
 
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SYSTEM</title>
-    
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-        <?php include 'style.php';?>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <?php include 'style.php'; ?>
 </head>
 
 <body data-sidebar="dark">
@@ -57,10 +56,10 @@ function timeAgo($startdate) {
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-      <?php 
-      $page_title="Welcome To Dashboard"; 
-      include 'Header.php'; 
-      ?>
+        <?php
+        $page_title = 'Welcome To Dashboard';
+        include 'Header.php';
+        ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -83,9 +82,13 @@ function timeAgo($startdate) {
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-md-12 col-sm-6">
-                            <button type="button"  data-bs-toggle="modal" data-bs-target="#addRechargeModal" class="btn-sm btn btn-primary mb-1"><i class="mdi mdi-battery-charging-90"></i> Recharge Now</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#addRechargeModal"
+                                class="btn-sm btn btn-primary mb-1"><i class="mdi mdi-battery-charging-90"></i> Recharge
+                                Now</button>
 
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn-sm btn btn-success mb-1"><i class="mdi mdi-account-plus"></i> Add Customer</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#addCustomerModal"
+                                class="btn-sm btn btn-success mb-1"><i class="mdi mdi-account-plus"></i> Add
+                                Customer</button>
 
                             <a href="con_request.php" class="btn-sm btn btn-warning mb-1">Connection Request
                                 <?php
@@ -96,15 +99,15 @@ function timeAgo($startdate) {
                                     } else {
                                     }
                                 }
-
-
-
+                                
                                 ?>
                             </a>
 
-                            <button type="button" id="addSmsBtn" class="btn-sm btn btn-primary mb-1"><i class="far fa-envelope"></i> SMS Notification</button>
+                            <button type="button" id="addSmsBtn" class="btn-sm btn btn-primary mb-1"><i
+                                    class="far fa-envelope"></i> SMS Notification</button>
 
-                            <button type="button"  data-bs-toggle="modal" data-bs-target="#ticketModal"  class="btn-sm btn btn-success mb-1">Add Ticket</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#ticketModal"
+                                class="btn-sm btn btn-success mb-1">Add Ticket</button>
                         </div>
                     </div>
                     <div class="row">
@@ -113,11 +116,12 @@ function timeAgo($startdate) {
                             <div class="card">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-primary me-0 float-end"><i class="fas fa-user-check"></i></span>
+                                        <span class="mini-stat-icon bg-primary me-0 float-end"><i
+                                                class="fas fa-user-check"></i></span>
                                         <div class="mini-stat-info">
                                             <span class="counter text-primary">
                                                 <?php
-                                                if ($onlinecstmr = $con->query("SELECT * FROM radacct WHERE acctstoptime IS NULL")) {
+                                                if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
                                                     echo $onlinecstmr->num_rows;
                                                 }
                                                 ?>
@@ -134,14 +138,14 @@ function timeAgo($startdate) {
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-success me-0 float-end"><i class="fas fa-users"></i></span>
+                                            <span class="mini-stat-icon bg-success me-0 float-end"><i
+                                                    class="fas fa-users"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-success">
                                                     <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1'")) {
-                                                        echo  $totalcstmr = $totalCustomer->num_rows;
-														
+                                                        echo $totalcstmr = $totalCustomer->num_rows;
                                                     }
-
+                                                    
                                                     ?>
                                                 </span>
                                                 Active Customers
@@ -153,21 +157,22 @@ function timeAgo($startdate) {
                         </div> <!--End col -->
 
 
-                        
-                        
+
+
 
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <a href="customer_expire.php">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-danger me-0 float-end"><i class="fas fa-exclamation-triangle"></i></span>
+                                            <span class="mini-stat-icon bg-danger me-0 float-end"><i
+                                                    class="fas fa-exclamation-triangle"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
-                                                    <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate")) {
-                                                        echo  $AllExcstmr->num_rows;
+                                                    <?php if ($AllExcstmr = $con->query('SELECT * FROM `customers` WHERE  NOW() > expiredate')) {
+                                                        echo $AllExcstmr->num_rows;
                                                     }
-
+                                                    
                                                     ?>
                                                 </span>
                                                 Expired
@@ -179,94 +184,99 @@ function timeAgo($startdate) {
                         </div> <!-- End col -->
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
-                            <a href="customer_disabled.php">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-secondary me-0 float-end"><i class="fas fa-user-slash"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-secondary">
-                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0'")) {
-                                                    echo  $dsblcstmr->num_rows;
-                                                }
-                                                ?>
-                                            </span>
-                                            Disabled
+                                <a href="customer_disabled.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-secondary me-0 float-end"><i
+                                                    class="fas fa-user-slash"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-secondary">
+                                                    <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0'")) {
+                                                        echo $dsblcstmr->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                Disabled
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
+                                </a>
                             </div>
                         </div><!--end col -->
                     </div> <!-- end row-->
-					
-					<!-- New Row-->
-					 <div class="row">
+
+                    <!-- New Row-->
+                    <div class="row">
 
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <div class="card-body">
-								<a href="pop_branch.php">
-                                    <div class="mini-stat">
-									
-                                        <span class="mini-stat-icon bg-brown me-0 float-end"><i class="fas fa-project-diagram"></i></span>
-                                        <div class="mini-stat-info">
-                                            
-											<span class="counter text-brown">
-                                                <?php
-                                                if ($onlinecstmr = $con->query("SELECT * FROM add_pop")) {
-                                                echo $onlinecstmr->num_rows;
-                                                }
-                                                ?>
-                                            </span>
-                                            POP/Branch
-											
+                                    <a href="pop_branch.php">
+                                        <div class="mini-stat">
+
+                                            <span class="mini-stat-icon bg-brown me-0 float-end"><i
+                                                    class="fas fa-project-diagram"></i></span>
+                                            <div class="mini-stat-info">
+
+                                                <span class="counter text-brown">
+                                                    <?php
+                                                    if ($onlinecstmr = $con->query('SELECT * FROM add_pop')) {
+                                                        echo $onlinecstmr->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                POP/Branch
+
+                                            </div>
                                         </div>
-                                    </div>
                                 </div></a>
                             </div>
                         </div> <!-- End col -->
 
                         <div class="col-md-6 col-xl-3">
-                            
-                                <div class="card">
-                                    <div class="card-body">
-									<a href="pop_area.php">
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="pop_area.php">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i class="fas fa-search-location"></i></span>
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="fas fa-search-location"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-teal">
-                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM area_list")) {
-                                                        echo  $totalCustomer->num_rows;
+                                                    <?php if ($totalCustomer = $con->query('SELECT * FROM area_list')) {
+                                                        echo $totalCustomer->num_rows;
                                                     }
-
+                                                    
                                                     ?>
                                                 </span>
                                                 Area
-												
-											
+
+
                                             </div>
-                                        </div></a>
-                                    </div>
+                                        </div>
+                                    </a>
                                 </div>
-                            
+                            </div>
+
                         </div> <!--End col -->
 
 
-                        
-                        
+
+
 
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <a href="allTickets.php">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-warning me-0 float-end"><i class="fas fa-notes-medical"></i></span>
+                                            <span class="mini-stat-icon bg-warning me-0 float-end"><i
+                                                    class="fas fa-notes-medical"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
-                                                    <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket")) {
-                                                    echo  $dsblcstmr->num_rows;
-                                                }
-                                                ?>
+                                                    <?php if ($dsblcstmr = $con->query('SELECT * FROM ticket')) {
+                                                        echo $dsblcstmr->num_rows;
+                                                    }
+                                                    ?>
                                                 </span>
                                                 Tickets
                                             </div>
@@ -278,20 +288,21 @@ function timeAgo($startdate) {
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <a href="nas.php">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-purple me-0 float-end"><i class="fas fa-network-wired"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-teal">
-                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM nas")) {
-                                                    echo  $dsblcstmr->num_rows;
-                                                }
-                                                ?>
-                                            </span>
-                                            Routers
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-purple me-0 float-end"><i
+                                                    class="fas fa-network-wired"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                    <?php if ($dsblcstmr = $con->query('SELECT * FROM nas')) {
+                                                        echo $dsblcstmr->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                Routers
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 </a>
                             </div>
                         </div><!--end col -->
@@ -300,24 +311,28 @@ function timeAgo($startdate) {
 
                     <div class="row">
 
-                         <div class="col-md-6 grid-margin stretch-card">
+                        <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                <div >
-                                        <table  class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <div>
+                                        <table class="table table-bordered dt-responsive nowrap"
+                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                <th>ID</th>
+                                                    <th>ID</th>
                                                     <th>POP Name</th>
                                                     <th>Total</th>
-                                                    <th><img src="images/icon/online.png" height="10" width="10"/> Online</th>
-                                                    <th><img src="images/icon/expired.png" height="10" width="10"/> Expired</th>
-                                                    <th><img src="images/icon/disabled.png" height="10" width="10"/> Disabled</th>
-                                                   
+                                                    <th><img src="images/icon/online.png" height="10"
+                                                            width="10" /> Online</th>
+                                                    <th><img src="images/icon/expired.png" height="10"
+                                                            width="10" /> Expired</th>
+                                                    <th><img src="images/icon/disabled.png" height="10"
+                                                            width="10" /> Disabled</th>
+
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                            <?php
+                                                <?php
                                                 $sql = "SELECT * FROM add_pop LIMIT 5";
                                                 $result = mysqli_query($con, $sql);
 
@@ -325,76 +340,70 @@ function timeAgo($startdate) {
                                                    $pop_ID = $rows['id'];
                                                 ?>
 
-                                                    <tr>
-                                                        <td><?php echo $rows['id']; ?></td>
-                                                        <td><a href="view_pop.php?id=<?php echo $pop_ID; ?>"><?php echo $rows['pop']; ?></a></td>
-                                                        <td>
-                                                            <?php
+                                                <tr>
+                                                    <td><?php echo $rows['id']; ?></td>
+                                                    <td><a
+                                                            href="view_pop.php?id=<?php echo $pop_ID; ?>"><?php echo $rows['pop']; ?></a>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        
+                                                        $sql = "SELECT * FROM customers WHERE pop='$pop_ID'";
+                                                        $countpopusr = mysqli_query($con, $sql);
+                                                        
+                                                        echo $countpopusr->num_rows;
+                                                        
+                                                        ?>
 
-                                                                $sql = "SELECT * FROM customers WHERE pop='$pop_ID'";
-                                                                $countpopusr = mysqli_query($con, $sql);
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        
+                                                        $sql = "SELECT radacct.username FROM radacct
+                                                                                                                        INNER JOIN customers
+                                                                                                                        ON customers.username=radacct.username
+                                                                                                                        
+                                                                                                                        WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
+                                                        $countpoponlnusr = mysqli_query($con, $sql);
+                                                        
+                                                        echo $countpoponlnusr->num_rows;
+                                                        
+                                                        ?>
 
-                                                                echo $countpopusr->num_rows;
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $sql = "SELECT * FROM customers WHERE pop='$pop_ID' AND NOW() > expiredate";
+                                                        $countxprd = mysqli_query($con, $sql);
+                                                        $totalexprs = $countxprd->num_rows;
+                                                        if ($totalexprs == 0) {
+                                                            echo $totalexprs;
+                                                        } else {
+                                                            echo "<span class='badge bg-danger'>$totalexprs</span>";
+                                                        }
+                                                        
+                                                        //
+                                                        
+                                                        ?>
+                                                    </td>
 
-                                                            ?>
+                                                    <td>
+                                                        <?php
+                                                        $disableQ = "SELECT * FROM customers WHERE pop='$pop_ID' AND status='0'";
+                                                        $countdsbld = mysqli_query($con, $disableQ);
+                                                        $totaldsbld = $countdsbld->num_rows;
+                                                        if ($totaldsbld == 0) {
+                                                            echo $totaldsbld;
+                                                        } else {
+                                                            echo "<span class='badge bg-danger'>$totaldsbld</span>";
+                                                        }
+                                                        
+                                                        //
+                                                        
+                                                        ?>
+                                                    </td>
 
-                                                        </td>
-                                                        <td>
-                                                            <?php
-
-                                                                $sql = "SELECT radacct.username FROM radacct
-                                                                INNER JOIN customers
-                                                                ON customers.username=radacct.username
-                                                                
-                                                                WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
-                                                                $countpoponlnusr = mysqli_query($con, $sql);
-
-                                                                echo $countpoponlnusr->num_rows;
-
-                                                            ?>
-
-                                                        </td>
-                                                        <td>
-                                                            <?php
-                                                                $sql = "SELECT * FROM customers WHERE pop='$pop_ID' AND NOW() > expiredate";
-                                                                $countxprd = mysqli_query($con, $sql);
-                                                                 $totalexprs = $countxprd->num_rows;
-                                                                if($totalexprs == 0)
-                                                                {
-                                                                    echo $totalexprs;   
-
-                                                                }
-                                                                else{
-
-                                                                    echo "<span class='badge bg-danger'>$totalexprs</span>";
-                                                                }
-                                                            
-                                                                //
-                                                            
-                                                            ?>
-                                                        </td>
-
-                                                        <td>
-                                                            <?php
-                                                                $disableQ = "SELECT * FROM customers WHERE pop='$pop_ID' AND status='0'";
-                                                                $countdsbld = mysqli_query($con, $disableQ);
-                                                                 $totaldsbld = $countdsbld->num_rows;
-                                                                if($totaldsbld == 0)
-                                                                {
-                                                                    echo $totaldsbld;   
-
-                                                                }
-                                                                else{
-
-                                                                    echo "<span class='badge bg-danger'>$totaldsbld</span>";
-                                                                }
-                                                            
-                                                                //
-                                                            
-                                                            ?>
-                                                        </td>
-                                                   
-                                                    </tr>
+                                                </tr>
                                                 <?php } ?>
 
                                             </tbody>
@@ -406,54 +415,54 @@ function timeAgo($startdate) {
 
                         <div class="col-xl-6">
                             <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title">Tickets</h4>
-                                <button style="float: right;">
-                                                <a href="allTickets.php">+</a>
-                                            </button>
-                                            <?php 
-    $badge_colors = ['bg-primary', 'bg-purple', 'bg-success', 'bg-warning']; 
-    $color_index = 0;
-    $is_first = true; 
-
-    if($get_best_area = $con->query("SELECT area_id, COUNT(*) AS ticket_count FROM ticket GROUP BY area_id ORDER BY ticket_count DESC LIMIT 5")) {
-        while($rows = $get_best_area->fetch_assoc()) {
-            $area_id = $rows['area_id'];
-            $ticket_count = $rows['ticket_count'];
-            $area_name_result = $con->query("SELECT name FROM area_list WHERE id = $area_id");
-            
-            if ($area_name_result && $area_row = $area_name_result->fetch_assoc()) {
-                $area_name = $area_row['name'];
-                
-                if ($is_first) {
-                    echo '<span class="badge bg-danger me-2">' . htmlspecialchars($area_name) . ' (' . $ticket_count . ')</span>';
-                    $is_first = false;
-                } else {
-                    echo '<span class="badge ' . $badge_colors[$color_index] . ' me-2">' . htmlspecialchars($area_name) . ' (' . $ticket_count . ')</span>';
-                    $color_index++;
-                }
-            } else {
-                echo '<span class="badge bg-secondary me-2">Unknown (' . $ticket_count . ')</span>';
-            }
-            if ($color_index >= count($badge_colors)) {
-                $color_index = 0;
-            }
-        }
-    } else {
-        echo '<span class="badge bg-danger">Error fetching areas</span>';
-    }
-    ?>
-</div>
+                                <div class="card-header">
+                                    <h4 class="card-title">Tickets</h4>
+                                    <button style="float: right;">
+                                        <a href="allTickets.php">+</a>
+                                    </button>
+                                    <?php
+                                    $badge_colors = ['bg-primary', 'bg-purple', 'bg-success', 'bg-warning'];
+                                    $color_index = 0;
+                                    $is_first = true;
+                                    
+                                    if ($get_best_area = $con->query('SELECT area_id, COUNT(*) AS ticket_count FROM ticket GROUP BY area_id ORDER BY ticket_count DESC LIMIT 5')) {
+                                        while ($rows = $get_best_area->fetch_assoc()) {
+                                            $area_id = $rows['area_id'];
+                                            $ticket_count = $rows['ticket_count'];
+                                            $area_name_result = $con->query("SELECT name FROM area_list WHERE id = $area_id");
+                                    
+                                            if ($area_name_result && ($area_row = $area_name_result->fetch_assoc())) {
+                                                $area_name = $area_row['name'];
+                                    
+                                                if ($is_first) {
+                                                    echo '<span class="badge bg-danger me-2">' . htmlspecialchars($area_name) . ' (' . $ticket_count . ')</span>';
+                                                    $is_first = false;
+                                                } else {
+                                                    echo '<span class="badge ' . $badge_colors[$color_index] . ' me-2">' . htmlspecialchars($area_name) . ' (' . $ticket_count . ')</span>';
+                                                    $color_index++;
+                                                }
+                                            } else {
+                                                echo '<span class="badge bg-secondary me-2">Unknown (' . $ticket_count . ')</span>';
+                                            }
+                                            if ($color_index >= count($badge_colors)) {
+                                                $color_index = 0;
+                                            }
+                                        }
+                                    } else {
+                                        echo '<span class="badge bg-danger">Error fetching areas</span>';
+                                    }
+                                    ?>
+                                </div>
 
 
 
                                 <div class="card-body">
-                                    
+
                                     <div class="table-responsive">
                                         <table id="tickets_table" class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>Status</th> 
+                                                    <th>Status</th>
                                                     <th>Created</th>
                                                     <th>Customer Name</th>
                                                     <th>Issues</th>
@@ -461,7 +470,7 @@ function timeAgo($startdate) {
                                                 </tr>
                                             </thead>
                                             <tbody id="ticket-list">
-                                            <?php
+                                                <?php
                                                 $sql = "SELECT * FROM `ticket` ORDER BY id DESC limit 5";
                                                 $result = mysqli_query($con, $sql);
 
@@ -469,86 +478,88 @@ function timeAgo($startdate) {
 
                                                 ?>
 
-                                                    <tr>
-                                                       
-                                                        <td>
-                                                            <?php 
+                                                <tr>
+
+                                                    <td>
+                                                        <?php 
                                                             $ticketType = $rows["ticket_type"];
                                                             
                                                             if ($ticketType === "Complete"): ?>
-                                                                
-                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
-                                                                    <span class="badge bg-success">Completed</span>
-                                                                </a>
-                                                            <?php elseif ($ticketType === "Active"): ?>
-                                                                
-                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
-                                                                    <span class="badge bg-danger">Active</span>
-                                                                </a>
-                                                            <?php elseif ($ticketType === "Close"): ?>
-                                                                
-                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
-                                                                    <span class="badge bg-success">Close</span>
-                                                                </a>
-                                                            <?php else: ?>
-                                                                <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $ticketType; ?></a>
-                                                            <?php endif; ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php 
-                                                             $startdate = $rows["startdate"];
-                                                             echo timeAgo($startdate); 
-                                                            ?>
-                                                            
-                                                        </td>
-                                                        <td>
-                                                        <?php 
-                                                            $customer_id= $rows['customer_id']; 
-                                                            $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
-                                                            while ($stmr = $customer->fetch_array()) {
-                                                                 $cstmrID = $stmr['id'];
-																 $username = $stmr['username'];
-																 $cstmr_fullname = $stmr['fullname'];
-                                                            }
+
+                                                        <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                            <span class="badge bg-success">Completed</span>
+                                                        </a>
+                                                        <?php elseif ($ticketType === "Active"): ?>
+
+                                                        <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                            <span class="badge bg-danger">Active</span>
+                                                        </a>
+                                                        <?php elseif ($ticketType === "Close"): ?>
+
+                                                        <a href="tickets_profile.php?id=<?php echo $rows['id']; ?>">
+                                                            <span class="badge bg-success">Close</span>
+                                                        </a>
+                                                        <?php else: ?>
+                                                        <a
+                                                            href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><?php echo $ticketType; ?></a>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $startdate = $rows['startdate'];
+                                                        echo timeAgo($startdate);
                                                         ?>
-														
-                                                            <?php 
-                                                            
-                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                            $chkc = $onlineusr->num_rows;
-                                                            if($chkc==1)
-                                                            {
-                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                            } else{
-                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
 
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $customer_id = $rows['customer_id'];
+                                                        $customer = $con->query("SELECT * FROM customers WHERE id=$customer_id ");
+                                                        while ($stmr = $customer->fetch_array()) {
+                                                            $cstmrID = $stmr['id'];
+                                                            $username = $stmr['username'];
+                                                            $cstmr_fullname = $stmr['fullname'];
+                                                        }
+                                                        ?>
+
+                                                        <?php
+                                                        
+                                                        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                                                        $chkc = $onlineusr->num_rows;
+                                                        if ($chkc == 1) {
+                                                            echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                                                        } else {
+                                                            echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                                                        }
+                                                        
+                                                        ?>
+
+
+                                                        <a href="profile.php?clid=<?php echo $cstmrID; ?>"
+                                                            target="_blank"> <?php echo $cstmr_fullname; ?></a>
+                                                    </td>
+
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $complain_typeId = $rows['complain_type'];
+                                                        if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
+                                                            while ($rowss = $allCom->fetch_array()) {
+                                                                echo $rowss['topic_name'];
                                                             }
-                                                 
-                                                            
-                                                            ?>
-                                                        
-                                                        
-                                                        <a href="profile.php?clid=<?php echo $cstmrID; ?>" target="_blank"> <?php echo $cstmr_fullname; ?></a></td>
-                                                        
-                                                        </td>
-                                                        <td>
-                                                             <?php
-                                                            $complain_typeId = $rows["complain_type"];
-                                                            if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                while ($rowss = $allCom->fetch_array()) {
-                                                                    echo $rowss['topic_name'];
-                                                                }
-                                                            }
-                                                            ?>
-                                                        </td>
-                                                        <td>
-                                                            
-                                                            <a class="btn-sm btn btn-success" href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
-                                                            </a>
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td>
+
+                                                        <a class="btn-sm btn btn-success"
+                                                            href="tickets_profile.php?id=<?php echo $rows['id']; ?>"><i
+                                                                class="fas fa-eye"></i>
+                                                        </a>
 
 
-                                                        </td>
-                                                    </tr>
+                                                    </td>
+                                                </tr>
                                                 <?php } ?>
                                             </tbody>
                                         </table>
@@ -559,7 +570,7 @@ function timeAgo($startdate) {
 
                             <!------------ ------------->
 
-                         
+
 
 
 
@@ -584,103 +595,104 @@ function timeAgo($startdate) {
 
                     </div>
                     <!-- end row -->
-                    
 
 
-                     <div class="row">
-					 <div class="col-md-6 grid-margin stretch-card">
-					 <div class="card">
-                                <div class="card-body">
-                                    	<h4 class="card-title mb-4">Ticket Statics 10 Days</h4>					
-									
 
-                                         <div class="row text-center mt-4">
-                                            <div class="col-3">
-                                                <h5 class="mb-0 font-size-18">
-												<?php
-												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE startdate BETWEEN '$daystkt' AND NOW()");
-												echo $tktsql->num_rows;
-												?>
-												
-												</h5>
-                                                <p class="text-muted text-truncate">Tickets</p>
-                                            </div>
-                                            <div class="col-3">
-                                                <h5 class="mb-0 font-size-18">
-												<?php
-												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
-												echo $tktsql->num_rows;
-												?>
-												
-												</h5>
-                                                <p class="text-muted text-truncate">Resolved</p>
-                                            </div>
-                                            <div class="col-3">
-                                                <h5 class="mb-0 font-size-18">
-												<?php
-												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
-												echo $tktsql->num_rows;
-												?>
-												</h5>
-                                                <p class="text-muted text-truncate">Pending</p>
-                                            </div>
-											
-											<div class="col-3">
-                                                <h5 class="mb-0 font-size-18">
-												<?php
-												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
-												echo $tktsql->num_rows;
-												?>
-												</h5>
-                                                <p class="text-muted text-truncate danger">Closed</p>
-                                            </div>
-											
-                                        </div>
-
-                                        <div id="chart" dir="ltr"></div>
-									
-									
-									
-									
-									
-                                </div>
-                            </div>
-							</div>
-							
-							
+                    <div class="row">
                         <div class="col-md-6 grid-margin stretch-card">
-                        <div class="card">
-                                    <div class="card-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title mb-4">Ticket Statics 10 Days</h4>
 
-                                        <h4 class="card-title mb-4">Customer Statics</h4>
 
-                                        <div class="row text-center mt-4">
-                                            <div class="col-4">
-                                                <h5 class="mb-0 font-size-18">50</h5>
-                                                <p class="text-muted text-truncate">New</p>
-                                            </div>
-                                            <div class="col-4">
-                                                <h5 class="mb-0 font-size-18">44</h5>
-                                                <p class="text-muted text-truncate">Expired</p>
-                                            </div>
-                                            <div class="col-4">
-                                                <h5 class="mb-0 font-size-18">32</h5>
-                                                <p class="text-muted text-truncate">Disabled</p>
-                                            </div>
+                                    <div class="row text-center mt-4">
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+
+                                            </h5>
+                                            <p class="text-muted text-truncate">Tickets</p>
+                                        </div>
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+
+                                            </h5>
+                                            <p class="text-muted text-truncate">Resolved</p>
+                                        </div>
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+                                            </h5>
+                                            <p class="text-muted text-truncate">Pending</p>
                                         </div>
 
-                                        <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr"></div>
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+                                            </h5>
+                                            <p class="text-muted text-truncate danger">Closed</p>
+                                        </div>
 
                                     </div>
+
+                                    <div id="chart" dir="ltr"></div>
+
+
+
+
+
                                 </div>
+                            </div>
                         </div>
 
 
-                    </div> 
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <h4 class="card-title mb-4">Customer Statics</h4>
+
+                                    <div class="row text-center mt-4">
+                                        <div class="col-4">
+                                            <h5 class="mb-0 font-size-18">50</h5>
+                                            <p class="text-muted text-truncate">New</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <h5 class="mb-0 font-size-18">44</h5>
+                                            <p class="text-muted text-truncate">Expired</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <h5 class="mb-0 font-size-18">32</h5>
+                                            <p class="text-muted text-truncate">Disabled</p>
+                                        </div>
+                                    </div>
+
+                                    <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
                     <!-- end row -->
 
                     <div class="row">
@@ -704,15 +716,16 @@ function timeAgo($startdate) {
 
 
                                     <div class="table-responsive">
-                                        <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
+                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Full Name</th>
-                                                    
+
                                                     <th>POP</th>
                                                     <th>Area</th>
-                                                    
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -726,45 +739,43 @@ function timeAgo($startdate) {
 
                                                 ?>
 
-                                                    <tr>
-                                                        <td><?php echo $rows['id']; ?></td>
-                                                        <td><a target="new" href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                        <?php 
-                                                        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                        $chkc = $onlineusr->num_rows;
-                                                        if($chkc==1)
-                                                        {
-                                                            echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                        } else{
-                                                            echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                                                <tr>
+                                                    <td><?php echo $rows['id']; ?></td>
+                                                    <td><a target="new"
+                                                            href="profile.php?clid=<?php echo $rows['id']; ?>">
+                                                            <?php
+                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                                                            $chkc = $onlineusr->num_rows;
+                                                            if ($chkc == 1) {
+                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                                                            } else {
+                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                                                            }
+                                                            
+                                                            echo ' ' . $rows['fullname']; ?></a></td>
 
+                                                    <td>
+                                                        <?php
+                                                        $popID = $rows['pop'];
+                                                        $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
+                                                        while ($popRow = $allPOP->fetch_array()) {
+                                                            echo $popRow['pop'];
                                                         }
                                                         
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php $id = $rows['area'];
+                                                        $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
+                                                        while ($popRow = $allArea->fetch_array()) {
+                                                            echo $popRow['name'];
+                                                        }
                                                         
-                                                        echo ' '. $rows["fullname"]; ?></a></td>
-                                                        
-                                                        <td>
-                                                            <?php
-                                                            $popID = $rows["pop"];
-                                                            $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
-                                                            while ($popRow = $allPOP->fetch_array()) {
-                                                                echo $popRow['pop'];
-                                                            }
+                                                        ?>
 
-                                                            ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php $id = $rows["area"];
-                                                            $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-                                                            while ($popRow = $allArea->fetch_array()) {
-                                                                echo $popRow['name'];
-                                                            }
+                                                    </td>
 
-                                                            ?>
-
-                                                        </td>
-                                                        
-                                                    </tr>
+                                                </tr>
                                                 <?php } ?>
 
                                             </tbody>
@@ -773,9 +784,9 @@ function timeAgo($startdate) {
                                 </div>
                             </div>
                         </div>
-						
-						
-						<div class="col-md-6 stretch-card">
+
+
+                        <div class="col-md-6 stretch-card">
                             <div class="card">
                                 <div class="card-body">
 
@@ -795,15 +806,16 @@ function timeAgo($startdate) {
 
 
                                     <div class="table-responsive">
-                                        <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
+                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Full Name</th>
-                                                    
+
                                                     <th>POP</th>
                                                     <th>Area</th>
-                                                    
+
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -817,45 +829,43 @@ function timeAgo($startdate) {
 
                                                 ?>
 
-                                                    <tr>
-                                                        <td><?php echo $rows['id']; ?></td>
-                                                        <td><a target="new" href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                        <?php 
-                                                        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                        $chkc = $onlineusr->num_rows;
-                                                        if($chkc==1)
-                                                        {
-                                                            echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                        } else{
-                                                            echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                                                <tr>
+                                                    <td><?php echo $rows['id']; ?></td>
+                                                    <td><a target="new"
+                                                            href="profile.php?clid=<?php echo $rows['id']; ?>">
+                                                            <?php
+                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                                                            $chkc = $onlineusr->num_rows;
+                                                            if ($chkc == 1) {
+                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                                                            } else {
+                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                                                            }
+                                                            
+                                                            echo ' ' . $rows['fullname']; ?></a></td>
 
+                                                    <td>
+                                                        <?php
+                                                        $popID = $rows['pop'];
+                                                        $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
+                                                        while ($popRow = $allPOP->fetch_array()) {
+                                                            echo $popRow['pop'];
                                                         }
                                                         
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php $id = $rows['area'];
+                                                        $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
+                                                        while ($popRow = $allArea->fetch_array()) {
+                                                            echo $popRow['name'];
+                                                        }
                                                         
-                                                        echo ' '. $rows["fullname"]; ?></a></td>
-                                                        
-                                                        <td>
-                                                            <?php
-                                                            $popID = $rows["pop"];
-                                                            $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
-                                                            while ($popRow = $allPOP->fetch_array()) {
-                                                                echo $popRow['pop'];
-                                                            }
+                                                        ?>
 
-                                                            ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php $id = $rows["area"];
-                                                            $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-                                                            while ($popRow = $allArea->fetch_array()) {
-                                                                echo $popRow['name'];
-                                                            }
+                                                    </td>
 
-                                                            ?>
-
-                                                        </td>
-                                                        
-                                                    </tr>
+                                                </tr>
                                                 <?php } ?>
 
                                             </tbody>
@@ -864,87 +874,87 @@ function timeAgo($startdate) {
                                 </div>
                             </div>
                         </div>
-						
-						
-						
-						
-						
-						
-						
-						
-                    </div>
-					
-					
-					
-					
-					
-					<div class="row">
-					
-					<div class="col-md-12 grid-margin stretch-card">
-					 <div class="card">
-                                <div class="card-body">
-                                    	<h4 class="card-title mb-4">Yearly Customer Statics</h4>					
-									
 
-                                         <div class="row text-center mt-4">
-                                            <div class="col-3">
-                                                <h5 class="mb-0 font-size-18">
-												<?php
-												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE startdate BETWEEN '$daystkt' AND NOW()");
-												echo $tktsql->num_rows;
-												?>
-												
-												</h5>
-                                                <p class="text-muted text-truncate">Tickets</p>
-                                            </div>
-                                            <div class="col-3">
-                                                <h5 class="mb-0 font-size-18">
-												<?php
-												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
-												echo $tktsql->num_rows;
-												?>
-												
-												</h5>
-                                                <p class="text-muted text-truncate">Resolved</p>
-                                            </div>
-                                            <div class="col-3">
-                                                <h5 class="mb-0 font-size-18">
-												<?php
-												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
-												echo $tktsql->num_rows;
-												?>
-												</h5>
-                                                <p class="text-muted text-truncate">Pending</p>
-                                            </div>
-											
-											<div class="col-3">
-                                                <h5 class="mb-0 font-size-18">
-												<?php
-												$daystkt = date("Y-m-d", strtotime('-7 day'));
-												$tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
-												echo $tktsql->num_rows;
-												?>
-												</h5>
-                                                <p class="text-muted text-truncate danger">Closed</p>
-                                            </div>
-											
+
+
+
+
+
+
+
+                    </div>
+
+
+
+
+
+                    <div class="row">
+
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title mb-4">Yearly Customer Statics</h4>
+
+
+                                    <div class="row text-center mt-4">
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+
+                                            </h5>
+                                            <p class="text-muted text-truncate">Tickets</p>
+                                        </div>
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+
+                                            </h5>
+                                            <p class="text-muted text-truncate">Resolved</p>
+                                        </div>
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+                                            </h5>
+                                            <p class="text-muted text-truncate">Pending</p>
                                         </div>
 
-                                        <div id="chart_year" dir="ltr"></div>
-								
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+                                            </h5>
+                                            <p class="text-muted text-truncate danger">Closed</p>
+                                        </div>
+
+                                    </div>
+
+                                    <div id="chart_year" dir="ltr"></div>
+
                                 </div>
                             </div>
-							</div>
-							
-							
-							
-							
-							
-							
-							
+                        </div>
+
+
+
+
+
+
+
                         <div class="col-md-12 stretch-card">
                             <div class="card">
                                 <div class="card-body">
@@ -965,69 +975,70 @@ function timeAgo($startdate) {
 
 
                                     <div class="table-responsive">
-                                    <table id="datatables" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-    <thead>
-        <tr>
-            <th>No.</th>
-            <th>Months</th>
-            <th>New Conn.</th>
-            <th>Expired Conn.</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
+                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
+                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Months</th>
+                                                    <th>New Conn.</th>
+                                                    <th>Expired Conn.</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
         for($i=1; $i<=12; $i++)
         {
             ?>
-            <tr>
-                <td><?php echo $i; ?></td>
-                <td>
-                    <?php 
-                    $month = sprintf("%02d", $i);
-                    $currentyrMnth = date("Y").'-'.$month;
-                    echo date("M-Y", strtotime($currentyrMnth)); 
-                    ?>
-                </td>
-                <td>
-                    <?php
-                    $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
-                    $result = mysqli_query($con, $sql);
-                    $countconn = mysqli_num_rows($result);
-                    echo '<a href="customer_newcon.php?list='.$currentyrMnth.'">'.$countconn.'</a>';											
-                    ?>
-                </td>
-                <td>
-                    <?php
-                    $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%'";
-                    $result = mysqli_query($con, $sql);
-                    $countexpconn = mysqli_num_rows($result);
-                    echo '<a href="customer_expire.php?list='.$currentyrMnth.'">'.$countexpconn.'</a>';
-                    ?>
-                </td>
-            </tr>
-        <?php 
+                                                <tr>
+                                                    <td><?php echo $i; ?></td>
+                                                    <td>
+                                                        <?php
+                                                        $month = sprintf('%02d', $i);
+                                                        $currentyrMnth = date('Y') . '-' . $month;
+                                                        echo date('M-Y', strtotime($currentyrMnth));
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+                                                        $result = mysqli_query($con, $sql);
+                                                        $countconn = mysqli_num_rows($result);
+                                                        echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '">' . $countconn . '</a>';
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%'";
+                                                        $result = mysqli_query($con, $sql);
+                                                        $countexpconn = mysqli_num_rows($result);
+                                                        echo '<a href="customer_expire.php?list=' . $currentyrMnth . '">' . $countexpconn . '</a>';
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <?php 
         }	
         ?>
-    </tbody>
-</table>
+                                            </tbody>
+                                        </table>
 
                                     </div>
                                 </div>
                             </div>
                         </div>
-						
-						
-						
-						
-						
-						
-						
-						
-						
+
+
+
+
+
+
+
+
+
                     </div>
-					
-					
-					
+
+
+
                     <div class="row">
 
 
@@ -1051,40 +1062,40 @@ function timeAgo($startdate) {
 
                                         <pre>
 <strong>Uptime:</strong>
-<?php system("uptime"); ?>
+<?php system('uptime'); ?>
 <br />
 <strong>System Information:</strong>
-<?php system("uname -a"); ?>
+<?php system('uname -a'); ?>
 
 <?php
 //<strong>CPU Usage:</strong>
 $exec_loads = sys_getloadavg();
 $exec_cores = trim(shell_exec("grep -P '^processor' /proc/cpuinfo|wc -l"));
-$cpu1 = round($exec_loads[1] / ($exec_cores + 1) * 100, 0);
+$cpu1 = round(($exec_loads[1] / ($exec_cores + 1)) * 100, 0);
 
 //<strong>RAM Usage%:</strong>
 $exec_free = explode("\n", trim(shell_exec('free')));
-$get_mem = preg_split("/[\s]+/", $exec_free[1]);
-$mem1 = round($get_mem[2] / $get_mem[1] * 100, 0);
+$get_mem = preg_split('/[\s]+/', $exec_free[1]);
+$mem1 = round(($get_mem[2] / $get_mem[1]) * 100, 0);
 
 //<strong>RAM Usage:</strong>
 $exec_free = explode("\n", trim(shell_exec('free')));
-print_r( $get_mem = preg_split("/[\s]+/", $exec_free[1]));
+print_r($get_mem = preg_split('/[\s]+/', $exec_free[1]));
 $mem = number_format(round($get_mem[2] / 1024 / 1024, 2), 2) . '/' . number_format(round($get_mem[1] / 1024 / 1024, 2), 2);
 ?>
 
 <strong>System Date & Time:</strong>
 <?php
 //$exec_uptime = preg_split("/[\s]+/", trim(shell_exec('uptime')));
-echo date("D-M-Y")." ".date("h:i:s A")."<br/>";
+echo date('D-M-Y') . ' ' . date('h:i:s A') . '<br/>';
 echo date_default_timezone_get();
 ?>
 <br/>
 <strong><span class="mdi-database-clock-outline"></span> Date & Time:</strong>
 <?php
 //$exec_uptime = preg_split("/[\s]+/", trim(shell_exec('uptime')));
-     $dbtime = $con->query("SELECT NOW() AS dbtime");
- $rowd = $dbtime->fetch_assoc();
+$dbtime = $con->query('SELECT NOW() AS dbtime');
+$rowd = $dbtime->fetch_assoc();
 echo $rowd['dbtime'];
 
 ?>
@@ -1092,23 +1103,18 @@ echo $rowd['dbtime'];
 
 <strong>Uptime:</strong>
 <?php
-$exec_uptime = preg_split("/[\s]+/", trim(shell_exec('uptime')));
+$exec_uptime = preg_split('/[\s]+/', trim(shell_exec('uptime')));
 echo $uptime = $exec_uptime[2] . ' Days';
 ?>
 <br/>
 <strong>DB Sync:</strong>
 <?php
-$cronupdt = $con->query("SELECT * FROM cron");
-		$rowcron = $cronupdt->fetch_assoc();
-			echo $rowcron["date"];
-		
+$cronupdt = $con->query('SELECT * FROM cron');
+$rowcron = $cronupdt->fetch_assoc();
+echo $rowcron['date'];
 
 ?>
-<?php 
-
-
-
-
+<?php
 
 ?>
 </pre>
@@ -1127,8 +1133,8 @@ $cronupdt = $con->query("SELECT * FROM cron");
             </div>
             <!-- End Page-content -->
 
-            <?php 
-            include 'Footer.php'; 
+            <?php
+            include 'Footer.php';
             ?>
 
         </div>
@@ -1136,8 +1142,9 @@ $cronupdt = $con->query("SELECT * FROM cron");
 
     </div>
     <!-- END layout-wrapper -->
-    
-    <div class="modal fade" id="addRechargeModal" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+
+    <div class="modal fade" id="addRechargeModal" tabindex="-1" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog ">
             <div class="modal-content">
                 <div class="modal-header ">
@@ -1152,7 +1159,7 @@ $cronupdt = $con->query("SELECT * FROM cron");
                                 <select id="recharge_customer" class="form-select">
                                     <option value="">Select Customer</option>
                                     <?php
-                                    if ($allCustomer = $con->query("SELECT * FROM customers")) {
+                                    if ($allCustomer = $con->query('SELECT * FROM customers')) {
                                         while ($rows = $allCustomer->fetch_array()) {
                                             echo '<option value="' . $rows['id'] . '">' . $rows['username'] . ' (' . $rows['mobile'] . ')</option>';
                                         }
@@ -1164,7 +1171,7 @@ $cronupdt = $con->query("SELECT * FROM cron");
                                 <label for="recharge_customer_month" class="form-label">Month</label>
                                 <select id="recharge_customer_month" class="form-select">
                                     <?php for ($i = 1; $i <= 12; $i++) : ?>
-                                        <option value="<?= $i ?>"><?= $i ?></option>
+                                    <option value="<?= $i ?>"><?= $i ?></option>
                                     <?php endfor; ?>
                                 </select>
                             </div>
@@ -1179,7 +1186,8 @@ $cronupdt = $con->query("SELECT * FROM cron");
                             </div>
                             <div class="col-md-6">
                                 <label for="recharge_customer_package_price" class="form-label">Package Price</label>
-                                <input id="recharge_customer_package_price" type="text" class="form-control" disabled>
+                                <input id="recharge_customer_package_price" type="text" class="form-control"
+                                    disabled>
                             </div>
                         </div>
 
@@ -1199,16 +1207,18 @@ $cronupdt = $con->query("SELECT * FROM cron");
                         </div>
 
                         <div class="row mb-3">
-                            
+
                             <div class="col-md-6">
-                                <label for="recharge_customer_transaction_type" class="form-label">Transaction Type</label>
+                                <label for="recharge_customer_transaction_type" class="form-label">Transaction
+                                    Type</label>
                                 <select id="recharge_customer_transaction_type" class="form-select">
                                     <option value="1">Cash</option>
                                     <option value="0">On Credit</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-success mt-4" id="add_recharge_btn" style="margin-top: 4px;">
+                                <button type="button" class="btn btn-success mt-4" id="add_recharge_btn"
+                                    style="margin-top: 4px;">
                                     <i class="mdi mdi-battery-charging-90"></i>&nbsp;&nbsp;Recharge Now
                                 </button>
                             </div>
@@ -1233,16 +1243,17 @@ $cronupdt = $con->query("SELECT * FROM cron");
                         <div class="col-sm">
                             <div class="form-group">
                                 <label>Customer Account</label>
-                                <select name="cstmr_ac" id="cstmr_ac" class="form-control select2" onchange="currentCstmrAc()" style="width:100%;">
+                                <select name="cstmr_ac" id="cstmr_ac" class="form-control select2"
+                                    onchange="currentCstmrAc()" style="width:100%;">
                                     <option>Select</option>
                                     <?php
-
+                                    
                                     if ($allCstmr = $con->query("SELECT * FROM customers WHERE user_type=$auth_usr_type AND status=1 ")) {
                                         while ($rows = $allCstmr->fetch_array()) {
                                             echo '<option value=' . $rows['id'] . '>' . $rows['fullname'] . '</option>';
                                         }
                                     }
-
+                                    
                                     ?>
 
                                 </select>
@@ -1262,12 +1273,12 @@ $cronupdt = $con->query("SELECT * FROM cron");
                                 <select class="form-select" id="currentMessageTemp" onchange="currentMsgTemp()">
                                     <option>Select</option>
                                     <?php
-                                    if ($allCstmr = $con->query("SELECT * FROM message_template WHERE user_type=1")) {
+                                    if ($allCstmr = $con->query('SELECT * FROM message_template WHERE user_type=1')) {
                                         while ($rows = $allCstmr->fetch_array()) {
                                             echo '<option value=' . $rows['id'] . '>' . $rows['template_name'] . '</option>';
                                         }
                                     }
-
+                                    
                                     ?>
                                 </select>
                             </div>
@@ -1283,7 +1294,8 @@ $cronupdt = $con->query("SELECT * FROM cron");
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary waves-effect"
+                        data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary waves-effect waves-light">Send Message</button>
                 </div>
             </div><!-- /.modal-content -->
@@ -1293,343 +1305,416 @@ $cronupdt = $con->query("SELECT * FROM cron");
     <?php include 'modal/tickets_modal.php'; ?>
 
 
-    <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel"><span class="mdi mdi-account-check mdi-18px"></span> &nbsp;New customer</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="">
-                                                <form id="customer_form">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Full Name</label>
-                                                                        <input id="customer_fullname" type="text" class="form-control " placeholder="Enter Your Fullname" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Username <span id="usernameCheck"></span></label>
-                                                                        <input id="customer_username" type="text" class="form-control " name="username" placeholder="Enter Your Username" oninput="checkUsername();" />
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
+        id="addCustomerModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span
+                            class="mdi mdi-account-check mdi-18px"></span> &nbsp;New customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="">
+                    <form id="customer_form">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Full Name</label>
+                                            <input id="customer_fullname" type="text" class="form-control "
+                                                placeholder="Enter Your Fullname" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Username <span id="usernameCheck"></span></label>
+                                            <input id="customer_username" type="text" class="form-control "
+                                                name="username" placeholder="Enter Your Username"
+                                                oninput="checkUsername();" />
 
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Password</label>
-                                                                        <input id="customer_password" type="password" class="form-control " name="password" value="12345" placeholder="Enter Your Password" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Mobile no.</label>
-                                                                        <input id="customer_mobile" type="text" class="form-control " name="mobile" value="0" placeholder="Enter Your Mobile Number" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Expired Date</label>
-                                                                        <select id="customer_expire_date" class="form-select">
-                                                                            <option value="<?php echo "10";//date("d"); ?>"><?php echo "10";//date("d"); ?></option>
-                                                                            <?php
-                                                                            if ($exp_cstmr = $con->query("SELECT * FROM customer_expires")) {
-                                                                                while ($rowsssss = $exp_cstmr->fetch_array()) {
-
-
-                                                                                    $exp_date = $rowsssss["days"];
-
-                                                                                    echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
-                                                                                }
-                                                                            }
-
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Address</label>
-                                                                        <input id="customer_address" type="text" class="form-control" name="address" value="Sharkapur, Gouripur, Daudkandi" placeholder="Enter Your Addres" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6 ">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>POP/Branch</label>
-                                                                        <select id="customer_pop" class="form-select">
-                                                                            <option value="">Select Pop/Branch</option>
-                                                                            <?php
-                                                                            if ($pop = $con->query("SELECT * FROM add_pop ")) {
-                                                                                while ($rows = $pop->fetch_array()) {
-
-
-                                                                                    $id = $rows["id"];
-                                                                                    $name = $rows["pop"];
-
-                                                                                    echo '<option value="' . $id . '">' . $name . '</option>';
-                                                                                }
-                                                                            }
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6 ">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Area/Location</label>
-                                                                        <select id="customer_area" class="form-select" name="area">
-                                                                            <option>Select Area</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Nid Card Number</label>
-                                                                        <input id="customer_nid" type="text" class="form-control" name="nid" value="7263478246" placeholder="Enter Your Nid Number" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Package</label>
-                                                                        <select id="customer_package" class="form-select">
-
-
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Connection Charge</label>
-                                                                        <input id="customer_con_charge" type="text" class="form-control" name="con_charge" placeholder="Enter Connection Charge" value="500" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Package Price</label>
-                                                                        <input disabled id="customer_price" type="text" class="form-control" value="00" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Remarks</label>
-                                                                        <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Status</label>
-                                                                        <select id="customer_status" class="form-select">
-                                                                            <option value="1">Active</option>
-                                                                            <option value="0">Disable</option>
-                                                                            <option value="1">Active</option>
-                                                                            <option value="2">Expire</option>
-                                                                            <option value="3">Request</option>
-                                                                        </select>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-success" id="customer_add">Add Customer</button>
-                                            </div>
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal-dialog -->
+                                        </div>
+                                    </div>
                                 </div>
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Password</label>
+                                            <input id="customer_password" type="password" class="form-control "
+                                                name="password" value="12345" placeholder="Enter Your Password" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Mobile no.</label>
+                                            <input id="customer_mobile" type="text" class="form-control "
+                                                name="mobile" value="0"
+                                                placeholder="Enter Your Mobile Number" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Expired Date</label>
+                                            <select id="customer_expire_date" class="form-select">
+                                                <option value="<?php echo '10'; //date("d"); ?>"><?php echo '10'; //date("d"); ?></option>
+                                                <?php
+                                                if ($exp_cstmr = $con->query('SELECT * FROM customer_expires')) {
+                                                    while ($rowsssss = $exp_cstmr->fetch_array()) {
+                                                        $exp_date = $rowsssss['days'];
+                                                
+                                                        echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
+                                                    }
+                                                }
+                                                
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Address</label>
+                                            <input id="customer_address" type="text" class="form-control"
+                                                name="address" value="Sharkapur, Gouripur, Daudkandi"
+                                                placeholder="Enter Your Addres" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 ">
+                                        <div class="form-group mb-2">
+                                            <label>POP/Branch</label>
+                                            <select id="customer_pop" class="form-select">
+                                                <option value="">Select Pop/Branch</option>
+                                                <?php
+                                                if ($pop = $con->query('SELECT * FROM add_pop ')) {
+                                                    while ($rows = $pop->fetch_array()) {
+                                                        $id = $rows['id'];
+                                                        $name = $rows['pop'];
+                                                
+                                                        echo '<option value="' . $id . '">' . $name . '</option>';
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <div class="form-group mb-2">
+                                            <label>Area/Location</label>
+                                            <select id="customer_area" class="form-select" name="area">
+                                                <option>Select Area</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Nid Card Number</label>
+                                            <input id="customer_nid" type="text" class="form-control"
+                                                name="nid" value="7263478246"
+                                                placeholder="Enter Your Nid Number" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Package</label>
+                                            <select id="customer_package" class="form-select">
+
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Connection Charge</label>
+                                            <input id="customer_con_charge" type="text" class="form-control"
+                                                name="con_charge" placeholder="Enter Connection Charge"
+                                                value="500" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Package Price</label>
+                                            <input disabled id="customer_price" type="text" class="form-control"
+                                                value="00" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Remarks</label>
+                                            <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Status</label>
+                                            <select id="customer_status" class="form-select">
+                                                <option value="1">Active</option>
+                                                <option value="0">Disable</option>
+                                                <option value="1">Active</option>
+                                                <option value="2">Expire</option>
+                                                <option value="3">Request</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="customer_add">Add Customer</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
-   
 
-    <?php include 'script.php';?>
+
+    <?php include 'script.php'; ?>
     <script src="js/tickets.js"></script>
     <script type="text/javascript">
         /*** Add ticket Modal Script****/
         ticket_modal();
-         loadCustomers();
-         ticket_assign();
-         ticket_complain_type();
-
-         
-	var chart=new Chartist.Line("#simple-line-chart",{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-		series:[
-		[<?php 
-		for($i=1; $i<13; $i++)
-			{
-				$currentyrMnth = date("Y").'-0'.$i;
-				$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
-				$result = mysqli_query($con, $sql);
-				echo $countconn = mysqli_num_rows($result).',';
-			}
-				?>],
-		[
-		
-		<?php
-		for($i=1; $i<13; $i++)
-			{
-				$currentyrMnth = date("Y").'-0'.$i;
-				$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
-				$result = mysqli_query($con, $sql);
-				//echo $countexpconn = mysqli_num_rows($result).',';
-				
-			}
-
-		?>],
-		[1,3,4,5,6,7,7,7,7,7,7,7,10],
-		[10,2,3,4,5,6,6,6,6,6,6,6,13]]},
-		{fullWidth:!0,chartPadding:{right:40},plugins:[Chartist.plugins.tooltip()]});
-		
-		var times=function(e){return Array.apply(null,new Array(e))},data=times(52).map(Math.random).reduce(function(e,t,a){return e.labels.push(a+1),e.series.forEach(function(e){e.push(100*Math.random())}),e},{labels:[],series:times(4).map(function(){return new Array})}),
-		options={showLine:!1,axisX:{labelInterpolationFnc:function(e,t){return t%13==0?"W"+e:null}}},responsiveOptions=[["screen and (min-width: 640px)",{axisX:{labelInterpolationFnc:function(e,t){return t%4==0?"W"+e:null}}}]];new Chartist.Line("#scatter-diagram",data,options,responsiveOptions);
+        loadCustomers();
+        ticket_assign();
+        ticket_complain_type();
 
 
-///////////////// Chart Bar //////////////////////
-!function(e){"use strict";function a(){}a.prototype.init=function(){c3.generate({bindto:"#chart",
-data:{columns:[
-["Tickets",
-<?php 
-// Date find from 5 days ago
-//echo $Fidayago = strtotime(date("d", strtotime("-5 day")));
-/**/
-		for($i=0; $i<9; $i++)
-			{
-				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
-				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%'");
-				echo $tktsql->num_rows;
-				echo ',';
-				 
-				
-				
-			}
-			
-?>
-],
-["Resolved",
-<?php 
-// Date find from 5 days ago
+        var chart = new Chartist.Line("#simple-line-chart", {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            series: [
+                [<?php
+                for ($i = 1; $i < 13; $i++) {
+                    $currentyrMnth = date('Y') . '-0' . $i;
+                    $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+                    $result = mysqli_query($con, $sql);
+                    echo $countconn = mysqli_num_rows($result) . ',';
+                }
+                ?>],
+                [
 
-		for($i=0; $i<9; $i++)
-			{
-				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
-				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Complete'");
-				echo $tktsql->num_rows;
-				echo ',';	
-			}
-			
-?>
+                    <?php
+                    for ($i = 1; $i < 13; $i++) {
+                        $currentyrMnth = date('Y') . '-0' . $i;
+                        $sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+                        $result = mysqli_query($con, $sql);
+                        //echo $countexpconn = mysqli_num_rows($result).',';
+                    }
+                    
+                    ?>
+                ],
+                [1, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 10],
+                [10, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, 13]
+            ]
+        }, {
+            fullWidth: !0,
+            chartPadding: {
+                right: 40
+            },
+            plugins: [Chartist.plugins.tooltip()]
+        });
 
-
-],
-["Pending",
-<?php 
-// Date find from 5 days ago
-
-		for($i=0; $i<9; $i++)
-			{
-				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
-				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
-				echo $tktsql->num_rows;
-				echo ',';	
-			}
-			
-?>
-
-
-]],
-type:"bar",colors:{Tickets:"#fb8c00",Resolved:"#3bc3e9",Pending:"#5468da"}}})},
-e.ChartC3=new a,e.ChartC3.Constructor=a}(window.jQuery),
-function(){"use strict";
-window.jQuery.ChartC3.init()}();
-
-
-///////////////// ####### Yearly Customer statics Chart Bar ######## //////////////////////
-!function(e){"use strict";function a(){}a.prototype.init=function(){c3.generate({bindto:"#chart_year",
-data:{columns:[
-["New Customer",
-<?php 
-
-		for($i=1; $i<13; $i++)
-			{
-				
-				$currentyrMnth = date("Y").'-0'.$i;
-				date("M-Y", strtotime(date("Y").'-'.$i));
-				$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
-				$result = mysqli_query($con, $sql);
-				echo $countconn = mysqli_num_rows($result).',';
-			}
-			
-?>
-],
-["Expired",
-<?php 
-// Date find from 5 days ago
-
-		for($i=0; $i<11; $i++)
-			{
-				$currentyrMnth = date("Y").'-0'.$i;
-				date("M-Y", strtotime(date("Y").'-'.$i));
-				$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
-				$result = mysqli_query($con, $sql);
-				echo $countconn = mysqli_num_rows($result).',';
-			}
-			
-?>
+        var times = function(e) {
+                return Array.apply(null, new Array(e))
+            },
+            data = times(52).map(Math.random).reduce(function(e, t, a) {
+                return e.labels.push(a + 1), e.series.forEach(function(e) {
+                    e.push(100 * Math.random())
+                }), e
+            }, {
+                labels: [],
+                series: times(4).map(function() {
+                    return new Array
+                })
+            }),
+            options = {
+                showLine: !1,
+                axisX: {
+                    labelInterpolationFnc: function(e, t) {
+                        return t % 13 == 0 ? "W" + e : null
+                    }
+                }
+            },
+            responsiveOptions = [
+                ["screen and (min-width: 640px)", {
+                    axisX: {
+                        labelInterpolationFnc: function(e, t) {
+                            return t % 4 == 0 ? "W" + e : null
+                        }
+                    }
+                }]
+            ];
+        new Chartist.Line("#scatter-diagram", data, options, responsiveOptions);
 
 
-],
-["Disabled",
-<?php 
-// Date find from 5 days ago
+        ///////////////// Chart Bar //////////////////////
+        ! function(e) {
+            "use strict";
 
-		for($i=0; $i<11; $i++)
-			{
-				$daystkt = date("Y-m-d", strtotime('-'.$i.' day'));
-				$tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
-				echo $tktsql->num_rows;
-				echo ',';	
-			}
-			
-?>
+            function a() {}
+            a.prototype.init = function() {
+                    c3.generate({
+                        bindto: "#chart",
+                        data: {
+                            columns: [
+                                ["Tickets",
+                                    <?php
+                                    // Date find from 5 days ago
+                                    //echo $Fidayago = strtotime(date("d", strtotime("-5 day")));
+                                    /**/
+                                    for ($i = 0; $i < 9; $i++) {
+                                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
+                                        $tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%'");
+                                        echo $tktsql->num_rows;
+                                        echo ',';
+                                    }
+                                    
+                                    ?>
+                                ],
+                                ["Resolved",
+                                    <?php
+                                    // Date find from 5 days ago
+                                    
+                                    for ($i = 0; $i < 9; $i++) {
+                                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
+                                        $tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Complete'");
+                                        echo $tktsql->num_rows;
+                                        echo ',';
+                                    }
+                                    
+                                    ?>
 
 
-]],
-type:"bar",colors:{Tickets:"#fb8c00",Resolved:"#3bc3e9",Pending:"#5468da"}}})},
-e.ChartC3=new a,e.ChartC3.Constructor=a}(window.jQuery),
-function(){"use strict";
-window.jQuery.ChartC3.init()}();
+                                ],
+                                ["Pending",
+                                    <?php
+                                    // Date find from 5 days ago
+                                    
+                                    for ($i = 0; $i < 9; $i++) {
+                                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
+                                        $tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
+                                        echo $tktsql->num_rows;
+                                        echo ',';
+                                    }
+                                    
+                                    ?>
+
+
+                                ]
+                            ],
+                            type: "bar",
+                            colors: {
+                                Tickets: "#fb8c00",
+                                Resolved: "#3bc3e9",
+                                Pending: "#5468da"
+                            }
+                        }
+                    })
+                },
+                e.ChartC3 = new a, e.ChartC3.Constructor = a
+        }(window.jQuery),
+        function() {
+            "use strict";
+            window.jQuery.ChartC3.init()
+        }();
+
+
+        ///////////////// ####### Yearly Customer statics Chart Bar ######## //////////////////////
+        ! function(e) {
+            "use strict";
+
+            function a() {}
+            a.prototype.init = function() {
+                    c3.generate({
+                        bindto: "#chart_year",
+                        data: {
+                            columns: [
+                                ["New Customer",
+                                    <?php
+                                    
+                                    for ($i = 1; $i < 13; $i++) {
+                                        $currentyrMnth = date('Y') . '-0' . $i;
+                                        date('M-Y', strtotime(date('Y') . '-' . $i));
+                                        $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+                                        $result = mysqli_query($con, $sql);
+                                        echo $countconn = mysqli_num_rows($result) . ',';
+                                    }
+                                    
+                                    ?>
+                                ],
+                                ["Expired",
+                                    <?php
+                                    // Date find from 5 days ago
+                                    
+                                    for ($i = 0; $i < 11; $i++) {
+                                        $currentyrMnth = date('Y') . '-0' . $i;
+                                        date('M-Y', strtotime(date('Y') . '-' . $i));
+                                        $sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+                                        $result = mysqli_query($con, $sql);
+                                        echo $countconn = mysqli_num_rows($result) . ',';
+                                    }
+                                    
+                                    ?>
+
+
+                                ],
+                                ["Disabled",
+                                    <?php
+                                    // Date find from 5 days ago
+                                    
+                                    for ($i = 0; $i < 11; $i++) {
+                                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
+                                        $tktsql = $con->query("SELECT * FROM ticket WHERE startdate LIKE '%$daystkt%' AND ticket_type='Active'");
+                                        echo $tktsql->num_rows;
+                                        echo ',';
+                                    }
+                                    
+                                    ?>
+
+
+                                ]
+                            ],
+                            type: "bar",
+                            colors: {
+                                Tickets: "#fb8c00",
+                                Resolved: "#3bc3e9",
+                                Pending: "#5468da"
+                            }
+                        }
+                    })
+                },
+                e.ChartC3 = new a, e.ChartC3.Constructor = a
+        }(window.jQuery),
+        function() {
+            "use strict";
+            window.jQuery.ChartC3.init()
+        }();
 
 
         $('#expire_customer_datatable').dataTable();
-        
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
             $('#cstmr_ac').select2();
             //
-            $('#addRechargeModal').on('shown.bs.modal', function () {
-                /*Check if select2 is already initialized*/ 
+            $('#addRechargeModal').on('shown.bs.modal', function() {
+                /*Check if select2 is already initialized*/
                 if (!$('#recharge_customer').hasClass("select2-hidden-accessible")) {
                     $("#recharge_customer").select2({
                         dropdownParent: $('#addRechargeModal'),
@@ -1707,10 +1792,10 @@ window.jQuery.ChartC3.init()}();
                 }
             });
         });
-        
+
         $(document).on('change', '#customer_pop', function() {
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            // alert(pop_id);
             $.ajax({
                 type: 'POST',
                 url: "include/customers_server.php",
@@ -1718,39 +1803,39 @@ window.jQuery.ChartC3.init()}();
                     current_pop_name: pop_id
                 },
                 success: function(response) {
-                     $("#customer_area").html(response);
+                    $("#customer_area").html(response);
                 }
             });
         });
         $(document).on('change', '#customer_pop', function() {
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            // alert(pop_id);
             $.ajax({
                 type: 'POST',
                 url: "include/customers_server.php",
                 data: {
                     pop_name: pop_id,
-                    getCustomerPackage:0
+                    getCustomerPackage: 0
                 },
                 success: function(response) {
-                     $("#customer_package").html(response);
+                    $("#customer_package").html(response);
                 }
             });
         });
         $(document).on('change', '#customer_package', function() {
             var packageId = $("#customer_package").val();
             var pop_id = $("#customer_pop").val();
-           // alert(pop_id);
+            // alert(pop_id);
             $.ajax({
                 type: 'POST',
                 url: "include/customers_server.php",
                 data: {
                     package_id: packageId,
                     pop_id: pop_id,
-                    getPackagePrice:0
+                    getPackagePrice: 0
                 },
                 success: function(response) {
-                     $("#customer_price").val(response);
+                    $("#customer_price").val(response);
                 }
             });
         });
@@ -1775,11 +1860,13 @@ window.jQuery.ChartC3.init()}();
             var status = $("#customer_status").val();
             var user_type = <?php echo $auth_usr_type; ?>;
 
-            customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status)
+            customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
+                con_charge, price, remarks, nid, status)
 
         });
 
-        function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status) {
+        function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
+            con_charge, price, remarks, nid, status) {
             if (fullname.length == 0) {
                 toastr.error("Customer name is require");
             } else if (package.length == 0) {
@@ -1788,9 +1875,11 @@ window.jQuery.ChartC3.init()}();
                 toastr.error("Username is require");
             } else if (password.length == 0) {
                 toastr.error("Password is require");
-            } /*else if (mobile.length == 0) {
-                toastr.error("Mobile number is require");
-            }*/ else if (expire_date.length == 0) {
+            }
+            /*else if (mobile.length == 0) {
+                           toastr.error("Mobile number is require");
+                       }*/
+            else if (expire_date.length == 0) {
                 toastr.error("Expire Date is require");
             } else if (pop.length == 0) {
                 toastr.error("POP/Branch is require");
@@ -1803,7 +1892,8 @@ window.jQuery.ChartC3.init()}();
             } else if (status.length == 0) {
                 toastr.error("Status is require");
             } else {
-                $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+                $("#customer_add").html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
                 var addCustomerData = 0;
                 $.ajax({
                     type: 'POST',
@@ -1847,152 +1937,152 @@ window.jQuery.ChartC3.init()}();
 
         //////////////////////////////// CUSTOMER  Recharge SCRIPT ///////////////////////////////////////////////////
 
-        
 
-    $("#recharge_customer").on('change', function() {
-        var id = $("#recharge_customer").val();
-        getCustomerPackage(id);
-        getCustomerPackagePrice(id);
-        getCustomerPopId(id);
 
-    });
+        $("#recharge_customer").on('change', function() {
+            var id = $("#recharge_customer").val();
+            getCustomerPackage(id);
+            getCustomerPackagePrice(id);
+            getCustomerPopId(id);
 
-//get Package name
-function getCustomerPackage(recevedId) {
-    var customerId = recevedId;
-    $.ajax({
-        url: 'include/customers_server.php',
-        method: 'POST',
-        data: {
-            id: customerId,
-            getCustomerSpecificId: 0
-        },
-        //dataType: 'json',
-        success: function(responseData) {
-            $("#recharge_customer_package").html(responseData);
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            // Handle any errors here
-            console.error('An error occurred:', errorThrown);
-        }
-    });
-}
-//get Package price
-function getCustomerPackagePrice(recevedId) {
-    var customerId = recevedId;
-    $.ajax({
-        url: 'include/customers_server.php',
-        method: 'POST',
-        data: {
-            id: customerId,
-            getCustomerPackagePrice: 0
-        },
-        //dataType: 'json',
-        success: function(responseData) {
-            $("#recharge_customer_package_price").val(responseData);
-            $("#recharge_customer_amount").val(responseData);
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            // Handle any errors here
-            console.error('An error occurred:', errorThrown);
-        }
-    });
-}
-//get Package price
-function getCustomerPopId(recevedId) {
-    var customerId = recevedId;
-    $.ajax({
-        url: 'include/customers_server.php',
-        method: 'POST',
-        data: {
-            id: customerId,
-            getCustomerPop: 0
-        },
-        //dataType: 'json',
-        success: function(responseData) {
-            $("#recharge_customer_pop_id").val(responseData);
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            // Handle any errors here
-            console.error('An error occurred:', errorThrown);
-        }
-    });
-}
-//get recharge Calculation
-getCalculation();
+        });
 
-function getCalculation() {
-    $(document).on('change', "#recharge_customer_month", function() {
-        var month = $("#recharge_customer_month").val();
-        var price = $("#recharge_customer_package_price").val();
-        var totalAmount = Number(month * price);
-        $("#recharge_customer_amount").val(totalAmount);
-    });
-}
-
-//customer recharge script
-
-$(document).on('click', '#add_recharge_btn', function() {
-    var customer_id = $("#recharge_customer").val();
-    var month = $("#recharge_customer_month").val();
-    var package = $("#recharge_customer_package").val();
-    var mainAmount = $("#recharge_customer_amount").val();
-    var tra_type = $("#recharge_customer_transaction_type").val();
-    var pop_id = $("#recharge_customer_pop_id").val();
-    var ref = $("#ref").val();
-    sendData(customer_id, month, package, mainAmount, tra_type, pop_id,ref);
-});
-const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref) => {
-
-    if (month.length == 0) {
-        toastr.error("Select Month");
-    } else if (customer_id.length == 0) {
-        toastr.error("Select Customer");
-    } else if (tra_type.length == 0) {
-        toastr.error("Select Transaction");
-    } else {
-        $("#add_recharge_btn").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-        $.ajax({
-            type: 'POST',
-            url: 'include/customer_recharge_server.php',
-            data: {
-                customer_id: customer_id,
-                month: month,
-                package: package,
-                amount: mainAmount,
-                tra_type: tra_type,
-                pop_id: pop_id,
-                RefNo: ref,
-                add_recharge_data:0
-            },
-            success: function(response) {
-                if (response == 1) {
-                    $("#add_recharge_btn").html('Recharge Now');
-                    $("#addRechargeModal").modal('hide');
-                    toastr.success("Recharge Successful");
-                    setTimeout(() => {
-                        location.reload();
-                    }, 500);
-                } else {
-                    toastr.error(response);
-                    $("#add_recharge_btn").html('Recharge Now');
+        //get Package name
+        function getCustomerPackage(recevedId) {
+            var customerId = recevedId;
+            $.ajax({
+                url: 'include/customers_server.php',
+                method: 'POST',
+                data: {
+                    id: customerId,
+                    getCustomerSpecificId: 0
+                },
+                //dataType: 'json',
+                success: function(responseData) {
+                    $("#recharge_customer_package").html(responseData);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    // Handle any errors here
+                    console.error('An error occurred:', errorThrown);
                 }
+            });
+        }
+        //get Package price
+        function getCustomerPackagePrice(recevedId) {
+            var customerId = recevedId;
+            $.ajax({
+                url: 'include/customers_server.php',
+                method: 'POST',
+                data: {
+                    id: customerId,
+                    getCustomerPackagePrice: 0
+                },
+                //dataType: 'json',
+                success: function(responseData) {
+                    $("#recharge_customer_package_price").val(responseData);
+                    $("#recharge_customer_amount").val(responseData);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    // Handle any errors here
+                    console.error('An error occurred:', errorThrown);
+                }
+            });
+        }
+        //get Package price
+        function getCustomerPopId(recevedId) {
+            var customerId = recevedId;
+            $.ajax({
+                url: 'include/customers_server.php',
+                method: 'POST',
+                data: {
+                    id: customerId,
+                    getCustomerPop: 0
+                },
+                //dataType: 'json',
+                success: function(responseData) {
+                    $("#recharge_customer_pop_id").val(responseData);
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    // Handle any errors here
+                    console.error('An error occurred:', errorThrown);
+                }
+            });
+        }
+        //get recharge Calculation
+        getCalculation();
+
+        function getCalculation() {
+            $(document).on('change', "#recharge_customer_month", function() {
+                var month = $("#recharge_customer_month").val();
+                var price = $("#recharge_customer_package_price").val();
+                var totalAmount = Number(month * price);
+                $("#recharge_customer_amount").val(totalAmount);
+            });
+        }
+
+        //customer recharge script
+
+        $(document).on('click', '#add_recharge_btn', function() {
+            var customer_id = $("#recharge_customer").val();
+            var month = $("#recharge_customer_month").val();
+            var package = $("#recharge_customer_package").val();
+            var mainAmount = $("#recharge_customer_amount").val();
+            var tra_type = $("#recharge_customer_transaction_type").val();
+            var pop_id = $("#recharge_customer_pop_id").val();
+            var ref = $("#ref").val();
+            sendData(customer_id, month, package, mainAmount, tra_type, pop_id, ref);
+        });
+        const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id, ref) => {
+
+            if (month.length == 0) {
+                toastr.error("Select Month");
+            } else if (customer_id.length == 0) {
+                toastr.error("Select Customer");
+            } else if (tra_type.length == 0) {
+                toastr.error("Select Transaction");
+            } else {
+                $("#add_recharge_btn").html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+                $.ajax({
+                    type: 'POST',
+                    url: 'include/customer_recharge_server.php',
+                    data: {
+                        customer_id: customer_id,
+                        month: month,
+                        package: package,
+                        amount: mainAmount,
+                        tra_type: tra_type,
+                        pop_id: pop_id,
+                        RefNo: ref,
+                        add_recharge_data: 0
+                    },
+                    success: function(response) {
+                        if (response == 1) {
+                            $("#add_recharge_btn").html('Recharge Now');
+                            $("#addRechargeModal").modal('hide');
+                            toastr.success("Recharge Successful");
+                            setTimeout(() => {
+                                location.reload();
+                            }, 500);
+                        } else {
+                            toastr.error(response);
+                            $("#add_recharge_btn").html('Recharge Now');
+                        }
+
+
+
+                    }
+                });
 
 
 
             }
-        });
+
+        }
+    </script>
 
 
-
-    }
-
-}
-
-</script>
-
-
-<script type="text/javascript">
+    <script type="text/javascript">
         //Storage
         var fm = new FluidMeter();
         fm.init({
@@ -2049,16 +2139,12 @@ const sendData = (customer_id, month, package, mainAmount, tra_type, pop_id,ref)
             }
         });
         fm.setPercentage(percentage);
-		
-		
-/////////////////////////Chart /////////////////////////////////////
 
 
-        
-
+        /////////////////////////Chart /////////////////////////////////////
     </script>
-	
-	
+
+
 </body>
 
 </html>
