@@ -149,20 +149,20 @@ if (!isset($_SESSION)) {
 		
 		
 	);
-	$condition = "pop_id = 1"; // Default condition
+	$condition = "1=1"; 
 
-	/*Check if session 'user_pop' */ 
 	if (!empty($_SESSION['user_pop'])) {
-		$condition = "pop_id = '" . $_SESSION['user_pop'] . "'";
+		$condition .= " AND pop_id = '" . mysqli_real_escape_string($con, $_SESSION['user_pop']) . "'";
 	}
 
-	/* If 'area_id' is provided, */
+	/* Check if 'area_id' is provided in the GET request*/
 	if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
-		$condition .= " AND area_id = '" . $_GET['area_id'] . "'";
+		$condition .= " AND area_id = '" . mysqli_real_escape_string($con, $_GET['area_id']) . "'";
 	}
-	/* If 'area_id' is provided, */
+
+	/* Check if 'pop_id' is provided in the GET request*/
 	if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
-		$condition .= " AND pop_id = '" . $_GET['pop_id'] . "'";
+		$condition .= " AND pop_id = '" . mysqli_real_escape_string($con, $_GET['pop_id']) . "'";
 	}
 	/* Output JSON for DataTables to handle*/
 	echo json_encode(

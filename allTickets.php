@@ -202,7 +202,14 @@ include("include/users_right.php");
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
-            loadAreaOptions();
+            var received_pop_id = "<?php echo isset($_GET['pop_id']) ? $_GET['pop_id'] : ''; ?>";
+
+            if (received_pop_id.length > 0) {
+                console.log("POP ID found: " + received_pop_id);
+            } else {
+                loadAreaOptions();
+            }
+           
             //loadCustomerOptions(); 
 
             function loadAreaOptions() {
@@ -253,32 +260,7 @@ include("include/users_right.php");
                 });
             }
            
-            // function loadCustomerOptions() {
-            //     $.ajax({
-            //     url: 'include/tickets_server.php?get_all_customer=true',
-            //     type: 'GET',
-            //     dataType: 'json',
-            //     success: function (response) {
-            //         if (response.success==true) {
-            //                 var customerOptions = '<label style="margin-left: 10px;"> ';
-            //                 customerOptions += '<select class="customer_filter form-select select2">';
-            //                 customerOptions += '<option value="">--Select Customer--</option>';
-                            
-                        
-            //                 $.each(response.data, function(key, customer) {
-            //                     customerOptions += '<option value="'+customer.id+'">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>';
-            //                 });
-
-            //                 customerOptions += '</select></label>';
-                            
-            //                 setTimeout(() => {
-            //                     $('.dataTables_length').append(customerOptions);
-            //                     $('.select2').select2();
-            //                 }, 500);
-            //             }
-            //     }
-            // });
-            // }
+            
             table=$('#tickets_datatable').DataTable( {
                "searching": true,
                 "paging": true,
