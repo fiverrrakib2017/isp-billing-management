@@ -274,7 +274,12 @@ include("include/users_right.php");
                     type		: 'GET',
                     data: function(d) {
                         d.area_id = $('.area_filter').val();
-                        <?php if(isset($_GET['pop_id'])){echo  'd.pop_id' . ' = ' . $_GET['pop_id'];}?>;
+                        <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
+                            d.pop_id = <?php echo $_GET['pop_id']; ?>;
+                        <?php else: ?>
+                            d.pop_id = $('.pop_filter').val();
+                        <?php endif; ?>
+                      
                     },
                     beforeSend: function() {
                         $(".dataTables_empty").html('<img src="assets/images/loading.gif" style="background-color: transparent"/>');

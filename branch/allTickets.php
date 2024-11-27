@@ -32,7 +32,7 @@ if (file_exists($users_right_path)) {
         
         ?>
 	<style>
-        div#tickets_datatable_filter {
+        /* div#tickets_datatable_filter {
             display: none;
         }
         div#tickets_datatable_length {
@@ -46,7 +46,7 @@ if (file_exists($users_right_path)) {
                 width: 200px !important; 
             }
             
-        }
+        } */
     </style>
 
 
@@ -437,8 +437,7 @@ if (file_exists($users_right_path)) {
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
-            loadAreaOptions();
-            loadCustomerOptions(); 
+             loadAreaOptions();
 
             function loadAreaOptions() {
                 var protocol = location.protocol;
@@ -486,47 +485,31 @@ if (file_exists($users_right_path)) {
                 });
             }
            
-            function loadCustomerOptions() {
-                var protocol = location.protocol;
-                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_all_customer=true';
-                $.ajax({
-                url: url,
-                type: 'GET',
-                dataType: 'json',
-                success: function (response) {
-                    if (response.success==true) {
-                            var customerOptions = '<label style="margin-left: 10px;"> ';
-                            customerOptions += '<select class="customer_filter form-select select2">';
-                            customerOptions += '<option value="">--Select Customer--</option>';
-                            
-                        
-                            $.each(response.data, function(key, customer) {
-                                customerOptions += '<option value="'+customer.id+'">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>';
-                            });
-
-                            customerOptions += '</select></label>';
-                            
-                            setTimeout(() => {
-                                $('.dataTables_length').append(customerOptions);
-                                $('.select2').select2();
-                            }, 500);
-                        }
-                }
-            });
-            }
             var protocol = location.protocol;
             var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/tickets_server.php?get_tickets_data=1';
             table=$('#tickets_datatable').DataTable( {
-               "searching": true,
+                "searching": true,
                 "paging": true,
                 "info": false,
                 "lengthChange":true ,
-                "processing"		: true,
-                "serverSide"		: true,
+                "processing"		: false,
+                "serverSide"		: false,
                 "zeroRecords":    "No matching records found",
                 "ajax"				: {
                     url			: url,
                     type		: 'GET',
+                    data: function(d) {
+                        d.area_id = $('.area_filter').val();
+                        <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
+                            d.pop_id = <?php echo $_GET['pop_id']; ?>;
+                        <?php else: ?>
+                            d.pop_id = $('.pop_filter').val();
+                        <?php endif; ?>
+                      
+                    },
+                    beforeSend: function() {
+                        $(".dataTables_empty").html('<img src="../assets/images/loading.gif" style="background-color: transparent"/>');
+                    },
                 },
                 "order": [[0, 'desc']], 
                 "buttons": [
@@ -573,18 +556,14 @@ if (file_exists($users_right_path)) {
         });
         /* Area filter change event*/
         $(document).on('change', '.area_filter', function(){
-            var area_filter_result = $('.area_filter').val() || '';
-            table.columns(7).search(area_filter_result).draw();
+            table.ajax.reload(null, false);
         });          
         /* Status filter change event*/
         $(document).on('change', '.status_filter', function(){
             var status_filter_result = $('.status_filter').val() || '';
             table.columns(1).search(status_filter_result).draw();
         });   
-        $(document).on('change', '.customer_filter', function(){
-            var status_filter_result = $('.customer_filter').val() || '';
-            table.columns(4).search(status_filter_result).draw();
-        });   
+        
         
         $(document).on('click', 'button[name="settings_button"]', function() {
             let dataId=$(this).data('id'); 
