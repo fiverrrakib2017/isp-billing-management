@@ -503,9 +503,16 @@ include 'include/users_right.php';
                     type: 'GET',
                     data: function(d) {
                         d.status = $('.status_filter').val();
-                        d.pop_id = $('.pop_filter').val();
+                        
+                        <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
+                            d.pop_id = <?php echo $_GET['pop_id']; ?>;
+                        <?php else: ?>
+                            d.pop_id = $('.pop_filter').val();
+                        <?php endif; ?>
+                        
                         d.area_id = $('.area_filter').val();
                     },
+
                 },
                 "drawCallback": function() {
                     $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
