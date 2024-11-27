@@ -363,9 +363,15 @@ include 'include/users_right.php';
     <script type="text/javascript">
         var table;
         $(document).ready(function() {
+            var get_pop_id = "<?php echo isset($_GET['pop_id']) ? $_GET['pop_id'] : ''; ?>";
+            if (get_pop_id.length > 0) {
+               
+            }else{
+                loadPopOptions();
+                loadAreaOptions();
+            }
 
-            loadPopOptions();
-            loadAreaOptions();
+            
 
             function loadPopOptions() {
                 $.ajax({
