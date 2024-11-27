@@ -234,7 +234,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                         </div> <!-- End col -->
 
                         <div class="col-md-6 col-xl-3">
-                            <a href="customers.php">
+                            <a href="customers_new.php?pop_id=<?php echo $popid; ?>&active=1">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="mini-stat">
@@ -262,7 +262,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
-                                <a href="customer_expire.php">
+                                <a href="customer_expire.php?pop_id=<?php echo $popid; ?>">
                                     <div class="card-body">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-danger me-0 float-end"><i
@@ -284,7 +284,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                         </div> <!-- End col -->
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
-                                <a href="customer_disabled.php">
+                                <a href="customer_disabled.php?pop_id=<?php echo $popid; ?>">
                                     <div class="card-body">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-secondary me-0 float-end"><i
@@ -310,7 +310,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
                             <div class="card">
                                 <div class="card-body">
-                                    <a href="pop_area.php">
+                                    <a href="pop_area.php?pop_id=<?php echo $popid; ?>">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-teal me-0 float-end"><i
                                                     class="fas fa-search-location"></i></span>
