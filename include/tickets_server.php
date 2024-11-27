@@ -160,6 +160,10 @@ if (!isset($_SESSION)) {
 	if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
 		$condition .= " AND area_id = '" . $_GET['area_id'] . "'";
 	}
+	/* If 'area_id' is provided, */
+	if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
+		$condition .= " AND pop_id = '" . $_GET['pop_id'] . "'";
+	}
 	/* Output JSON for DataTables to handle*/
 	echo json_encode(
 		SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)

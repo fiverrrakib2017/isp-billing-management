@@ -339,14 +339,16 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
-                                <a href="allTickets.php">
+                                <a href="allTickets.php?pop_id=<?php echo $popid; ?>">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-warning me-0 float-end"><i
-                                                    class="fas fa-notes-medical"></i></span>
+                                            <span class="mini-stat-icon bg-warning me-0 float-end">
+                                                <i class="fas fa-notes-medical"></i>
+                                            </span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
-                                                    <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$popid")) {
+                                                    <?php 
+                                                    if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$popid")) {
                                                         echo $dsblcstmr->num_rows;
                                                     }
                                                     ?>
@@ -358,6 +360,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                 </a>
                             </div>
                         </div> <!-- End col -->
+
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <a href="nas.php">
