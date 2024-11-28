@@ -203,14 +203,14 @@ include("include/users_right.php");
         var table;
         $(document).ready(function(){
             var received_pop_id = "<?php echo isset($_GET['pop_id']) ? $_GET['pop_id'] : ''; ?>";
+            var received_area_id = "<?php echo isset($_GET['area_id']) ? $_GET['area_id'] : ''; ?>";
 
-            if (received_pop_id.length > 0) {
-                console.log("POP ID found: " + received_pop_id);
-            } else {
-                loadAreaOptions();
+            if (received_pop_id.length > 0 || received_area_id.length > 0) {
+                console.log('yes');
+            }else{
+                loadAreaOptions();  
             }
            
-            //loadCustomerOptions(); 
 
             function loadAreaOptions() {
                 $.ajax({
@@ -273,12 +273,8 @@ include("include/users_right.php");
                     url			: "include/tickets_server.php?get_tickets_data=1",
                     type		: 'GET',
                     data: function(d) {
-                        d.area_id = $('.area_filter').val();
-                        <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
-                            d.pop_id = <?php echo $_GET['pop_id']; ?>;
-                        <?php else: ?>
-                            d.pop_id = $('.pop_filter').val();
-                        <?php endif; ?>
+                        d.pop_id = received_pop_id.length > 0 ? received_pop_id : $('.pop_filter').val();
+                        d.area_id = received_area_id.length > 0 ? received_area_id : $('.area_filter').val();
                       
                     },
                     beforeSend: function() {
@@ -286,51 +282,11 @@ include("include/users_right.php");
                     },
                     complete: function() {
                         // Hide loading spinner
-                        $('#tickets_datatable').unblock();
+                        //$('#tickets_datatable').unblock();
                     },
                 },
-                "order": [[0, 'desc']], 
-                "buttons": [
-                {
-                    extend: 'copy',
-                    text: '<i class="fas fa-copy"></i> Copy',
-                    titleAttr: 'Copy',
-                    exportOptions: { columns: ':visible' }
-                },
-                {
-                    extend: 'excel',
-                    text: '<i class="fas fa-file-excel"></i> Excel',
-                    titleAttr: 'Excel',
-                    exportOptions: { columns: ':visible' }
-                },
-                {
-                    extend: 'csv',
-                    text: '<i class="fas fa-file-csv"></i> CSV',
-                    titleAttr: 'CSV',
-                    exportOptions: { columns: ':visible' }
-                },
-                {
-                    extend: 'pdf',
-                    exportOptions: { columns: ':visible' },
-                    orientation: 'landscape',
-                    pageSize: "LEGAL",
-                    text: '<i class="fas fa-file-pdf"></i> PDF',
-                    titleAttr: 'PDF'
-                },
-                {
-                    extend: 'print',
-                    text: '<i class="fas fa-print"></i> Print',
-                    titleAttr: 'Print',
-                    exportOptions: { columns: ':visible' }
-                },
-                {
-                    extend: 'colvis',
-                    text: '<i class="fas fa-list"></i> Column Visibility',
-                    titleAttr: 'Column Visibility'
-                }
-            ],
+                "order": [[0, 'desc']],
             });
-            table.buttons().container().appendTo($('#export_buttonscc'));	
         });
         /* Area filter change event*/
         $(document).on('change', '.area_filter', function(){
