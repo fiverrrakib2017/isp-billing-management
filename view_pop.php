@@ -168,14 +168,14 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             echo '<a href="?inactive=false&id=' .
                                                 $lstid .
                                                 '"><abbr title="Make Enable POP"><button type="button" class="btn-sm btn btn-success">
-                                                                                                       <i class="mdi mdi mdi-wifi-off "></i>
-                                                                                                   </button></abbr></a>';
+                                                                                                                                               <i class="mdi mdi mdi-wifi-off "></i>
+                                                                                                                                           </button></abbr></a>';
                                         } elseif ($pop_status == '1') {
                                             echo '<a href="?inactive=true&id=' .
                                                 $lstid .
                                                 '"><abbr title="Make Disable POP"><button type="button" class="btn-sm btn btn-danger">
-                                                                                                        <i class="mdi mdi mdi-wifi-off "></i>
-                                                                                                    </button></abbr></a>';
+                                                                                                                                                <i class="mdi mdi mdi-wifi-off "></i>
+                                                                                                                                            </button></abbr></a>';
                                             $checkd = 'checked';
                                         }
                                         
@@ -347,7 +347,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             </span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
-                                                    <?php 
+                                                    <?php
                                                     if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$popid")) {
                                                         echo $dsblcstmr->num_rows;
                                                     }
@@ -391,10 +391,10 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                 </div>
                             </div>
                         </div>
-                      
+
                     </div> <!-- end row-->
                     <div class="row">
-                       
+
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card shadow h-100 py-2" style="border-left:3px solid #27F10F;">
@@ -516,7 +516,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                         </div>
                         <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
-                              
+
                                 <div class="card-body">
                                     <h4 class="card-title mb-4">Customer Statics</h4>
 
@@ -535,7 +535,8 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                         </div>
                                     </div>
 
-                                    <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr"></div>
+                                    <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr">
+                                    </div>
 
                                 </div>
                             </div>
@@ -603,7 +604,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                         <div class="col-md-6 stretch-card">
                             <div class="card">
                                 <div class="card-body">
@@ -694,76 +695,76 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                         </div>
                     </div>
                     <div class="col-md-12 stretch-card">
-                            <div class="card">
-                                <div class="card-body">
+                        <div class="card">
+                            <div class="card-body">
 
 
 
-                                    <div class="row">
-                                        <div class="col-md-8 mt-1 py-2">
-                                            <p class="card-title ">New Customers by months</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button style="float: right;">
-                                                <a href="customers.php">+</a>
-                                            </button>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-8 mt-1 py-2">
+                                        <p class="card-title ">New Customers by months</p>
                                     </div>
+                                    <div class="col-md-4">
+                                        <button style="float: right;">
+                                            <a href="customers.php">+</a>
+                                        </button>
+                                    </div>
+                                </div>
 
 
 
-                                    <div class="table-responsive">
-                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
-                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
-                                                <tr>
-                                                    <th>No.</th>
-                                                    <th>Months</th>
-                                                    <th>New Conn.</th>
-                                                    <th>Expired Conn.</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-        for($i=1; $i<=12; $i++)
-        {
-            ?>
-                                                <tr>
-                                                    <td><?php echo $i; ?></td>
-                                                    <td>
-                                                        <?php
-                                                        $month = sprintf('%02d', $i);
-                                                        $currentyrMnth = date('Y') . '-' . $month;
-                                                        echo date('M-Y', strtotime($currentyrMnth));
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%' AND pop=$popid";
-                                                        $result = mysqli_query($con, $sql);
-                                                        $countconn = mysqli_num_rows($result);
-                                                        echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '">' . $countconn . '</a>';
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%' AND pop=$popid";
-                                                        $result = mysqli_query($con, $sql);
-                                                        $countexpconn = mysqli_num_rows($result);
-                                                        echo '<a href="customer_expire.php?list=' . $currentyrMnth . '">' . $countexpconn . '</a>';
-                                                        ?>
-                                                    </td>
-                                                </tr>
-                                                <?php 
+                                <div class="table-responsive">
+                                    <table id="datatables" class="table table-bordered dt-responsive nowrap"
+                                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Months</th>
+                                                <th>New Conn.</th>
+                                                <th>Expired Conn.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            for($i=1; $i<=12; $i++)
+                                            {
+                                                ?>
+                                            <tr>
+                                                <td><?php echo $i; ?></td>
+                                                <td>
+                                                    <?php
+                                                    $month = sprintf('%02d', $i);
+                                                    $currentyrMnth = date('Y') . '-' . $month;
+                                                    echo date('M-Y', strtotime($currentyrMnth));
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%' AND pop=$popid";
+                                                    $result = mysqli_query($con, $sql);
+                                                    $countconn = mysqli_num_rows($result);
+                                                    echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '">' . $countconn . '</a>';
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%' AND pop=$popid";
+                                                    $result = mysqli_query($con, $sql);
+                                                    $countexpconn = mysqli_num_rows($result);
+                                                    echo '<a href="customer_expire.php?list=' . $currentyrMnth . '">' . $countexpconn . '</a>';
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <?php 
         }	
         ?>
-                                            </tbody>
-                                        </table>
+                                        </tbody>
+                                    </table>
 
-                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
 
                 </div> <!-- container-fluid -->
@@ -863,24 +864,24 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                         <div class="card">
                                             <div class="card-body">
                                                 <table id="tickets_datatable"
-                                                class="table table-bordered dt-responsive nowrap"
-                                                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
-                                                        <th>No.</th> 
-                                                        <th>Status</th> 
-                                                        <th>Created</th>
-                                                        <th>Priority</th>
-                                                        <th>Customer Name</th>
-                                                        <th>Phone Number</th>
-                                                        <th>Issues</th>
-                                                        <th>Pop/Area</th>                                                   
-                                                        <th>Assigned Team</th>
-                                                        <th>Ticket For</th>
-                                                        <th>Acctual Work</th>
-                                                        <th>Percentage</th>
-                                                        <th>Note</th>
-                                                        <th></th>
+                                                            <th>No.</th>
+                                                            <th>Status</th>
+                                                            <th>Created</th>
+                                                            <th>Priority</th>
+                                                            <th>Customer Name</th>
+                                                            <th>Phone Number</th>
+                                                            <th>Issues</th>
+                                                            <th>Pop/Area</th>
+                                                            <th>Assigned Team</th>
+                                                            <th>Ticket For</th>
+                                                            <th>Acctual Work</th>
+                                                            <th>Percentage</th>
+                                                            <th>Note</th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody></tbody>
@@ -1247,104 +1248,140 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
     <script type="text/javascript" src="js/customer.js"></script>
     <script type="text/javascript">
         /*************************simple-line-chart Start**************************************************/
-        var chart=new Chartist.Line("#simple-line-chart",{labels:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-		series:[
-		[<?php 
-		for($i=1; $i<13; $i++)
-			{
-				$currentyrMnth = date("Y").'-0'.$i;
-				$sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%' AND pop='{$_GET['id']}'";
-				$result = mysqli_query($con, $sql);
-				echo $countconn = mysqli_num_rows($result).',';
-			}
-				?>],
-		[
-		
-		<?php
-		for($i=1; $i<13; $i++)
-			{
-				$currentyrMnth = date("Y").'-0'.$i;
-				$sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%' AND pop='{$_GET['id']}'";
-				$result = mysqli_query($con, $sql);				
-			}
+        var chart = new Chartist.Line("#simple-line-chart", {
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            series: [
+                [<?php
+                for ($i = 1; $i < 13; $i++) {
+                    $currentyrMnth = date('Y') . '-0' . $i;
+                    $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%' AND pop='{$_GET['id']}'";
+                    $result = mysqli_query($con, $sql);
+                    echo $countconn = mysqli_num_rows($result) . ',';
+                }
+                ?>],
+                [
 
-		?>],
-		[1,3,4,5,6,7,7,7,7,7,7,7,10],
-		[10,2,3,4,5,6,6,6,6,6,6,6,13]]},
-		{fullWidth:!0,chartPadding:{right:40},plugins:[Chartist.plugins.tooltip()]});
-		
-		var times=function(e){return Array.apply(null,new Array(e))},data=times(52).map(Math.random).reduce(function(e,t,a){return e.labels.push(a+1),e.series.forEach(function(e){e.push(100*Math.random())}),e},{labels:[],series:times(4).map(function(){return new Array})}),
-		options={showLine:!1,axisX:{labelInterpolationFnc:function(e,t){return t%13==0?"W"+e:null}}},responsiveOptions=[["screen and (min-width: 640px)",{axisX:{labelInterpolationFnc:function(e,t){return t%4==0?"W"+e:null}}}]];new Chartist.Line("#scatter-diagram",data,options,responsiveOptions);
+                    <?php
+                    for ($i = 1; $i < 13; $i++) {
+                        $currentyrMnth = date('Y') . '-0' . $i;
+                        $sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%' AND pop='{$_GET['id']}'";
+                        $result = mysqli_query($con, $sql);
+                    }
+                    
+                    ?>
+                ],
+                [1, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 10],
+                [10, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, 13]
+            ]
+        }, {
+            fullWidth: !0,
+            chartPadding: {
+                right: 40
+            },
+            plugins: [Chartist.plugins.tooltip()]
+        });
+
+        var times = function(e) {
+                return Array.apply(null, new Array(e))
+            },
+            data = times(52).map(Math.random).reduce(function(e, t, a) {
+                return e.labels.push(a + 1), e.series.forEach(function(e) {
+                    e.push(100 * Math.random())
+                }), e
+            }, {
+                labels: [],
+                series: times(4).map(function() {
+                    return new Array
+                })
+            }),
+            options = {
+                showLine: !1,
+                axisX: {
+                    labelInterpolationFnc: function(e, t) {
+                        return t % 13 == 0 ? "W" + e : null
+                    }
+                }
+            },
+            responsiveOptions = [
+                ["screen and (min-width: 640px)", {
+                    axisX: {
+                        labelInterpolationFnc: function(e, t) {
+                            return t % 4 == 0 ? "W" + e : null
+                        }
+                    }
+                }]
+            ];
+        new Chartist.Line("#scatter-diagram", data, options, responsiveOptions);
         /*************************simple-line-chart End**************************************************/
-///////////////// Chart Bar //////////////////////
-!function(e) {
-    "use strict";
+        ///////////////// Chart Bar //////////////////////
+        ! function(e) {
+            "use strict";
 
-function a() {}
-a.prototype.init = function() {
-    c3.generate({
-        bindto: "#chart",
-        data: {
-            columns: [
-                ["Tickets",
-                    <?php
-                    // Date find from 9 days ago
-                    for ($i = 0; $i < 9; $i++) {
-                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
-                        $stmt = $con->prepare("SELECT COUNT(*) AS total FROM ticket WHERE startdate LIKE ? AND pop_id = ?");
-                        $likeDate = "%$daystkt%";
-                        $stmt->bind_param("si", $likeDate, $_GET['id']);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        $row = $result->fetch_assoc();
-                        echo $row['total'] . ',';
-                    }
-                    ?>
-                ],
-                ["Resolved",
-                    <?php
-                    for ($i = 0; $i < 9; $i++) {
-                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
-                        $stmt = $con->prepare("SELECT COUNT(*) AS total FROM ticket WHERE startdate LIKE ? AND ticket_type='Complete' AND pop_id = ?");
-                        $likeDate = "%$daystkt%";
-                        $stmt->bind_param("si", $likeDate, $_GET['id']);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        $row = $result->fetch_assoc();
-                        echo $row['total'] . ',';
-                    }
-                    ?>
-                ],
-                ["Pending",
-                    <?php
-                    for ($i = 0; $i < 9; $i++) {
-                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
-                        $stmt = $con->prepare("SELECT COUNT(*) AS total FROM ticket WHERE startdate LIKE ? AND ticket_type='Active' AND pop_id = ?");
-                        $likeDate = "%$daystkt%";
-                        $stmt->bind_param("si", $likeDate, $_GET['id']);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                        $row = $result->fetch_assoc();
-                        echo $row['total'] . ',';
-                    }
-                    ?>
-                ]
-            ],
-            type: "bar",
-            colors: {
-                Tickets: "#fb8c00",
-                Resolved: "#3bc3e9",
-                Pending: "#5468da"
-            }
-        }
-    })
-},
-e.ChartC3 = new a, e.ChartC3.Constructor = a
-}(window.jQuery),
-function() {
-"use strict";
-window.jQuery.ChartC3.init()
-}();
+            function a() {}
+            a.prototype.init = function() {
+                    c3.generate({
+                        bindto: "#chart",
+                        data: {
+                            columns: [
+                                ["Tickets",
+                                    <?php
+                                    // Date find from 9 days ago
+                                    for ($i = 0; $i < 9; $i++) {
+                                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
+                                        $stmt = $con->prepare('SELECT COUNT(*) AS total FROM ticket WHERE startdate LIKE ? AND pop_id = ?');
+                                        $likeDate = "%$daystkt%";
+                                        $stmt->bind_param('si', $likeDate, $_GET['id']);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $row = $result->fetch_assoc();
+                                        echo $row['total'] . ',';
+                                    }
+                                    ?>
+                                ],
+                                ["Resolved",
+                                    <?php
+                                    for ($i = 0; $i < 9; $i++) {
+                                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
+                                        $stmt = $con->prepare("SELECT COUNT(*) AS total FROM ticket WHERE startdate LIKE ? AND ticket_type='Complete' AND pop_id = ?");
+                                        $likeDate = "%$daystkt%";
+                                        $stmt->bind_param('si', $likeDate, $_GET['id']);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $row = $result->fetch_assoc();
+                                        echo $row['total'] . ',';
+                                    }
+                                    ?>
+                                ],
+                                ["Pending",
+                                    <?php
+                                    for ($i = 0; $i < 9; $i++) {
+                                        $daystkt = date('Y-m-d', strtotime('-' . $i . ' day'));
+                                        $stmt = $con->prepare("SELECT COUNT(*) AS total FROM ticket WHERE startdate LIKE ? AND ticket_type='Active' AND pop_id = ?");
+                                        $likeDate = "%$daystkt%";
+                                        $stmt->bind_param('si', $likeDate, $_GET['id']);
+                                        $stmt->execute();
+                                        $result = $stmt->get_result();
+                                        $row = $result->fetch_assoc();
+                                        echo $row['total'] . ',';
+                                    }
+                                    ?>
+                                ]
+                            ],
+                            type: "bar",
+                            colors: {
+                                Tickets: "#fb8c00",
+                                Resolved: "#3bc3e9",
+                                Pending: "#5468da"
+                            }
+                        }
+                    })
+                },
+                e.ChartC3 = new a, e.ChartC3.Constructor = a
+        }(window.jQuery),
+        function() {
+            "use strict";
+            window.jQuery.ChartC3.init()
+        }();
 
         $(document).ready(function() {
 
@@ -1358,7 +1395,7 @@ window.jQuery.ChartC3.init()
                 "lengthChange": true,
                 "processing": true,
                 "serverSide": true,
-                
+
                 lengthMenu: [
                     [10, 25, 50, -1],
                     [10, 25, 50, 'All']
@@ -1377,7 +1414,7 @@ window.jQuery.ChartC3.init()
                 "drawCallback": function() {
                     $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
                 },
-                
+
             });
             $('#recharge_history_datatable').DataTable({
                 "searching": true,
@@ -1389,7 +1426,7 @@ window.jQuery.ChartC3.init()
                 "lengthChange": true,
                 "processing": true,
                 "serverSide": true,
-                
+
                 lengthMenu: [
                     [10, 25, 50, -1],
                     [10, 25, 50, 'All']
@@ -1407,7 +1444,7 @@ window.jQuery.ChartC3.init()
                 "drawCallback": function() {
                     $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
                 },
-                
+
             });
 
             $('#tickets_datatable').DataTable({
@@ -1423,24 +1460,35 @@ window.jQuery.ChartC3.init()
                     type: 'GET',
                     data: function(d) {
                         d.area_id = $('.area_filter').val();
-                        <?php if (isset($popid)) { echo 'd.pop_id = ' . $popid; } ?>
+                        <?php if (isset($popid)) {
+                            echo 'd.pop_id = ' . $popid;
+                        } ?>
                     },
                     beforeSend: function() {
-                        $(".dataTables_empty").html('<img src="assets/images/loading.gif" style="background-color: transparent"/>');
+                        $(".dataTables_empty").html(
+                            '<img src="assets/images/loading.gif" style="background-color: transparent"/>'
+                            );
                     }
                 },
-                "order": [[0, 'desc']],
+                "order": [
+                    [0, 'desc']
+                ],
                 "scrollX": true,
-                "responsive": true, 
-                "columnDefs": [
-                    { "width": "5%", "targets": 0 },
-                    { "width": "10%", "targets": 1 }
+                "responsive": true,
+                "columnDefs": [{
+                        "width": "5%",
+                        "targets": 0
+                    },
+                    {
+                        "width": "10%",
+                        "targets": 1
+                    }
                 ]
             });
 
 
             //$("#package-list-table").DataTable();
-       
+
             $("#transaction_datatable").DataTable();
             $("#package_datatable").DataTable();
             $("#recharge_history_datatable").DataTable();
