@@ -504,14 +504,20 @@ include 'include/users_right.php';
                     url: "include/customer_server_new.php?get_customers_data=true",
                     type: 'GET',
                     data: function(d) {
-                        d.status = $('.status_filter').val();
-                        
+                      
+                        /********************Finter For Active Customer*******************************/
+                        <?php if (isset($_GET['active']) && !empty($_GET['active'])): ?>
+                            d.status = <?php echo $_GET['active']; ?>;
+                        <?php else: ?>
+                            d.status = $('.status_filter').val();
+                        <?php endif; ?>
+                        /********************Finter For POP ID Customer*******************************/
                         <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
                             d.pop_id = <?php echo $_GET['pop_id']; ?>;
                         <?php else: ?>
                             d.pop_id = $('.pop_filter').val();
                         <?php endif; ?>
-
+                        /********************Finter For AREA ID Customer*******************************/
                         <?php if (isset($_GET['area_id']) && !empty($_GET['area_id'])): ?>
                             d.area_id = <?php echo $_GET['area_id']; ?>;
                         <?php else: ?>
