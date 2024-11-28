@@ -991,23 +991,26 @@ function timeAgo($startdate) {
                         </div>
                     </div>
                     <!-- end row -->
+                    <div class="">
                     <div class="row">
                         <div class="card">
                             <div class="card-body">
 
                                 <!-- Nav tabs -->
                                 <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                                <li class="nav-item">
-                                        <a class="nav-link active" data-bs-toggle="tab" href="#branch_user" role="tab">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#branch_user"
+                                            role="tab">
                                             <span class="d-none d-md-block">Users (
 
-                                                <?php if ($totalCustomers = $con->query("SELECT * FROM customers WHERE   pop=$auth_usr_POP_id ")) {
-                                                    echo  $totalCustomers->num_rows;
+                                                <?php if ($totalCustomers = $con->query("SELECT * FROM customers WHERE pop=$auth_usr_POP_id ")) {
+                                                    echo $totalCustomers->num_rows;
                                                 }
-
+                                                
                                                 ?>
 
-                                                )</span><span class="d-block d-md-none"><i class="mdi mdi-account-check h5"></i></span>
+                                                )</span><span class="d-block d-md-none"><i
+                                                    class="mdi mdi-account-check h5"></i></span>
                                         </a>
                                     </li>
 
@@ -1015,23 +1018,31 @@ function timeAgo($startdate) {
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#tickets" role="tab">
                                             <span class="d-none d-md-block">Tickets
-                                            </span><span class="d-block d-md-none"><i class="mdi mdi-home-variant h5"></i></span>
+                                            </span><span class="d-block d-md-none"><i
+                                                    class="mdi mdi-home-variant h5"></i></span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#recharge_history" role="tab">
-                                            <span class="d-none d-md-block">Recharge History</span><span class="d-block d-md-none"><i class="mdi mdi-battery-charging h5"></i></span>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#recharge_history"
+                                            role="tab">
+                                            <span class="d-none d-md-block">Recharge History</span><span
+                                                class="d-block d-md-none"><i
+                                                    class="mdi mdi-battery-charging h5"></i></span>
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" data-bs-toggle="tab" href="#packages" role="tab">
-                                            <span class="d-none d-md-block">Package</span><span class="d-block d-md-none"><i class="mdi mdi-package h5"></i></span>
+                                            <span class="d-none d-md-block">Package</span><span
+                                                class="d-block d-md-none"><i class="mdi mdi-package h5"></i></span>
                                         </a>
                                     </li>
-                                    
+
                                     <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#pop_transaction" role="tab">
-                                            <span class="d-none d-md-block">Transaction Statment</span><span class="d-block d-md-none"><i class="mdi mdi-currency-bdt h5"></i></span>
+                                        <a class="nav-link" data-bs-toggle="tab" href="#pop_transaction"
+                                            role="tab">
+                                            <span class="d-none d-md-block">Transaction Statment</span><span
+                                                class="d-block d-md-none"><i
+                                                    class="mdi mdi-currency-bdt h5"></i></span>
                                         </a>
                                     </li>
                                 </ul>
@@ -1039,153 +1050,63 @@ function timeAgo($startdate) {
                                 <!-- Tab panes -->
                                 <div class="tab-content">
 
-
-                                <div class="tab-pane active p-3" id="branch_user" role="tabpanel">
+                                    <div class="tab-pane active p-3" id="branch_user" role="tabpanel">
                                         <div class="card">
-                                            <div class="card-header">
-                                                <div class="row d-flex">
-                                                    <div style="width:50%; float: left;">
 
-                                                    </div>
-                                                    <div style="width:50%; float: right;">
-                                                        <button type="button" data-bs-target="#addCustomerModal" data-bs-toggle="modal" class="btn-sm btn btn-primary" style="float:right;" type="button" id=""><i class="mdi mdi-account-plus"></i></button>
-                                                    </div>
-                                                </div>
-                                            </div>
                                             <div class="card-body">
-                                                <table id="branch_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="customers_table"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
+                                                            <th><input type="checkbox" id="checkedAll"
+                                                                    name="checkedAll" class="form-check-input"></th>
                                                             <th>ID</th>
-                                                            <th>Full Name</th>
+                                                            <th>Name</th>
                                                             <th>Package</th>
+                                                            <th>Amount</th>
+                                                            <th>Expired Date</th>
                                                             <th>Expired Date</th>
                                                             <th>User Name</th>
                                                             <th>Mobile no.</th>
-                                                            <th>Create Date</th>
+                                                            <th>POP/Branch</th>
+                                                            <th>Area/Location</th>
+                                                            <th>Liablities</th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody id="transaction-list">
-                                                        <?php
-                                                        $sql = "SELECT * FROM customers WHERE pop='$auth_usr_POP_id'  ";
-                                                        $result = mysqli_query($con, $sql);
+                                                    <tbody id="customer-list">
 
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-                                                            $username = $rows["username"];
-
-                                                        ?>
-
-                                                            <tr>
-                                                                <td><?php echo $rows['id']; ?></td>
-                                                                <td><a href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                                <?php
-                                                                $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                                $chkc = $onlineusr->num_rows;
-                                                                if($chkc==1)
-                                                                {
-                                                                    echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                                } else{
-                                                                    echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-        
-                                                                }
-                                                                 echo " ". $rows["fullname"]; ?></a></td>
-                                                                <td>
-
-                                                                    <?php
-                                                                    $popID = $rows["package"];
-                                                                    $allPOP = $con->query("SELECT * FROM radgroupcheck WHERE id=$popID ");
-                                                                    while ($popRow = $allPOP->fetch_array()) {
-                                                                        echo $popRow['groupname'];
-                                                                    }
-
-                                                                    ?>
-
-
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-
-                                                                    $expireDate = $rows["expiredate"];
-                                                                    $todayDate = date("Y-m-d");
-                                                                    if ($expireDate <= $todayDate) {
-                                                                        echo "<span class='badge bg-danger'>Expired</span>";
-                                                                    } else {
-                                                                        //echo date("d-m-Y", strtotime($expireDate));
-                                                                        echo date("d M Y", strtotime($expireDate));
-                                                                    }
-                                                                    ?>
-
-                                                                </td>
-                                                                <td><?php echo $rows["username"]; ?></td>
-                                                                <td><?php echo $rows["mobile"]; ?></td>
-                                                                <td><?php echo  date("d M Y", strtotime($rows["createdate"])) ?></td>
-                                                            </tr>
-                                                        <?php } ?>
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                     </div>
-
-
-
                                     <div class="tab-pane p-3" id="tickets" role="tabpanel">
                                         <div class="card">
                                             <div class="card-body">
-                                                <table id="ticket_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="tickets_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
-                                                            <th>Complain Type</th>
-                                                            <th>Ticket Type</th>
-                                                            <th>Form Date</th>
+                                                            <th>No.</th>
+                                                            <th>Status</th>
+                                                            <th>Created</th>
+                                                            <th>Priority</th>
+                                                            <th>Customer Name</th>
+                                                            <th>Phone Number</th>
+                                                            <th>Issues</th>
+                                                            <th>Pop/Area</th>
+                                                            <th>Assigned Team</th>
+                                                            <th>Ticket For</th>
+                                                            <th>Acctual Work</th>
+                                                            <th>Percentage</th>
+                                                            <th>Note</th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody id="ticket-list">
-                                                        <?php
-                                                        $sql = "SELECT * FROM ticket WHERE pop_id='$auth_usr_POP_id' ";
-                                                        $result = mysqli_query($con, $sql);
-
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                        ?>
-
-                                                            <tr>
-
-                                                                <td>
-                                                                    <?php
-                                                                    $complain_typeId = $rows["complain_type"];
-                                                                    $ticketsId = $rows["id"];
-                                                                    if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                        while ($rowss = $allCom->fetch_array()) {
-                                                                            $topicName = $rowss['topic_name'];
-                                                                            echo '<a href="tickets_edit.php?id=' . $ticketsId . '">' . $topicName . '</a>';
-                                                                        }
-                                                                    }
-                                                                    ?>
-
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-                                                                    $ticketType = $rows['ticket_type'];
-                                                                    if ($ticketType == "Active") {
-                                                                        echo "<span class='badge bg-success'>Active</span>";
-                                                                    } else if ($ticketType == "Open") {
-                                                                        echo "<span class='badge bg-info'>Open</span>";
-                                                                    } else if ($ticketType == "New") {
-                                                                        echo "<span class='badge bg-danger'>New</span>";
-                                                                    } else if ($ticketType == "Complete") {
-                                                                        echo "<span class='badge bg-success'>Complete</span>";
-                                                                    }
-
-                                                                    ?>
-
-                                                                </td>
-
-                                                                <td><?php echo  date("d M Y", strtotime($rows["startdate"])) ?></td>
-
-                                                            </tr>
-                                                        <?php } ?>
-                                                    </tbody>
+                                                    <tbody></tbody>
                                                 </table>
                                             </div>
                                         </div>
@@ -1194,10 +1115,12 @@ function timeAgo($startdate) {
                                         <div class="card">
 
                                             <div class="card-body">
-                                                <table id="recharge_history_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="recharge_history_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
-
+                                                            <th>ID</th>
                                                             <th>Recharged date</th>
                                                             <th>Customer Name</th>
                                                             <th>Months</th>
@@ -1205,46 +1128,7 @@ function timeAgo($startdate) {
                                                             <th>Amount</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
-                                                        <?php
-                                                        $sql = "SELECT * FROM customer_rechrg WHERE pop_id='$auth_usr_POP_id'  ";
-                                                        $result = mysqli_query($con, $sql);
-
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                        ?>
-
-                                                            <tr>
-                                                                <td>
-                                                                    <?php
-                                                                    $recharge_date_time = $rows['datetm'];
-                                                                    $dateTm = new DateTime($recharge_date_time);
-                                                                    //echo $dateTm->format("H:i A, d-M-Y");
-                                                                    echo $dateTm->format("d-M-Y");
-                                                                    ?>
-                                                                </td>
-
-                                                                <td>
-                                                                    <?php
-                                                                    $getCstmrId = $rows["customer_id"];
-                                                                    if ($allCom = $con->query("SELECT * FROM customers WHERE id='$getCstmrId' ")) {
-                                                                        while ($rowss = $allCom->fetch_array()) {
-                                                                            $customerName = $rowss['fullname'];
-                                                                            echo '<a href="profile.php?clid=' . $getCstmrId . '">' . $customerName . '</a>';
-                                                                        }
-                                                                    }
-                                                                    ?>
-
-                                                                </td>
-
-
-                                                                <td><?php echo $rows["months"]; ?></td>
-                                                                <td><?php echo $rows["rchrg_until"]; ?></td>
-                                                                <td><?php echo $rows["amount"]; ?></td>
-
-                                                            </tr>
-                                                        <?php } ?>
-                                                    </tbody>
+                                                   
                                                 </table>
                                             </div>
                                         </div>
@@ -1254,7 +1138,9 @@ function timeAgo($startdate) {
                                         <div class="card">
 
                                             <div class="card-body">
-                                                <table id="package_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="package_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
                                                             <th>ID</th>
@@ -1266,32 +1152,22 @@ function timeAgo($startdate) {
                                                     <tbody id="package-list">
                                                         <?php
                                                         $increment = 1;
-                                                        $sql = "SELECT * FROM branch_package WHERE pop_id='$auth_usr_POP_id' ";
+                                                        $sql = "SELECT * FROM branch_package WHERE pop_id='$auth_usr_POP_id'";
                                                         $result = mysqli_query($con, $sql);
 
                                                         while ($rows = mysqli_fetch_assoc($result)) {
 
                                                         ?>
 
-                                                            <tr>
-                                                                <td><?php echo $increment++; ?></td>
-                                                                <td>
-                                                                    <?php
+                                                        <tr>
+                                                            <td><?php echo $increment++; ?></td>
 
-                                                                    echo  $rows["package_name"];
-                                                                    // $allPackageee = $con->query("SELECT * FROM radgroupcheck WHERE id=$packageNameId ");
-                                                                    // while ($popRowwww = $allPackageee->fetch_array()) {
-                                                                    //     echo $popRowwww['groupname'];
-                                                                    // }
+                                                            <td><?php echo $rows['package_name']; ?></td>
+                                                            <td><?php echo $rows['p_price']; ?></td>
+                                                            <td><?php echo $rows['s_price']; ?></td>
 
 
-                                                                    ?>
-                                                                </td>
-                                                                <td><?php echo $rows["p_price"]; ?></td>
-                                                                <td><?php echo $rows["s_price"]; ?></td>
-
-
-                                                            </tr>
+                                                        </tr>
                                                         <?php } ?>
                                                     </tbody>
                                                 </table>
@@ -1299,12 +1175,13 @@ function timeAgo($startdate) {
                                         </div>
 
                                     </div>
-                   
 
                                     <div class="tab-pane p-3" id="pop_transaction" role="tabpanel">
                                         <div class="card">
                                             <div class="card-body">
-                                                <table id="transaction_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                <table id="transaction_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
                                                             <th>ID</th>
@@ -1324,51 +1201,50 @@ function timeAgo($startdate) {
 
                                                         ?>
 
-                                                            <tr>
-                                                                <td><?php echo $rows['id']; ?></td>
-                                                                <td> <?php echo  $rows["amount"]; ?></td>
-                                                                <td> <?php echo  $rows["paid_amount"]; ?></td>
+                                                        <tr>
+                                                            <td><?php echo $rows['id']; ?></td>
+                                                            <td> <?php echo $rows['amount']; ?></td>
+                                                            <td> <?php echo $rows['paid_amount']; ?></td>
 
 
-                                                                <td>
-                                                                    <?php
-                                                                    $transaction_action = $rows["action"];
-                                                                    $transaction_type = $rows["transaction_type"];
-
-                                                                    if ($transaction_action == 'Recharge' && $transaction_type == '0') {
-                                                                        echo  '<span class="badge bg-danger">Recharged</span> <br> <span class="badge bg-success">Paid</span>';
-                                                                    } else if ($transaction_action == 'Recharge' && $transaction_type == '1') {
-                                                                        echo  '<span class="badge bg-danger">Recharged </span>';
-                                                                    } else if ($transaction_action == 'paid') {
-                                                                        echo  '<span class="badge bg-success">Paid</span>';
-                                                                    } else if ($transaction_action == 'Return') {
-                                                                        echo  '<span class="badge bg-warning">Return</span>';
-                                                                    }
-
-
-
-
-                                                                    ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-                                                                    $transaction_type = $rows["transaction_type"];
-                                                                    if ($transaction_type == 0) {
-                                                                        echo  '<button class="btn-sm btn btn-outline-success">Cash</button>';
-                                                                    } elseif ($transaction_type == 1) {
-                                                                        echo  '<button class="btn-sm btn btn-outline-danger">Credit</button>';
-                                                                    } elseif ($transaction_type == 2) {
-                                                                        echo 'Bkash';
-                                                                    } elseif ($transaction_type == 3) {
-                                                                        echo 'Nagad';
-                                                                    } elseif ($transaction_type == 4) {
-                                                                        echo 'Bank';
-                                                                    }
-
-                                                                    ?>
-                                                                </td>
-                                                                <td> <?php echo  $rows["date"]; ?></td>
-                                                            </tr>
+                                                            <td>
+                                                                <?php
+                                                                $transaction_action = $rows['action'];
+                                                                $transaction_type = $rows['transaction_type'];
+                                                                
+                                                                if ($transaction_action == 'Recharge' && $transaction_type == '1') {
+                                                                    echo '<span class="badge bg-danger">Recharged</span> <br> <span class="badge bg-success">Paid</span>';
+                                                                } elseif ($transaction_action == 'Recharge' && $transaction_type == '0') {
+                                                                    echo '<span class="badge bg-danger">Recharged </span>';
+                                                                } elseif ($transaction_action == 'paid') {
+                                                                    echo '<span class="badge bg-success">Paid</span>';
+                                                                } elseif ($transaction_action == 'Return') {
+                                                                    echo '<span class="badge bg-warning">Return</span>';
+                                                                }
+                                                                
+                                                                ?>
+                                                            </td>
+                                                            <td>
+                                                                <?php
+                                                                $transaction_type = $rows['transaction_type'];
+                                                                if ($transaction_type == 1) {
+                                                                    echo '<button class="btn-sm btn btn-outline-success">Cash</button>';
+                                                                } elseif ($transaction_type == 0) {
+                                                                    echo '<button class="btn-sm btn btn-outline-danger">Credit</button>';
+                                                                } elseif ($transaction_type == 2) {
+                                                                    echo 'Bkash';
+                                                                } elseif ($transaction_type == 3) {
+                                                                    echo 'Nagad';
+                                                                } elseif ($transaction_type == 4) {
+                                                                    echo 'Bank';
+                                                                } elseif ($transaction_type == 5) {
+                                                                    echo '<button class="btn-sm btn btn-outline-primary">Payment Rcvd</button>';
+                                                                }
+                                                                
+                                                                ?>
+                                                            </td>
+                                                            <td> <?php echo $rows['date']; ?></td>
+                                                        </tr>
                                                         <?php } ?>
                                                     </tbody>
                                                 </table>
@@ -1380,6 +1256,7 @@ function timeAgo($startdate) {
                             </div>
                         </div>
                     </div>
+                </div>
 
 
                 </div> <!-- container-fluid -->
@@ -1829,6 +1706,111 @@ function timeAgo($startdate) {
         echo file_get_contents($url);
         
     ?>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#customers_table').DataTable({
+                "searching": true,
+                "paging": true,
+                "info": true,
+                "order": [
+                    [0, "desc"]
+                ],
+                "lengthChange": true,
+                "processing": true,
+                "serverSide": true,
+
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                "zeroRecords": "No matching records found",
+                "ajax": {
+                    url: "../include/customer_server_new.php?get_customers_data=true",
+                    type: 'GET',
+                    data: function(d) {
+                        //d.status = $('.status_filter').val();
+                        // d.pop_id = $('.pop_filter').val();
+                        d.pop_id = <?php echo $auth_usr_POP_id; ?>;
+                        //d.area_id = $('.area_filter').val();
+                    },
+                },
+                "drawCallback": function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+
+            });
+            $('#recharge_history_datatable').DataTable({
+                "searching": true,
+                "paging": true,
+                "info": true,
+                "order": [
+                    [0, "desc"]
+                ],
+                "lengthChange": true,
+                "processing": true,
+                "serverSide": true,
+
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                "zeroRecords": "No matching records found",
+                "ajax": {
+                    url: "../include/customer_recharge_server.php?get_recharge_data=true",
+                    type: 'GET',
+                    data: function(d) {
+                        //d.status = $('.status_filter').val();
+                        // d.pop_id = $('.pop_filter').val();
+                        d.pop_id = <?php echo $auth_usr_POP_id; ?>;
+                    },
+                },
+                "drawCallback": function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+
+            });
+
+            $('#tickets_datatable').DataTable({
+                "searching": true,
+                "paging": true,
+                "info": false,
+                "lengthChange": true,
+                "processing": false,
+                "serverSide": false,
+                "zeroRecords": "No matching records found",
+                "ajax": {
+                    url: "../include/tickets_server.php?get_tickets_data=1",
+                    type: 'GET',
+                    data: function(d) {
+                        d.area_id = $('.area_filter').val();
+                        <?php if (isset($auth_usr_POP_id)) {
+                            echo 'd.pop_id = ' . $auth_usr_POP_id;
+                        } ?>
+                    },
+                    beforeSend: function() {
+                        $(".dataTables_empty").html(
+                            '<img src="../assets/images/loading.gif" style="background-color: transparent"/>'
+                            );
+                    }
+                },
+                "order": [
+                    [0, 'desc']
+                ],
+                "scrollX": true,
+                "responsive": true,
+                "columnDefs": [{
+                        "width": "5%",
+                        "targets": 0
+                    },
+                    {
+                        "width": "10%",
+                        "targets": 1
+                    }
+                ]
+            });
+ 
+        });
+    </script>
     <script type="text/javascript">
     $(document).ready(function() {
         var protocol = location.protocol;
