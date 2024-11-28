@@ -36,12 +36,51 @@ function get_total_amount($con, $table_name = "sales", $column_name = "total_due
 
     $stmt->close();
     
-    // Return the formatted total amount
+    /* Return the formatted total amount*/
     return number_format($total_amount, 2);
 }
 
+function get_latest_customer($con, $pop_id = null, $limit = 5) {
+    $customers = [];
 
-echo get_total_amount($con, "purchase","total_due"); 
+    /*Check if pop_id is set*/
+    $whereClause = isset($pop_id) && !empty($pop_id) ? "WHERE pop = '$pop_id'" : "";
+
+    /**Get latest 5 customers*/
+    $sql = "SELECT * FROM customers $whereClause ORDER BY id DESC LIMIT $limit";
+    $result = mysqli_query($con, $sql);
+
+    while ($rows = mysqli_fetch_assoc($result)) {
+        $username = $rows['username'];
+        $popID = $rows['pop'];
+        $areaID = $rows['area'];
+
+        /**Check if user is online*/
+        $onlineusr = mysqli_query($con, "SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+        $status = (mysqli_num_rows($onlineusr) > 0) ? 'Online' : 'Offline';
+
+        /**Get pop and area name*/
+        $popResult = mysqli_query($con, "SELECT pop FROM add_pop WHERE id='$popID'");
+        $popName = ($popRow = mysqli_fetch_assoc($popResult)) ? $popRow['pop'] : 'N/A';
+
+        /**Get area name*/
+        $areaResult = mysqli_query($con, "SELECT name FROM area_list WHERE id='$areaID'");
+        $areaName = ($areaRow = mysqli_fetch_assoc($areaResult)) ? $areaRow['name'] : 'N/A';
+
+       
+        $customers[] = [
+            'id' => $rows['id'],
+            'fullname' => $rows['fullname'],
+            'username' => $username,
+            'status' => $status,
+            'pop' => $popName,
+            'area' => $areaName
+        ];
+    }
+
+    return $customers;
+}
+
 
 
 

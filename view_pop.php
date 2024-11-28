@@ -847,7 +847,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
-
+                                                            <th>ID</th>
                                                             <th>Recharged date</th>
                                                             <th>Customer Name</th>
                                                             <th>Months</th>
@@ -1322,6 +1322,36 @@ window.jQuery.ChartC3.init()
                         // d.pop_id = $('.pop_filter').val();
                         d.pop_id = <?php echo $popid; ?>;
                         d.area_id = $('.area_filter').val();
+                    },
+                },
+                "drawCallback": function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+                
+            });
+            $('#recharge_history_datatable').DataTable({
+                "searching": true,
+                "paging": true,
+                "info": true,
+                "order": [
+                    [0, "desc"]
+                ],
+                "lengthChange": true,
+                "processing": true,
+                "serverSide": true,
+                
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                "zeroRecords": "No matching records found",
+                "ajax": {
+                    url: "include/customer_recharge_server.php?get_recharge_data=true",
+                    type: 'GET',
+                    data: function(d) {
+                        //d.status = $('.status_filter').val();
+                        // d.pop_id = $('.pop_filter').val();
+                        d.pop_id = <?php echo $popid; ?>;
                     },
                 },
                 "drawCallback": function() {

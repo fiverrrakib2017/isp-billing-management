@@ -416,4 +416,109 @@ if (isset($_POST['undo_customer_recharge'])) {
     $con->close();
 }
 
+
+if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
+    require 'datatable.php';
+
+    $table = 'customer_rechrg';
+    $primaryKey = 'id';
+    $columns = array(
+        array(
+            'db' => 'id', 
+            'dt' => 0,
+            
+        ),
+        array(
+            'db'        => 'datetm',
+            'dt'        => 1,
+            'formatter' => function($d, $row) use ($con) {
+                return date('d-m-Y', strtotime($d));
+            }
+        ),
+        array('db' => 'customer_id', 
+            'dt' => 2,
+            'formatter' => function($d, $row) use ($con) {
+                $customer_id = $d;
+                $allCustomer = $con->query("SELECT fullname FROM customers WHERE id=$customer_id");
+                $row = $allCustomer->fetch_array();
+                return $row['fullname'];
+            }
+
+        ),
+        array('db' => 'months', 'dt' => 3),
+        
+        array('db' => 'rchrg_until', 'dt' => 4),
+        array('db' => 'purchase_price', 'dt' => 5),
+      
+    );
+    $condition="";
+
+    if (!empty($_SESSION['user_pop'])) {
+        $condition = "pop_id = '" . $_SESSION['user_pop'] . "'";
+    } else {
+        //$condition = "package = 5"; 
+    }
+
+    /* If 'area_id' is provided, */
+    if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
+        $condition .= (!empty($condition) ? " AND " : ""). "area = '" . $_GET['area_id'] . "'";
+    }
+    /* If 'pop_id' is provided, */
+    if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
+        // $condition .= " AND pop = '" . $_GET['pop_id'] . "'";
+        $condition .= (!empty($condition) ? " AND " : ""). "pop_id = '" . $_GET['pop_id'] . "'";
+    }
+    /* If Status is provided, */
+    if (isset($_GET['status']) && !empty($_GET['status'])) {
+        $status = $_GET['status'];
+    
+        if ($status == 'expired') {
+            $status = "2";
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+        } elseif ($status == 'disabled') {
+            $status = "0";
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+        } elseif ($status == 'active') {
+            $status = "1";
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+        } elseif ($status == 'online') {
+            $status = "1";
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
+                            AND EXISTS (
+                                SELECT 1 FROM radacct 
+                                WHERE radacct.username = customers.username 
+                                AND radacct.acctstoptime IS NULL
+                            )";
+        } elseif ($status == 'free') {
+            $condition .= (!empty($condition) ? " AND " : "") . "package = 5"; 
+        } elseif ($status == 'unpaid') {
+            $popID = $_SESSION['user_pop'] ?? 1;
+            $condition .= (!empty($condition) ? " AND " : "") . "
+                EXISTS (
+                    SELECT 1 FROM customer_rechrg 
+                    WHERE 
+                        DAY(expiredate) BETWEEN 1 AND 10 
+                        AND MONTH(expiredate) = MONTH(CURDATE()) 
+                        AND YEAR(expiredate) = YEAR(CURDATE())
+                        AND pop = '$popID'
+                )
+            ";
+        } elseif ($status == 'offline') {
+            $status = "0";
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
+                            AND NOT EXISTS (
+                                SELECT 1 FROM radacct 
+                                WHERE radacct.username = customers.username 
+                                AND radacct.acctstoptime IS NOT NULL
+                            )";
+        } else {
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+        }
+    }
+    /* Output JSON for DataTables to handle*/
+    echo json_encode(
+        SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
+    );
+}
+
 ?>
