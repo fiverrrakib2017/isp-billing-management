@@ -1659,7 +1659,8 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
         });
     </script>
 
-    <iframe name="load_iframe" style="height:0px, width:0px, border:0px"></iframe>
+   
+
 </body>
 
 </html>
