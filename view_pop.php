@@ -306,7 +306,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                     </div> <!-- end row-->
                     <!-- New Row-->
                     <div class="row">
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col-md-6 col-xl-4">
 
                             <div class="card">
                                 <div class="card-body">
@@ -337,7 +337,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
 
 
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col-md-6 col-xl-4">
                             <div class="card">
                                 <a href="allTickets.php?pop_id=<?php echo $popid; ?>">
                                     <div class="card-body">
@@ -360,32 +360,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                 </a>
                             </div>
                         </div> <!-- End col -->
-
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card">
-                                <a href="nas.php">
-                                    <div class="card-body">
-                                        <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-purple me-0 float-end"><i
-                                                    class="fas fa-network-wired"></i></span>
-                                            <div class="mini-stat-info">
-                                                <span class="counter text-teal">
-                                                    <?php if ($dsblcstmr = $con->query('SELECT * FROM nas')) {
-                                                        echo $dsblcstmr->num_rows;
-                                                    }
-                                                    ?>
-                                                </span>
-                                                Routers
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div><!--end col -->
-                    </div> <!-- end row-->
-                    <div class="row">
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="col-xl-4 col-md-6 mb-4">
                             <div class="card shadow h-100 py-2" style="border-left:3px solid #2A0FF1;">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -416,6 +391,10 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                 </div>
                             </div>
                         </div>
+                      
+                    </div> <!-- end row-->
+                    <div class="row">
+                       
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card shadow h-100 py-2" style="border-left:3px solid #27F10F;">
@@ -585,7 +564,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             <h5 class="mb-0 font-size-18">
                                                 <?php
                                                 $daystkt = date('Y-m-d', strtotime('-7 day'));
-                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW() AND pop_id=$popid");
                                                 echo $tktsql->num_rows;
                                                 ?>
 
@@ -596,7 +575,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             <h5 class="mb-0 font-size-18">
                                                 <?php
                                                 $daystkt = date('Y-m-d', strtotime('-7 day'));
-                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW() AND pop_id=$popid");
                                                 echo $tktsql->num_rows;
                                                 ?>
                                             </h5>
@@ -607,7 +586,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             <h5 class="mb-0 font-size-18">
                                                 <?php
                                                 $daystkt = date('Y-m-d', strtotime('-7 day'));
-                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW() AND pop_id=$popid");
                                                 echo $tktsql->num_rows;
                                                 ?>
                                             </h5>
@@ -660,7 +639,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             <tbody>
                                                 <?php
                                                 //AND user_type='$auth_usr_type'
-                                                $sql = "SELECT * FROM customers ORDER BY id DESC LIMIT 5 ";
+                                                $sql = "SELECT * FROM customers WHERE pop=$popid ORDER BY id DESC LIMIT 5 ";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
@@ -714,6 +693,77 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-12 stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+
+
+
+                                    <div class="row">
+                                        <div class="col-md-8 mt-1 py-2">
+                                            <p class="card-title ">New Customers by months</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button style="float: right;">
+                                                <a href="customers.php">+</a>
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="table-responsive">
+                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
+                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Months</th>
+                                                    <th>New Conn.</th>
+                                                    <th>Expired Conn.</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+        for($i=1; $i<=12; $i++)
+        {
+            ?>
+                                                <tr>
+                                                    <td><?php echo $i; ?></td>
+                                                    <td>
+                                                        <?php
+                                                        $month = sprintf('%02d', $i);
+                                                        $currentyrMnth = date('Y') . '-' . $month;
+                                                        echo date('M-Y', strtotime($currentyrMnth));
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%' AND pop=$popid";
+                                                        $result = mysqli_query($con, $sql);
+                                                        $countconn = mysqli_num_rows($result);
+                                                        echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '">' . $countconn . '</a>';
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%' AND pop=$popid";
+                                                        $result = mysqli_query($con, $sql);
+                                                        $countexpconn = mysqli_num_rows($result);
+                                                        echo '<a href="customer_expire.php?list=' . $currentyrMnth . '">' . $countexpconn . '</a>';
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <?php 
+        }	
+        ?>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
                 </div> <!-- container-fluid -->

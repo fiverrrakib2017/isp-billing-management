@@ -43,6 +43,40 @@
                  <span>Customer </span>
              </a>
              <ul class="sub-menu" aria-expanded="false">
+                                    <!-- <li><a href="customers.php">Total Customer List</a></li> -->
+                                    <li><a href="customers_new.php">Total Customer <span class="badge rounded-pill bg-success">New</span></a></li>
+                                    <!-- <li><a href="bulk_payment.php">Bulk Recharge</a></li> -->
+                                    <!-- <li><a href="active_cstmr_list.php">Active Customer List</a></li>
+                                    <li><a href="customer_expire.php">Expired Customer List</a></li>
+                                    <li><a href="customer_free_con.php">Free Customer List</a></li> -->
+                                  
+
+                                    <li>
+                                        <a href="con_request.php">Connection Request 
+                                            <?php 
+                                                if ($allCstmr=$con->query("SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND status=3")) {
+                                                    //echo $allCstmr->num_rows;
+                                                    if ($allCstmr->num_rows > 0) {
+                                                        echo '<span class="badge rounded-pill bg-danger float-end">'.$allCstmr->num_rows.'<span>';
+                                                    }else{
+
+                                                    }
+                                                }
+
+
+
+                                                 ?>
+                                        </a>
+                                    </li>
+                                    <!-- <li><a href="customer_dues.php">Customer Unpaid</a></li> -->
+                                    <li><a href="customer_recharge.php">Customer Recharge</a></li>
+                                    <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
+                                    <li><a href="package_add.php">Customer Packages</a></li>
+                                    <li><a href="pwdmissmatch.php">Password missmatch</a></li>
+                                    <li><a href="customer_import.php">Import</a></li>
+                                    <!-- <li><a href="area.php">Area</a></li> -->
+                                </ul>
+             <!-- <ul class="sub-menu" aria-expanded="false">
                  <li><a href="customers.php">Total Customer List</a></li>
                  <li><a href="customers_new.php">Total Customer <span class="badge rounded-pill bg-success">New</span></a></li>
                  <li><a href="active_cstmr_list.php">Active Customer List</a></li>
@@ -53,7 +87,7 @@
                  <li><a href="bulk_payment.php">Bulk Recharge</a></li>
                  
                  <li><a href="package_add.php">Package's</a></li>
-             </ul>
+             </ul> -->
          </li>
 
          <li>
