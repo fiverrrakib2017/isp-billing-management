@@ -364,7 +364,9 @@ include 'include/users_right.php';
         var table;
         $(document).ready(function() {
             var get_pop_id = "<?php echo isset($_GET['pop_id']) ? $_GET['pop_id'] : ''; ?>";
-            if (get_pop_id.length > 0) {
+            var get_area_id = "<?php echo isset($_GET['area_id']) ? $_GET['area_id'] : ''; ?>";
+
+            if (get_pop_id.length > 0 || get_area_id.length > 0) {
                
             }else{
                 loadPopOptions();
@@ -509,8 +511,14 @@ include 'include/users_right.php';
                         <?php else: ?>
                             d.pop_id = $('.pop_filter').val();
                         <?php endif; ?>
+
+                        <?php if (isset($_GET['area_id']) && !empty($_GET['area_id'])): ?>
+                            d.area_id = <?php echo $_GET['area_id']; ?>;
+                        <?php else: ?>
+                            d.area_id = $('.area_filter').val();
+                        <?php endif; ?>
                         
-                        d.area_id = $('.area_filter').val();
+                      
                     },
 
                 },
