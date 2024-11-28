@@ -15,176 +15,18 @@ include("include/users_right.php");
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
-    <meta content="Themesbrand" name="author">
-    <!-- DataTables -->
-    <link href="assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
-    <link href="assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css">
-
-    <!-- Responsive datatable examples -->
-    <link href="assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css">
-
-    <!-- Bootstrap Css -->
-    <link href="assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css">
-    <!-- Icons Css -->
-    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css">
-    <!-- App Css-->
-    <link href="assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" type="text/css" href="css/toastr/toastr.min.css">
-    <link rel="stylesheet" type="text/css" href="css/deleteModal.css">
+    <?php include 'style.php';?>
 </head>
 
 <body data-sidebar="dark">
 
 
-    <!-- Loader -->
-    <div id="preloader">
-        <div id="status">
-            <div class="spinner"></div>
-        </div>
-    </div>
+   
 
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <header id="page-topbar">
-            <div class="navbar-header">
-                <div class="d-flex">
-                    <!-- LOGO -->
-                    <div class="navbar-brand-box">
-                        <a href="index.php" class="logo logo-dark">
-                            <span class="logo-sm">
-                                <img src="assets/images/it-fast.png" alt="" height="22">
-                            </span>
-                            <span class="logo-lg">
-                                <img src="assets/images/it-fast.png" alt="" height="17">
-                            </span>
-                        </a>
-
-                        <a href="index.php" class="logo logo-light">
-                            <span class="logo-sm">
-                                <img src="assets/images/it-fast.png" alt="" height="22">
-                            </span>
-                            <span class="logo-lg">
-                                <img src="assets/images/it-fast.png" alt="" height="36">
-                            </span>
-                        </a>
-                    </div>
-
-                    <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
-                        <i class="mdi mdi-menu"></i>
-                    </button>
-
-                    <div class="d-none d-sm-block ms-2">
-                        <h4 class="page-title">Customers Disabled</h4>
-                    </div>
-                </div>
-
-
-
-                <div class="d-flex">
-
-
-
-
-
-                    <div class="dropdown d-none d-md-block me-2">
-                        <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="font-size-16">
-                                <?php if (isset($_SESSION['fullname'])) {
-                                    echo $_SESSION['fullname'];
-                                } ?>
-                            </span>
-                        </button>
-                    </div>
-
-
-                    <div class="dropdown d-inline-block">
-                        <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="profileImages/avatar.png" alt="Header Avatar">
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <!-- item-->
-                            <a class="dropdown-item text-danger" href="logout.php">Logout</a>
-                        </div>
-                    </div>
-
-                    <div class="dropdown d-inline-block me-2">
-                        <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="ion ion-md-notifications"></i>
-                            <span class="badge bg-danger rounded-pill">3</span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0" aria-labelledby="page-header-notifications-dropdown">
-                            <div class="p-3">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h5 class="m-0 font-size-16"> Notification (3) </h5>
-                                    </div>
-                                </div>
-                            </div>
-                            <div data-simplebar style="max-height: 230px;">
-                                <a href="" class="text-reset notification-item">
-                                    <div class="d-flex">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title bg-success rounded-circle font-size-16">
-                                                <i class="mdi mdi-cart-outline"></i>
-                                            </span>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h6 class="mt-0 font-size-15 mb-1">Your order is placed</h6>
-                                            <div class="font-size-12 text-muted">
-                                                <p class="mb-1">Dummy text of the printing and typesetting industry.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-
-                                <a href="" class="text-reset notification-item">
-                                    <div class="d-flex">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title bg-warning rounded-circle font-size-16">
-                                                <i class="mdi mdi-message-text-outline"></i>
-                                            </span>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h6 class="mt-0 font-size-15 mb-1">New Message received</h6>
-                                            <div class="font-size-12 text-muted">
-                                                <p class="mb-1">You have 87 unread messages</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-
-                                <a href="" class="text-reset notification-item">
-                                    <div class="d-flex">
-                                        <div class="avatar-xs me-3">
-                                            <span class="avatar-title bg-info rounded-circle font-size-16">
-                                                <i class="mdi mdi-glass-cocktail"></i>
-                                            </span>
-                                        </div>
-                                        <div class="flex-1">
-                                            <h6 class="mt-0 font-size-15 mb-1">Your item is shipped</h6>
-                                            <div class="font-size-12 text-muted">
-                                                <p class="mb-1">It is a long established fact that a reader will</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-
-                            </div>
-                            <div class="p-2 border-top">
-                                <div class="d-grid">
-                                    <a class="btn btn-sm btn-link font-size-14  text-center" href="javascript:void(0)">
-                                        View all
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </header>
+        <?php include 'Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -192,7 +34,7 @@ include("include/users_right.php");
             <div data-simplebar class="h-100">
 
                 <!--- Sidemenu -->
-                <?php include 'Sidebar_menu.php'; ?>
+                <?php $page_title="Custmer Disable"; include 'Sidebar_menu.php'; ?>
 
                 <!-- Sidebar -->
             </div>
@@ -221,176 +63,13 @@ include("include/users_right.php");
                                     <br>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-end flex-wrap">
-                                    <button data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" id="addBtn" style="margin-bottom: 12px;">&nbsp;&nbsp;New customer</button>
+                                    
 
                                    
 
                                 </div>
 
-                                <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel"><span class="mdi mdi-account-check mdi-18px"></span> &nbsp;New customer</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="">
-                                                <form id="customer_form">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Full Name</label>
-                                                                        <input id="customer_fullname" type="text" class="form-control " placeholder="Enter Your Fullname" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Username <span id="usernameCheck"></span></label>
-                                                                        <input id="customer_username" type="text" class="form-control " name="username" placeholder="Enter Your Username" oninput="checkUsername();" />
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Password</label>
-                                                                        <input id="customer_password" type="password" class="form-control " name="password" placeholder="Enter Your Password" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Mobile no.</label>
-                                                                        <input id="customer_mobile" type="text" class="form-control " name="mobile" placeholder="Enter Your Mobile Number" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Expired Date</label>
-                                                                        <select id="customer_expire_date" class="form-select">
-                                                                            <option value="<?php echo date("d"); ?>"><?php echo date("d"); ?></option>
-                                                                            <?php
-                                                                            if ($exp_cstmr = $con->query("SELECT * FROM customer_expires")) {
-                                                                                while ($rowsssss = $exp_cstmr->fetch_array()) {
-
-
-                                                                                    $exp_date = $rowsssss["days"];
-
-                                                                                    echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
-                                                                                }
-                                                                            }
-
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Address</label>
-                                                                        <input id="customer_address" type="text" class="form-control" name="address" placeholder="Enter Your Addres" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6 ">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>POP/Branch</label>
-                                                                        <select id="customer_pop" class="form-select">
-                                                                            <option value="">Select Pop/Branch</option>
-                                                                            <?php
-                                                                            if ($pop = $con->query("SELECT * FROM add_pop ")) {
-                                                                                while ($rows = $pop->fetch_array()) {
-
-
-                                                                                    $id = $rows["id"];
-                                                                                    $name = $rows["pop"];
-
-                                                                                    echo '<option value="' . $id . '">' . $name . '</option>';
-                                                                                }
-                                                                            }
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6 ">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Area/Location</label>
-                                                                        <select id="customer_area" class="form-select" name="area">
-                                                                            <option>Select Area</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Nid Card Number</label>
-                                                                        <input id="customer_nid" type="text" class="form-control" name="nid" placeholder="Enter Your Nid Number" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Package</label>
-                                                                        <select id="customer_package" class="form-select">
-
-
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Connection Charge</label>
-                                                                        <input id="customer_con_charge" type="text" class="form-control" name="con_charge" placeholder="Enter Connection Charge" value="500" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Package Price</label>
-                                                                        <input disabled id="customer_price" type="text" class="form-control" value="00" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Remarks</label>
-                                                                        <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Status</label>
-                                                                        <select id="customer_status" class="form-select">
-                                                                            <option value="">Select Status</option>
-                                                                            <option value="0">Disable</option>
-                                                                            <option value="1">Active</option>
-                                                                            <option value="2">Expire</option>
-                                                                            <option value="3">Request</option>
-                                                                        </select>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-success" id="customer_add">Add Customer</button>
-                                            </div>
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal-dialog -->
-                                </div>
+                               
                             </div>
                         </div>
                     </div>
@@ -422,14 +101,36 @@ include("include/users_right.php");
                                             </thead>
                                             <tbody id="customer-list">
                                                 <?php
-												if(isset($_GET["list"]))
-												{
-													$ExpMnthYr=$_GET["list"];
-													$sql="SELECT * FROM customers WHERE expiredate LIKE '%$ExpMnthYr%'";
-												}
-												else{
-													$sql="SELECT * FROM customers WHERE status='0'";
-												}
+												// if(isset($_GET["list"]))
+												// {
+												// 	$ExpMnthYr=$_GET["list"];
+												// 	$sql="SELECT * FROM customers WHERE expiredate LIKE '%$ExpMnthYr%'";
+												// }
+												// else{
+												// 	$sql="SELECT * FROM customers WHERE status='0'";
+												// }
+
+                                                // if ($isset($_GET['area_id']) && !empty($_GET['area_id'])) {
+                                                //     $sql="SELECT * FROM customers WHERE status='0' AND area=$area_id";
+                                                // }
+                                                $condition=[];
+                                                if(isset($_GET['list']) && !empty($_GET['list'])){
+                                                    $ExpMnthYr = mysqli_real_escape_string($con, $_GET["list"]);
+                                                    $conditions[] = "expiredate LIKE '%$ExpMnthYr%'";
+                                                }else{
+                                                    $conditions[] = "status='0'";
+                                                }
+
+                                                if(isset($_GET['area_id']) && !empty($_GET['area_id'])){
+                                                    $area_id = mysqli_real_escape_string($con, $_GET["area_id"]);
+                                                    $conditions[] = "area=$area_id";
+                                                }
+
+                                                if(!empty($conditions)){
+                                                    $condition = implode(" AND ", $conditions);
+                                                    $sql="SELECT * FROM customers WHERE $condition";
+                                                }
+
                                                
 											   
                                                 $result = mysqli_query($con, $sql);
