@@ -231,7 +231,7 @@ if (isset($_GET['inactive'])) {
 
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
-                                <a href="customer_expire.php?pop_id=<?php echo $area_id; ?>">
+                                <a href="customer_expire.php?area_id=<?php echo $area_id; ?>">
                                     <div class="card-body">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-danger me-0 float-end"><i

@@ -80,19 +80,28 @@ include("include/users_right.php");
                                     <div class="table-responsive ">
                                     <?php
 $popIdCondition = '';
+$areaIdCondition = '';
+
+/* Check for pop_id in the query string*/
 if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
-    $popIdCondition = " AND pop='{$_GET['pop_id']}'";
+    $popIdCondition = " AND pop='" . mysqli_real_escape_string($con, $_GET['pop_id']) . "'";
 }
 
-/*Expire Date Filter check*/ 
+/* Check for area_id in the query string*/
+if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
+    $areaIdCondition = " AND area='" . mysqli_real_escape_string($con, $_GET['area_id']) . "'";
+}
+
+/* Expire Date Filter check*/
 if (isset($_GET["list"])) {
-    $ExpMnthYr = $_GET["list"];
-    $sql = "SELECT * FROM customers WHERE expiredate LIKE '%$ExpMnthYr%' $popIdCondition";
+    $ExpMnthYr = mysqli_real_escape_string($con, $_GET["list"]);
+    $sql = "SELECT * FROM customers WHERE expiredate LIKE '%$ExpMnthYr%' $popIdCondition $areaIdCondition";
 } else {
-    $sql = "SELECT * FROM customers WHERE expiredate < NOW() $popIdCondition";
+    $sql = "SELECT * FROM customers WHERE expiredate < NOW() $popIdCondition $areaIdCondition";
 }
 
 $result = mysqli_query($con, $sql);
+
 ?>
 
 <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="width: 100%;">
