@@ -95,36 +95,39 @@ include 'Header.php';
                                 <span>Customer </span>
                             </a>
                             <ul class="sub-menu" aria-expanded="false">
-                                <li><a href="customers.php">Total Customer List</a></li>
-                                <li><a href="bulk_payment.php">Bulk Recharge</a></li>
-                                <li><a href="active_cstmr_list.php">Active Customer List</a></li>
-                                <li><a href="customer_expire.php">Expired Customer List</a></li>
-                                <li><a href="customer_free_con.php">Free Customer List</a></li>
+                                    <!-- <li><a href="customers.php">Total Customer List</a></li> -->
+                                    <li><a href="customers_new.php">Total Customer <span class="badge rounded-pill bg-success">New</span></a></li>
+                                    <!-- <li><a href="bulk_payment.php">Bulk Recharge</a></li> -->
+                                    <!-- <li><a href="active_cstmr_list.php">Active Customer List</a></li>
+                                    <li><a href="customer_expire.php">Expired Customer List</a></li>
+                                    <li><a href="customer_free_con.php">Free Customer List</a></li> -->
+                                  
+
+                                    <li>
+                                        <a href="con_request.php">Connection Request 
+                                            <?php 
+                                                if ($allCstmr=$con->query("SELECT * FROM customers WHERE user_type='1' AND status=3")) {
+                                                    //echo $allCstmr->num_rows;
+                                                    if ($allCstmr->num_rows > 0) {
+                                                        echo '<span class="badge rounded-pill bg-danger float-end">'.$allCstmr->num_rows.'<span>';
+                                                    }else{
+
+                                                    }
+                                                }
 
 
-                                <li>
-                                    <a href="con_request.php">Connection Request
-                                        <?php
-if ($allCstmr = $con->query("SELECT * FROM customers WHERE user_type='1' AND status=3")) {
-    //echo $allCstmr->num_rows;
-    if ($allCstmr->num_rows > 0) {
-        echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
-    } else {
 
-    }
-}
-
-?>
-                                    </a>
-                                </li>
-                                <li><a href="customer_dues.php">Customer Dues/Unpaid</a></li>
-                                <li><a href="customer_recharge.php">Customer Recharge</a></li>
-                                <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
-                                <li><a href="package_add.php">Customer Packages</a></li>
-                                <li><a href="pwdmissmatch.php">Password missmatch</a></li>
-                                <li><a href="customer_import.php">Import</a></li>
-                                <!-- <li><a href="area.php">Area</a></li> -->
-                            </ul>
+                                                 ?>
+                                        </a>
+                                    </li>
+                                    <!-- <li><a href="customer_dues.php">Customer Unpaid</a></li> -->
+                                    <li><a href="customer_recharge.php">Customer Recharge</a></li>
+                                    <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
+                                    <li><a href="package_add.php">Customer Packages</a></li>
+                                    <li><a href="pwdmissmatch.php">Password missmatch</a></li>
+                                    <li><a href="customer_import.php">Import</a></li>
+                                    <!-- <li><a href="area.php">Area</a></li> -->
+                                </ul>
                         </li>
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">
