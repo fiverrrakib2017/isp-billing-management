@@ -68,12 +68,23 @@ function createPayment($base_url, $auth, $app_key, $callbackURL, $amount) {
 if (isset($_GET['submit_payment']) && !empty($_GET['submit_payment'])) {
     $amount = $_GET['amount']; 
     $pop_id = $_GET['pop_id']; 
+    $result = $con->query("SELECT `fullname` FROM add_pop WHERE id='$pop_id'");
+
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $recharge_by = $row['fullname']; 
+    } 
+
+    /*Start Grant Token*/ 
     $id_token = getGrantToken($base_url, $username, $password, $app_key, $app_secret);
 
     if ($id_token) {
         $paymentResponse = createPayment($base_url, $id_token, $app_key, $callbackURL, $amount);
 
-        if (isset($paymentResponse->bkashURL)) {
+        if (isset($paymentResponse->bkashURL)) {      
+            date_default_timezone_set('Asia/Dhaka');
+            $todayDate=date('H:i A, d-M-Y');
+            $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$amount','$amount','1','Recharge','$recharge_by','$todayDate')");
             header("Location: " . $paymentResponse->bkashURL);
             exit;
         } else {
