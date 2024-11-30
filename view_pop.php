@@ -221,8 +221,14 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                         <div class="mini-stat-info">
                                             <span class="counter text-primary">
                                                 <?php
-                                                if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
-                                                    echo $onlinecstmr->num_rows;
+                                                // if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
+                                                //     echo $onlinecstmr->num_rows;
+                                                // }
+                                                $onlinecstmr = $con->query("SELECT COUNT(username) AS total_online FROM customers WHERE status='1' AND pop=$popid");
+
+                                                if ($onlinecstmr) {
+                                                    $row = $onlinecstmr->fetch_assoc();
+                                                    echo $row['total_online']; 
                                                 }
                                                 ?>
                                             </span>
