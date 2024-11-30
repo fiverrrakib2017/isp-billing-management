@@ -118,6 +118,14 @@ function timeAgo($startdate) {
                             <button type="button" data-bs-toggle="modal" data-bs-target="#sendMessage" class="btn-sm btn btn-primary mb-1"><i class="far fa-envelope"></i> SMS Notification</button>
 
                             <button type="button" data-bs-toggle="modal" data-bs-target="#ticketModal" class="btn-sm btn btn-success mb-1">Add Ticket</button>
+
+                            <!-- <a href="bkash.php?a=15" class="btn-sm btn mb-1"> 
+                               <img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png" class="img-fluid" height="50px" width="100px">
+                            </a> -->
+                            <button type="button" class="btn-sm btn mb-1" id="bkashPaymentButton"> 
+                               <img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png" class="img-fluid" height="50px" width="100px">
+                            </button>
+
                         </div>
                     </div>
                     <div class="row">
@@ -954,7 +962,6 @@ function timeAgo($startdate) {
                                                     <td><?php echo $i; ?></td>
                                                     <td>
                                                         <?php 
-                                                        // মাসের ভ্যালুকে 2 অঙ্কে ফরম্যাট করে নিচ্ছি
                                                         $month = sprintf("%02d", $i);
                                                         $currentyrMnth = date("Y").'-'.$month;
                                                         echo date("M-Y", strtotime($currentyrMnth)); 
@@ -962,7 +969,6 @@ function timeAgo($startdate) {
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        // নতুন সংযোগের জন্য SQL
                                                         $sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND createdate LIKE '%$currentyrMnth%'";
                                                         $result = mysqli_query($con, $sql);
                                                         $countconn = mysqli_num_rows($result);
@@ -971,7 +977,6 @@ function timeAgo($startdate) {
                                                     </td>
                                                     <td>
                                                         <?php
-                                                        // এক্সপায়ার্ড সংযোগের জন্য SQL
                                                         $sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND expiredate LIKE '%$currentyrMnth%'";
                                                         $result = mysqli_query($con, $sql);
                                                         $countexpconn = mysqli_num_rows($result);
@@ -1708,6 +1713,16 @@ function timeAgo($startdate) {
     ?>
     <script type="text/javascript">
         $(document).ready(function() {
+            $('#bkashPaymentButton').on('click', function() {
+                let amount = prompt("Enter the amount to pay:");
+
+                if (amount && amount > 0) {
+                    let pop_id = "<?php echo $auth_usr_POP_id ?? 0; ?>"; 
+                    window.location.href = 'bkash.php?amount=' + amount + '&pop_id=' + pop_id + '&submit_payment=' + 1;
+                } else {
+                    alert("Please enter a valid amount.");
+                }
+            });
             $('#customers_table').DataTable({
                 "searching": true,
                 "paging": true,
