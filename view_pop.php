@@ -3,6 +3,7 @@ include 'include/security_token.php';
 include 'include/db_connect.php';
 include 'include/users_right.php';
 include 'include/pop_security.php';
+include 'include/functions.php';
 if (isset($_GET['id'])) {
     $popid = $_GET['id'];
 }
@@ -221,15 +222,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                         <div class="mini-stat-info">
                                             <span class="counter text-primary">
                                                 <?php
-                                                // if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
-                                                //     echo $onlinecstmr->num_rows;
-                                                // }
-                                                $onlinecstmr = $con->query("SELECT COUNT(username) AS total_online FROM customers WHERE status='1' AND pop=$popid");
-
-                                                if ($onlinecstmr) {
-                                                    $row = $onlinecstmr->fetch_assoc();
-                                                    echo $row['total_online']; 
-                                                }
+                                                 echo get_online_users($area_id=null,$pop_id=$popid,$con);
                                                 ?>
                                             </span>
                                             Online

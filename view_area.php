@@ -3,6 +3,7 @@ include 'include/security_token.php';
 include 'include/db_connect.php';
 include 'include/users_right.php';
 include 'include/pop_security.php';
+include 'include/functions.php';
 if (isset($_GET['id']) && !empty($_GET['id'])) {
     $area_id = $_GET['id'];
     if ($area = $con->query("SELECT * FROM area_list WHERE id='$area_id'")) {
@@ -189,10 +190,8 @@ if (isset($_GET['inactive'])) {
                                                 class="fas fa-user-check"></i></span>
                                         <div class="mini-stat-info">
                                             <span class="counter text-primary">
-                                                <?php
-                                                if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
-                                                    echo $onlinecstmr->num_rows;
-                                                }
+                                                <?php 
+                                                    echo get_online_users($area_id,$pop_id=null,$con);
                                                 ?>
                                             </span>
                                             Online

@@ -81,7 +81,33 @@ function get_latest_customer($con, $pop_id = null, $limit = 5) {
     return $customers;
 }
 
+function get_online_users($area_id,$pop_id,$con) {
+    $customers=[];
+    if (!empty($area_id)&&isset($area_id)) {
+        $onlinecstmr = $con->query("SELECT `username` AS online_users FROM customers WHERE  area=$area_id");
+        while($row = mysqli_fetch_assoc($onlinecstmr)) {
+            $customers[] = $row['online_users'];
 
+        }
+    }
+    if (!empty($pop_id)&&isset($pop_id)) {
+        $onlinecstmr = $con->query("SELECT `username` AS online_users FROM customers WHERE  pop=$pop_id");
+        while($row = mysqli_fetch_assoc($onlinecstmr)) {
+            $customers[] = $row['online_users'];
+        }
+    }
+    
+    $_online_users = 0;
+
+    foreach ($customers as $_get_customer_username) {
+        $result = $con->query("SELECT COUNT(*) AS online_count FROM radacct WHERE username='$_get_customer_username' AND acctstoptime IS NULL");
+        if ($row = $result->fetch_assoc()) {
+            $_online_users += $row['online_count'];
+        }
+    }
+
+    return $_online_users;
+};
 
 
 ?>
