@@ -110,7 +110,7 @@ if (file_exists($users_right_path)) {
                                     </thead>
                                     <tbody>
                                          <?php 
-                          $sql="SELECT * FROM customer_rechrg WHERE pop_id='$auth_usr_POP_id'  ";
+                          $sql="SELECT * FROM customer_rechrg WHERE pop_id='$auth_usr_POP_id' ORDER BY datetm DESC";
                           $result=mysqli_query($con,$sql);
 
                           while ($rows=mysqli_fetch_assoc($result)) {
