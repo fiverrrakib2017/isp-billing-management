@@ -7,7 +7,6 @@ $username = '01770618567';
 $password = 'D7DaC<*E*eG'; 
 $base_url = 'https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout'; 
 
-// Start Grant Token using cURL
 $curl = curl_init();
 
 curl_setopt_array($curl, [
@@ -30,9 +29,8 @@ $response = curl_exec($curl);
 curl_close($curl);
 
 $response_data = json_decode($response, true);
-$id_token = $response_data['id_token']; // End Grant Token
+$id_token = $response_data['id_token']; 
 
-// Handle create payment logic
 if (isset($_GET['a'])) {
     $amount = $_GET['a'];
     $InvoiceNumber = 'shop' . rand();
@@ -68,11 +66,10 @@ if (isset($_GET['a'])) {
     curl_close($url);
     
     $obj = json_decode($resultdata);
-    header("Location: " . $obj->bkashURL); // Redirect to payment URL
+    header("Location: " . $obj->bkashURL);
     exit;
 }
 
-// Handle payment execution
 if (isset($_GET['paymentID'], $_GET['status']) && $_GET['status'] == 'success') {
     $paymentID = $_GET['paymentID'];
     $auth = $id_token;
@@ -109,7 +106,6 @@ $bkash_helper = new BkashHelper();
 echo '<pre>';
 print_r(json_encode($bkash_helper->getToken()));
 echo '</pre>'; exit;
-// Step 1: Initiate payment request to bKash
 $api_url = "https://checkout.sandbox.bka.sh/v1.2.0-beta/checkout/payment/create";
 $access_token = "Bearer " . $bkash_helper->getToken(); 
 
@@ -135,9 +131,8 @@ curl_close($ch);
 
 $result = json_decode($response, true);
 
-// যদি API সফলভাবে কাজ করে
 if (isset($result['bkashURL'])) {
-    header("Location: " . $result['bkashURL']); // bKash পেমেন্ট পেজে রিডাইরেক্ট
+    header("Location: " . $result['bkashURL']); 
     exit();
 } else {
     echo "Payment initiation failed: " . $result['errorMessage'];
