@@ -15,6 +15,54 @@ if (file_exists($users_right_path)) {
     require($users_right_path);
 }
 
+if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
+    $paymentID = $_GET['paymentID'];
+    $id_token=$_SESSION['id_token'];
+    $app_key=$_SESSION['app_key'];
+    $amount=$_SESSION['final_amount'];
+    $pop_id=$_SESSION['pop_id'];
+    
+    $post_paymentID = array(
+      'paymentID' => $paymentID
+       );
+       
+        $posttoken = json_encode($post_paymentID);
+    $base_url = 'https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout';
+    $url = curl_init("$base_url/execute");
+    $header = array(
+       'Content-Type:application/json',
+       
+       "authorization:$id_token",
+       "x-app-key:$app_key"
+   );
+
+   curl_setopt($url, CURLOPT_HTTPHEADER, $header);
+   curl_setopt($url, CURLOPT_CUSTOMREQUEST, "POST");
+   curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
+   curl_setopt($url, CURLOPT_POSTFIELDS, $posttoken);
+   curl_setopt($url, CURLOPT_FOLLOWLOCATION, 1);
+   curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+   curl_exec($url);
+   curl_close($url);
+
+    $result = $con->query("SELECT `fullname` FROM add_pop WHERE id='$pop_id'");
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $recharge_by = $row['fullname']; 
+    } 
+
+    date_default_timezone_set('Asia/Dhaka');
+    $todayDate = date('H:i A, d-M-Y');
+
+    $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$amount','$amount','Recharge','1','$recharge_by','$todayDate')");
+
+    // Clear session data
+    unset($_SESSION['id_token'], $_SESSION['app_key'], $_SESSION['final_amount'], $_SESSION['pop_id']);
+
+    header('Location: http://103.146.16.154');
+}
+
+
 
 function timeAgo($startdate) {
     /*Convert startdate to a timestamp*/ 
