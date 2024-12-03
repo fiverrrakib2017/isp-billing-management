@@ -111,14 +111,31 @@ if (file_exists($users_right_path)) {
                                             </thead>
                                             <tbody id="customer-list">
                                                 <?php
-												if(isset($_GET["list"]))
-												{
-													$ExpMnthYr=$_GET["list"];
-													$sql="SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND expiredate LIKE '%$ExpMnthYr%'";
-												}
-												else{
-													$sql="SELECT * FROM customers  WHERE pop=$auth_usr_POP_id AND status='0'";
-												}
+												 $popIdCondition = '';
+                                                 $areaIdCondition = '';
+                                                 $DEFAULT_CONDITION='';
+                                                 
+                                                 /* Check for pop_id in the query string*/
+                                                 if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
+                                                     $popIdCondition = " AND pop='" . mysqli_real_escape_string($con, $_GET['pop_id']) . "'";
+                                                 }else{
+                                                     $DEFAULT_CONDITION = " AND pop='" . $_SESSION['user_pop'] . "'";
+                                                 }
+                                                 
+                                                 /* Check for area_id in the query string*/
+                                                 if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
+                                                     $areaIdCondition = " AND area='" . mysqli_real_escape_string($con, $_GET['area_id']) . "'";
+                                                 }else{
+                                                    $DEFAULT_CONDITION = " AND pop='" . $_SESSION['user_pop'] . "'";
+                                                 }
+
+                                                 /* Expire Date Filter check*/
+                                                if (isset($_GET['list'])) {
+                                                    $ExpMnthYr = mysqli_real_escape_string($con, $_GET['list']);
+                                                    $sql = "SELECT * FROM customers WHERE expiredate LIKE '%$ExpMnthYr%' $popIdCondition $areaIdCondition";
+                                                } else {
+                                                    $sql = "SELECT * FROM customers WHERE status='0' AND expiredate < NOW() $popIdCondition $areaIdCondition $DEFAULT_CONDITION";
+                                                }
                                                
 											   
                                                 $result = mysqli_query($con, $sql);
