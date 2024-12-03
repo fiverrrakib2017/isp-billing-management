@@ -803,9 +803,15 @@ if (file_exists($users_right_path)) {
     <script type="text/javascript">
         var table;
         $(document).ready(function() {
-
-            loadPopOptions();
-            loadAreaOptions();
+            var get_area_id = "<?php echo isset($_GET['area_id']) ? $_GET['area_id'] : ''; ?>";
+            if (get_area_id.length > 0) {
+               
+            }else{
+                loadPopOptions();
+                loadAreaOptions();
+            }
+            // loadPopOptions();
+            // loadAreaOptions();
 
             function loadPopOptions() {
                 $.ajax({
@@ -944,7 +950,12 @@ if (file_exists($users_right_path)) {
                     data: function(d) {
                         d.status = $('.status_filter').val();
                         d.pop_id = $('.pop_filter').val();
-                        d.area_id = $('.area_filter').val();
+                        /********************Finter For AREA ID Customer*******************************/
+                        <?php if (isset($_GET['area_id']) && !empty($_GET['area_id'])): ?>
+                            d.area_id = <?php echo $_GET['area_id']; ?>;
+                        <?php else: ?>
+                            d.area_id = $('.area_filter').val();
+                        <?php endif; ?>
                     },
                 },
                 "drawCallback": function() {
