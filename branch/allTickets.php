@@ -437,7 +437,13 @@ if (file_exists($users_right_path)) {
     <script type="text/javascript">
         var table;
         $(document).ready(function(){
-             loadAreaOptions();
+            var get_area_id = "<?php echo isset($_GET['area_id']) ? $_GET['area_id'] : ''; ?>";
+            if (get_area_id.length > 0) {
+
+            }else{
+                loadAreaOptions();
+            }
+            
 
             function loadAreaOptions() {
                 var protocol = location.protocol;
@@ -499,11 +505,17 @@ if (file_exists($users_right_path)) {
                     url			: url,
                     type		: 'GET',
                     data: function(d) {
-                        d.area_id = $('.area_filter').val();
+                        /********************Finter For POP ID Customer*******************************/
                         <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
                             d.pop_id = <?php echo $_GET['pop_id']; ?>;
                         <?php else: ?>
                             d.pop_id = $('.pop_filter').val();
+                        <?php endif; ?>
+                         /********************Finter For AREA ID Customer*******************************/
+                        <?php if (isset($_GET['area_id']) && !empty($_GET['area_id'])): ?>
+                            d.area_id = <?php echo $_GET['area_id']; ?>;
+                        <?php else: ?>
+                            d.area_id = $('.area_filter').val();
                         <?php endif; ?>
                       
                     },
