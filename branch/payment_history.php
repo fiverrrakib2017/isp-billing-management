@@ -2,17 +2,17 @@
 if (!isset($_SESSION)) {
     session_start();
 }
-$rootPath = $_SERVER['DOCUMENT_ROOT'];  
+$rootPath = $_SERVER['DOCUMENT_ROOT'];
 
-$db_connect_path = $rootPath . '/include/db_connect.php';  
+$db_connect_path = $rootPath . '/include/db_connect.php';
 $users_right_path = $rootPath . '/include/users_right.php';
 
 if (file_exists($db_connect_path)) {
-    require($db_connect_path);
+    require $db_connect_path;
 }
 
 if (file_exists($users_right_path)) {
-    require($users_right_path);
+    require $users_right_path;
 }
 
 ?>
@@ -27,12 +27,12 @@ if (file_exists($users_right_path)) {
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php
-        
-        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
-        
-        echo file_get_contents($url);
-        
+    
+    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+    
+    echo file_get_contents($url);
+    
     ?>
 
 </head>
@@ -43,10 +43,10 @@ if (file_exists($users_right_path)) {
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-            <?php 
-                $page_title="Payment History";
-                include '../Header.php';
-            ?>
+        <?php
+        $page_title = 'Payment History';
+        include '../Header.php';
+        ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -68,122 +68,99 @@ if (file_exists($users_right_path)) {
 
             <div class="page-content">
                 <div class="container-fluid">
-                <div class="row">
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #2A0FF1;">
+                    <div class="row">
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Current Balance</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $currentBal += $rows["balance"];
-                                                    }
-                                                    if ($pop_payment = $con->query(" SELECT `purchase_price` FROM `customer_rechrg` WHERE pop_id='$auth_usr_POP_id' ")) {
+                                    <a href="payment_history.php">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="mdi mdi-currency-bdt fa-2x text-gray-300"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                    <?php
+                                                    if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
                                                         while ($rows = $pop_payment->fetch_array()) {
-                                                            $totalpaid += $rows["purchase_price"];
+                                                            $currentBal += $rows['balance'];
                                                         }
-                                                        echo  $currentBal - $totalpaid;
+                                                        if ($pop_payment = $con->query(" SELECT `purchase_price` FROM `customer_rechrg` WHERE pop_id='$auth_usr_POP_id' ")) {
+                                                            while ($rows = $pop_payment->fetch_array()) {
+                                                                $totalpaid += $rows['purchase_price'];
+                                                            }
+                                                            echo $currentBal - $totalpaid;
+                                                        }
                                                     }
-                                                }
-
-                                                ?>
+                                                    
+                                                    ?>
+                                                </span>
+                                                Current Balance
                                             </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #27F10F;">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Paid</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-
-                                                if ($pop_payment = $con->query(" SELECT `paid_amount` FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $stotalpaid += $rows["paid_amount"];
+                        </div> <!--End col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card ">
+                                <a href="payment_history.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-success me-0 float-end"> <i
+                                                    class="mdi mdi-currency-bdt fa-2x text-white-300"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                    <?php
+                                                    
+                                                    if ($pop_payment = $con->query(" SELECT `paid_amount` FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
+                                                        while ($rows = $pop_payment->fetch_array()) {
+                                                            $stotalpaid += $rows['paid_amount'];
+                                                        }
+                                                        echo $stotalpaid;
                                                     }
-                                                    echo $stotalpaid;
-                                                }
-                                                ?>
+                                                    ?>
+                                                </span>
+                                                Total Paid
                                             </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
-                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
-                        </div>
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid red;">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Due</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $totalAmount += $rows["balance"];
+                        </div><!--end col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <a href="payment_history.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-danger me-0 float-end"> <i
+                                                    class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
+                                            </span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-danger">
+                                                    <?php
+                                                    
+                                                    if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
+                                                        while ($rows = $pop_payment->fetch_array()) {
+                                                            $totalAmount += $rows['balance'];
+                                                        }
+                                                        $totalAmount;
                                                     }
-                                                    $totalAmount;
-                                                }
-
-                                                if ($pop_payment = $con->query("SELECT SUM(paid_amount) AS amount FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $paidAmount += $rows["amount"];
+                                                    
+                                                    if ($pop_payment = $con->query("SELECT SUM(paid_amount) AS amount FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
+                                                        while ($rows = $pop_payment->fetch_array()) {
+                                                            $paidAmount += $rows['amount'];
+                                                        }
                                                     }
-                                                }
-                                                echo $totalAmount - $paidAmount;
+                                                    echo $totalAmount - $paidAmount;
+                                                    ?>
 
-                                                ?>
+                                                </span>
+                                                Total Due
                                             </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
-                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
-                        </div>
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #0FADF1;">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </div> <!-- End col -->
 
                     </div>
                     <div class="row">
@@ -217,76 +194,7 @@ if (file_exists($users_right_path)) {
 
                                         </div>
                                     </div>
-                                    <div class="table-responsive">
-                                    <table id="transaction_datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>ID</th>
-                                                            <th>Recharge Amount</th>
-                                                            <th>Paid Amount</th>
-                                                            <th>Action</th>
-                                                            <th>Transaction Type</th>
-                                                            <th>Date</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <?php
-                                                        $sql = "SELECT * FROM pop_transaction WHERE pop_id='$auth_usr_POP_id'  ";
-                                                        $result = mysqli_query($con, $sql);
-
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                        ?>
-
-                                                            <tr>
-                                                                <td><?php echo $rows['id']; ?></td>
-                                                                <td> <?php echo  $rows["amount"]; ?></td>
-                                                                <td> <?php echo  $rows["paid_amount"]; ?></td>
-
-
-                                                                <td>
-                                                                    <?php
-                                                                    $transaction_action = $rows["action"];
-                                                                    $transaction_type = $rows["transaction_type"];
-
-                                                                    if ($transaction_action == 'Recharge' && $transaction_type == '0') {
-                                                                        echo  '<span class="badge bg-danger">Recharged</span> <br> <span class="badge bg-success">Paid</span>';
-                                                                    } else if ($transaction_action == 'Recharge' && $transaction_type == '1') {
-                                                                        echo  '<span class="badge bg-danger">Recharged </span>';
-                                                                    } else if ($transaction_action == 'paid') {
-                                                                        echo  '<span class="badge bg-success">Paid</span>';
-                                                                    } else if ($transaction_action == 'Return') {
-                                                                        echo  '<span class="badge bg-warning">Return</span>';
-                                                                    }
-
-
-
-
-                                                                    ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?php
-                                                                    $transaction_type = $rows["transaction_type"];
-                                                                    if ($transaction_type == 0) {
-                                                                        echo  '<button class="btn-sm btn btn-outline-success">Cash</button>';
-                                                                    } elseif ($transaction_type == 1) {
-                                                                        echo  '<button class="btn-sm btn btn-outline-danger">Credit</button>';
-                                                                    } elseif ($transaction_type == 2) {
-                                                                        echo 'Bkash';
-                                                                    } elseif ($transaction_type == 3) {
-                                                                        echo 'Nagad';
-                                                                    } elseif ($transaction_type == 4) {
-                                                                        echo 'Bank';
-                                                                    }
-
-                                                                    ?>
-                                                                </td>
-                                                                <td> <?php echo  $rows["date"]; ?></td>
-                                                            </tr>
-                                                        <?php } ?>
-                                                    </tbody>
-                                                </table>
-                                    </div>
+                                  <?php include 'Table/transaction_history_table.php';?>
                                 </div>
                             </div>
                         </div>
@@ -296,12 +204,12 @@ if (file_exists($users_right_path)) {
             <!-- End Page-content -->
 
             <?php
-        
-                $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-                $url = $protocol . $_SERVER['HTTP_HOST'] . '/Footer.php';
-                
-                echo file_get_contents($url);
-                
+            
+            $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+            $url = $protocol . $_SERVER['HTTP_HOST'] . '/Footer.php';
+            
+            echo file_get_contents($url);
+            
             ?>
 
         </div>
@@ -310,7 +218,7 @@ if (file_exists($users_right_path)) {
     </div>
     <!-- END layout-wrapper -->
 
-   
+
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
@@ -318,12 +226,12 @@ if (file_exists($users_right_path)) {
 
     <!-- JAVASCRIPT -->
     <?php
-        
-        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
-        
-        echo file_get_contents($url);
-        
+    
+    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
+    
+    echo file_get_contents($url);
+    
     ?>
     <script type="text/javascript">
         $(document).ready(function() {

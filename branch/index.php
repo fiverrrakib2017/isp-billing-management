@@ -177,32 +177,11 @@ function timeAgo($startdate) {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 col-xl-3">
-                            <a href="customers_new.php">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-purple me-0 float-end"><i class=" far fa-user"></i></span>
-                                            <div class="mini-stat-info">
-                                                <span class="counter text-purple">
-                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE  pop=$auth_usr_POP_id ")) {
-                                                        echo  $totalCustomer->num_rows;
-                                                    }
-
-                                                    ?>
-                                                </span>
-                                                Total Customers
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div> <!--End col -->
-                        <div class="col-md-6 col-xl-3">
+                    <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-success me-0 float-end"><i class="fas fa-globe"></i></span>
+                                        <span class="mini-stat-icon bg-primary  me-0 float-end"><i class="fas fa-user-check"></i></span>
                                         <div class="mini-stat-info">
                                             <span class="counter text-green">
                                                 <?php
@@ -225,6 +204,28 @@ function timeAgo($startdate) {
                                 </div>
                             </div>
                         </div> <!-- End col -->
+                        <div class="col-md-6 col-xl-3">
+                            <a href="customers_new.php">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-success me-0 float-end"><i class=" fas fa-users"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-success">
+                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE  pop=$auth_usr_POP_id AND status='1'")) {
+                                                        echo  $totalCustomer->num_rows;
+                                                    }
+
+                                                    ?>
+                                                </span>
+                                                Active Customers
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div> <!--End col -->
+                       
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <a href="customer_expire.php">
@@ -255,7 +256,7 @@ function timeAgo($startdate) {
                             <a href="customer_disabled.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-danger me-0 float-end"><i class="fas fa-user-slash"></i></span>
+                                        <span class="mini-stat-icon bg-secondary  me-0 float-end"><i class="fas fa-user-slash"></i></span>
                                         <div class="mini-stat-info">
                                             <span class="counter text-teal">
                                                 <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND pop=$auth_usr_POP_id")) {
@@ -272,14 +273,57 @@ function timeAgo($startdate) {
                         </div><!--end col -->
                     </div> <!-- end row-->
                     <div class="row">
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #2A0FF1;">
+                    <div class="col-md-6 col-xl-3">
+                            <div class="card ">
+                                <a href="allTickets.php">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Current Balance</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-warning me-0 float-end"><i class="fas fa-notes-medical"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-teal">
+                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id")) {
+                                                    echo  $dsblcstmr->num_rows;
+                                                }
+                                                ?>
+                                            </span>
+                                            Tickets
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        </div><!--end col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="pop_area.php">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="fas fa-search-location"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM area_list WHERE pop_id='$auth_usr_POP_id' ")) {
+                                                        echo $totalCustomer->num_rows;
+                                                    }
+                                                    
+                                                    ?>
+                                                </span>
+                                                Area
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div> <!--End col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="payment_history.php">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="mdi mdi-currency-bdt fa-2x text-gray-300"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
                                                 <?php
                                                 if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
@@ -294,24 +338,23 @@ function timeAgo($startdate) {
                                                 }
 
                                                 ?>
+                                                </span>
+                                                Current Balance
                                             </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #27F10F;">
+                        </div> <!--End col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card ">
+                                <a href="payment_history.php">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Paid</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-success me-0 float-end"> <i class="mdi mdi-currency-bdt fa-2x text-white-300"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-teal">
+                                            <?php
 
                                                 if ($pop_payment = $con->query(" SELECT `paid_amount` FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
@@ -320,67 +363,48 @@ function timeAgo($startdate) {
                                                     echo $stotalpaid;
                                                 }
                                                 ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid red;">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Due</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $totalAmount += $rows["balance"];
-                                                    }
-                                                    $totalAmount;
-                                                }
-
-                                                if ($pop_payment = $con->query("SELECT SUM(paid_amount) AS amount FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $paidAmount += $rows["amount"];
-                                                    }
-                                                }
-                                                echo $totalAmount - $paidAmount;
-
-                                                ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card " style="border-left:3px solid red;">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-warning me-0 float-end"><i class="far fa-sticky-note"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-teal">
-                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id")) {
-                                                    echo  $dsblcstmr->num_rows;
-                                                }
-                                                ?>
                                             </span>
-                                            Tickets
+                                            Total Paid
                                         </div>
                                     </div>
                                 </div>
+                                </a>
                             </div>
                         </div><!--end col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <a href="payment_history.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-danger me-0 float-end">  <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
+                                            </span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-danger">
+                                                    <?php
+                                                    
+                                                    if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
+                                                        while ($rows = $pop_payment->fetch_array()) {
+                                                            $totalAmount += $rows["balance"];
+                                                        }
+                                                        $totalAmount;
+                                                    }
+    
+                                                    if ($pop_payment = $con->query("SELECT SUM(paid_amount) AS amount FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
+                                                        while ($rows = $pop_payment->fetch_array()) {
+                                                            $paidAmount += $rows["amount"];
+                                                        }
+                                                    }
+                                                    echo $totalAmount - $paidAmount;
+                                                    ?>
 
+                                                </span>
+                                                Total Due
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div> <!-- End col -->
                     </div>
 
                     <div class="row">
