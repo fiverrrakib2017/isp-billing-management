@@ -54,7 +54,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     date_default_timezone_set('Asia/Dhaka');
     $todayDate = date('H:i A, d-M-Y');
 
-    $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$amount','$amount','Recharge','1','$recharge_by','$todayDate')");
+    $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$amount','$amount','Recharge','2','$recharge_by','$todayDate')");
 
     // Clear session data
     unset($_SESSION['id_token'], $_SESSION['app_key'], $_SESSION['final_amount'], $_SESSION['pop_id']);
@@ -1274,6 +1274,9 @@ function timeAgo($startdate) {
                                                                 } elseif ($transaction_action == 'Return') {
                                                                     echo '<span class="badge bg-warning">Return</span>';
                                                                 }
+                                                                 elseif ($transaction_action == 'Recharge' && $transaction_type == '2') {
+                                                                    echo '<span class="badge bg-danger">Recharged</span> <br> <span class="badge bg-success">Paid</span>';
+                                                                }
                                                                 
                                                                 ?>
                                                             </td>
@@ -1285,7 +1288,7 @@ function timeAgo($startdate) {
                                                                 } elseif ($transaction_type == 0) {
                                                                     echo '<button class="btn-sm btn btn-outline-danger">Credit</button>';
                                                                 } elseif ($transaction_type == 2) {
-                                                                    echo 'Bkash';
+                                                                    echo '<button class="btn-sm btn btn-outline-success">Bkash</button>';
                                                                 } elseif ($transaction_type == 3) {
                                                                     echo 'Nagad';
                                                                 } elseif ($transaction_type == 4) {
