@@ -177,7 +177,6 @@ function timeAgo($startdate) {
                         </div>
                     </div>
                     <?php include 'Card/branch_panel_card.php';?>
-
                     <div class="row">
 
                     <div class="col-md-7 grid-margin stretch-card">

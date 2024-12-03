@@ -101,7 +101,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                                 <a href="index.php">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;</a>
                                             </p>
                                             <p class="text-primary mb-0 hover-cursor"><a
-                                                    href="pop_area.php">POP/Area&nbsp;/&nbsp; </a><?php echo $area_name; ?></p>
+                                                    href="pop_area.php">Area&nbsp;/&nbsp; </a><?php echo $areaName; ?></p>
                                         </div>
                                     </div>
                                     <br>
