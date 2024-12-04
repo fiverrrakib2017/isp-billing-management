@@ -101,18 +101,6 @@ include("include/users_right.php");
                                             </thead>
                                             <tbody id="customer-list">
                                                 <?php
-												// if(isset($_GET["list"]))
-												// {
-												// 	$ExpMnthYr=$_GET["list"];
-												// 	$sql="SELECT * FROM customers WHERE expiredate LIKE '%$ExpMnthYr%'";
-												// }
-												// else{
-												// 	$sql="SELECT * FROM customers WHERE status='0'";
-												// }
-
-                                                // if ($isset($_GET['area_id']) && !empty($_GET['area_id'])) {
-                                                //     $sql="SELECT * FROM customers WHERE status='0' AND area=$area_id";
-                                                // }
                                                 $condition=[];
                                                 if(isset($_GET['list']) && !empty($_GET['list'])){
                                                     $ExpMnthYr = mysqli_real_escape_string($con, $_GET["list"]);
@@ -124,6 +112,10 @@ include("include/users_right.php");
                                                 if(isset($_GET['area_id']) && !empty($_GET['area_id'])){
                                                     $area_id = mysqli_real_escape_string($con, $_GET["area_id"]);
                                                     $conditions[] = "area=$area_id";
+                                                }
+                                                if(isset($_GET['pop_id']) && !empty($_GET['pop_id'])){
+                                                    $pop_id = mysqli_real_escape_string($con, $_GET["pop_id"]);
+                                                    $conditions[] = "pop=$pop_id";
                                                 }
 
                                                 if(!empty($conditions)){

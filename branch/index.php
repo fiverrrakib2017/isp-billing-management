@@ -188,7 +188,7 @@ function timeAgo($startdate) {
                                             <thead>
                                                 <tr>
                                                 <th>ID</th>
-                                                    <th>POP Name</th>
+                                                    <th>Area Name</th>
                                                     <th>Total</th>
                                                     <th><img src="images/icon/online.png" height="10" width="10"/> Online</th>
                                                     <th><img src="images/icon/expired.png" height="10" width="10"/> Expired</th>
