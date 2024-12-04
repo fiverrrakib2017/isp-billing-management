@@ -161,7 +161,31 @@ if (file_exists($users_right_path)) {
                                 </a>
                             </div>
                         </div> <!-- End col -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card ">
+                                <a href="#">
+                                <div class="card-body">
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-success me-0 float-end"> <i class="mdi mdi-currency-bdt fa-2x text-white-300"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-teal">
+                                            <?php
 
+                                                if ($pop_dupayment = $con->query(" SELECT paid_amount FROM pop_transaction WHERE pop_id='$auth_usr_POP_id' AND transaction_type='5' ")) {
+                                                    while ($rowsdp = $pop_dupayment->fetch_array()) {
+                                                        $stotalDupaid += $rowsdp['paid_amount'];
+                                                    }
+                                                    echo $stotalDupaid;
+                                                }
+                                                ?>
+                                            </span>
+                                            Due Paid
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 grid-margin">

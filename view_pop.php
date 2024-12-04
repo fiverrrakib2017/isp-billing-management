@@ -360,33 +360,33 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                             </div>
                         </div> <!-- End col -->
                         <div class="col-xl-4 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #2A0FF1;">
+                            <div class="card">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Current Balance</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                    <a href="#">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="mdi mdi-currency-bdt fa-2x text-gray-300"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
                                                 <?php
-                                                if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$popid' ")) {
+                                                if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$pop_id' ")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
-                                                        $currentBal += $rows['balance'];
+                                                        $currentBal += $rows["balance"];
                                                     }
-                                                    if ($pop_payment = $con->query(" SELECT `purchase_price` FROM `customer_rechrg` WHERE pop_id='$popid' ")) {
+                                                    if ($pop_payment = $con->query(" SELECT `purchase_price` FROM `customer_rechrg` WHERE pop_id='$pop_id' ")) {
                                                         while ($rows = $pop_payment->fetch_array()) {
-                                                            $totalpaid += $rows['purchase_price'];
+                                                            $totalpaid += $rows["purchase_price"];
                                                         }
-                                                        echo $currentBal - $totalpaid;
+                                                        echo  $currentBal - $totalpaid;
                                                     }
                                                 }
-                                                
+
                                                 ?>
+                                                </span>
+                                                Current Balance
                                             </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -396,93 +396,92 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #27F10F;">
+                            <div class="card ">
+                                <a href="#">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Total Paid</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                
-                                                if ($pop_payment = $con->query(" SELECT `paid_amount` FROM `pop_transaction` WHERE pop_id='$popid'")) {
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-success me-0 float-end"> <i class="mdi mdi-currency-bdt fa-2x text-white-300"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-teal">
+                                            <?php
+
+                                                if ($pop_payment = $con->query(" SELECT `paid_amount` FROM `pop_transaction` WHERE pop_id='$pop_id' ")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
-                                                        $stotalpaid += $rows['paid_amount'];
+                                                        $stotalpaid += $rows["paid_amount"];
                                                     }
                                                     echo $stotalpaid;
                                                 }
                                                 ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
+                                            </span>
+                                            Total Paid
                                         </div>
                                     </div>
                                 </div>
+                                </a>
                             </div>
                         </div>
                         <!-- Pending Requests Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid red;">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Total Due</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM `pop_transaction` WHERE pop_id=$popid  ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $totalAmount += $rows['balance'];
+                            <div class="card">
+                                <a href="#">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-danger me-0 float-end">  <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
+                                            </span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-danger">
+                                                    <?php
+                                                    
+                                                    if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM `pop_transaction` WHERE pop_id=$pop_id  ")) {
+                                                        while ($rows = $pop_payment->fetch_array()) {
+                                                            $totalAmount += $rows["balance"];
+                                                        }
+                                                        $totalAmount;
                                                     }
-                                                    $totalAmount;
-                                                }
-                                                
-                                                if ($pop_payment = $con->query("SELECT SUM(paid_amount) AS amount FROM `pop_transaction` WHERE pop_id=$popid")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $paidAmount += $rows['amount'];
+    
+                                                    if ($pop_payment = $con->query("SELECT SUM(paid_amount) AS amount FROM `pop_transaction` WHERE pop_id=$pop_id  ")) {
+                                                        while ($rows = $pop_payment->fetch_array()) {
+                                                            $paidAmount += $rows["amount"];
+                                                        }
                                                     }
-                                                }
-                                                echo $totalAmount - $paidAmount;
-                                                
-                                                ?>
+                                                    echo $totalAmount - $paidAmount;
+                                                    ?>
+
+                                                </span>
+                                                Total Due
                                             </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
-                                        </div>
                                     </div>
-                                </div>
+                                </a>
                             </div>
                         </div>
+                                               
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card shadow h-100 py-2" style="border-left:3px solid #0FADF1;">
+                            <div class="card ">
+                                <a href="#">
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Due
-                                                Paid</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                <?php
-                                                
-                                                if ($pop_dupayment = $con->query(" SELECT paid_amount FROM pop_transaction WHERE pop_id='$popid' AND transaction_type='5' ")) {
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-success me-0 float-end"> <i class="mdi mdi-currency-bdt fa-2x text-white-300"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-teal">
+                                            <?php
+
+                                                if ($pop_dupayment = $con->query(" SELECT paid_amount FROM pop_transaction WHERE pop_id='$pop_id' AND transaction_type='5' ")) {
                                                     while ($rowsdp = $pop_dupayment->fetch_array()) {
                                                         $stotalDupaid += $rowsdp['paid_amount'];
                                                     }
                                                     echo $stotalDupaid;
                                                 }
                                                 ?>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="mdi mdi-currency-bdt fa-2x text-gray-300"></i>
+                                            </span>
+                                            Due Paid
                                         </div>
                                     </div>
                                 </div>
+                                </a>
                             </div>
-                        </div>
-
+                        </div>                       
                     </div>
                     <div class="row">
                         <div class="col-md-6">
