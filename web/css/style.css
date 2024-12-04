@@ -1,0 +1,593 @@
+
+/* Theme Name: Admiria - Admin Dashboard & Frontend
+   Author: Themesbrand
+   File Description:Main CSS file of the template
+*/
+/*
+1.BASIC
+2.HELPER
+3.TITLE
+4.BOOTSTRAP RESET
+5.NAVBAR CUSTOM
+6.HOME
+7.SERVICES
+8.SCREENSHOT
+9.PRICING
+10.TEAM
+11.TESTIMONIAL
+12.CONTACT
+13.FOOTER
+14.RESPONSIVE
+*/
+
+
+/*=================================
+        1. BACIS
+==================================*/
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  position: relative;
+  line-height: 24px;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Quattrocento Sans', sans-serif;
+  font-weight: 700;
+}
+
+a{
+  text-decoration: none !important;
+  -webkit-transition: all 400ms ease-in-out;
+  -moz-transition: all 400ms ease-in-out;
+  -o-transition: all 400ms ease-in-out;
+  transition: all 400ms ease-in-out;
+  outline: none !important;
+}
+
+/* container */
+@media (min-width: 1200px){
+.container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl{
+      max-width: 1140px;
+}
+}
+
+.row>* {
+  position: relative;
+}
+
+
+/*===================================
+      2. HELPER
+=====================================*/
+
+.section{
+  padding-bottom: 80px;
+  padding-top: 80px;
+  position: relative;
+}
+
+.vertical-content {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+  align-items: center;
+  -webkit-align-items: center;
+  justify-content: center;
+  -webkit-justify-content: center;
+  flex-direction: row;
+  -webkit-flex-direction: row;
+}
+
+.bg-overlay{
+  background-color: rgba(0,0,0,0.45);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.bg-grey {
+	background-color: #f7f8f8;
+}
+/*==========================
+    3.TITLE
+=============================*/
+.section-title {
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.section-subtitle{
+  letter-spacing: 0.02em;
+  font-size: 15px;
+  text-transform:capitalize;
+}
+span.title-divider {
+  color: #96A1B3;
+  font-weight: bold;
+}
+span.title-divider:before,span.title-divider:after {
+  content: "";
+  width: 42px;
+  height: 2px;
+  background: #96A1B3;
+  display: inline-block;
+  vertical-align: middle;
+}
+span.title-divider:before{
+    margin-right: 5px;
+}
+span.title-divider:after {
+    margin-left: 5px;
+}
+
+/*=====================
+4. BOOTSTRAP RESET
+======================*/
+/*----BACKGROUND COLOR-----*/
+.bg-custom{
+  background-color: #ea553d;
+}
+.bg-gray {
+    background-color: #f2f0f1;
+}
+.bg-white{
+  background-color: #fff;
+}
+.bg-dark{
+  background-color: #191919;
+}
+/*--Text color--- */
+.text-primary {
+  color: #1b9cde;
+}
+.text-success {
+  color: #66d203;
+}
+.text-info {
+  color:#00a4fe;
+}
+.text-warning {
+  color: #f5a623;
+}
+.text-danger {
+  color: #e66060;
+}
+.text-muted {
+  color: #898989 !important;
+}
+.text-white {
+  color: #fff !important;
+}
+.text-custom{
+  color: #ea553d !important;
+}
+.text-gray{
+  color: #777 !important;
+}
+.text-dark{
+  color: #000 !important;
+}
+/*====Buttons=======*/
+.btn {
+  padding: 14px 20px 12px;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 1px;
+  font-family: 'Quattrocento Sans', sans-serif;
+  font-weight: 700;
+}
+.btn-rounded {
+  border-radius: 30px;
+}
+
+.btn-custom {
+  background-color: #ea553d !important;
+  border: 1px solid #ea553d !important;
+  color: #fff;
+  transition: all 0.3s;
+}
+.btn-custom:hover,
+.btn-custom:focus,
+.btn-custom:active,
+.btn-custom.active,
+.btn-custom.focus,
+.btn-custom:active,
+.btn-custom:focus,
+.btn-custom:hover,
+.open > .dropdown-toggle.btn-custom {
+  background-color: #b74e3d !important;
+  border: 1px solid #b74e3d !important;
+  color: #f3f3f3 !important;
+  transition: all 0.5s;
+}
+.btn-custom.focus, .btn-custom:focus{
+    -webkit-box-shadow: 0 0 0 2px rgba(234, 85, 61, 0.3);
+    box-shadow: 0 0 0 2px rgba(234, 85, 61, 0.3);
+}
+.btn-dark {
+  background-color: #262c30;
+  border: 1px solid #262c30;
+  color: #fff;
+}
+.btn-dark:hover,
+.btn-dark:focus,
+.btn-dark:active,
+.btn-dark.active,
+.btn-dark.focus,
+.btn-dark:active,
+.btn-dark:focus,
+.btn-dark:hover,
+.open > .dropdown-toggle.btn-custom {
+  background-color: #262c30 !important;
+  border: 1px solid #262c30 !important;
+  color: #fff !important;
+}
+.btn-outline {
+  background-color: #fff;
+  border: 1px solid #ea553d;
+  color: #ea553d !important;
+}
+.btn-outline:hover,
+.btn-outline:focus,
+.btn-outline:active,
+.btn-outline.active,
+.btn-outline.focus,
+.btn-outline:active,
+.btn-outline:focus,
+.btn-outline:hover,
+.open > .dropdown-toggle.btn-custom {
+  background-color: #ea553d !important;
+  border: 1px solid #ea553d !important;
+  color: #fff !important;
+}
+
+.btn-white{
+  background-color: #fff !important;
+  transition: all 0.3s;
+  border: 2px solid #fff;
+  color: #ea553d !important;
+}
+
+/*=================================
+  5.NAVBAR CUSTOM
+===================================*/
+.navbar-custom{
+  padding: 30px 0px;
+  width: 100%;
+  border-radius: 0px;
+  z-index: 999;
+  margin-bottom: 0px;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+.sticky-wrapper {
+  position: absolute;
+  width: 100%;
+}
+.navbar-cistom .navbar-nav {
+  margin-top: 10px;
+}
+.navbar-custom .navbar-brand {
+    font-size: 22px;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-family: 'Quattrocento Sans', sans-serif;
+    border-radius: 3px;
+    padding: 2px 10px;
+}
+.navbar-custom .navbar-nav li a {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+    border-bottom: 3px solid transparent;
+    background-color: transparent !important;
+    padding: 7px 0;
+    margin: 0 10px;
+    transition: all 0.4s;
+}
+.navbar-custom .navbar-nav li a.active,
+.navbar-custom .navbar-nav li a:hover,
+.navbar-custom .navbar-nav li a:active {
+  color: #ffffff;
+}
+.navbar-toggler i{
+  font-size: 24px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+.navbar-custom button{
+  outline: none !important;
+  margin-top: 5px;
+}
+.is-sticky .navbar-custom{
+  margin-top: 0px;
+  padding: 10px 0px;
+  background-color: #fff;
+  box-shadow: 0 10px 33px rgba(0,0,0,.1);
+  color: #000 !important;
+}
+.is-sticky .navbar-custom .navbar-nav li a {
+  color: #000;
+}
+.logo .logo-light {
+  display: inline-block;
+}
+.sticky-wrapper.is-sticky .logo .logo-dark {
+  display: inline-block;
+}
+.sticky-wrapper.is-sticky .logo .logo-text {
+  color: #4c4a4a !important;
+}
+.sticky-wrapper.is-sticky .logo .logo-light {
+  display:none;
+}
+
+.is-sticky .navbar-custom .navbar-nav li a.active,
+.is-sticky .navbar-custom .navbar-nav li a:hover,
+.is-sticky .navbar-custom .navbar-nav li a:active{
+  color: #ea553d !important;
+}
+
+.logo .logo-dark {
+  display: none;
+}
+
+.navbar-custom .btn-custom {
+  margin-top: 0px ;
+  margin-left: 10px;
+}
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
+  background-color: transparent;
+  border-color: #337ab7;
+}
+
+.slogan {
+    font-size: 15px;
+    margin-bottom: 45px;
+    max-width: 580px;
+    margin: 0px auto 30px auto;
+}
+
+/*====================================
+        6.HOME
+=====================================*/
+.home{
+  background: -webkit-linear-gradient(315deg, rgba(158, 15, 184, 0.7) -10%, rgba(5, 232, 255, 0.8) 180%);
+  background-size: cover;
+  padding: 150px 0 0;
+}
+
+.home-title{
+  line-height: 48px;
+  font-size: 36px;
+}
+.home-subtitle{
+  font-size: 16px;
+  line-height: 28px;
+  font-weight: 300;
+}
+
+
+/*====================================
+      7.SERVICES
+=====================================*/
+.services-box i{
+  font-size: 48px;
+}
+
+/*====================================
+      8.Screenshot
+=====================================*/
+
+.thumb {
+  background-color: #ffffff;
+  border-radius: 3px;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+  float: left;
+  width: 100%;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  margin-top: 30px;
+}
+.thumb-img {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+/* glightbox */
+
+.glightbox-clean .gslide-title{
+  margin-bottom: 0;
+}
+
+
+/*====================================
+     9. Pricing
+=====================================*/
+
+.plan-card .plan-price sup {
+    font-size: 15px;
+    margin-left: 10px;
+    top: -1.1rem;
+}
+
+.plan-card .plan-features p {
+    line-height: 32px;
+}
+
+
+/*====================================
+     10. Team
+=====================================*/
+
+.team-box {
+    border-bottom: 1px solid #E9E9E9;
+}
+
+.team-name {
+    font-size: 15px;
+    font-weight: 700;
+    padding-top: 20px;
+    word-spacing: 1px;
+}
+
+.team-designation {
+    letter-spacing: 2px;
+    font-size: 10px;
+    color: #898989;
+    font-weight: 600;
+}
+
+/*====================================
+     11. testimonials
+=====================================*/
+.carousel-indicators [data-bs-target]{
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.carousel-indicators .active {
+    background-color: #333;
+}
+.testimonial-box {
+  padding-bottom: 20px;
+}
+.testimonial-team-desc{
+  font-size: 17px;
+  line-height: 27px;
+  color: #56514D;
+  font-weight: 400;
+}
+.testmonial-team-name{
+    font-weight: 500;
+    margin-bottom: 0;
+    text-transform: uppercase;
+}
+.testmonial-team-designation{
+  font-size: 13px;
+  color: #BFB9BE;
+}
+.item blockquote {
+  border-left: none;
+  margin: 0;
+}
+.quote-icon{
+  color: #ea553d;
+  font-size: 55px;
+}
+
+
+/*====================================
+     12. CONTACT
+=====================================*/
+
+.form-control:focus{
+  box-shadow: none;
+}
+
+/*====================================
+     13. FOOTER
+=====================================*/
+.footer .copy-rights,.footer .social {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 20px 0;
+}
+.footer{
+  background-color: #252731 !important;
+}
+.copy-rights{
+  line-height: 36px;
+}
+.social li a {
+  display: block;
+  color: #8f8c98 !important;
+  font-size: 20px;
+  line-height: 36px;
+  padding:0 7px;
+  text-align: center;
+  text-decoration: none !important;
+  transition: all 0.3s;
+}
+.social li a:hover {
+  color: #f5f5f5 !important;
+}
+
+
+/*====================================
+        14.RESPONSIVE
+======================================*/
+@media screen and (max-width: 991.98px) {
+  
+  .logo .logo-light{
+    display: inline-block;
+  }
+  .navbar-custom .navbar-nav li a {
+    color: #434343 !important;
+  }
+  .navbar-custom {
+    padding: 15px 0;
+  }
+  .navbar-custom button {
+    outline: none !important;
+    margin-top: 0;
+    color: #333 !important;
+}
+  .logo .logo-dark{
+    display: none !important;
+  }
+  .is-sticky .navbar-custom{
+    background-color: #fff !important;
+    box-shadow: 0 10px 33px rgba(0,0,0,.1);
+  }
+  .navbar-custom{
+    background-color: #fff !important;
+    box-shadow: 0 10px 33px rgba(0,0,0,.1);
+  }
+  .logo .logo-text {
+    color: #4c4a4a !important;
+  }
+  .navbar-custom .navbar-nav li a {
+    margin: 0 10px;
+    transition: all 0.4s;
+    display: block;
+  }
+  .navbar-custom>.container-fluid{
+    width: 100%;
+  }
+  .navbar-custom .navbar-nav li a.active {
+    color: #ea553d !important;
+    border-color: transparent;
+  }
+  .vertical-content {
+    display: inherit;
+  }
+  .container {
+    width: 100%;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+  #quote-carousel .carousel-control{
+  background: none;
+  font-size:0em;
+  text-shadow: none;
+  margin-top:0px;
+ }
+ .plan-card {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width:425px){
+  .pull-none{
+    float: none !important;
+    text-align: center;
+  }
+}
