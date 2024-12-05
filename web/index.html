@@ -22,6 +22,9 @@
 
         <!-- Bootstrap core CSS -->
         <link href="css/bootstrap.min.css" rel="stylesheet">
+        <!-- Animate.css -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+        
 
         <!-- Custom styles for this template -->
         <link href="css/style.css" rel="stylesheet">
@@ -46,7 +49,13 @@
                 left: 0;
                 bottom: 0;
             }
-            
+            /* .wow {
+                visibility: visible !important;
+            }
+            .col-sm-4 {
+                overflow: hidden;
+            }
+             */
         </style>
         
     </head>
@@ -92,7 +101,7 @@
         
 
       <!--START HOME-->
-      <section class="section home" id="home" style="background: url('images/banner.jpg') no-repeat center center/cover;">
+      <section class="section home" id="home" style="background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 128, 0, 0.7)), url('images/banner.jpg') no-repeat center center/cover;">
         <div class="bg-overlay"></div>
         <div class="container">
             <div class="row justify-content-center">
@@ -195,91 +204,161 @@
         
 
        
-      <!--START PRICING-->
-        <section class="section" id="pricing">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="text-center">
-                            <h3 class="mb-3">Flexible Pricing Plans</h3>
-                            <p class="text-muted slogan">Choose the perfect plan for your needs. Enjoy high-speed internet with exceptional support and features.</p>
+     <!--START PRICING-->
+    <section class="section" id="pricing">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center">
+                        <h3 class="mb-3">Flexible Pricing Plans</h3>
+                        <p class="text-muted slogan">Choose the perfect plan for your needs. Enjoy high-speed internet with exceptional support and features.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <!-- Basic Plan -->
+                <div class="col-sm-4 animate__bounce">
+                    <div class="card plan-card text-center">
+                        <div class="card-body">
+                            <div class="pt-3 pb-3">
+                                <h1><i class="ion-speedometer plan-icon bg-primary"></i></h1>
+                                <h6 class="text-uppercase text-dark">Basic Plan</h6>
+                            </div>
+                            <div>
+                                <h1 class="plan-price">৳ 500<sup class="text-muted">/month</sup></h1>
+                                <div class="plan-div-border"></div>
+                            </div>
+                            <div class="plan-features pb-3 mt-3 text-muted">
+                                <p>Up to 10 Mbps Speed</p>
+                                <p>Unlimited Data</p>
+                                <p>24/7 Support</p>
+                                <p>Free Installation</p>
+                                <a href="#" class="btn btn-custom">Get Started</a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-4">
-                    <!-- Basic Plan -->
-                    <div class="col-sm-4">
-                        <div class="card plan-card text-center">
-                            <div class="card-body">
-                                <div class="pt-3 pb-3">
-                                    <h1><i class="ion-speedometer plan-icon bg-primary"></i></h1>
-                                    <h6 class="text-uppercase text-dark">Basic Plan</h6>
-                                </div>
-                                <div>
-                                    <h1 class="plan-price">৳20<sup class="text-muted">/month</sup></h1>
-                                    <div class="plan-div-border"></div>
-                                </div>
-                                <div class="plan-features pb-3 mt-3 text-muted">
-                                    <p>Up to 50 Mbps Speed</p>
-                                    <p>Unlimited Data</p>
-                                    <p>24/7 Support</p>
-                                    <p>Free Installation</p>
-                                    <a href="#" class="btn btn-custom">Get Started</a>
-                                </div>
+                <!-- Standard Plan -->
+                <div class="col-sm-4">
+                    <div class="card plan-card text-center">
+                        <div class="card-body">
+                            <div class="pt-3 pb-3">
+                                <h1><i class="ion-network plan-icon bg-success"></i></h1>
+                                <h6 class="text-uppercase text-dark">Standard Plan</h6>
+                            </div>
+                            <div>
+                                <h1 class="plan-price">৳ 800<sup class="text-muted">/month</sup></h1>
+                                <div class="plan-div-border"></div>
+                            </div>
+                            <div class="plan-features pb-3 mt-3 text-muted">
+                                <p>Up to 20 Mbps Speed</p>
+                                <p>Unlimited Data</p>
+                                <p>Priority Support</p>
+                                <p>Free Router</p>
+                                <a href="#" class="btn btn-custom">Get Started</a>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Standard Plan -->
-                    <div class="col-sm-4">
-                        <div class="card plan-card text-center">
-                            <div class="card-body">
-                                <div class="pt-3 pb-3">
-                                    <h1><i class="ion-network plan-icon bg-success"></i></h1>
-                                    <h6 class="text-uppercase text-dark">Standard Plan</h6>
-                                </div>
-                                <div>
-                                    <h1 class="plan-price">৳50<sup class="text-muted">/month</sup></h1>
-                                    <div class="plan-div-border"></div>
-                                </div>
-                                <div class="plan-features pb-3 mt-3 text-muted">
-                                    <p>Up to 100 Mbps Speed</p>
-                                    <p>Unlimited Data</p>
-                                    <p>Priority Support</p>
-                                    <p>Free Router</p>
-                                    <a href="#" class="btn btn-custom">Get Started</a>
-                                </div>
+                <!-- Premium Plan -->
+                <div class="col-sm-4">
+                    <div class="card plan-card text-center">
+                        <div class="card-body">
+                            <div class="pt-3 pb-3">
+                                <h1><i class="ion-rocket plan-icon bg-danger"></i></h1>
+                                <h6 class="text-uppercase text-dark">Premium Plan</h6>
+                            </div>
+                            <div>
+                                <h1 class="plan-price">৳ 1500<sup class="text-muted">/month</sup></h1>
+                                <div class="plan-div-border"></div>
+                            </div>
+                            <div class="plan-features pb-3 mt-3 text-muted">
+                                <p>Up to 50 Mbps Speed</p>
+                                <p>Unlimited Data</p>
+                                <p>Dedicated Support</p>
+                                <p>Free Mesh Wi-Fi</p>
+                                <a href="#" class="btn btn-custom">Get Started</a>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Premium Plan -->
-                    <div class="col-sm-4">
-                        <div class="card plan-card text-center">
-                            <div class="card-body">
-                                <div class="pt-3 pb-3">
-                                    <h1><i class="ion-rocket plan-icon bg-danger"></i></h1>
-                                    <h6 class="text-uppercase text-dark">Premium Plan</h6>
-                                </div>
-                                <div>
-                                    <h1 class="plan-price">৳100<sup class="text-muted">/month</sup></h1>
-                                    <div class="plan-div-border"></div>
-                                </div>
-                                <div class="plan-features pb-3 mt-3 text-muted">
-                                    <p>Up to 200 Mbps Speed</p>
-                                    <p>Unlimited Data</p>
-                                    <p>Dedicated Support</p>
-                                    <p>Free Mesh Wi-Fi</p>
-                                    <a href="#" class="btn btn-custom">Get Started</a>
-                                </div>
+                <!-- Economy Plan -->
+                <div class="col-sm-4">
+                    <div class="card plan-card text-center">
+                        <div class="card-body">
+                            <div class="pt-3 pb-3">
+                                <h1><i class="ion-cash plan-icon bg-warning"></i></h1>
+                                <h6 class="text-uppercase text-dark">Economy Plan</h6>
+                            </div>
+                            <div>
+                                <h1 class="plan-price">৳ 2000<sup class="text-muted">/month</sup></h1>
+                                <div class="plan-div-border"></div>
+                            </div>
+                            <div class="plan-features pb-3 mt-3 text-muted">
+                                <p>Up to 70 Mbps Speed</p>
+                                <p>Unlimited Data</p>
+                                <p>Email Support</p>
+                                <p>Basic Installation</p>
+                                <a href="#" class="btn btn-custom">Get Started</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Business Plan -->
+                <div class="col-sm-4">
+                    <div class="card plan-card text-center">
+                        <div class="card-body">
+                            <div class="pt-3 pb-3">
+                                <h1><i class="ion-briefcase plan-icon bg-info"></i></h1>
+                                <h6 class="text-uppercase text-dark">Business Plan</h6>
+                            </div>
+                            <div>
+                                <h1 class="plan-price">৳ 2500<sup class="text-muted">/month</sup></h1>
+                                <div class="plan-div-border"></div>
+                            </div>
+                            <div class="plan-features pb-3 mt-3 text-muted">
+                                <p>Up to 100 Mbps Speed</p>
+                                <p>Unlimited Data</p>
+                                <p>Business Support</p>
+                                <p>Free Static IP</p>
+                                <a href="#" class="btn btn-custom">Get Started</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ultimate Plan -->
+                <div class="col-sm-4">
+                    <div class="card plan-card text-center">
+                        <div class="card-body">
+                            <div class="pt-3 pb-3">
+                                <h1><i class="ion-star plan-icon bg-purple"></i></h1>
+                                <h6 class="text-uppercase text-dark">Ultimate Plan</h6>
+                            </div>
+                            <div>
+                                <h1 class="plan-price">৳ 3000<sup class="text-muted">/month</sup></h1>
+                                <div class="plan-div-border"></div>
+                            </div>
+                            <div class="plan-features pb-3 mt-3 text-muted">
+                                <p>Up to 150 Mbps Speed</p>
+                                <p>Unlimited Data</p>
+                                <p>24/7 Dedicated Support</p>
+                                <p>Free Advanced Router</p>
+                                <a href="#" class="btn btn-custom">Get Started</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-      <!--END PRICING-->
+        </div>
+    </section>
+    <!--END PRICING-->
+
 
 
         <section class="section bg-custom text-center py-5">
@@ -295,7 +374,7 @@
         <section class="section" id="team">
             <div class="container">
 
-                <div class="row">
+                <div class="row" >
                     <div class="col-12">
                         <div class="text-center">
                             <h3>Our Team</h3>
@@ -304,7 +383,7 @@
                     </div>
                 </div>
 
-                <div class="row mt-4">
+                <div class="row mt-4 wow fadeIn" data-wow-duration="2s" data-wow-delay="5s">
                     <div class="col-md-3 col-sm-6">
                         <div class="team-box text-center">
                             <div class="team-wrapper">
@@ -358,88 +437,75 @@
             </div>
         </section>
 
-        <section class="section bg-grey text-center">
+        <section class="section bg-grey" id="shots" >
             <div class="container">
+
                 <div class="row">
                     <div class="col-12">
-                        <h3 class="mb-5">What Our Clients Say</h3>
-                        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-                            <ol class="carousel-indicators">
-                                <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
-                                <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"></li>
-                                <li data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"></li>
-                            </ol>
-                            <div class="carousel-inner">
-                                <!-- Slide 1 -->
-                                <div class="carousel-item active">
-                                    <blockquote class="blockquote">
-                                        <div class="row justify-content-center">
-                                            <div class="col-md-8">
-                                                <div class="testimonial-box">
-                                                    <div class="mb-4">
-                                                        <i class="mdi mdi-format-quote-open quote-icon text-primary"></i>
-                                                    </div>
-                                                    <p class="testimonial-team-desc mb-4">
-                                                        "This service has transformed the way we operate. The customer support is excellent, and the platform is incredibly user-friendly."
-                                                    </p>
-                                                    <p class="testmonial-team-name fw-bold">John Doe</p>
-                                                    <p class="testmonial-team-designation text-muted">Founder, TechWave</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </blockquote>
-                                </div>
-        
-                                <!-- Slide 2 -->
-                                <div class="carousel-item">
-                                    <blockquote class="blockquote">
-                                        <div class="row justify-content-center">
-                                            <div class="col-md-8">
-                                                <div class="testimonial-box">
-                                                    <div class="mb-4">
-                                                        <i class="mdi mdi-format-quote-open quote-icon text-primary"></i>
-                                                    </div>
-                                                    <p class="testimonial-team-desc mb-4">
-                                                        "I’ve never seen such a seamless and intuitive experience. The team’s dedication to excellence is unmatched."
-                                                    </p>
-                                                    <p class="testmonial-team-name fw-bold">Jane Smith</p>
-                                                    <p class="testmonial-team-designation text-muted">CEO, Innovate Corp</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </blockquote>
-                                </div>
-        
-                                <!-- Slide 3 -->
-                                <div class="carousel-item">
-                                    <blockquote class="blockquote">
-                                        <div class="row justify-content-center">
-                                            <div class="col-md-8">
-                                                <div class="testimonial-box">
-                                                    <div class="mb-4">
-                                                        <i class="mdi mdi-format-quote-open quote-icon text-primary"></i>
-                                                    </div>
-                                                    <p class="testimonial-team-desc mb-4">
-                                                        "Their commitment to quality and service has exceeded our expectations. We highly recommend them!"
-                                                    </p>
-                                                    <p class="testmonial-team-name fw-bold">Michael Brown</p>
-                                                    <p class="testmonial-team-designation text-muted">COO, Bright Solutions</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </blockquote>
-                                </div>
-                            </div>
-                            <!-- Carousel controls -->
-                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            </a>
-                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            </a>
+                        <div class="text-center">
+                            <h3>What Our Clients Say</h3>
+                            <p class="text-muted slogan">Some of our happy clients using SR Coummunication fastest internet.</p>
                         </div>
                     </div>
                 </div>
+
+                <div class="row mt-4">
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_33.png" class="thumb preview-thumb image-popup" title="Screenshot-1">
+                            <img src="images/screenshots/Screenshot_33.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_34.png" class="thumb preview-thumb image-popup" title="Screenshot-2">
+                            <img src="images/screenshots/Screenshot_34.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_35.png" class="thumb preview-thumb image-popup" title="Screenshot-3">
+                            <img src="images/screenshots/Screenshot_35.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_36.png" class="thumb preview-thumb image-popup" title="Screenshot-4">
+                            <img src="images/screenshots/Screenshot_36.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_37.png" class="thumb preview-thumb image-popup" title="Screenshot-5">
+                            <img src="images/screenshots/Screenshot_37.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_38.png" class="thumb preview-thumb image-popup" title="Screenshot-6">
+                            <img src="images/screenshots/Screenshot_38.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                </div>
+                <!-- end row -->
+
+                <div class="row">
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_39.png" class="thumb preview-thumb image-popup" title="Screenshot-7">
+                            <img src="images/screenshots/Screenshot_39.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_40.png" class="thumb preview-thumb image-popup" title="Screenshot-8">
+                            <img src="images/screenshots/Screenshot_40.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                    <div class="col-sm-4">
+                        <a href="images/screenshots/Screenshot_41.png" class="thumb preview-thumb image-popup" title="Screenshot-9">
+                            <img src="images/screenshots/Screenshot_41.png" class="thumb-img" alt="work-thumbnail">
+                        </a>
+                    </div>
+                </div>
+                <!-- end row -->
+
             </div>
         </section>
         
@@ -456,11 +522,12 @@
                             </p>
                             <p class="text-muted slogan">
                                Address: <a href="#" class="text-reset">Purnata plaza, Gouripur bazar, Daudkandi, Cumilla</a>
-                            </p>
-                            <p class="text-muted slogan">
                                Emai: <a href="mailto:info@starcommunicationbd.com" class="text-reset">info@starcommunicationbd.com</a>
                             </p>
-                            <p class="mt-1">
+                            <p class="text-muted slogan">
+                            
+                            </p>
+                            <p class="text-muted slogan">
                                 <a href="tel:+8801944 123 123" class="btn btn-custom mt-4 mb-4">
                                     <i class="mdi mdi-phone"></i> Call Us: +8801944 123 123
                                 </a>
@@ -533,6 +600,10 @@
             </div>
         </footer>
         <!--END FOOTER-->
+        <!-- WOW.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+        <!-- JQUERY Cdn link  -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
         <!-- js placed at the end of the document so the pages load faster -->
         <script src="js/bootstrap.bundle.min.js"></script>
@@ -541,6 +612,21 @@
         
         <!--common script for all pages-->
         <script src="js/app.js"></script>
+        <script>
+            $(document).ready(function() {
+                wow = new WOW(
+                    {
+                    boxClass:     'wow',     
+                    animateClass: 'animated', 
+                    offset:       0,        
+                    mobile:       true,      
+                    live:         true        
+                }
+                )
+                wow.init();
+            });
+            
+        </script>
     </body>
 
 </html>
