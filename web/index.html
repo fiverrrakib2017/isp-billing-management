@@ -56,6 +56,49 @@
                 overflow: hidden;
             }
              */
+             .section.home {
+                height: 100vh;
+                display: flex;
+                align-items: center; 
+                justify-content: center; 
+                text-align: center;
+                padding: 20px; 
+                overflow: hidden; 
+            }
+
+            .home-title {
+                font-size: 2.5rem; /* Adjust title size */
+                line-height: 1.4; /* Better line spacing */
+                word-break: break-word; /* Prevent text breaking issues */
+            }
+
+            .home-subtitle {
+                font-size: 1.2rem;
+                line-height: 1.6;
+                margin: 0 auto; /* Center-align content */
+                max-width: 700px; /* Set a max width to avoid text stretching */
+            }
+
+            .btn-custom {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+
+            @media (max-width: 768px) {
+                .home-title {
+                    font-size: 2rem; /* Adjust title size for smaller screens */
+                
+                }
+                .welcome_text{
+                    font-size: 2rem;
+                    margin-top: 7rem;
+                }
+                .home-subtitle {
+                    font-size: 1rem;
+                    margin-top: 2rem;
+                }
+            }
+
         </style>
         
     </head>
@@ -101,22 +144,24 @@
         
 
       <!--START HOME-->
-      <section class="section home" id="home" style="background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 128, 0, 0.7)), url('images/banner.jpg') no-repeat center center/cover;">
+    <section class="section home" id="home" style="background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 128, 0, 0.7)), url('') no-repeat center center/cover; height: 100vh; display: flex; align-items: center;">
         <div class="bg-overlay"></div>
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 text-white text-center">
-                    <h1 class="home-title text-success">Welcome To SR Communication</h1><br>
+                    <h1 class="welcome_text text-success">Welcome To SR Communication</h1>
                     <h1 class="home-title">High-Speed Internet for Your Home & Business</h1>
-                    <p class="mt-4 home-subtitle">Seamless connectivity, blazing fast speeds, and unmatched customer support tailored to elevate your online experience. Whether it's streaming, gaming, or business, we've got you covered.</p>
+                    <p class="mt-4 home-subtitle">
+                        Seamless connectivity, blazing fast speeds, and unmatched customer support tailored to elevate your online experience. Whether it's streaming, gaming, or business, we've got you covered.
+                    </p>
                     <a href="#pricing" class="btn btn-custom mt-4 mb-4">Explore Plans</a>
                     <a href="#contact" class="btn btn-outline-light mt-4 mb-4">Contact Us</a>
                 </div>
             </div>
         </div>
     </section>
-    
     <!--END HOME-->
+
 
 
         <section class="section" id="features">
@@ -364,9 +409,9 @@
         <section class="section bg-custom text-center py-5">
             <div class="container">
                 <h3 class="text-white mb-4 fw-bold">
-                    Try it free for 30 days. No credit card required.
+                    Please Follow Us For More Offers And Information
                 </h3>
-                <a href="#" class="btn btn-custom btn-lg px-5">Sign Up Now</a>
+                <a target="_blank" href="https://www.facebook.com/srcommbd" class="btn btn-custom btn-lg px-5"><i class="fas fa-rights"></i>Follow Us</a>
             </div>
         </section>
     
@@ -424,11 +469,11 @@
                         <div class="team-box text-center">
                             <div class="team-wrapper">
                                 <div class="team-member">
-                                    <img alt="" src="images/team/img-4.jpg" alt="" class="img-fluid rounded">
+                                    <img alt="" src="images/monir.jpg" alt="" class="img-fluid rounded">
                                 </div>
                             </div>
-                            <h4 class="team-name text-uppercase">Melba Brown</h4>
-                            <p class="text-uppercase team-designation">Manager</p>
+                            <h4 class="team-name text-uppercase">Monir Rahman</h4>
+                            <p class="text-uppercase team-designation">DevOps Engineer</p>
                         </div>
                     </div>
 
@@ -520,13 +565,21 @@
                             <p class="text-muted slogan">
                                 We’d love to hear from you! Whether you have a question about our services, pricing, or anything else, our team is ready to answer all your questions.
                             </p>
-                            <p class="text-muted slogan">
+                            <p class="text-muted ">
+                              Email: <a href="mailto:info@starcommunicationbd.com" class="">info@starcommunicationbd.com</a>
+                                
+
+                            </p>
+                            <p class="text-muted">
+                              Address: <a href="#" class="text-reset">Purnata plaza, Gouripur bazar, Daudkandi, Cumilla</a>
+                                
+
+                            </p>
+                            <!-- <p class="text-muted slogan"> 
+                               Emai: <a href="mailto:info@starcommunicationbd.com" class="">info@starcommunicationbd.com</a><br>
                                Address: <a href="#" class="text-reset">Purnata plaza, Gouripur bazar, Daudkandi, Cumilla</a>
-                               Emai: <a href="mailto:info@starcommunicationbd.com" class="text-reset">info@starcommunicationbd.com</a>
-                            </p>
-                            <p class="text-muted slogan">
-                            
-                            </p>
+                              
+                            </p> -->
                             <p class="text-muted slogan">
                                 <a href="tel:+8801944 123 123" class="btn btn-custom mt-4 mb-4">
                                     <i class="mdi mdi-phone"></i> Call Us: +8801944 123 123
@@ -539,24 +592,24 @@
 
                 <br/>
 
-                <form class="">
+                <form id="contactForm">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label" for="username">Name</label>
-                                <input type="text" class="form-control" id="username" placeholder="Enter Name" required />
+                                <input type="text" name="username" class="form-control" id="username" placeholder="Enter Name" required />
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label" for="useremail">Email address</label>
-                                <input type="email" class="form-control" id="useremail" placeholder="Enter Email" required />
+                                <input type="email" name="useremail" class="form-control" id="useremail" placeholder="Enter Email" required />
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label" for="subject">Subject</label>
-                                <input type="text" class="form-control" id="subject" placeholder="Enter Subject" required />
+                                <input type="text" name="subject" class="form-control" id="subject" placeholder="Enter Subject" required />
                             </div>
                         </div>
                     </div>
@@ -564,7 +617,7 @@
                         <div class="col-md-12">
                             <div class="mb-3">
                                 <label class="form-label" for="message">Message</label>
-                                <textarea class="form-control" rows="5" id="message" placeholder="What's on your mind"></textarea>
+                                <textarea class="form-control" name="message" rows="5" id="message" placeholder="What's on your mind"></textarea>
                             </div>
                         </div>
                     </div>
@@ -574,6 +627,9 @@
                         </div>
                     </div>
                 </form>
+                <div id="responseMessage"></div>
+                
+                
             </div>
         </section>
         <!--END FORM-->
@@ -625,6 +681,30 @@
                 )
                 wow.init();
             });
+
+            $(document).ready(function () {
+                $("#contactForm").on("submit", function (e) {
+                    e.preventDefault(); 
+
+                    $.ajax({
+                        url: "send_email.php", 
+                        method: "POST",
+                        data: $(this).serialize(), 
+                        success: function (response) {
+                            $("#responseMessage").html(
+                                '<div class="alert alert-success">Email sent successfully!</div>'
+                            );
+                            $("#contactForm")[0].reset(); 
+                        },
+                        error: function () {
+                            $("#responseMessage").html(
+                                '<div class="alert alert-danger">Failed to send email. Please try again.</div>'
+                            );
+                        },
+                    });
+                });
+            });
+
             
         </script>
     </body>
