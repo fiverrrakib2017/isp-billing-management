@@ -53,8 +53,8 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
 
     date_default_timezone_set('Asia/Dhaka');
     $todayDate = date('H:i A, d-M-Y');
-
-    $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$amount','$amount','Recharge','2','$recharge_by','$todayDate')");
+    $percent_amount =  $amount * 0.02;
+    $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$percent_amount','$percent_amount','Recharge','2','$recharge_by','$todayDate')");
 
     // Clear session data
     unset($_SESSION['id_token'], $_SESSION['app_key'], $_SESSION['final_amount'], $_SESSION['pop_id']);
@@ -171,7 +171,7 @@ function timeAgo($startdate) {
                                <img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png" class="img-fluid" height="50px" width="100px">
                             </a> -->
                             <button type="button" class="btn-sm btn mb-1" id="bkashPaymentButton"> 
-                               <img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png" class="img-fluid" height="50px" width="100px">
+                               <img src="images/bkash_payment_logo.png" class="img-fluid" height="50px" width="100px">
                             </button>
 
                         </div>
@@ -1488,7 +1488,7 @@ function timeAgo($startdate) {
     <script type="text/javascript">
         $(document).ready(function() {
             $('#bkashPaymentButton').on('click', function() {
-                let amount = prompt("Enter the amount to pay:");
+                let amount = prompt("Enter Amount:");
 
                 if (amount && amount > 0) {
                     let pop_id = "<?php echo $auth_usr_POP_id ?? 0; ?>"; 
