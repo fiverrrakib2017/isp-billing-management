@@ -73,6 +73,34 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include 'style.php'; ?>
+    <style>
+.profile-info {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-item {
+    margin-bottom: 10px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    color: #333;
+}
+
+.profile-item i {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #007bff;
+}
+
+.profile-item strong {
+    color: #495057;
+}
+
+</style>
 </head>
 
 <body data-sidebar="dark">
@@ -303,63 +331,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                             </div>
                         </div><!--end col -->
                     </div> <!-- end row-->
-                    <!-- New Row-->
+                    
                     <div class="row">
-                        <div class="col-md-6 col-xl-4">
-
-                            <div class="card">
-                                <div class="card-body">
-                                    <a href="pop_area.php?pop_id=<?php echo $popid; ?>">
-                                        <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
-                                                    class="fas fa-search-location"></i></span>
-                                            <div class="mini-stat-info">
-                                                <span class="counter text-teal">
-                                                    <?php if ($totalarea = $con->query("SELECT * FROM area_list WHERE pop_id=$popid")) {
-                                                        echo $totalarea->num_rows;
-                                                    }
-                                                    
-                                                    ?>
-                                                </span>
-                                                Area
-
-
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-
-                        </div> <!--End col -->
-
-
-
-
-
-                        <div class="col-md-6 col-xl-4">
-                            <div class="card">
-                                <a href="allTickets.php?pop_id=<?php echo $popid; ?>">
-                                    <div class="card-body">
-                                        <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-warning me-0 float-end">
-                                                <i class="fas fa-notes-medical"></i>
-                                            </span>
-                                            <div class="mini-stat-info">
-                                                <span class="counter text-danger">
-                                                    <?php
-                                                    if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$popid")) {
-                                                        echo $dsblcstmr->num_rows;
-                                                    }
-                                                    ?>
-                                                </span>
-                                                Tickets
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div> <!-- End col -->
-                        <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card">
                                 <div class="card-body">
                                     <a href="#">
@@ -390,10 +364,6 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                 </div>
                             </div>
                         </div>
-
-                    </div> <!-- end row-->
-                    <div class="row">
-
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card ">
@@ -483,35 +453,159 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                             </div>
                         </div>                       
                     </div>
+                    <!-- New Row-->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-3 ">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="col-12 bg-white p-0 px-2 pb-3 mb-3">
-                                        <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class="mdi mdi-marker-check"></i> Incharge Fullname:</p> <a
-                                                href="#"><?php echo $fullname; ?></a>
+                                    <a href="pop_area.php?pop_id=<?php echo $popid; ?>">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="fas fa-search-location"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                    <?php if ($totalarea = $con->query("SELECT * FROM area_list WHERE pop_id=$popid")) {
+                                                        echo $totalarea->num_rows;
+                                                    }
+                                                    
+                                                    ?>
+                                                </span>
+                                                Area
+
+
+                                            </div>
                                         </div>
-                                        <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class="mdi mdi-account-circle"></i> Incharge Username:</p> <a
-                                                href="#"><?php echo $username; ?></a>
-                                        </div>
-                                        <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class=" fas fa-dollar-sign"></i> Opening Balance:</p> <a
-                                                href="#"><?php echo $opening_bal; ?></a>
-                                        </div>
-                                        <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class="mdi mdi-phone"></i> Mobile:</p> <a
-                                                href="#"><?php echo $mobile_num1; ?></a>
-                                        </div>
-                                        <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                            <p><i class=" fas fa-envelope"></i> Email Address:</p> <a
-                                                href="#"><?php echo $email_address; ?></a>
+                                    </a>
+                                </div>
+                            </div>
+                        </div> <!--End col -->                           
+                        <div class="col-md-3">
+                            <div class="card">
+                                <a href="allTickets.php?pop_id=<?php echo $popid; ?>">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-warning me-0 float-end">
+                                                <i class="fas fa-notes-medical"></i>
+                                            </span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-danger">
+                                                    <?php
+                                                    if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$popid")) {
+                                                        echo $dsblcstmr->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                Tickets
+                                            </div>
                                         </div>
                                     </div>
+                                </a>
+                            </div>
+                        </div> <!-- End col --> 
+                    </div> <!-- end row-->
+                    <div class="row">
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table class="table table-bordered dt-responsive nowrap"
+                                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>POP Name</th>
+                                                <th>Total</th>
+                                                <th><img src="images/icon/online.png" height="10"
+                                                        width="10" /> Online</th>
+                                                <th><img src="images/icon/expired.png" height="10"
+                                                        width="10" /> Expired</th>
+                                                <th><img src="images/icon/disabled.png" height="10"
+                                                        width="10" /> Disabled</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $sql = "SELECT * FROM add_pop LIMIT 5";
+                                            $result = mysqli_query($con, $sql);
+
+                                            while ($rows = mysqli_fetch_assoc($result)) {
+                                                $pop_ID = $rows['id'];
+                                            ?>
+
+                                            <tr>
+                                                <td><?php echo $rows['id']; ?></td>
+                                                <td><a
+                                                        href="view_pop.php?id=<?php echo $pop_ID; ?>"><?php echo $rows['pop']; ?></a>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    
+                                                    $sql = "SELECT * FROM customers WHERE pop='$pop_ID'";
+                                                    $countpopusr = mysqli_query($con, $sql);
+                                                    
+                                                    echo $countpopusr->num_rows;
+                                                    
+                                                    ?>
+
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    
+                                                    $sql = "SELECT radacct.username FROM radacct
+                                                                                                                    INNER JOIN customers
+                                                                                                                    ON customers.username=radacct.username
+                                                                                                                    
+                                                                                                                    WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
+                                                    $countpoponlnusr = mysqli_query($con, $sql);
+                                                    
+                                                    echo $countpoponlnusr->num_rows;
+                                                    
+                                                    ?>
+
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $sql = "SELECT * FROM customers WHERE pop='$pop_ID' AND NOW() > expiredate";
+                                                    $countxprd = mysqli_query($con, $sql);
+                                                    $totalexprs = $countxprd->num_rows;
+                                                    if ($totalexprs == 0) {
+                                                        echo $totalexprs;
+                                                    } else {
+                                                        echo "<span class='badge bg-danger'>$totalexprs</span>";
+                                                    }
+                                                    
+                                                    //
+                                                    
+                                                    ?>
+                                                </td>
+
+                                                <td>
+                                                    <?php
+                                                    $disableQ = "SELECT * FROM customers WHERE pop='$pop_ID' AND status='0'";
+                                                    $countdsbld = mysqli_query($con, $disableQ);
+                                                    $totaldsbld = $countdsbld->num_rows;
+                                                    if ($totaldsbld == 0) {
+                                                        echo $totaldsbld;
+                                                    } else {
+                                                        echo "<span class='badge bg-danger'>$totaldsbld</span>";
+                                                    }
+                                                    
+                                                    //
+                                                    
+                                                    ?>
+                                                </td>
+
+                                            </tr>
+                                            <?php } ?>
+
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
+
+
+
                         <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
 
@@ -1245,6 +1339,12 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
     <?php include 'script.php'; ?>
     <script type="text/javascript" src="js/customer.js"></script>
     <script type="text/javascript">
+        // document.addEventListener('DOMContentLoaded', function () {
+        //     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        //     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        //         return new bootstrap.Tooltip(tooltipTriggerEl);
+        //     });
+        // });
         /*************************simple-line-chart Start**************************************************/
         var chart = new Chartist.Line("#simple-line-chart", {
             labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],

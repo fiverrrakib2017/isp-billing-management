@@ -59,7 +59,20 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
-                            <a class="dropdown-item text-danger" href="logout.php">Logout</a>
+                            <?php
+                           
+                                if (!empty($pop_name) && !empty($fullname) && !empty($username) && !empty($opening_bal)) {
+                                    echo '<div class="profile-info">';
+                                    echo '<p class="profile-item"><i class="mdi mdi-marker-check"></i> <strong>Fullname:</strong> ' . htmlspecialchars($fullname) . '</p>';
+                                    echo '<p class="profile-item"><i class="mdi mdi-account-circle"></i> <strong>Username:</strong> ' . htmlspecialchars($username) . '</p>';
+                                    echo '<p class="profile-item"><i class="fas fa-dollar-sign"></i> <strong>Opening Balance:</strong> ' . htmlspecialchars($opening_bal) . '</p>';
+                                    echo '<p class="profile-item"><i class="mdi mdi-phone"></i> <strong>Mobile:</strong> ' . htmlspecialchars($mobile_num1) . '</p>';
+                                    echo '<p class="profile-item"><i class="fas fa-envelope"></i> <strong>Email:</strong> ' . htmlspecialchars($email_address) . '</p>';
+                                    echo '</div>';
+                                }
+                            ?>
+
+                            <a class="dropdown-item text-danger" href="logout.php"><i class="mdi mdi-power"></i> Logout</a>
                         </div>
                     </div>
 
