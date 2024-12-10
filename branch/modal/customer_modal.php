@@ -84,7 +84,7 @@
                                             <option value="">Select Pop/Branch
                                             </option>
                                             <?php
-                                            if ($pop = $con->query('SELECT * FROM add_pop ')) {
+                                            if ($pop = $con->query('SELECT * FROM add_pop WHERE id=' . $auth_usr_POP_id)) {
                                                 while ($rows = $pop->fetch_array()) {
                                                     $id = $rows['id'];
                                                     $name = $rows['pop'];
