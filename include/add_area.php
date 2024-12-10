@@ -8,7 +8,8 @@ include "db_connect.php";
  if (isset($_GET["update"])) {
   $areaId=$_GET["id"];
   $area_name=$_GET["area"];
-  $con->query("UPDATE area_list SET name='$area_name' WHERE id=$areaId");
+  $billing_date=$_GET["billing_date"];
+  $con->query("UPDATE area_list SET name='$area_name', billing_date='$billing_date' WHERE id=$areaId");
    
 }
 
@@ -19,9 +20,10 @@ include "db_connect.php";
 if(isset($_GET['add'])){
   $area_name= $_GET['area'];
   $pop_name= $_GET['pop_id'];
+  $billing_date= $_GET['billing_date'];
   $user_type= $_GET['user_type'];
 
-  $result= $con->query("INSERT INTO area_list(name,pop_id,user_type) VALUES('$area_name','$pop_name','$user_type')");
+  $result= $con->query("INSERT INTO area_list(name,pop_id,billing_date,user_type) VALUES('$area_name','$pop_name','$billing_date','$user_type')");
   if ($result) {
     echo "Area Added Successfully";
   }

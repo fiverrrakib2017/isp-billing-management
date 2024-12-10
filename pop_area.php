@@ -109,6 +109,18 @@ include 'include/pop_security.php';
                                                         <input class="form-control" type="text" name="area"
                                                             placeholder="Type Your Area" id="area" />
                                                     </div>
+                                                    <div class="form-group">
+                                                        <label>Billing Cycle Date</label>
+                                                        <select class="form-select" type="text" id="billing_date" name="billing_date">
+                                                            <?php 
+                                                            
+                                                            for($i=1; $i<30; $i++){
+                                                                echo '<option value="'.$i.'">'.$i.'</option>';
+                                                            }
+                                                            
+                                                            ?>
+                                                        </select>
+                                                    </div>
                                                     <div class="form-group d-none">
                                                         <label>User Type</label>
                                                         <input class="form-control" type="text" name="user_type"
@@ -268,9 +280,13 @@ while ($rows2 = mysqli_fetch_assoc($result)) {
         $("#areaDataTable").DataTable();
         $("#add_area").click(function() {
             var area = $("#area").val();
+            var billing_date = $("#billing_date").val();
             if (area.length == 0) {
                 toastr.error("Area name is require");
-            } else {
+            }else if(billing_date.length==0){
+                toastr.error("Billing Cycle Date is require");
+            } 
+            else {
                 var formData = $("#form-area").serialize();
                 $.ajax({
                     type: "GET",
