@@ -507,47 +507,37 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                         <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <table class="table table-bordered dt-responsive nowrap"
+                                    <table id="customer_table_area" class="table table-bordered dt-responsive nowrap"
                                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>POP Name</th>
-                                                <th>Total</th>
+                                                <th>Area Name</th>
+                                              
                                                 <th><img src="images/icon/online.png" height="10"
                                                         width="10" /> Online</th>
                                                 <th><img src="images/icon/expired.png" height="10"
                                                         width="10" /> Expired</th>
                                                 <th><img src="images/icon/disabled.png" height="10"
                                                         width="10" /> Disabled</th>
-
+                                                        <th>Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <?php
-                                            $sql = "SELECT * FROM add_pop LIMIT 5";
+                                            $sql = "SELECT * FROM area_list WHERE pop_id=$pop_id";
                                             $result = mysqli_query($con, $sql);
 
                                             while ($rows = mysqli_fetch_assoc($result)) {
-                                                $pop_ID = $rows['id'];
+                                                $area_ID = $rows['id'];
                                             ?>
 
                                             <tr>
                                                 <td><?php echo $rows['id']; ?></td>
                                                 <td><a
-                                                        href="view_pop.php?id=<?php echo $pop_ID; ?>"><?php echo $rows['pop']; ?></a>
+                                                        href="view_area.php?id=<?php echo $area_ID; ?>"><?php echo $rows['name']; ?></a>
                                                 </td>
-                                                <td>
-                                                    <?php
-                                                    
-                                                    $sql = "SELECT * FROM customers WHERE pop='$pop_ID'";
-                                                    $countpopusr = mysqli_query($con, $sql);
-                                                    
-                                                    echo $countpopusr->num_rows;
-                                                    
-                                                    ?>
-
-                                                </td>
+                                                
                                                 <td>
                                                     <?php
                                                     
@@ -555,7 +545,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                                                                                     INNER JOIN customers
                                                                                                                     ON customers.username=radacct.username
                                                                                                                     
-                                                                                                                    WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
+                                                                                                                    WHERE customers.area='$area_ID' AND radacct.acctstoptime IS NULL";
                                                     $countpoponlnusr = mysqli_query($con, $sql);
                                                     
                                                     echo $countpoponlnusr->num_rows;
@@ -565,7 +555,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                 </td>
                                                 <td>
                                                     <?php
-                                                    $sql = "SELECT * FROM customers WHERE pop='$pop_ID' AND NOW() > expiredate";
+                                                    $sql = "SELECT * FROM customers WHERE area='$area_ID' AND NOW() > expiredate";
                                                     $countxprd = mysqli_query($con, $sql);
                                                     $totalexprs = $countxprd->num_rows;
                                                     if ($totalexprs == 0) {
@@ -581,7 +571,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
                                                 <td>
                                                     <?php
-                                                    $disableQ = "SELECT * FROM customers WHERE pop='$pop_ID' AND status='0'";
+                                                    $disableQ = "SELECT * FROM customers WHERE area='$area_ID' AND status='0'";
                                                     $countdsbld = mysqli_query($con, $disableQ);
                                                     $totaldsbld = $countdsbld->num_rows;
                                                     if ($totaldsbld == 0) {
@@ -590,9 +580,18 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                         echo "<span class='badge bg-danger'>$totaldsbld</span>";
                                                     }
                                                     
-                                                    //
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    
+                                                    $sql = "SELECT * FROM customers WHERE area='$area_ID'";
+                                                    $countpopusr = mysqli_query($con, $sql);
+                                                    
+                                                    echo $countpopusr->num_rows;
                                                     
                                                     ?>
+
                                                 </td>
 
                                             </tr>
@@ -1339,12 +1338,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
     <?php include 'script.php'; ?>
     <script type="text/javascript" src="js/customer.js"></script>
     <script type="text/javascript">
-        // document.addEventListener('DOMContentLoaded', function () {
-        //     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        //     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        //         return new bootstrap.Tooltip(tooltipTriggerEl);
-        //     });
-        // });
+        $("#customer_table_area").DataTable();
         /*************************simple-line-chart Start**************************************************/
         var chart = new Chartist.Line("#simple-line-chart", {
             labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
