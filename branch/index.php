@@ -170,8 +170,8 @@ function timeAgo($startdate) {
                             <!-- <a href="bkash.php?a=15" class="btn-sm btn mb-1"> 
                                <img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png" class="img-fluid" height="50px" width="100px">
                             </a> -->
-                            <button type="button" class="btn-sm btn mb-1" id="bkashPaymentButton"> 
-                               <img src="images/bkash_payment_logo.png" class="img-fluid" height="50px" width="100px">
+                            <button type="button" class="btn-sm btn mb-1" data-bs-toggle="modal" data-bs-target="#bkash_paymentModal"> 
+                               <img src="images/bkash_payment_logo.svg" class="img-fluid" height="50px" width="80px">
                             </button>
 
                         </div>
@@ -1473,6 +1473,44 @@ function timeAgo($startdate) {
         </div><!-- /.modal-dialog -->
     </div>
 
+    <!-- Bkash Payment  Modal -->
+    <div class="modal fade" id="bkash_paymentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">POP/Branch Recharge</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+            <form id="bkash_payment_form">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group mb-2">
+                            <label for="">Amount</label>
+                            <input type="text" name="received_amount" class="form-control" placeholder="Enter Your Amount">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="">Charge Amount</label>
+                            <input readonly  type="text" name="charge_amount" class="form-control" value="00">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="">Billing Amount</label>
+                            <input readonly  type="text" name="amount" class="form-control" value="00">
+                        </div>
+                        <div class="form-group mb-2 d-none">
+                            <input  type="text" name="pop_id" class="form-control" value="<?php echo $auth_usr_POP_id ?? 0; ?>">
+                        </div>
+                    </div>    
+                </div>
+                <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success"><i class="fas fa-cash"></i>&nbsp;Payment Now</button>
+                </div> 
+            </form>
+        </div>
+    </div>
+    </div>
+
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
 
@@ -1487,15 +1525,30 @@ function timeAgo($startdate) {
     ?>
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#bkashPaymentButton').on('click', function() {
-                let amount = prompt("Enter Amount:");
-
-                if (amount && amount > 0) {
-                    let pop_id = "<?php echo $auth_usr_POP_id ?? 0; ?>"; 
-                    window.location.href = 'bkash.php?amount=' + amount + '&pop_id=' + pop_id + '&submit_payment=' + 1;
-                } else {
-                    alert("Please enter a valid amount.");
+            $("input[name='received_amount']").keyup(function(){
+                var received_amount = parseFloat($(this).val());
+                if (isNaN(received_amount) || received_amount <= 0) {
+                    $("input[name='charge_amount']").val("0");
+                    $("input[name='amount']").val("0");
+                    return;
                 }
+                /*Calculate charge and final amount*/ 
+                var charge_amount = received_amount * 0.02;
+                var amount = received_amount - charge_amount;
+                
+                /* Update the readonly fields*/
+                $("input[name='charge_amount']").val(charge_amount.toFixed(2));
+                $("input[name='amount']").val(amount.toFixed(2));
+            });
+            $("#bkash_payment_form").on('submit',function(e){
+                 e.preventDefault();
+                var amount=$("input[name='received_amount']").val();
+                var pop_id=$("input[name='pop_id']").val();
+                if (!amount || amount <= 0) {
+                    toastr.error("Invalid payment amount!");
+                    return;
+                }
+                window.location.href = `http://<?php echo $_SERVER['HTTP_HOST']; ?>/branch/bkash.php?amount=${amount}&pop_id=${pop_id}&submit_payment=1`;
             });
             $('#customers_table').DataTable({
                 "searching": true,
