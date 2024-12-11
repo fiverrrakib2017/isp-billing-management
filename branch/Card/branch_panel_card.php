@@ -95,48 +95,7 @@
                         </div><!--end col -->
                     </div> <!-- end row-->
                     <div class="row">
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card ">
-                                <a href="allTickets.php">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-warning me-0 float-end"><i class="fas fa-notes-medical"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-teal">
-                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id")) {
-                                                    echo  $dsblcstmr->num_rows;
-                                                }
-                                                ?>
-                                            </span>
-                                            Tickets
-                                        </div>
-                                    </div>
-                                </div>
-                                </a>
-                            </div>
-                        </div><!--end col -->
-                        <div class="col-md-6 col-xl-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <a href="pop_area.php">
-                                        <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
-                                                    class="fas fa-search-location"></i></span>
-                                            <div class="mini-stat-info">
-                                                <span class="counter text-teal">
-                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM area_list WHERE pop_id='$auth_usr_POP_id' ")) {
-                                                        echo $totalCustomer->num_rows;
-                                                    }
-                                                    
-                                                    ?>
-                                                </span>
-                                                Area
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div> <!--End col -->
+                       
                         <div class="col-md-6 col-xl-3">
                             <div class="card">
                                 <div class="card-body">
@@ -230,7 +189,7 @@
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card ">
-                                <a href="#">
+                                <a href="payment_history.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
                                         <span class="mini-stat-icon bg-success me-0 float-end"> <i class="mdi mdi-currency-bdt fa-2x text-white-300"></i></span>
@@ -253,4 +212,46 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card ">
+                                <a href="allTickets.php">
+                                <div class="card-body">
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-warning me-0 float-end"><i class="fas fa-notes-medical"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-teal">
+                                                <?php if ($dsblcstmr = $con->query("SELECT * FROM ticket WHERE pop_id=$auth_usr_POP_id")) {
+                                                    echo  $dsblcstmr->num_rows;
+                                                }
+                                                ?>
+                                            </span>
+                                            Tickets
+                                        </div>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        </div><!--end col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="pop_area.php">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="fas fa-search-location"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM area_list WHERE pop_id='$auth_usr_POP_id' ")) {
+                                                        echo $totalCustomer->num_rows;
+                                                    }
+                                                    
+                                                    ?>
+                                                </span>
+                                                Area
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div> <!--End col -->
                     </div>

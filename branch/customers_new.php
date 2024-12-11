@@ -35,7 +35,7 @@ if (file_exists($users_right_path)) {
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php include '../Header.php'; ?>
+        <?php $page_title="Customers"; include '../Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">

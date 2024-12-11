@@ -534,7 +534,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                                     $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%' AND area=$area_id";
                                                     $result = mysqli_query($con, $sql);
                                                     $countconn = mysqli_num_rows($result);
-                                                    echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '">' . $countconn . '</a>';
+                                                    echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '&&area_id='.$area_id.'">' . $countconn . '</a>';
                                                     ?>
                                                 </td>
                                                 <td>
@@ -542,7 +542,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                                     $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%' AND area=$area_id";
                                                     $result = mysqli_query($con, $sql);
                                                     $countexpconn = mysqli_num_rows($result);
-                                                    echo '<a href="customer_expire.php?list=' . $currentyrMnth . '">' . $countexpconn . '</a>';
+                                                    echo '<a href="customer_expire.php?list=' . $currentyrMnth . ' && area_id='.$area_id.'">' . $countexpconn . '</a>';
                                                     ?>
                                                 </td>
                                             </tr>

@@ -114,11 +114,15 @@ if (file_exists($users_right_path)) {
 												if(isset($_GET["list"]))
 												{
 													$MnthYr=$_GET["list"];
-													
+													$area_id=$_GET['area_id'];
+                                                    $condition='';
+                                                    if($area_id >0){
+                                                        $condition .="AND area=$area_id";
+                                                    }
 
                                                     $sql = "SELECT * FROM customers 
                                                     WHERE DATE_FORMAT(createdate, '%Y-%m') = '$MnthYr'
-                                                    AND pop=$auth_usr_POP_id AND expiredate >= NOW()";
+                                                    AND pop=$auth_usr_POP_id $condition AND expiredate >= NOW()";
 
 
 												}
@@ -160,11 +164,6 @@ if (file_exists($users_right_path)) {
                                                             <?php
 
                                                             echo  $rows["package_name"];
-                                                            // if ($allData = $con->query("SELECT * FROM radgroupcheck WHERE id='$packageId'")) {
-                                                            //     while ($packageName = $allData->fetch_array()) {
-                                                            //         echo  $packageName['groupname'];
-                                                            //     }
-                                                            // }
 
                                                             ?>
 
@@ -205,8 +204,8 @@ if (file_exists($users_right_path)) {
                                                         </td>
 
                                                         <td>
-                                                            <a class="btn btn-info" href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-                                                            <a class="btn btn-success" href="profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
+                                                            <a class="btn-sm btn btn-info" href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
+                                                            <a class="btn-sm btn btn-success" href="profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
                                                             </a>
 
                                                             <!--<a href="customer_delete.php?clid=<?php echo $rows['id']; ?>" class="btn btn-danger deleteBtn" onclick=" return confirm('Are You Sure');" data-id=<?php echo $rows['id']; ?>><i class="fas fa-trash"></i>
