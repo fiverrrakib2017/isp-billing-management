@@ -111,8 +111,8 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php $page_title = 'POP/Branch';
-        include 'Header.php'; ?>
+      
+        <?php $page_title="POP/Branch"; include 'Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">

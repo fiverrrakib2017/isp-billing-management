@@ -84,13 +84,22 @@
                                             <option value="">Select Pop/Branch
                                             </option>
                                             <?php
-                                            if ($pop = $con->query('SELECT * FROM add_pop ')) {
+                                            $condition = "";
+                                            if (isset($pop_id)) {
+                                                $pop_id = intval($pop_id); 
+                                                $condition = "WHERE id=$pop_id";
+                                            }
+                                            
+                                            $query = "SELECT * FROM add_pop $condition";
+                                            if ($pop = $con->query($query)) { 
                                                 while ($rows = $pop->fetch_array()) {
-                                                    $id = $rows['id'];
-                                                    $name = $rows['pop'];
+                                                    $id = htmlspecialchars($rows['id']);
+                                                    $name = htmlspecialchars($rows['pop']);
                                             
                                                     echo '<option value="' . $id . '">' . $name . '</option>';
                                                 }
+                                            } else {
+                                                echo "Error: " . $con->error; 
                                             }
                                             ?>
                                         </select>
