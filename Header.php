@@ -69,6 +69,32 @@
                                 echo '<p class="profile-item"><i class="fas fa-envelope"></i> <strong>Email:</strong>'.$email_address.'</p>';
                                 echo ' </div>';
                              }
+
+                            //  if(isset($auth_usr_type)){
+                            //     if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_type'")) {
+                            //         while ($rows = $pop_list->fetch_array()) {
+                            //             $lstid = $rows['id'];
+                            //             $pop_name = $rows['pop'];
+                            //             $pop_status = $rows['status'];
+                            //             $fullname = $rows['fullname'];
+                            //             $username = $rows['username'];
+                            //             $password = $rows['password'];
+                            //             $opening_bal = $rows['opening_bal'];
+                            //             $mobile_num1 = $rows['mobile_num1'];
+                            //             $mobile_num2 = $rows['mobile_num2'];
+                            //             $email_address = $rows['email_address'];
+                            //             $note = $rows['note'];
+
+                            //             echo '<div class="profile-info">';
+                            //             echo '<p class="profile-item"><i class="mdi mdi-marker-check"></i><strong>Fullname:</strong> '.$fullname.'</p>';
+                            //             echo '<p class="profile-item"><i class="mdi mdi-account-circle"></i> <strong>Username:</strong> '.$username.'</p>';
+                            //             echo '<p class="profile-item"><i class="fas fa-dollar-sign"></i> <strong>Opening Balance:</strong> '.$opening_bal.'</p>';
+                            //             echo '<p class="profile-item"><i class="mdi mdi-phone"></i> <strong>Mobile:</strong> '.$mobile_num1.'</p>';
+                            //             echo '<p class="profile-item"><i class="fas fa-envelope"></i> <strong>Email:</strong>'.$email_address.'</p>';
+                            //             echo ' </div>';
+                            //         }
+                            //     }
+                            //  }
                              
                              
                              ?>
@@ -152,3 +178,32 @@
                 </div>
             </div>
         </header>
+
+        <style>
+.profile-info {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-item {
+    margin-bottom: 10px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    color: #333;
+}
+
+.profile-item i {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #007bff;
+}
+
+.profile-item strong {
+    color: #495057;
+}
+
+</style>

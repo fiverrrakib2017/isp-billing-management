@@ -73,34 +73,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include 'style.php'; ?>
-    <style>
-.profile-info {
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.profile-item {
-    margin-bottom: 10px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    color: #333;
-}
-
-.profile-item i {
-    font-size: 18px;
-    margin-right: 10px;
-    color: #007bff;
-}
-
-.profile-item strong {
-    color: #495057;
-}
-
-</style>
+    
 </head>
 
 <body data-sidebar="dark">

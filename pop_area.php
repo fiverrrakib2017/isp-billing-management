@@ -159,6 +159,7 @@ include 'include/pop_security.php';
                                                     <th>Customers</th>
                                                     <th>Expired</th>
                                                     <th>POP/Branch Name</th>
+                                                    <th>Billing Cycle</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
@@ -212,6 +213,9 @@ while ($rows2 = mysqli_fetch_assoc($result)) {
                 echo htmlspecialchars($rows3['pop']);
             }
             ?>
+        </td>
+        <td>
+            <?php echo $rows2['billing_date']?? 0;?>
         </td>
 
         <td style="text-align:right;">
