@@ -96,6 +96,37 @@ if (isset($_POST['current_pop_name'])) {
         }
     }
 }
+/* Get Area Billing Cycle */
+if (isset($_POST['get_billing_cycle'])) {
+    $area_id = $_POST['area_id'];
+    $response = '';
+    $data=[];
+    $allArea = $con->query("SELECT billing_date FROM `area_list` WHERE  id='$area_id'");
+    if ($allArea->num_rows > 0) {
+        while ($row = $allArea->fetch_array()) {
+            if(!is_null($row['billing_date']) && $row['billing_date'] !==''){
+                $data[] = $row['billing_date'];
+            }
+        }
+    }
+    
+    if(empty($data)){
+        $exp_cstmr = $con->query('SELECT * FROM customer_expires');
+        if ($exp_cstmr && $exp_cstmr->num_rows > 0) {
+            while ($rowss = $exp_cstmr->fetch_array()) {
+                $data[] = $rowss['days'];
+            }
+        }
+    }
+    if(empty($data)){
+        $data[] = "No Data Avaliable";
+    }
+
+    echo json_encode($data);
+    exit;
+}
+
+
 
 //Area name by POP
 if (isset($_POST['srch_pop_name'])) {

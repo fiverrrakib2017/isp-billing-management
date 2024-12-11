@@ -59,6 +59,35 @@ $(document).on('change', '#customer_package', function() {
         }
     });
 });
+$(document).on('change', '#customer_area', function() {
+    var area_id = $("#customer_area").val();
+    $.ajax({
+        type: 'POST',
+        url: "include/customers_server.php",
+        dataType: 'json',
+        data: {
+            area_id: area_id,
+            get_billing_cycle: 1
+        },
+        success: function(response) {
+            // if(response !==''){
+            //     $("#customer_expire_date").html(`<option>${response}</option>`); 
+            // }
+            if (response.length > 0) {
+                var options = "";
+                response.forEach(function (item) {
+                    options += '<option value="' + item + '">' + item + '</option>';
+                });
+                $("#customer_expire_date").html(options);
+            } else {
+                console.log("No data received.");
+            }
+        },
+        error: function() {
+            console.error("An error occurred while fetching billing cycle.");
+        }
+    });
+});
 
 
 
