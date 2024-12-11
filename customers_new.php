@@ -13,8 +13,7 @@ include 'include/users_right.php';
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include 'style.php'; ?>
-    <!-- DataTables CSS -->
-    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css"> -->
+    
 </head>
 
 <body data-sidebar="dark">
@@ -363,6 +362,7 @@ include 'include/users_right.php';
     <script type="text/javascript">
         var table;
         $(document).ready(function() {
+            //$("#customer_details_show_modal").modal('show');
             var get_pop_id = "<?php echo isset($_GET['pop_id']) ? $_GET['pop_id'] : ''; ?>";
             var get_area_id = "<?php echo isset($_GET['area_id']) ? $_GET['area_id'] : ''; ?>";
 
