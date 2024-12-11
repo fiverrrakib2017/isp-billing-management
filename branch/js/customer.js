@@ -59,6 +59,70 @@ $(document).on('change', '#customer_package', function() {
         }
     });
 });
+$(document).on('change', '#customer_area', function() {
+    var area_id = $("#customer_area").val();
+    $.ajax({
+        type: 'POST',
+        url: "../../include/customers_server.php",
+        dataType: 'json',
+        data: {
+            area_id: area_id,
+            get_billing_cycle: 1
+        },
+        success: function(response) {
+            if (response.length > 0) {
+                var options = "";
+                response.forEach(function (item) {
+                    options += '<option value="' + item + '">' + item + '</option>';
+                });
+                $("#customer_expire_date").html(options);
+            } else {
+                console.log("No data received.");
+            }
+        },
+        error: function() {
+            console.error("An error occurred while fetching billing cycle.");
+        }
+    });
+});
+
+function copyDetails() {
+    let customerDetails = "";
+
+    /* Collect customer details*/
+    $('#customer-details p').each(function() {
+        customerDetails += $(this).text() + "\n";
+    });
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(customerDetails)
+            .then(() => {
+                toastr.success("Copied the details:\n" + customerDetails); 
+            })
+            .catch(err => {
+                console.error("Failed to copy details: ", err);
+                toastr.error("Failed to copy details!"); 
+            });
+    } else {
+        let tempInput = $("<textarea>");
+        $("body").append(tempInput);
+        tempInput.val(customerDetails).select();
+
+        /*Focus before copying for older browsers*/ 
+        tempInput[0].focus();
+        
+        /* Use execCommand to copy text*/
+        if (document.execCommand("copy")) {
+            toastr.success("Copied the details"); 
+        } else {
+            toastr.error("Failed to copy details!"); 
+        }
+
+        tempInput.remove();
+    }
+
+    return false; 
+}
 
 $("#customer_add").click(function() {
     var fullname = $("#customer_fullname").val();
@@ -138,10 +202,16 @@ function customerAdd(user_type, fullname, package, username, password, mobile, a
             success: function(responseData) {
                 if (responseData == 1) {
                     toastr.success("Added Successfully");
+                    $('#customers_table').DataTable().ajax.reload();
                     $("#addCustomerModal").modal('hide');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    $("#customer_details_show_modal").modal('show');
+                    $("#details-name").html(fullname);
+                    $("#details-username").html(username);
+                    $("#details-mobile").html(mobile);
+                    $("#details-address").html(address);
+                    // setTimeout(() => {
+                    //     location.reload();
+                    // }, 1000);
                 } else {
                     toastr.error(responseData);
                 }

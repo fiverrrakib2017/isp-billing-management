@@ -426,7 +426,7 @@ if (file_exists($users_right_path)) {
             </div>
         </div>
     </div>
-     <!------------------ Modal for Create Ticket For POP/Branch ------------------>
+     <!------------------ Modal for Create Customer For POP/Branch ------------------>
      <?php include 'modal/customer_modal.php';?>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>

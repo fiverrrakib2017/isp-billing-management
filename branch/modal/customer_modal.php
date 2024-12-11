@@ -84,13 +84,22 @@
                                             <option value="">Select Pop/Branch
                                             </option>
                                             <?php
-                                            if ($pop = $con->query('SELECT * FROM add_pop WHERE id=' . $auth_usr_POP_id)) {
+                                            $condition = "";
+                                            if (isset($auth_usr_POP_id)) {
+                                                $pop_id = intval($auth_usr_POP_id); 
+                                                $condition = "WHERE id=$pop_id";
+                                            }
+                                            
+                                            $query = "SELECT * FROM add_pop $condition";
+                                            if ($pop = $con->query($query)) { 
                                                 while ($rows = $pop->fetch_array()) {
-                                                    $id = $rows['id'];
-                                                    $name = $rows['pop'];
+                                                    $id = htmlspecialchars($rows['id']);
+                                                    $name = htmlspecialchars($rows['pop']);
                                             
                                                     echo '<option value="' . $id . '">' . $name . '</option>';
                                                 }
+                                            } else {
+                                                echo "Error: " . $con->error; 
                                             }
                                             ?>
                                         </select>
@@ -176,6 +185,7 @@
                         </div>
                     </div>
                 </form>
+               
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -185,3 +195,71 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
+
+
+<!-- Customer Details Show Modal -->
+<div class="modal fade" id="customer_details_show_modal" tabindex="-1" aria-labelledby="customerDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header ">
+                <h5 class="modal-title" id="customerDetailsModalLabel">Customer Details</h5>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Details Section -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <div id="customer-details" class="row gx-3 gy-2">
+                            <div class="col-12">
+                                <p><strong>Full Name:</strong> <span id="details-name" class="text-muted"></span></p>
+                            </div>
+                            <div class="col-12">
+                                <p><strong>Username:</strong> <span id="details-username" class="text-muted"></span></p>
+                            </div>
+                            <div class="col-12">
+                                <p><strong>Mobile:</strong> <span id="details-mobile" class="text-muted"></span></p>
+                            </div>
+                            <div class="col-12">
+                                <p><strong>Address:</strong> <span id="details-address" class="text-muted"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light text-center mt-3">
+                        <button  class="btn btn-success me-2" onclick="copyDetails()">
+                            <i class="fas fa-clipboard"></i> Copy Information
+                        </button>
+                        <button  class="btn btn-primary">
+                            <i class="fas fa-chat"></i> Send Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+        #details-section {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#details-section .card-body {
+    position: relative;
+}
+
+#customer-details p {
+    font-size: 14px;
+    color: #333;
+    border-bottom: 2px dotted #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+#customer-details p span {
+    font-weight: bold;
+    color: #007bff;
+}
+
+    </style>
