@@ -5,13 +5,37 @@ include "db_connect.php";
 
 
 
- if (isset($_GET["update"])) {
-  $areaId=$_GET["id"];
-  $area_name=$_GET["area"];
-  $billing_date=$_GET["billing_date"];
+if (isset($_GET["update"])) {
+  $areaId = $_GET["id"];
+  $area_name = $_GET["area"];
+  $billing_date = $_GET["billing_date"];
+
+  /* GET Customers for updating their Billing Date area ID wise */
+  $get_customer = $con->query("SELECT `id`, `expiredate` FROM customers WHERE area=$areaId");
+  
+  while ($customer = $get_customer->fetch_assoc()) {
+      $customer_id = $customer["id"];
+      $expiredate = $customer["expiredate"]; 
+      
+      $year = "";
+      $month = "";
+      for ($i = 0; $i < 4; $i++) {
+          $year .= $expiredate[$i]; 
+      }
+      for ($i = 5; $i < 7; $i++) {
+          $month .= $expiredate[$i]; 
+      }      
+      $billing_date = (strlen($billing_date) === 1) ? "0" . $billing_date : $billing_date; 
+      $newexpDate = $year . "-" . $month . "-" . $billing_date;
+
+      /*Update Customer Expire Date*/
+      $con->query("UPDATE customers SET expiredate='$newexpDate' WHERE id=$customer_id");
+  }
+
+  /* Update area_list table */
   $con->query("UPDATE area_list SET name='$area_name', billing_date='$billing_date' WHERE id=$areaId");
-   
 }
+
 
 
 

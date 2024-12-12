@@ -156,7 +156,8 @@ include 'include/pop_security.php';
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>Area</th>
-                                                    <th>Customers</th>
+                                                    <th>Total Customers</th>
+                                                    <th>Online</th>
                                                     <th>Expired</th>
                                                     <th>POP/Branch Name</th>
                                                     <th>Billing Cycle</th>
@@ -196,12 +197,24 @@ while ($rows2 = mysqli_fetch_assoc($result)) {
             echo $area_cust;
             ?>
         </td>
+        <td>
+            <?php
+             $sql = "SELECT radacct.username FROM radacct
+             INNER JOIN customers
+             ON customers.username=radacct.username
+             
+             WHERE customers.area='$areaID' AND radacct.acctstoptime IS NULL";
+             $countpoponlnusr = mysqli_query($con, $sql);
+
+             echo $countpoponlnusr->num_rows;
+            ?>
+        </td>
 
         <td>
             <?php
             $totalexcust = $con->query("SELECT COUNT(*) as expired FROM customers WHERE area = '$areaID' AND expiredate < NOW()");
             $area_excust = $totalexcust->fetch_assoc()['expired'];
-            echo $area_excust;
+            echo '<a href="customer_expire.php?area_id=' . $areaID . '"><span class="badge bg-danger">' . $area_excust . '</span></a>';
             ?>
         </td>
 
@@ -215,7 +228,14 @@ while ($rows2 = mysqli_fetch_assoc($result)) {
             ?>
         </td>
         <td>
-            <?php echo $rows2['billing_date']?? 0;?>
+            <?php 
+            $final_data= $rows2['billing_date'] ?? 0;
+            if($final_data > 0){
+                echo '<span class="badge bg-success">'.$final_data.'</span></span>';
+            }else{
+                echo '<span class="badge bg-danger">'.$final_data.'</span></span>';
+            }
+            ?>
         </td>
 
         <td style="text-align:right;">

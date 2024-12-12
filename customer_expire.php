@@ -110,14 +110,13 @@ include 'include/users_right.php';
                                             style="width: 100%;">
                                             <thead class="bg-success text-white">
                                                 <tr>
-                                                    <th><input type="checkbox" id="checkedAll" name="checkedAll"> All
+                                                    <th><input type="checkbox" id="checkedAll" name="checkedAll" class="form-check-input">
                                                     </th>
                                                     <th>ID</th>
                                                     <th>Name</th>
                                                     <th>Package</th>
                                                     <th>Amount</th>
                                                     <th>Expired Status</th>
-                                                    <th>Expired Date</th>
                                                     <th>Username</th>
                                                     <th>Mobile no.</th>
                                                     <th>POP/Branch</th>
@@ -129,7 +128,7 @@ include 'include/users_right.php';
                                                 <?php while ($rows = mysqli_fetch_assoc($result)) : ?>
                                                 <tr>
                                                     <td><input type="checkbox" value="<?php echo $rows['id']; ?>"
-                                                            name="checkAll[]" class="checkSingle"></td>
+                                                            name="checkAll[]" class="checkSingle form-check-input"></td>
                                                     <td><?php echo $rows['id']; ?></td>
                                                     <td>
                                                         <?php
@@ -137,10 +136,7 @@ include 'include/users_right.php';
                                                         $onlineusr = $con->query("SELECT * FROM radacct WHERE acctstoptime IS NULL AND username='$username'");
                                                         $statusIcon = $onlineusr->num_rows == 1 ? 'online.png' : 'offline.png';
                                                         ?>
-                                                        <abbr title="<?php echo $statusIcon == 'online.png' ? 'Online' : 'Offline'; ?>">
-                                                            <img src="images/icon/<?php echo $statusIcon; ?>" height="10"
-                                                                width="10" />
-                                                        </abbr>
+                                                        <img src="images/icon/<?php echo $statusIcon; ?>" height="10" width="10" />
                                                         <a
                                                             href="profile.php?clid=<?php echo $rows['id']; ?>"><?php echo $rows['fullname']; ?></a>
                                                     </td>
@@ -149,11 +145,16 @@ include 'include/users_right.php';
                                                     <td>
                                                         <?php
                                                         $expireDate = $rows['expiredate'];
-                                                        $badgeClass = $expireDate <= date('Y-m-d') ? 'bg-danger' : 'bg-success';
-                                                        echo "<span class='badge $badgeClass'>" . ($badgeClass == 'bg-danger' ? 'Expired' : 'Active') . '</span>';
+
+                                                        if (DateTime::createFromFormat('Y-m-d', $expireDate) !== false) {
+                                                            $badgeClass = $expireDate <= date('Y-m-d') ? 'bg-danger' : 'bg-success';
+                                                            $statusText = $badgeClass == 'bg-danger' ? 'Expired' : 'Active';
+                                                            echo "<abbr title='Expire Date: $expireDate'><span class='badge $badgeClass'>$statusText</span></abbr>";
+                                                        } else {
+                                                            echo "<span class='badge bg-warning'>Invalid Date</span>";
+                                                        }
                                                         ?>
                                                     </td>
-                                                    <td><?php echo $rows['expiredate']; ?></td>
                                                     <td><?php echo $rows['username']; ?></td>
                                                     <td><?php echo $rows['mobile']; ?></td>
                                                     <td>
@@ -171,10 +172,10 @@ include 'include/users_right.php';
                                                         ?>
                                                     </td>
                                                     <td>
-                                                        <a class="btn btn-info"
+                                                        <a class="btn-sm btn btn-info"
                                                             href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i
                                                                 class="fas fa-edit"></i></a>
-                                                        <a class="btn btn-success"
+                                                        <a class="btn-sm btn btn-success"
                                                             href="profile.php?clid=<?php echo $rows['id']; ?>"><i
                                                                 class="fas fa-eye"></i></a>
                                                     </td>
