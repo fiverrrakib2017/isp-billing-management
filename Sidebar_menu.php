@@ -65,11 +65,12 @@
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-antenna"></i>
-                                    <span>Pop Managment</span>
+                                    <span>Pop/Area Managment</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
                                     <li><a href="pop_branch.php">Pop Branch</a></li>
                                     <li><a href="pop_area.php">Pop Area</a></li>
+                                    <li><a href="area_house_no.php">House/Holding/Building</a></li>
                                 </ul>
                             </li>
                             <li>
