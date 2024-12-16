@@ -30,8 +30,17 @@ if(isset($_GET['get_locations_for_google_map'])){
 if(isset($_GET['add_area_house'])) {
   $area_id= $_POST['area_id'];
   $house_no= $_POST['house_no'];
+  $lat= $_POST['lat']??'';
+  $lng= $_POST['lng']??'';
   $note= $_POST['note']?? '';
-   $con->query("INSERT INTO area_house(`area_id`, `house_no`, `Note`) VALUES('$area_id','$house_no','$note')");
+  $pop_id='';
+  /*Fetch pop_id from area_list table*/ 
+  $result = $con->query("SELECT pop_id FROM area_list WHERE id='$area_id'");
+    if ($result->num_rows > 0) {
+      $row = $result->fetch_assoc();
+      $pop_id = $row['pop_id'];
+    }
+   $con->query("INSERT INTO area_house(`pop_id`, `area_id`, `house_no`, `lat`, `lng`, `Note`) VALUES('$pop_id','$area_id','$house_no','$lat','$lng','$note')");
   echo 1; 
   exit; 
 }

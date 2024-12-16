@@ -79,57 +79,44 @@
                                 </div>
                                 <div class="card-body">
                                 <table id="areaDataTable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; width: 100%;">
-    <thead>
-        <!-- <tr>
-            <th>Area Name</th>
-        </tr> -->
-    </thead>
-    <tbody id="area_table">
-    <div id="areaTree">
-    <ul>
-        <?php
-        $query = "
-            SELECT 
-                h.area_id,
-                ar.name AS area_name,
-                GROUP_CONCAT(h.house_no SEPARATOR ', ') AS house_numbers
-            FROM 
-                area_house h
-            JOIN 
-                area_list ar 
-            ON 
-                h.area_id = ar.id
-            GROUP BY 
-                h.area_id, ar.name
-        ";
-
-        $result = $con->query($query);
-
-        if ($result) {
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo '<li>';
-                    echo '<span>' . $row['area_name'] . '</span>';
-                    echo '<ul>';
-                    $house_numbers = explode(', ', $row['house_numbers']);
-                    foreach ($house_numbers as $house_no) {
-                        echo '<li>House No: ' . $house_no . '</li>';
-                    }
-                    echo '</ul>';
-                    echo '</li>';
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Area Name</th>
+                                            <th>House/Holding No</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="area_table">
+    <?php 
+    if ($area_list = $con->query("SELECT al.id AS area_id, al.name AS area_name, GROUP_CONCAT(ah.house_no SEPARATOR ', ') AS house_numbers FROM area_list al LEFT JOIN area_house ah ON al.id = ah.area_id GROUP BY al.id, al.name")) {
+        while ($rows = $area_list->fetch_assoc()) {
+            echo '<tr>';
+            echo '<td>' . $rows['area_id'] . '</td>';
+            echo '<td>' . $rows['area_name'] . '</td>';
+            
+            if (!empty($rows['house_numbers'])) {
+                $house_numbers = explode(', ', $rows['house_numbers']); 
+                
+                echo '<td><ul>';
+                foreach ($house_numbers as $house_no) {
+                    echo '<li><a href="new_page.php?area_id=' . $rows['area_id'] . '&house_no=' . $house_no . '">' . $house_no . '</a></li>';
                 }
+                echo '</ul></td>';
             } else {
-                echo '<li>No data available</li>';
+                echo '<td></td>';
             }
-        } else {
-            echo '<li>Error in query execution: ' . $con->error . '</li>';
+            
+            echo '<td>
+                    <a href="new_page.php?area_id=' . $rows['area_id'] . '" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
+                  </td>';
+            echo '</tr>';
         }
-        ?>
-    </ul>
-</div>
+    }
+    ?>
+</tbody>
 
-    </tbody>
-</table>
+                                </table>
 
                                 </div>
                             </div>
@@ -158,8 +145,8 @@
                         <div class="col-md-12">
                             <form id="form-area">
                                 <div class="form-group mb-1">
-                                    <label>POP/Area</label>
-                                    <select class="form-select" name="area_id" id="area_id">
+                                    <label>Area</label>
+                                    <select class="form-select" name="area_id" id="area_id" style="width: 100%;">
                                         <option value="">Select</option>
                                         <?php
                                         if ($pop = $con->query("SELECT * FROM area_list")) {
@@ -173,14 +160,21 @@
                                     </select>
                                 </div>
                                 <div class="form-group mb-1">
-                                    <label>House-Building No.</label>
+                                    <label>House/Building No.</label>
                                     <input class="form-control" type="text" name="house_no" id="house_no" placeholder="Type  House-Building No." />
                                   
                                 </div>
                                 <div class="form-group mb-1">
                                     <label>Note</label>
                                     <input class="form-control" type="text" name="note" id="note" placeholder="Type Your Note" />
-                                  
+                                </div>
+                                <div class="d-none">
+                                    <input type="hidden" id="lat" name="lat">
+                                    <input type="hidden" id="lng" name="lng">
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label>Map Location</label>
+                                    <div id="show_map" style="width: 100%; height: 400px;"></div>
                                 </div>
                             </form>
                         </div>
@@ -198,26 +192,31 @@
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
     <?php include 'script.php';?>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
     <script type="text/javascript">
        $(document).ready(function () {
-            $('#areaTree').jstree({
-                "core": {
-                    "themes": {
-                        "responsive": true
-                    }
-                },
-                "plugins": ["wholerow"]
-            }).on('ready.jstree', function (e, data) {
-                data.instance.open_all();
-            });
+            $("#areaDataTable").DataTable();
+            $("#addModal").on('show.bs.modal', function (event) {
+            /*Check if select2 is already initialized*/
+            if (!$('#area_id').hasClass("select2-hidden-accessible")) {
+                    $("#area_id").select2({
+                        dropdownParent: $("#addModal"),
+                        placeholder: "---Select---"
+                    });
+                }
+            }); 
 
             $(document).on('click','#add_area',function(){
                 // var formData=$("#form-area").serialize();
                 var area_id=$("select[name='area_id']").val();
                 var house_no=$("input[name='house_no']").val();
                 var note=$("input[name='note']").val();
-                var formData="area_id="+area_id+"&house_no="+house_no+"&note="+note;
+                var lat=$("input[name='lat']").val();
+                var lng=$("input[name='lng']").val();
+                var formData = "area_id=" + area_id + 
+                                "&house_no=" + house_no + 
+                                "&note=" + note + 
+                                "&lat=" + lat + 
+                                "&lng=" + lng;
                 $.ajax({
                     type:'POST',
                     url:'include/add_area.php?add_area_house',
@@ -235,8 +234,33 @@
                 });
             });
         });
+    function initMap2() {
+        const initialLocation = { lat: 23.5565964, lng: 90.7866716 }; 
+        const map = new google.maps.Map(document.getElementById("show_map"), {
+            center: initialLocation,
+            zoom: 12,
+        });
 
+        let marker;
+
+        map.addListener("click", (event) => {
+            const clickedLocation = event.latLng;
+            if (!marker) {
+                marker = new google.maps.Marker({
+                    position: clickedLocation,
+                    map: map,
+                });
+            } else {
+                marker.setPosition(clickedLocation);
+            }
+
+            document.getElementById("lat").value = clickedLocation.lat();
+            document.getElementById("lng").value = clickedLocation.lng();
+        });
+    }
     </script>
+    <!-- Load Google Maps API --> 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuBbBNNwQbS81QdDrQOMq2WlSFiU1QdIs&callback=initMap2" async defer></script>
 </body>
 
 </html>
