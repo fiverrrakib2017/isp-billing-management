@@ -1,7 +1,31 @@
 <?php 
 include "db_connect.php";
 
+if(isset($_GET['add_area_for_google_map'])){
+  $area_name= $_POST['area'];
+  $pop_id= $_POST['pop_id'];
+  $lat= $_POST['lat'];
+  $lng= $_POST['lng'];
+  $bar= 'bar';
+  //print_r($_POST);exit; 
+   $con->query("INSERT INTO google_map( `name`, `address`, `lat`, `lng`, `type`) VALUES('$area_name','Dfault Address','$lat','$lng','$bar')");
+  echo 1; 
+}
 
+if(isset($_GET['get_locations_for_google_map'])){
+
+  $sql = "SELECT name, lat, lng FROM google_map";
+  $result = $con->query($sql);
+
+  $locations = [];
+  if ($result->num_rows > 0) {
+      while ($row = $result->fetch_assoc()) {
+          $locations[] = $row;
+      }
+  }
+  echo json_encode($locations);
+  exit; 
+}
 
 
 
