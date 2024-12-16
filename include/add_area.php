@@ -27,6 +27,14 @@ if(isset($_GET['get_locations_for_google_map'])){
   exit; 
 }
 
+if(isset($_GET['add_area_house'])) {
+  $area_id= $_POST['area_id'];
+  $house_no= $_POST['house_no'];
+  $note= $_POST['note']?? '';
+   $con->query("INSERT INTO area_house(`area_id`, `house_no`, `Note`) VALUES('$area_id','$house_no','$note')");
+  echo 1; 
+  exit; 
+}
 
 
 if (isset($_GET["update"])) {

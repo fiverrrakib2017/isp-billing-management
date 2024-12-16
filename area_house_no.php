@@ -109,7 +109,7 @@
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     echo '<li>';
-                    echo '<span>' . $row['area_name'] . ' (ID: ' . $row['area_id'] . ')</span>';
+                    echo '<span>' . $row['area_name'] . '</span>';
                     echo '<ul>';
                     $house_numbers = explode(', ', $row['house_numbers']);
                     foreach ($house_numbers as $house_no) {
@@ -158,14 +158,14 @@
                         <div class="col-md-12">
                             <form id="form-area">
                                 <div class="form-group mb-1">
-                                    <label>POP</label>
-                                    <select class="form-select" name="pop_id" id="pop_id">
+                                    <label>POP/Area</label>
+                                    <select class="form-select" name="area_id" id="area_id">
                                         <option value="">Select</option>
                                         <?php
-                                        if ($pop = $con->query("SELECT * FROM add_pop WHERE user_type='1'  ")) {
+                                        if ($pop = $con->query("SELECT * FROM area_list")) {
                                             while ($rows = $pop->fetch_array()) {
                                                 $id = $rows['id'];
-                                                $name = $rows['pop'];
+                                                $name = $rows['name'];
                                                 echo '<option value="' . $id . '">' . $name . '</option>';
                                             }
                                         }
@@ -173,8 +173,13 @@
                                     </select>
                                 </div>
                                 <div class="form-group mb-1">
-                                    <label>Area</label>
-                                    <input class="form-control" type="text" name="area" id="area" placeholder="Type Your Area" />
+                                    <label>House-Building No.</label>
+                                    <input class="form-control" type="text" name="house_no" id="house_no" placeholder="Type  House-Building No." />
+                                  
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label>Note</label>
+                                    <input class="form-control" type="text" name="note" id="note" placeholder="Type Your Note" />
                                   
                                 </div>
                             </form>
@@ -196,14 +201,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/jstree.min.js"></script>
     <script type="text/javascript">
        $(document).ready(function () {
-            // $('#areaTree').jstree({
-            //     "core": {
-            //         "themes": {
-            //             "responsive": true
-            //         }
-            //     },
-            //     "plugins": ["wholerow"]
-            // });
             $('#areaTree').jstree({
                 "core": {
                     "themes": {
@@ -213,6 +210,29 @@
                 "plugins": ["wholerow"]
             }).on('ready.jstree', function (e, data) {
                 data.instance.open_all();
+            });
+
+            $(document).on('click','#add_area',function(){
+                // var formData=$("#form-area").serialize();
+                var area_id=$("select[name='area_id']").val();
+                var house_no=$("input[name='house_no']").val();
+                var note=$("input[name='note']").val();
+                var formData="area_id="+area_id+"&house_no="+house_no+"&note="+note;
+                $.ajax({
+                    type:'POST',
+                    url:'include/add_area.php?add_area_house',
+                    data:formData,
+                    cache:false,
+                    success:function(response){
+                        if(response==1){
+                            $("#addModal").modal('hide');
+                            toastr.success("Successfully Added");
+                            setTimeout(() => {
+                                location.reload();     
+                            }, 500);
+                        }
+                    }
+                });
             });
         });
 
