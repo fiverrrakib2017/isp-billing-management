@@ -65,24 +65,32 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    // console.log('rakib');
     async function loadCustomerOptions() {
         try {
             let response = await $.ajax({
-                url: 'include/tickets_server.php?get_all_customer=true',
+                url: 'include/customers_server.php?get_all_customer_with_online_status=true',
                 type: 'GET',
                 dataType: 'json'
             });
             if (response.success === true) {
                 var customerOptions = '<option value="">--- Select Customer ---</option>'; 
 
-                $.each(response.data, function(key, customer) {
-                    customerOptions += '<option value="' + customer.id + '">[' + customer.id + '] - ' + customer.username + ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>';
+                $.each(response.data, function (key, customer) {
+                    let statusIcon = customer.status === 'online'
+                    ? '<span style="color: green;">✅</span>'
+                    : '<span style="color: red;">❌</span>';
+
+                    customerOptions += '<option value="' + customer.id + '">' +
+                        statusIcon + ' [' + customer.id + '] - ' + customer.username + 
+                        ' || ' + customer.fullname + ', (' + customer.mobile + ')</option>';
                 });
 
                 $('select[name="menu_select_box"]').html(customerOptions);
                 $('select[name="menu_select_box"]').select2({
                     placeholder: '---Select Customer---',
+                        escapeMarkup: function (markup) {
+                        return markup; 
+                    }
                 });
             }
 

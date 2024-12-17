@@ -144,6 +144,68 @@ if (isset($_POST['get_house_building_no'])) {
    exit; 
 }
 
+/* Check Customer Online Offline  */
+if(isset($_GET['check_customer_online_status']) && $_POST['check_customer_online_status']){
+    if(isset($_POST['username']) && !empty($_POST['username'])){
+        $username = $_POST['username'];
+        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+        $response = $onlineusr->num_rows > 0 ? 'Online' : 'Offline';
+        echo $response;
+        exit; 
+    }
+   
+}
+
+/* GET All Customer With Online Status */
+if (isset($_GET['get_all_customer_with_online_status']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    /* Check if session is started */
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    /* Set default pop_id value */
+    $pop_id = 1;
+    if (isset($_SESSION['user_pop']) && !empty($_SESSION['user_pop'])) {
+        $pop_id = $_SESSION['user_pop'];
+    }
+
+    /* Prepare the SQL query */
+    $stmt = $con->prepare("SELECT id, username, fullname, mobile FROM customers WHERE pop = ?");
+    $stmt->bind_param('i', $pop_id);
+
+    /* Execute the query */
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        $customers = [];
+
+        /* Fetch results */
+        while ($row = $result->fetch_assoc()) {
+            $username = $row['username'];
+            $onlineusr = $con->query("SELECT * FROM radacct WHERE acctstoptime IS NULL AND username='$username'");
+            $status = $onlineusr->num_rows == 1 ? 'online' : 'offline';
+
+            $customers[] = [
+                'id' => $row['id'],
+                'fullname' => $row['fullname'],
+                'username' => $row['username'],
+                'mobile' => $row['mobile'],
+                'status' => $status
+            ];
+        }
+
+        /* Return JSON response */
+        echo json_encode(['success' => true, 'data' => $customers]);
+    } else {
+        /* If there's an error with the query */
+        echo json_encode(['success' => false, 'message' => 'Error retrieving customer data']);
+    }
+
+    /* Close the statement */
+    $stmt->close();
+    exit;
+}
+
+
 
 
 //Area name by POP
