@@ -121,15 +121,14 @@ $("#customer_add").click(function() {
     var remarks = $("#customer_remarks").val();
     var status = $("#customer_status").val();
     var liablities = $("#customer_liablities").val();
+    var customer_houseno = $("#customer_houseno").val();
     var user_type = 1;
 
-    customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
-        con_charge, price, remarks,liablities, nid, status)
+   customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status);
 
 });
 
-function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
-    con_charge, price, remarks,liablities, nid, status) {
+function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status) {
     if (fullname.length == 0) {
         toastr.error("Customer name is require");
     } else if (package.length == 0) {
@@ -146,7 +145,9 @@ function customerAdd(user_type, fullname, package, username, password, mobile, a
         toastr.error("POP/Branch is require");
     } else if (area.length == 0) {
         toastr.error("Area is require");
-    } else if (con_charge.length == 0) {
+    }else if(customer_houseno.length == 0){
+        toastr.error("House/Building No is require");
+    }else if (con_charge.length == 0) {
         toastr.error("Connection Charge is require");
     } else if (price.length == 0) {
         toastr.error("price is require");
@@ -171,6 +172,7 @@ function customerAdd(user_type, fullname, package, username, password, mobile, a
                 address: address,
                 expire_date: expire_date,
                 area: area,
+                customer_houseno: customer_houseno,
                 pop: pop,
                 con_charge: con_charge,
                 price: price,

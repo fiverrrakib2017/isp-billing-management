@@ -194,6 +194,7 @@ if (isset($_POST['addCustomerData'])) {
     $exp_date = $_POST['expire_date'];
     $pop = $_POST['pop'];
     $area = $_POST['area'];
+    $area_house_id = $_POST['customer_houseno'];
     $address = $_POST['address'];
     $nid = $_POST['nid'];
     $con_charge = $_POST['con_charge'];
@@ -234,7 +235,7 @@ if (isset($_POST['addCustomerData'])) {
         Please Recharge POP/Branch ";
     } else {
 
-    $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0')");
+    $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,area_house_id,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area','$area_house_id',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0')");
     if ($result == true) {
 
         //Update account recharge and transection
