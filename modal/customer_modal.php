@@ -77,10 +77,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 ">
+                                <div class="col-md-4 ">
                                     <div class="form-group mb-2">
                                         <label>POP/Branch</label>
-                                        <select id="customer_pop" class="form-select">
+                                        <select id="customer_pop" class="form-select" style="width: 100%;">
                                             <option value="">Select Pop/Branch
                                             </option>
                                             <?php
@@ -105,12 +105,25 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-6 ">
+                                <div class="col-md-4 ">
                                     <div class="form-group mb-2">
                                         <label>Area/Location</label>
-                                        <select id="customer_area" class="form-select" name="area">
+                                        <select id="customer_area" class="form-select" name="area" style="width: 100%;">
                                             <option>Select Area</option>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 ">
+                                    <div class="form-group mb-2">
+                                        <label>House / Building No.</label>
+                                        <div class="d-flex">
+                                            <select id="customer_houseno" class="form-select" name="customer_houseno" style="width: 100%;">
+                                                <option>---Select---</option>
+                                            </select>
+                                            <button type="button" class="btn btn-primary add-house-btn" data-bs-toggle="modal" data-bs-target="#addHouseModal">
+                                                <span>+</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -126,7 +139,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-2">
                                         <label>Package</label>
-                                        <select id="customer_package" class="form-select">
+                                        <select id="customer_package" class="form-select" style="width: 100%;">
 
 
                                         </select>
@@ -159,7 +172,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Status</label>
-                                        <select id="customer_status" class="form-select">
+                                        <select id="customer_status" class="form-select" style="width: 100%;">
                                             <option value="">Select Status
                                             </option>
                                             <option value="0">Disable</option>
@@ -173,7 +186,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Liablities</label>
-                                        <select id="customer_liablities" class="form-select">
+                                        <select id="customer_liablities" class="form-select" style="width: 100%;">
                                             <option value="">---Select---</option>
                                             <option value="0">No</option>
                                             <option value="1">Yes</option>
@@ -197,6 +210,63 @@
 </div>
 
 
+<!-- Add House Modal  -->
+<div class="modal fade" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addHouseModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Area</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form id="form-area">
+                                <div class="form-group mb-1">
+                                    <label>Area</label>
+                                    <select class="form-select" name="area_id" id="area_id" style="width: 100%;">
+                                        <option value="">Select</option>
+                                        <?php
+                                        if ($pop = $con->query("SELECT * FROM area_list")) {
+                                            while ($rows = $pop->fetch_array()) {
+                                                $id = $rows['id'];
+                                                $name = $rows['name'];
+                                                echo '<option value="' . $id . '">' . $name . '</option>';
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label>House/Building No.</label>
+                                    <input class="form-control" type="text" name="house_no" id="house_no" placeholder="Type  House-Building No." />
+                                  
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label>Note</label>
+                                    <input class="form-control" type="text" name="note" id="note" placeholder="Type Your Note" />
+                                </div>
+                                <div class="d-none">
+                                    <input type="hidden" id="lat" name="lat">
+                                    <input type="hidden" id="lng" name="lng">
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label>Map Location</label>
+                                    <div id="show_map" style="width: 100%; height: 300px;"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="add_area" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Customer Details Show Modal -->
 <div class="modal fade" id="customer_details_show_modal" tabindex="-1" aria-labelledby="customerDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog  modal-dialog-centered">

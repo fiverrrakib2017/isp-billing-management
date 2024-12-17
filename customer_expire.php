@@ -114,11 +114,12 @@ include 'include/users_right.php';
                                                     </th>
                                                     <th>ID</th>
                                                     <th>Name</th>
+                                                    <th>Mobile no.</th>
                                                     <th>Package</th>
                                                     <th>Amount</th>
                                                     <th>Expired Status</th>
                                                     <th>Username</th>
-                                                    <th>Mobile no.</th>
+                                                  
                                                     <th>POP/Branch</th>
                                                     <th>Area/Location</th>
                                                     <th>Actions</th>
@@ -140,6 +141,7 @@ include 'include/users_right.php';
                                                         <a
                                                             href="profile.php?clid=<?php echo $rows['id']; ?>"><?php echo $rows['fullname']; ?></a>
                                                     </td>
+                                                    <td><?php echo $rows['mobile']; ?></td>
                                                     <td><?php echo $rows['package_name']; ?></td>
                                                     <td><?php echo $rows['price']; ?></td>
                                                     <td>
@@ -156,7 +158,7 @@ include 'include/users_right.php';
                                                         ?>
                                                     </td>
                                                     <td><?php echo $rows['username']; ?></td>
-                                                    <td><?php echo $rows['mobile']; ?></td>
+                                                 
                                                     <td>
                                                         <?php
                                                         $popID = $rows['pop'];

@@ -75,7 +75,7 @@
                         <div class="col-md-12 stretch-card">
                             <div class="card">
                                 <div class="card-header">
-                                    <button type="button" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"  data-bs-toggle="modal" data-bs-target="#addModal"> Add Area</button>
+                                    <button type="button" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"  data-bs-toggle="modal" data-bs-target="#addModal"> Add House no</button>
                                 </div>
                                 <div class="card-body">
                                 <table id="areaDataTable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; width: 100%;">

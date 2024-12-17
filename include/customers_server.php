@@ -125,6 +125,24 @@ if (isset($_POST['get_billing_cycle'])) {
     echo json_encode($data);
     exit;
 }
+/* Get Area House Building No. */
+if (isset($_POST['get_house_building_no'])) {
+    $area_id = $_POST['area_id'];
+    $response = '';
+    $allArea = $con->query("SELECT * FROM `area_house` WHERE  area_id='$area_id'");
+    if ($allArea->num_rows > 0) {
+        while ($row = $allArea->fetch_array()) {
+            if(!is_null($row['house_no']) && $row['house_no'] !==''){
+                $response .= '<option value="'.$row['id'].'">'.$row['house_no'].'</option>';
+            }
+        }
+    }
+    if(isset($response) && $response ==''){
+        $response .= '<option value="">No Data Avaliable</option>';
+    }
+   echo $response;
+   exit; 
+}
 
 
 

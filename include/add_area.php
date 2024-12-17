@@ -44,6 +44,18 @@ if(isset($_GET['add_area_house'])) {
   echo 1; 
   exit; 
 }
+if(isset($_GET['load_house_no'])) {
+    $result = $con->query("SELECT * FROM area_house");
+    $response = '';
+    while ($row = $result->fetch_assoc()) {
+      $response .= '<option value="' . htmlspecialchars($row['id']) . '">' 
+      . htmlspecialchars($row['house_no']) . '</option>';
+    }
+  echo $response;
+  exit;
+}
+
+
 
 
 if (isset($_GET["update"])) {

@@ -70,9 +70,6 @@ $(document).on('change', '#customer_area', function() {
             get_billing_cycle: 1
         },
         success: function(response) {
-            // if(response !==''){
-            //     $("#customer_expire_date").html(`<option>${response}</option>`); 
-            // }
             if (response.length > 0) {
                 var options = "";
                 response.forEach(function (item) {
@@ -85,6 +82,24 @@ $(document).on('change', '#customer_area', function() {
         },
         error: function() {
             console.error("An error occurred while fetching billing cycle.");
+        }
+    });
+});
+$(document).on('change', '#customer_area', function() {
+    var area_id = $("#customer_area").val();
+    $.ajax({
+        type: 'POST',
+        url: "include/customers_server.php",
+        //dataType: 'json',
+        data: {
+            area_id: area_id,
+            get_house_building_no: 1
+        },
+        success: function(response) {
+            $("#customer_houseno").html(response);
+        },
+        error: function() {
+            console.error("An error occurred while fetching get_house_building_no.");
         }
     });
 });
@@ -284,3 +299,147 @@ function copyDetailsssss() {
         document.body.removeChild(tempTextarea);
     }
 }
+
+
+$("#addCustomerModal").on('show.bs.modal', function (event) {
+    /*Check if select2 is already initialized*/
+    if (!$('#customer_area').hasClass("select2-hidden-accessible")) {
+        $("#customer_area").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_houseno').hasClass("select2-hidden-accessible")) {
+        $("#customer_houseno").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_package').hasClass("select2-hidden-accessible")) {
+        $("#customer_package").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_status').hasClass("select2-hidden-accessible")) {
+        $("#customer_status").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_liablities').hasClass("select2-hidden-accessible")) {
+        $("#customer_liablities").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_pop').hasClass("select2-hidden-accessible")) {
+        $("#customer_pop").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+}); 
+$("#addHouseModal").on('show.bs.modal', function (event) {
+    /*Check if select2 is already initialized*/
+    if (!$('#area_id').hasClass("select2-hidden-accessible")) {
+        $("#area_id").select2({
+            dropdownParent: $("#addHouseModal"),
+            placeholder: "---Select---"
+        });
+    }
+}); 
+$(document).on('click','#add_area',function(){
+    // var formData=$("#form-area").serialize();
+    var area_id=$("select[name='area_id']").val();
+    var house_no=$("input[name='house_no']").val();
+    var note=$("input[name='note']").val();
+    var lat=$("input[name='lat']").val();
+    var lng=$("input[name='lng']").val();
+    var formData = "area_id=" + area_id + 
+                    "&house_no=" + house_no + 
+                    "&note=" + note + 
+                    "&lat=" + lat + 
+                    "&lng=" + lng;
+    $.ajax({
+        type:'POST',
+        url:'include/add_area.php?add_area_house',
+        data:formData,
+        cache:false,
+        success:function(response){
+            if(response==1){
+                $("#addHouseModal").modal('hide');
+                toastr.success("Successfully Added");
+                load_house_no(); 
+            }
+        }
+    });
+});
+
+function load_house_no() {
+    $.ajax({
+        type: "POST",
+        url: "include/add_area.php?load_house_no",
+        success: function(response) {
+            $("#customer_houseno").html(response);
+        }
+    });
+}
+
+function loadGoogleMapsScript() {
+    return new Promise((resolve, reject) => {
+        if (window.google) {
+            resolve(window.google); 
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBuBbBNNwQbS81QdDrQOMq2WlSFiU1QdIs&callback=initMap2";
+        script.async = true;
+        script.defer = true;
+
+        script.onload = () => {
+            resolve(window.google);
+        };
+
+        script.onerror = (error) => {
+            reject(error);
+        };
+
+        document.body.appendChild(script);
+    });
+}
+
+function initMap2() {
+    const initialLocation = { lat: 23.5565964, lng: 90.7866716 };
+    const map = new google.maps.Map(document.getElementById("show_map"), {
+        center: initialLocation,
+        zoom: 12,
+    });
+
+    let marker;
+
+    map.addListener("click", (event) => {
+        const clickedLocation = event.latLng;
+
+        if (!marker) {
+            marker = new google.maps.Marker({
+                position: clickedLocation,
+                map: map,
+            });
+        } else {
+            marker.setPosition(clickedLocation);
+        }
+        document.getElementById("lat").value = clickedLocation.lat();
+        document.getElementById("lng").value = clickedLocation.lng();
+    });
+}
+
+(async () => {
+    try {
+        await loadGoogleMapsScript();
+        initMap2(); 
+    } catch (error) {
+        console.error("Google Maps API:", error);
+    }
+})();
