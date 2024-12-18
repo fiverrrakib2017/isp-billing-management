@@ -373,7 +373,7 @@ $(document).on('click','#add_area',function(){
         }
     });
 });
-
+load_house_no(); 
 function load_house_no() {
     $.ajax({
         type: "POST",

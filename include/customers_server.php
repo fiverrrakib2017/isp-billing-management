@@ -129,20 +129,32 @@ if (isset($_POST['get_billing_cycle'])) {
 if (isset($_POST['get_house_building_no'])) {
     $area_id = $_POST['area_id'];
     $response = '';
-    $allArea = $con->query("SELECT * FROM `area_house` WHERE  area_id='$area_id'");
-    if ($allArea->num_rows > 0) {
-        while ($row = $allArea->fetch_array()) {
-            if(!is_null($row['house_no']) && $row['house_no'] !==''){
-                $response .= '<option value="'.$row['id'].'">'.$row['house_no'].'</option>';
+    $condition = '';
+    if (!empty($area_id) && $area_id > 0) {
+        $condition = " WHERE area_id = '$area_id'";
+    }
+    $query = "SELECT * FROM `area_house` $condition";
+    $allArea = $con->query($query);
+    if ($allArea) {
+        if ($allArea->num_rows > 0) {
+            while ($row = $allArea->fetch_assoc()) {
+                if (!empty($row['house_no'])) {
+                    $response .= '<option value="' . $row['id'] . '">' . htmlspecialchars($row['house_no']) . '</option>';
+                }
             }
         }
+
+        if (empty($response)) {
+            $response = '<option value="">No Data Available</option>';
+        }
+    } else {
+        $response = '<option value="">Error fetching data</option>';
     }
-    if(isset($response) && $response ==''){
-        $response .= '<option value="">No Data Avaliable</option>';
-    }
-   echo $response;
-   exit; 
+
+    echo $response;
+    exit;
 }
+
 
 /* Get Customer Last id  */
 if(isset($_POST['get_customer_last_id'])){

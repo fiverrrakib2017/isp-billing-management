@@ -46,7 +46,7 @@ if(isset($_GET['add_area_house'])) {
 }
 if(isset($_GET['load_house_no'])) {
     $result = $con->query("SELECT * FROM area_house");
-    $response = '';
+    $response = '<option value="0">---Select---</option>';
     while ($row = $result->fetch_assoc()) {
       $response .= '<option value="' . htmlspecialchars($row['id']) . '">' 
       . htmlspecialchars($row['house_no']) . '</option>';
