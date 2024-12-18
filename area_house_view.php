@@ -72,9 +72,7 @@
                     <div class="row">
                         <div class="col-md-12 stretch-card">
                             <div class="card">
-                                <div class="card-header">
-                                    <button type="button" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"  data-bs-toggle="modal" data-bs-target="#addModal"> Add Area</button>
-                                </div>
+                                
                                 <div class="card-body">
                                     <div id="map" style="width: 100%; height: 500px;"></div>
                                 </div>
@@ -91,55 +89,6 @@
 
     </div>
     <!-- END layout-wrapper -->
-    <div class="modal fade" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Area</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <form id="form-area">
-                                <div class="form-group mb-1">
-                                    <label>POP</label>
-                                    <select class="form-select" name="pop_id" id="pop_id">
-                                        <option value="">Select</option>
-                                        <?php
-                                        if ($pop = $con->query("SELECT * FROM add_pop WHERE user_type='1'  ")) {
-                                            while ($rows = $pop->fetch_array()) {
-                                                $id = $rows['id'];
-                                                $name = $rows['pop'];
-                                                echo '<option value="' . $id . '">' . $name . '</option>';
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="form-group mb-1">
-                                    <label>Area</label>
-                                    <input class="form-control" type="text" name="area" id="area" placeholder="Type Your Area" />
-                                    <input type="hidden" id="lat" name="lat">
-                                    <input type="hidden" id="lng" name="lng">
-                                </div>
-                                <div class="form-group">
-                                    <label>Map Location</label>
-                                    <div id="show_map" style="width: 100%; height: 400px;"></div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="add_area" class="btn btn-primary">Save Location</button>
-            </div>
-        </div>
-    </div>
-</div>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
@@ -158,30 +107,6 @@
         };
 
         const map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-        //$con->query("SELECT * FROM google_map")
-        // const locations = [
-        //     { name: "Store 1", lat: 23.8103, lng: 90.4125 },
-        //     { name: "Store 2", lat: 23.8150, lng: 90.4250 },
-        //     { name: "Store 3", lat: 23.8200, lng: 90.4050 },
-        //     { name: "Store 4", lat: 23.8050, lng: 90.4300 },
-        // ];
-
-        // locations.forEach(location => {
-        //     const marker = new google.maps.Marker({
-        //         position: { lat: location.lat, lng: location.lng },
-        //         map: map,
-        //         title: location.name,
-        //     });
-
-        //     const infoWindow = new google.maps.InfoWindow({
-        //         content: `<h3>${location.name}</h3><p>Coordinates: (${location.lat}, ${location.lng})</p>`,
-        //     });
-
-        //     marker.addListener("click", () => {
-        //         infoWindow.open(map, marker);
-        //     });
-        // });
 
         $.ajax({
             url: 'include/add_area.php?get_locations_for_google_map=true',

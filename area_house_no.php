@@ -91,6 +91,7 @@
     <?php 
     if ($area_list = $con->query("SELECT al.id AS area_id, al.name AS area_name, GROUP_CONCAT(ah.house_no SEPARATOR ', ') AS house_numbers FROM area_list al LEFT JOIN area_house ah ON al.id = ah.area_id GROUP BY al.id, al.name")) {
         while ($rows = $area_list->fetch_assoc()) {
+            $house_id=$rows['id'];
             echo '<tr>';
             echo '<td>' . $rows['area_id'] . '</td>';
             echo '<td>' . $rows['area_name'] . '</td>';
@@ -100,7 +101,7 @@
                 
                 echo '<td><ul>';
                 foreach ($house_numbers as $house_no) {
-                    echo '<li><a href="new_page.php?area_id=' . $rows['area_id'] . '&house_no=' . $house_no . '">' . $house_no . '</a></li>';
+                    echo '<li><a href="area_house_view.php?house_id=' . $house_id . '&area_id=' . $rows['area_id'] . '&house_no=' . $house_no . '">' . $house_no . '</a></li>';
                 }
                 echo '</ul></td>';
             } else {
