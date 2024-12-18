@@ -144,6 +144,17 @@ if (isset($_POST['get_house_building_no'])) {
    exit; 
 }
 
+/* Get Customer Last id  */
+if(isset($_POST['get_customer_last_id'])){
+    $result=$con->query("SELECT * FROM customers ORDER BY id DESC LIMIT 1");
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_array()) {
+            echo $row['id'];
+        }
+    }
+    exit; 
+}
+
 /* Check Customer Online Offline  */
 if(isset($_GET['check_customer_online_status']) && $_POST['check_customer_online_status']){
     if(isset($_POST['username']) && !empty($_POST['username'])){
@@ -155,7 +166,6 @@ if(isset($_GET['check_customer_online_status']) && $_POST['check_customer_online
     }
    
 }
-
 /* GET All Customer With Online Status */
 if (isset($_GET['get_all_customer_with_online_status']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     /* Check if session is started */
@@ -256,7 +266,7 @@ if (isset($_POST['addCustomerData'])) {
     $exp_date = $_POST['expire_date'];
     $pop = $_POST['pop'];
     $area = $_POST['area'];
-    $area_house_id = $_POST['customer_houseno'];
+    $area_house_id = is_numeric($_POST['customer_houseno']) ? intval($_POST['customer_houseno']) : '0';
     $address = $_POST['address'];
     $nid = $_POST['nid'];
     $con_charge = $_POST['con_charge'];

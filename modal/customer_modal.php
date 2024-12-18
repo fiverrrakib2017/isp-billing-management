@@ -298,9 +298,12 @@
                         <button  class="btn btn-success me-2" onclick="copyDetails()">
                             <i class="fas fa-clipboard"></i> Copy Information
                         </button>
-                        <button  class="btn btn-primary">
+                        <button  class="btn btn-warning">
                             <i class="fas fa-chat"></i> Send Message
                         </button>
+                        <a  class="btn btn-primary go_to_profile">
+                            <i class="mdi mdi-account"></i> View Profile
+                        </a>
                     </div>
                 </div>
             </div>

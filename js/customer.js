@@ -85,24 +85,6 @@ $(document).on('change', '#customer_area', function() {
         }
     });
 });
-$(document).on('change', '#customer_area', function() {
-    var area_id = $("#customer_area").val();
-    $.ajax({
-        type: 'POST',
-        url: "include/customers_server.php",
-        //dataType: 'json',
-        data: {
-            area_id: area_id,
-            get_house_building_no: 1
-        },
-        success: function(response) {
-            $("#customer_houseno").html(response);
-        },
-        error: function() {
-            console.error("An error occurred while fetching get_house_building_no.");
-        }
-    });
-});
 
 
 $("#customer_add").click(function() {
@@ -154,8 +136,8 @@ function customerAdd(user_type, fullname, package, username, password, mobile, a
     } else if (liablities.length == 0) {
         toastr.error("Liablities is require");
     }else {
-        $("#customer_add").html(
-            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+        $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+        $("#customer_add").prop("disabled", true);
         var addCustomerData = 0;
         $.ajax({
             type: 'POST',
@@ -183,22 +165,38 @@ function customerAdd(user_type, fullname, package, username, password, mobile, a
             success: function(responseData) {
                 if (responseData == 1) {
                     toastr.success("Added Successfully");
-                    $('#customers_table').DataTable().ajax.reload();
-                    $("#addCustomerModal").modal('hide');
-                    $("#customer_details_show_modal").modal('show');
-                    $("#details-name").html(fullname);
-                    $("#details-username").html(username);
-                    $("#details-mobile").html(mobile);
-                    $("#details-address").html(address);
-                    // setTimeout(() => {
-                    //     location.reload();
-                    // }, 1000);
+                     /*GET Last id With callback function */
+                        get_customer_last_id(function(last_id) {
+                        $('#customers_table').DataTable().ajax.reload();
+                        $("#addCustomerModal").modal('hide');
+                        $("#customer_details_show_modal").modal('show');
+                        $("#details-name").html(fullname);
+                        $("#details-username").html(username);
+                        $("#details-mobile").html(mobile);
+                        $("#details-address").html(address);
+                        $(".go_to_profile").attr("href", "profile.php?clid=" + last_id);
+                    });
                 } else {
                     toastr.error(responseData);
+                    $("#customer_add").html('Add Customer');
+                    $("#customer_add").prop("disabled", false);
                 }
             }
         });
     }
+}
+function get_customer_last_id(callback) {
+    $.ajax({
+        type: 'POST',
+        url: "include/customers_server.php",
+        data: {
+            get_customer_last_id: 1
+        },
+        success: function(response) {
+            /*Response Customer Callback function*/
+            callback(response); 
+        }
+    });
 }
 
 function copyDetails() {
