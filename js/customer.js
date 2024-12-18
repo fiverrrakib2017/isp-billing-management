@@ -145,8 +145,6 @@ function customerAdd(user_type, fullname, package, username, password, mobile, a
         toastr.error("POP/Branch is require");
     } else if (area.length == 0) {
         toastr.error("Area is require");
-    }else if(customer_houseno.length == 0){
-        toastr.error("House/Building No is require");
     }else if (con_charge.length == 0) {
         toastr.error("Connection Charge is require");
     } else if (price.length == 0) {

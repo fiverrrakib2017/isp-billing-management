@@ -118,7 +118,7 @@
                                         <label>House / Building No.</label>
                                         <div class="d-flex">
                                             <select id="customer_houseno" class="form-select" name="customer_houseno" style="width: 100%;">
-                                                <option>---Select---</option>
+                                                <option value="0">---Select---</option>
                                             </select>
                                             <button type="button" class="btn btn-primary add-house-btn" data-bs-toggle="modal" data-bs-target="#addHouseModal">
                                                 <span>+</span>
@@ -157,7 +157,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-2">
                                         <label>Package Price</label>
-                                        <input disabled id="customer_price" type="text" class="form-control"
+                                        <input  id="customer_price" type="text" class="form-control"
                                             value="00" />
                                     </div>
                                 </div>
