@@ -182,8 +182,7 @@ include("include/users_right.php");
                                                            
                                                             <button type="button" class="btn btn-success">Approve</button>
 
-                                                            <a href="customer_delete.php?clid=<?php echo $rows['id']; ?>" class="btn btn-danger deleteBtn" onclick=" return confirm('Are You Sure');" data-id=<?php echo $rows['id']; ?>><i class="fas fa-trash"></i>
-                                                            </a>
+                                                            <button type="button" class="btn btn-danger delete-btn"  data-id=<?php echo $rows['id']; ?>><i class="fas fa-trash"></i> </button>
 
                                                         </td>
                                                     </tr>
@@ -261,6 +260,7 @@ include("include/users_right.php");
         $.ajax({
             url: 'include/customers_server.php?create_customer_request=true',
             type: 'POST',
+            dataType: 'json',
             data: {
                 fullname: fullname,
                 mobile: mobile,
@@ -272,6 +272,9 @@ include("include/users_right.php");
                 if(response.success=true){
                     toastr.success(response.message);
                     $('#customer_create_modal').modal('hide');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
                 }
                 if(response.success==false){
                     toastr.success(response.message);
@@ -284,91 +287,33 @@ include("include/users_right.php");
         });
     });
 
-
-
-
-        $("#customer_add").click(function() {
-            var fullname = $("#customer_fullname").val();
-            var package = $("#customer_package").val();
-            var username = $("#customer_username").val();
-            var password = $("#customer_password").val();
-            var mobile = $("#customer_mobile").val();
-            var address = $("#customer_address").val();
-            var expire_date = $("#customer_expire_date").val();
-            var area = $("#customer_area").val();
-            var pop = $("#customer_pop").val();
-            var nid = $("#customer_nid").val();
-            var con_charge = $("#customer_con_charge").val();
-            var price = $("#customer_price").val();
-            var remarks = $("#customer_remarks").val();
-            var status = $("#customer_status").val();
-            var user_type = <?php echo $auth_usr_type; ?>;
-
-            customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status)
-
-        });
-
-        function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop, con_charge, price, remarks, nid, status) {
-            if (fullname.length == 0) {
-                toastr.error("Customer name is require");
-            } else if (package.length == 0) {
-                toastr.error("Customer Package is require");
-            } else if (username.length == 0) {
-                toastr.error("Username is require");
-            } else if (password.length == 0) {
-                toastr.error("Password is require");
-            } else if (mobile.length == 0) {
-                toastr.error("Mobile number is require");
-            } else if (expire_date.length == 0) {
-                toastr.error("Expire Date is require");
-            } else if (pop.length == 0) {
-                toastr.error("POP/Branch is require");
-            } else if (area.length == 0) {
-                toastr.error("Area is require");
-            } else if (con_charge.length == 0) {
-                toastr.error("Connection Charge is require");
-            } else if (price.length == 0) {
-                toastr.error("price is require");
-            } else if (status.length == 0) {
-                toastr.error("Status is require");
-            } else {
-                $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-                var addCustomerData = 0;
-                $.ajax({
-                    type: 'POST',
-                    url: 'include/customers_server.php',
-                    data: {
-                        addCustomerData: addCustomerData,
-                        fullname: fullname,
-                        package: package,
-                        username: username,
-                        password: password,
-                        mobile: mobile,
-                        address: address,
-                        expire_date: expire_date,
-                        area: area,
-                        pop: pop,
-                        con_charge: con_charge,
-                        price: price,
-                        remarks: remarks,
-                        nid: nid,
-                        status: status,
-                        user_type: user_type,
-                    },
-                    success: function(responseData) {
-                        if (responseData == 1) {
-                            toastr.success("Added Successfully");
-                            $("#addCustomerModal").modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            toastr.error(responseData);
-                        }
+    $(document).on('click', '.delete-btn', function() {
+        var id = $(this).data('id');
+        /* Confirm deletion*/
+        if (confirm("Are you sure you want to delete this item?")) {
+            $.ajax({
+                type: 'POST', 
+                dataType:'json',
+                url: 'include/customers_server.php?delete_customer_request_data=true', 
+                data: { delete_data: true, id: id }, 
+                success: function(response) {
+                    if(response.success=true){
+                        toastr.success(response.message);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 500);
                     }
-                });
-            }
+                    if(response.success==false){
+                        toastr.success(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    toastr.error("Error deleting item! " + error);
+                }
+            });
         }
+    });
     </script>
 </body>
 

@@ -204,6 +204,22 @@ if(isset($_GET['create_customer_request']) && $_SERVER['REQUEST_METHOD'] == 'POS
     $stmt->close();
     exit; 
 }
+/* Delete  Customer Request */
+if(isset($_GET['delete_customer_request_data']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
+    $id = intval($_POST['id']);
+    $stmt = $con->prepare("DELETE FROM customer_request WHERE id = ?");
+    $stmt->bind_param('i', $id);
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Deleted successfully!']);
+        exit;
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $stmt->error]);
+        exit;
+    }
+
+    $stmt->close();
+    exit;
+}
 /* GET All Customer With Online Status */
 if (isset($_GET['get_all_customer_with_online_status']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     /* Check if session is started */
