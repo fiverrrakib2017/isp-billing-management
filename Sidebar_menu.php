@@ -39,8 +39,7 @@
                                     <li>
                                         <a href="con_request.php">Connection Request 
                                             <?php 
-                                                if ($allCstmr=$con->query("SELECT * FROM customers WHERE user_type='1' AND status=3")) {
-                                                    //echo $allCstmr->num_rows;
+                                                if ($allCstmr=$con->query("SELECT * FROM customer_request WHERE status=0")) {
                                                     if ($allCstmr->num_rows > 0) {
                                                         echo '<span class="badge rounded-pill bg-danger float-end">'.$allCstmr->num_rows.'<span>';
                                                     }else{
