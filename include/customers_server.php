@@ -178,6 +178,32 @@ if(isset($_GET['check_customer_online_status']) && $_POST['check_customer_online
     }
    
 }
+/* Create  Customer Request */
+if(isset($_GET['create_customer_request']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
+    $fullname = trim($_POST['fullname']);
+    $mobile = trim($_POST['mobile']);
+    $address = trim($_POST['address']);
+    $area_id = intval($_POST['area_id']);
+    $request_by = trim($_POST['request_by']);
+    if (empty($fullname) || empty($mobile) || empty($address)) {
+        echo json_encode(['success' => false, 'message' => 'All fields are required.']);
+        exit;
+    }
+    /* Insert data into the database*/
+    $stmt = $con->prepare("INSERT INTO customer_request (fullname, mobile, address, area_id,req_date, request_by,status) VALUES (?, ?, ?, ?, NOW(),?,'0')");
+    $stmt->bind_param('sssis', $fullname, $mobile, $address, $area_id, $request_by);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Customer request created successfully!']);
+        exit;
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $stmt->error]);
+        exit;
+    }
+
+    $stmt->close();
+    exit; 
+}
 /* GET All Customer With Online Status */
 if (isset($_GET['get_all_customer_with_online_status']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     /* Check if session is started */
