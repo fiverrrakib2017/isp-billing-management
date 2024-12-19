@@ -60,7 +60,11 @@
 <script src="assets/libs/chartist/chartist.min.js"></script>
 <script src="assets/libs/chartist-plugin-tooltips/chartist-plugin-tooltip.min.js"></script>
 
+ <!-- form wizard -->
+ <script src="assets/libs/jquery-steps/build/jquery.steps.min.js"></script>
 
+<!-- form wizard init -->
+<script src="assets/js/pages/form-wizard.init.js"></script>
 
 
 <script type="text/javascript">

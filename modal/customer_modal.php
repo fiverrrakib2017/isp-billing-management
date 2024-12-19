@@ -9,196 +9,204 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="">
-                <form id="customer_form">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Full Name</label>
-                                        <input id="customer_fullname" type="text" class="form-control "
-                                            placeholder="Enter Your Fullname" />
-                                    </div>
+                <form id="form-horizontal" class="form-horizontal form-wizard-wrapper">
+                    <h3>Basic Information</h3>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Full Name</label>
+                                    <input id="customer_fullname" type="text" class="form-control "
+                                        placeholder="Enter Your Fullname" />
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Username <span id="usernameCheck"></span></label>
-                                        <input id="customer_username" type="text" class="form-control "
-                                            name="username" placeholder="Enter Your Username"
-                                            oninput="checkUsername();" />
 
-                                    </div>
-                                </div>
                             </div>
-                            <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Username <span id="usernameCheck"></span></label>
+                                    <input id="customer_username" type="text" class="form-control "
+                                        name="username" placeholder="Enter Your Username"
+                                         />
 
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Password</label>
-                                        <input id="customer_password" type="password" class="form-control "
-                                            name="password" placeholder="Enter Your Password" />
-                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Mobile no.</label>
-                                        <input id="customer_mobile" type="text" class="form-control " name="mobile"
-                                            placeholder="Enter Your Mobile Number" />
-                                    </div>
-                                </div>
+
                             </div>
-                            <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Password</label>
+                                    <input id="customer_password" type="password" class="form-control "
+                                        name="password" placeholder="Enter Your Password" />
+                                </div>
 
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Expired Date</label>
-                                        <select id="customer_expire_date" class="form-select">
-                                            <option value="<?php echo date('d'); ?>">
-                                                <?php echo date('d'); ?></option>
-                                            <?php
-                                            if ($exp_cstmr = $con->query('SELECT * FROM customer_expires')) {
-                                                while ($rowsssss = $exp_cstmr->fetch_array()) {
-                                                    $exp_date = $rowsssss['days'];
-                                            
-                                                    echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
-                                                }
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Mobile no.</label>
+                                    <input id="customer_mobile" type="text" class="form-control " name="mobile"
+                                        placeholder="Enter Your Mobile Number" />
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </fieldset><br>
+                    <h3>Contact</h3>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                <label>POP/Branch</label>
+                                    <select id="customer_pop" class="form-select" style="width: 100%;">
+                                        <option value="">Select Pop/Branch
+                                        </option>
+                                        <?php
+                                        $condition = "";
+                                        if (isset($pop_id)) {
+                                            $pop_id = intval($pop_id); 
+                                            $condition = "WHERE id=$pop_id";
+                                        }
+                                        
+                                        $query = "SELECT * FROM add_pop $condition";
+                                        if ($pop = $con->query($query)) { 
+                                            while ($rows = $pop->fetch_array()) {
+                                                $id = htmlspecialchars($rows['id']);
+                                                $name = htmlspecialchars($rows['pop']);
+                                        
+                                                echo '<option value="' . $id . '">' . $name . '</option>';
                                             }
-                                            
-                                            ?>
+                                        } else {
+                                            echo "Error: " . $con->error; 
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Area/Location</label>
+                                    <select id="customer_area" class="form-select" name="area" style="width: 100%;">
+                                        <option>Select Area</option>
+                                    </select>
+                                </div>
+
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>House / Building No.</label>
+                                    <div class="d-flex">
+                                        <select id="customer_houseno" class="form-select" name="customer_houseno" style="width: 100%;">
+                                            <option value="0">---Select---</option>
                                         </select>
+                                        <button type="button" class="btn btn-primary add-house-btn" data-bs-toggle="modal" data-bs-target="#addHouseModal">
+                                            <span>+</span>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Address</label>
-                                        <input id="customer_address" type="text" class="form-control" name="address"
-                                            placeholder="Enter Your Addres" />
-                                    </div>
+
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Address</label>
+                                    <input id="customer_address" type="text" class="form-control" name="address"
+                                        placeholder="Enter Your Addres" />
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </fieldset><br>
+                    <h3>Subscription</h3>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Package</label>
+                                    <select id="customer_package" class="form-select" style="width: 100%;"></select>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-4 ">
-                                    <div class="form-group mb-2">
-                                        <label>POP/Branch</label>
-                                        <select id="customer_pop" class="form-select" style="width: 100%;">
-                                            <option value="">Select Pop/Branch
-                                            </option>
-                                            <?php
-                                            $condition = "";
-                                            if (isset($pop_id)) {
-                                                $pop_id = intval($pop_id); 
-                                                $condition = "WHERE id=$pop_id";
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Package Price</label>
+                                    <input  id="customer_price" type="text" class="form-control"
+                                        value="00" />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Connection Charge</label>
+                                    <input id="customer_con_charge" type="text" class="form-control"
+                                        name="con_charge" placeholder="Enter Connection Charge" value="500" />
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Expired Date</label>
+                                    <select id="customer_expire_date" class="form-select">
+                                        <option value="<?php echo date('d'); ?>">
+                                            <?php echo date('d'); ?></option>
+                                        <?php
+                                        if ($exp_cstmr = $con->query('SELECT * FROM customer_expires')) {
+                                            while ($rowsssss = $exp_cstmr->fetch_array()) {
+                                                $exp_date = $rowsssss['days'];
+                                        
+                                                echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
                                             }
-                                            
-                                            $query = "SELECT * FROM add_pop $condition";
-                                            if ($pop = $con->query($query)) { 
-                                                while ($rows = $pop->fetch_array()) {
-                                                    $id = htmlspecialchars($rows['id']);
-                                                    $name = htmlspecialchars($rows['pop']);
-                                            
-                                                    echo '<option value="' . $id . '">' . $name . '</option>';
-                                                }
-                                            } else {
-                                                echo "Error: " . $con->error; 
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 ">
-                                    <div class="form-group mb-2">
-                                        <label>Area/Location</label>
-                                        <select id="customer_area" class="form-select" name="area" style="width: 100%;">
-                                            <option>Select Area</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 ">
-                                    <div class="form-group mb-2">
-                                        <label>House / Building No.</label>
-                                        <div class="d-flex">
-                                            <select id="customer_houseno" class="form-select" name="customer_houseno" style="width: 100%;">
-                                                <option value="0">---Select---</option>
-                                            </select>
-                                            <button type="button" class="btn btn-primary add-house-btn" data-bs-toggle="modal" data-bs-target="#addHouseModal">
-                                                <span>+</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Nid Card Number</label>
-                                        <input id="customer_nid" type="text" class="form-control" name="nid"
-                                            placeholder="Enter Your Nid Number" />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Package</label>
-                                        <select id="customer_package" class="form-select" style="width: 100%;">
-
-
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Connection Charge</label>
-                                        <input id="customer_con_charge" type="text" class="form-control"
-                                            name="con_charge" placeholder="Enter Connection Charge" value="500" />
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-2">
-                                        <label>Package Price</label>
-                                        <input  id="customer_price" type="text" class="form-control"
-                                            value="00" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Remarks</label>
-                                        <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Status</label>
-                                        <select id="customer_status" class="form-select" style="width: 100%;">
-                                            <option value="">Select Status
-                                            </option>
-                                            <option value="0">Disable</option>
-                                            <option value="1">Active</option>
-                                            <option value="2">Expire</option>
-                                            <option value="3">Request</option>
-                                        </select>
-                                    </div>
-
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label>Liablities</label>
-                                        <select id="customer_liablities" class="form-select" style="width: 100%;">
-                                            <option value="">---Select---</option>
-                                            <option value="0">No</option>
-                                            <option value="1">Yes</option>
-                                        </select>
-                                    </div>
-
+                                        }
+                                        
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </fieldset><br>
+                    <h3>Additional</h3>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Nid Card Number</label>
+                                    <input id="customer_nid" type="text" class="form-control" name="nid"
+                                        placeholder="Enter Your Nid Number" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Remarks</label>
+                                    <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Status</label>
+                                    <select id="customer_status" class="form-select" style="width: 100%;">
+                                        <option value="">Select Status
+                                        </option>
+                                        <option value="0">Disable</option>
+                                        <option value="1">Active</option>
+                                        <option value="2">Expire</option>
+                                        <option value="3">Request</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label>Liablities</label>
+                                    <select id="customer_liablities" class="form-select" style="width: 100%;">
+                                        <option value="">---Select---</option>
+                                        <option value="0">No</option>
+                                        <option value="1">Yes</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset><br>
                 </form>
-               
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
