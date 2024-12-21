@@ -1582,16 +1582,22 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                             pop_id: pop_id,
                             p_name: p_name,
                             p_price: p_price,
-                            s_price
+                            s_price:s_price,
                         },
                         url: "include/package_server.php",
                         cache: false,
-                        success: function(largestPossibleRadius) {
-                            $("#addPackageModal").modal('hide');
-                            toastr.success(largestPossibleRadius);
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
+                        dataType:'json',
+                        success: function(response) {
+                            if(response.success==true){
+                                $("#addPackageModal").modal('hide');
+                                toastr.success(response.message);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            }
+                            if(response.success==false){
+                                toastr.error(response.message);
+                            }
                         }
                     });
                 }

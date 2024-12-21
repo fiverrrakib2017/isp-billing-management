@@ -68,9 +68,12 @@ if (isset($_POST['pop_id'])) {
   $p_price=$_POST['p_price'];
   $S_price=$_POST['s_price'];
 
-  // Package Name Retrive
- 
-  
+  if($con->query("SELECT * FROM branch_package WHERE pop_id='$pop_id' AND pkg_id='$p_name' ")->num_rows>0){
+    echo json_encode(['success'=>false, 'message'=>'Package Already Exists']);
+    exit();
+  }
+
+  /*Package Name Retrive*/   
     if ($pkgName = $con->query("SELECT * FROM radgroupcheck WHERE id='$p_name' LIMIT 1")) {
         while ($rowspk = $pkgName->fetch_array()) {
         $packageName = $rowspk['groupname'];
@@ -80,9 +83,9 @@ if (isset($_POST['pop_id'])) {
    /**/
   $result= $con->query("INSERT INTO branch_package(pop_id, pkg_id, package_name, p_price, s_price) VALUES('$pop_id','$p_name','$packageName', '$p_price','$S_price')");
   if ($result==true) {
-    echo "Package Added";
+    echo json_encode(['success'=>true, 'message'=>'Package Added']);
   }else{
-    echo "Error";
+    echo json_encode(['success'=>false, 'message'=>'Something else']);
   }
 }
 
