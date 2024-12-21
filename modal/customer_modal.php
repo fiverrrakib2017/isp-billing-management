@@ -16,6 +16,7 @@
                             <div class="col-md-6">
                                 <div class="form-group mb-2">
                                     <label>Full Name</label>
+                                    <input id="customer_request_id" type="text" class="d-none"/>
                                     <input id="customer_fullname" type="text" class="form-control "
                                         placeholder="Enter Your Fullname" />
                                 </div>

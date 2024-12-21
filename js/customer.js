@@ -88,6 +88,7 @@ $(document).on('change', '#customer_area', function() {
 
 
 $("#customer_add").click(function() {
+    var customer_request_id = $("#customer_request_id").val();
     var fullname = $("#customer_fullname").val();
     var package = $("#customer_package").val();
     var username = $("#customer_username").val();
@@ -105,12 +106,11 @@ $("#customer_add").click(function() {
     var liablities = $("#customer_liablities").val();
     var customer_houseno = $("#customer_houseno").val();
     var user_type = 1;
-
-   customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status);
+   customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status);
 
 });
 
-function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status) {
+function customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status) {
     if (fullname.length == 0) {
         toastr.error("Customer name is require");
     } else if (package.length == 0) {
@@ -144,6 +144,7 @@ function customerAdd(user_type, fullname, package, username, password, mobile, a
             url: 'include/customers_server.php',
             data: {
                 addCustomerData: addCustomerData,
+                customer_request_id:customer_request_id,
                 fullname: fullname,
                 package: package,
                 username: username,
@@ -163,11 +164,13 @@ function customerAdd(user_type, fullname, package, username, password, mobile, a
                 user_type: user_type,
             },
             success: function(responseData) {
+                $("#customer_add").html('Add Customer');
+                $("#customer_add").prop("disabled", false);
                 if (responseData == 1) {
                     toastr.success("Added Successfully");
                      /*GET Last id With callback function */
                         get_customer_last_id(function(last_id) {
-                        $('#customers_table').DataTable().ajax.reload();
+                        //$('#customers_table').DataTable().ajax.reload();
                         $("#addCustomerModal").modal('hide');
                         $("#customer_details_show_modal").modal('show');
                         $("#details-name").html(fullname);
@@ -441,3 +444,5 @@ function initMap2() {
         console.error("Google Maps API:", error);
     }
 })();
+
+

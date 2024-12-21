@@ -312,6 +312,7 @@ if (isset($_POST['getPackagePrice'])) {
 // ADD NEW CUSTOMER
 
 if (isset($_POST['addCustomerData'])) {
+    $customer_request_id = $_POST['customer_request_id'] ?? 0;
     $fullname = $_POST['fullname'];
     $package = $_POST['package'];
     $username = $_POST['username'];
@@ -343,7 +344,7 @@ if (isset($_POST['addCustomerData'])) {
         }
     }
 
-    //পপ এর বেলেন্স চেক করে রিচারজ করবো , 
+    /*Check Pop Blance */
     if ($pop_payment = $con->query("SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$pop' ")) {
         while ($rows = $pop_payment->fetch_array()) {
             $popBalance = $rows["balance"];
@@ -362,6 +363,10 @@ if (isset($_POST['addCustomerData'])) {
     } else {
 
     $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,area_house_id,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area','$area_house_id',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0')");
+    /*Change the customer Reqeust status*/
+    if($customer_request_id > 0){
+        $con->query("UPDATE customer_request SET status='1' WHERE id='$customer_request_id'");
+    }
     if ($result == true) {
 
         //Update account recharge and transection
