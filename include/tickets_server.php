@@ -152,7 +152,12 @@ if (!isset($_SESSION)) {
 	$condition = "1=1"; 
 
 	if (!empty($_SESSION['user_pop'])) {
-		$condition .= " AND pop_id = '" . mysqli_real_escape_string($con, $_SESSION['user_pop']) . "'";
+		if($_SESSION['user_pop']==1){
+			$condition .= "";
+		}else{
+			$condition .= " AND pop_id = '" . mysqli_real_escape_string($con, $_SESSION['user_pop']) . "'";
+		}
+		
 	}
 
 	/* Check if 'area_id' is provided in the GET request*/
@@ -282,18 +287,27 @@ if (isset($_GET['get_all_customer']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
+
+	/* Set default condition */
     $condition = "WHERE pop = ?";
     
     /* Set default pop_id value*/
-    $pop_id = 1; 
-    
+    $pop_id = 0; 
+	
+
+   
     if (isset($_SESSION['user_pop']) && !empty($_SESSION['user_pop'])) {
-        $pop_id = $_SESSION['user_pop'];
+		$pop_id = $_SESSION['user_pop'];
     }
 
+	if($pop_id==0){
+		$condition = "";
+	}
     /*Prepare the SQL query */ 
     $stmt = $con->prepare("SELECT id, username, fullname, mobile FROM customers $condition");
-    $stmt->bind_param('i', $pop_id); 
+	if(!empty($condition)){
+		$stmt->bind_param('i', $pop_id); 
+	}
 
     /* Execute the query*/
     if ($stmt->execute()) {

@@ -26,6 +26,7 @@ if (isset($_GET['clid'])) {
             $nid = $rows["nid"];
             $price = $rows["price"];
             $remarks = $rows["remarks"];
+            $liablities = $rows["liablities"];
         }
 
         $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
@@ -372,6 +373,25 @@ echo $createdate;
                                              </a>
                                           </div>
                                           <div class="d-flex justify-content-between border-bottom py-2 px-3">
+                                             <p><i class=" fas fa-dollar-sign"></i> Bill Amount:</p>
+                                             <a href="#">
+                                             <?php echo $price; ?>
+                                             </a>
+                                          </div>
+                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
+                                             <p><i class="fas fa-file-contract"></i> Liabilities:</p>
+                                             <a href="#">
+                                             <?php 
+                                             if($liablities==1){
+                                                echo '<span class="badge bg-success">Yes</span>';
+                                             }else{
+                                                echo '<span class="badge bg-danger">No</span>';
+                                             }
+                                             
+                                             ?>
+                                             </a>
+                                          </div>
+                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
                                              <p><i class="mdi mdi-phone"></i> Mobile:</p>
                                              <a href="#"><?php echo $mobile; ?></a>
                                           </div>
@@ -638,7 +658,7 @@ echo $totalpaid - $discount_amount ?? 0.00;
                                                       <?php
 if ($duepmt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type='4'")) {
     while ($pmt_rows = $duepmt->fetch_array()) {
-        $totalpmtpaid = $pmt_rows["Amount"];
+        $totalpmtpaid = $pmt_rows["Amount"] ?? 0;
     }
     echo $totalpmtpaid;
 }

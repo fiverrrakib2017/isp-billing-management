@@ -81,7 +81,7 @@ function timeAgo($startdate)
             <div class="page-content">
                 <div class="container-fluid">
                     <div class="row mb-2">
-                        <div class="col-md-12 col-sm-6">
+                        <div class="col-md-6 col-sm-6">
                             <button type="button" data-bs-toggle="modal" data-bs-target="#addRechargeModal"
                                 class="btn-sm btn btn-primary mb-1"><i class="mdi mdi-battery-charging-90"></i> Recharge
                                 Now</button>
@@ -108,6 +108,32 @@ function timeAgo($startdate)
                             <button type="button" data-bs-toggle="modal" data-bs-target="#ticketModal"
                                 class="btn-sm btn btn-success mb-1">Add Ticket</button>
                         </div>
+                        <div class="col-md-6">
+                            <div class="float-end">
+                                 <abbr title="Date And Time ">
+                                 <button type="button"  class="btn-sm btn btn-info">
+                                    <i class="mdi mdi-clock-outline"></i>
+                                 </button></abbr>
+                                 &nbsp;
+                                 <abbr title="Up Time">
+                                 <button type="button" id="rechargeBtn" class="btn-sm btn btn-primary ">
+                                    <i class="mdi mdi-server"></i>
+                                 </button></abbr>
+                                 &nbsp;
+                                 <abbr title="Cloud Server">
+                                 <button type="button" class="btn-sm btn btn-secondary">
+                                 <i class="mdi mdi-cloud-outline"></i>
+                                 </button></abbr>
+                                 &nbsp;
+                                 <abbr title="Payment received">
+                                 <button type="button" data-bs-target="#addPaymentModal" data-bs-toggle="modal" class="btn-sm btn btn-info ">
+                                 <i class="mdi mdi mdi-cash-multiple"></i>
+                                 </button></abbr>
+                                 &nbsp;
+                                
+                              </div>
+                        </div>
+
                     </div>
                     <div class="row">
 
