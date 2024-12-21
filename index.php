@@ -49,6 +49,7 @@ function timeAgo($startdate)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <?php include 'style.php'; ?>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist-plugin-legend/0.6.2/chartist-plugin-legend.min.css"> -->
 </head>
 
 <body data-sidebar="dark">
@@ -92,7 +93,7 @@ function timeAgo($startdate)
 
                             <a href="con_request.php" class="btn-sm btn btn-warning mb-1">Connection Request
                                 <?php
-                                if ($allCstmr = $con->query("SELECT * FROM customer_request WHERE status=0")) {
+                                if ($allCstmr = $con->query('SELECT * FROM customer_request WHERE status=0')) {
                                     if ($allCstmr->num_rows > 0) {
                                         echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
                                     } else {
@@ -110,28 +111,29 @@ function timeAgo($startdate)
                         </div>
                         <div class="col-md-6">
                             <div class="float-end">
-                                 <abbr title="Date And Time ">
-                                 <button type="button"  class="btn-sm btn btn-info">
-                                    <i class="mdi mdi-clock-outline"></i>
-                                 </button></abbr>
-                                 &nbsp;
-                                 <abbr title="Up Time">
-                                 <button type="button" id="rechargeBtn" class="btn-sm btn btn-primary ">
-                                    <i class="mdi mdi-server"></i>
-                                 </button></abbr>
-                                 &nbsp;
-                                 <abbr title="Cloud Server">
-                                 <button type="button" class="btn-sm btn btn-secondary">
-                                 <i class="mdi mdi-cloud-outline"></i>
-                                 </button></abbr>
-                                 &nbsp;
-                                 <abbr title="Payment received">
-                                 <button type="button" data-bs-target="#addPaymentModal" data-bs-toggle="modal" class="btn-sm btn btn-info ">
-                                 <i class="mdi mdi mdi-cash-multiple"></i>
-                                 </button></abbr>
-                                 &nbsp;
-                                
-                              </div>
+                                <abbr title="Date And Time ">
+                                    <button type="button" class="btn-sm btn btn-info">
+                                        <i class="mdi mdi-clock-outline"></i>
+                                    </button></abbr>
+                                &nbsp;
+                                <abbr title="Up Time">
+                                    <button type="button" id="rechargeBtn" class="btn-sm btn btn-primary ">
+                                        <i class="mdi mdi-server"></i>
+                                    </button></abbr>
+                                &nbsp;
+                                <abbr title="Cloud Server">
+                                    <button type="button" class="btn-sm btn btn-secondary">
+                                        <i class="mdi mdi-cloud-outline"></i>
+                                    </button></abbr>
+                                &nbsp;
+                                <abbr title="Payment received">
+                                    <button type="button" data-bs-target="#addPaymentModal" data-bs-toggle="modal"
+                                        class="btn-sm btn btn-info ">
+                                        <i class="mdi mdi mdi-cash-multiple"></i>
+                                    </button></abbr>
+                                &nbsp;
+
+                            </div>
                         </div>
 
                     </div>
@@ -385,10 +387,10 @@ function timeAgo($startdate)
                                                         <?php
                                                         
                                                         $sql = "SELECT radacct.username FROM radacct
-                                                                                                                        INNER JOIN customers
-                                                                                                                        ON customers.username=radacct.username
-                                                                                                                        
-                                                                                                                        WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
+                                                                                                                                                                                INNER JOIN customers
+                                                                                                                                                                                ON customers.username=radacct.username
+                                                                                                                                                                                
+                                                                                                                                                                                WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
                                                         $countpoponlnusr = mysqli_query($con, $sql);
                                                         
                                                         echo $countpoponlnusr->num_rows;
@@ -440,7 +442,7 @@ function timeAgo($startdate)
 
                         <div class="col-xl-6">
                             <div class="card">
-                                <div class="card-header">
+                                <div class="card-header bg-white text-black">
                                     <h4 class="card-title">Tickets</h4>
                                     <button style="float: right;">
                                         <a href="allTickets.php">+</a>
@@ -696,15 +698,15 @@ function timeAgo($startdate)
 
                                     <div class="row text-center mt-4">
                                         <div class="col-4">
-                                            <h5 class="mb-0 font-size-18">50</h5>
+                                            <h5 class="mb-0 font-size-18"></h5>
                                             <p class="text-muted text-truncate">New</p>
                                         </div>
                                         <div class="col-4">
-                                            <h5 class="mb-0 font-size-18">44</h5>
+                                            <h5 class="mb-0 font-size-18"></h5>
                                             <p class="text-muted text-truncate">Expired</p>
                                         </div>
                                         <div class="col-4">
-                                            <h5 class="mb-0 font-size-18">32</h5>
+                                            <h5 class="mb-0 font-size-18"></h5>
                                             <p class="text-muted text-truncate">Disabled</p>
                                         </div>
                                     </div>
@@ -1330,7 +1332,7 @@ echo $rowcron['date'];
     <?php include 'modal/tickets_modal.php'; ?>
 
 
-    <?php require 'modal/customer_modal.php';?>
+    <?php require 'modal/customer_modal.php'; ?>
 
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
@@ -1348,39 +1350,58 @@ echo $rowcron['date'];
         ticket_complain_type();
 
 
-        var chart = new Chartist.Line("#simple-line-chart", {
-            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-            series: [
-                [<?php
-                for ($i = 1; $i < 13; $i++) {
-                    $currentyrMnth = date('Y') . '-0' . $i;
-                    $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+        new Chartist.Line("#simple-line-chart", {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    series: [
+        {
+            name: 'New Customers',
+            data: [<?php
+                for ($i = 1; $i <= 12; $i++) {
+                    $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                    $sql = "SELECT COUNT(*) AS new_customers FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
                     $result = mysqli_query($con, $sql);
-                    echo $countconn = mysqli_num_rows($result) . ',';
+                    $row = mysqli_fetch_assoc($result);
+                    echo $row['new_customers'] . ',';
                 }
-                ?>],
-                [
+            ?>]
+        },
+        {
+            name: 'Expired Customers',
+            data: [<?php
+                for ($i = 1; $i <= 12; $i++) {
+                    $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                    $sql = "SELECT COUNT(*) AS expired_customers FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+                    $result = mysqli_query($con, $sql);
+                    $row = mysqli_fetch_assoc($result);
+                    echo $row['expired_customers'] . ',';
+                }
+            ?>]
+        },
+        {
+            name: 'Disabled Customers',
+            data: [<?php
+                for ($i = 1; $i <= 12; $i++) {
+                    $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                    $sql = "SELECT COUNT(*) AS disabled_customers FROM customers WHERE status = '0' AND createdate LIKE '%$currentyrMnth%'";
+                    $result = mysqli_query($con, $sql);
+                    $row = mysqli_fetch_assoc($result);
+                    echo $row['disabled_customers'] . ',';
+                }
+            ?>]
+        }
+    ]
+}, {
+    fullWidth: true,
+    chartPadding: {
+        right: 40
+    },
+    plugins: [Chartist.plugins.tooltip()]
+});
 
-                    <?php
-                    for ($i = 1; $i < 13; $i++) {
-                        $currentyrMnth = date('Y') . '-0' . $i;
-                        $sql = "SELECT * FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
-                        $result = mysqli_query($con, $sql);
-                        //echo $countexpconn = mysqli_num_rows($result).',';
-                    }
-                    
-                    ?>
-                ],
-                [1, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 10],
-                [10, 2, 3, 4, 5, 6, 6, 6, 6, 6, 6, 6, 13]
-            ]
-        }, {
-            fullWidth: !0,
-            chartPadding: {
-                right: 40
-            },
-            plugins: [Chartist.plugins.tooltip()]
-        });
+
+
+
+
 
         var times = function(e) {
                 return Array.apply(null, new Array(e))
