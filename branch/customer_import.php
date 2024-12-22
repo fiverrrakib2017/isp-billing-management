@@ -1,8 +1,19 @@
 <?php
-include 'include/security_token.php';
-include 'include/db_connect.php';
-include 'include/pop_security.php';
-include 'include/users_right.php';
+if (!isset($_SESSION)) {
+    session_start();
+}
+$rootPath = $_SERVER['DOCUMENT_ROOT'];
+
+$db_connect_path = $rootPath . '/include/db_connect.php';
+$users_right_path = $rootPath . '/include/users_right.php';
+
+if (file_exists($db_connect_path)) {
+    require $db_connect_path;
+}
+
+if (file_exists($users_right_path)) {
+    require $users_right_path;
+}
 
 ?>
 
@@ -20,7 +31,14 @@ include 'include/users_right.php';
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include 'style.php'; ?>
+    <?php
+    $page_title = 'Customer Import';
+    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+    
+    echo file_get_contents($url);
+    
+    ?>
 </head>
 
 <body data-sidebar="dark">
@@ -31,8 +49,12 @@ include 'include/users_right.php';
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php $page_title = 'Customer Import';
-        include 'Header.php'; ?>
+        <?php
+            $page_title = 'Location/Area';
+            $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+            $url = $protocol . $_SERVER['HTTP_HOST'] . '/Header.php';
+            include '../Header.php';
+        ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -86,7 +108,7 @@ include 'include/users_right.php';
                                             </thead>
                                             <tbody id="customer-list">
                                                 <?php
-                                                $directory = "csv/"; 
+                                                $directory = "../csv/"; 
                                                 $files = scandir($directory); 
                                                 $upldNo = 1;
 
@@ -174,7 +196,13 @@ include 'include/users_right.php';
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
-    <?php include 'script.php'; ?>
+    <?php
+    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
+    
+    echo file_get_contents($url);
+    
+    ?>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#customers_table").DataTable();
@@ -182,7 +210,7 @@ include 'include/users_right.php';
                 if (confirm("Are you sure you want to import?")) {
                     $.ajax({
                         type: 'POST',
-                        url: "include/cstmr_import.php",
+                        url: "../include/cstmr_import.php",
                         data: {
                             customImprt: 0
                         },
@@ -200,7 +228,7 @@ include 'include/users_right.php';
                 form_data.append('import_file_name', imageData);
 
                 $.ajax({
-                    url: "include/cstmr_import.php?file_import",
+                    url: "../include/cstmr_import.php?file_import",
                     type: "POST",
                     data: form_data,
                     dataType: 'json',

@@ -270,7 +270,17 @@
                                     <select class="form-select" name="area_id" id="area_id" style="width: 100%;">
                                         <option value="">Select</option>
                                         <?php
-                                        if ($pop = $con->query("SELECT * FROM area_list")) {
+                                        /*Initial POP ID*/
+                                        $pop_id=0; 
+                                        $condition='';
+                                        if(!empty($_SESSION['user_pop']) && isset($_SESSION['user_pop'])){
+                                            $pop_id=$_SESSION['user_pop'];
+                                            $condition="WHERE pop_id=$pop_id";
+                                        }
+                                        if(empty($pop_id)){
+                                            $condition='';
+                                        }
+                                        if ($pop = $con->query("SELECT * FROM area_list $condition")) {
                                             while ($rows = $pop->fetch_array()) {
                                                 $id = $rows['id'];
                                                 $name = $rows['name'];
