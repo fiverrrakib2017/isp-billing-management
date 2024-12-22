@@ -1366,6 +1366,18 @@ echo $rowcron['date'];
             ?>]
         },
         {
+            name: 'Active Customers',
+            data: [<?php
+                for ($i = 1; $i <= 12; $i++) {
+                    $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                    $sql = "SELECT COUNT(*) AS active_customers FROM customers WHERE status = '1' AND createdate LIKE '%$currentyrMnth%'";
+                    $result = mysqli_query($con, $sql);
+                    $row = mysqli_fetch_assoc($result);
+                    echo $row['active_customers'] . ',';
+                }
+            ?>]
+        },
+        {
             name: 'Expired Customers',
             data: [<?php
                 for ($i = 1; $i <= 12; $i++) {
