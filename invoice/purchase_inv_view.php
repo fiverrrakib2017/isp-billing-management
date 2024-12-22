@@ -16,6 +16,7 @@ if (isset($_GET['clid'])) {
             $grand_total = $rows["grand_total"];
             $total_paid = $rows["total_paid"];
             $total_due = $rows["total_due"];
+            $created_at = $rows["created_at"];
         }
     }
 }
@@ -105,10 +106,10 @@ if (isset($_GET['clid'])) {
 
 
                                 <div>
-                                    <p class="tm_m0">Supplier Create Date</p>
+                                    <p class="tm_m0">Invoice Create Date</p>
                                     <b class="tm_primary_color">
                                         <?php
-                                            $date = $date;
+                                            $date = $created_at;
                                             $formatted_date = date("d F Y", strtotime($date));
                                             echo $formatted_date; 
                                         ?>
