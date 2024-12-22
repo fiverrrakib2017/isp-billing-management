@@ -226,17 +226,21 @@ if (isset($_GET['get_all_customer_with_online_status']) && $_SERVER['REQUEST_MET
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
-
+    $condition='WHERE pop = ?'; 
     /* Set default pop_id value */
-    $pop_id = 1;
+    $pop_id =0;
     if (isset($_SESSION['user_pop']) && !empty($_SESSION['user_pop'])) {
         $pop_id = $_SESSION['user_pop'];
     }
+    if($pop_id==0){
+        $condition='';
+    }
 
     /* Prepare the SQL query */
-    $stmt = $con->prepare("SELECT id, username, fullname, mobile FROM customers WHERE pop = ?");
-    $stmt->bind_param('i', $pop_id);
-
+    $stmt = $con->prepare("SELECT id, username, fullname, mobile FROM customers $condition");
+    if(!empty($Pop_id)){
+        $stmt->bind_param('i', $pop_id);
+    }
     /* Execute the query */
     if ($stmt->execute()) {
         $result = $stmt->get_result();
@@ -288,7 +292,7 @@ if (isset($_POST['srch_pop_name'])) {
 
 //dynamic customer package when click pop/branch
 if (isset($_POST['getCustomerPackage'])) {
-    echo '<option value="">Select</option>';
+    echo '<option value="">---Select---</option>';
     $popId = $_POST['pop_name'];
     if ($allArea = $con->query("SELECT * FROM branch_package WHERE  pop_id='$popId' ")) {
 
