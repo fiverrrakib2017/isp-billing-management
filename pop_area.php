@@ -25,7 +25,8 @@ include 'include/pop_security.php';
 
     <!-- Begin page -->
     <div id="layout-wrapper">
-        <?php $page_title="Area"; include 'Header.php'; ?>
+        <?php $page_title = 'Area';
+        include 'Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -111,11 +112,12 @@ include 'include/pop_security.php';
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Billing Cycle Date</label>
-                                                        <select class="form-select" type="text" id="billing_date" name="billing_date">
-                                                            <?php 
+                                                        <select class="form-select" type="text" id="billing_date"
+                                                            name="billing_date">
+                                                            <?php
                                                             
-                                                            for($i=1; $i<30; $i++){
-                                                                echo '<option value="'.$i.'">'.$i.'</option>';
+                                                            for ($i = 1; $i < 30; $i++) {
+                                                                echo '<option value="' . $i . '">' . $i . '</option>';
                                                             }
                                                             
                                                             ?>
@@ -165,90 +167,92 @@ include 'include/pop_security.php';
                                                 </tr>
                                             </thead>
                                             <tbody id="areaList">
-                                            <?php 
+                                                <?php 
 
-if (!empty($_GET['pop_id'])) {
-    $pop_id = (int)$_GET['pop_id'];
-} else if (!empty($auth_usr_POP_id)) {
-    $pop_id = (int)$auth_usr_POP_id;
-} else {
-    $pop_id = null; 
-}
+                                                    if (!empty($_GET['pop_id'])) {
+                                                        $pop_id = (int)$_GET['pop_id'];
+                                                    } else if (!empty($auth_usr_POP_id)) {
+                                                        $pop_id = (int)$auth_usr_POP_id;
+                                                    } else {
+                                                        $pop_id = null; 
+                                                    }
 
-if ($pop_id !== null) {
-    $sql_con = "SELECT * FROM area_list WHERE pop_id = $pop_id";
-} else {
-    $sql_con = "SELECT * FROM area_list"; 
-}
+                                                    if ($pop_id !== null) {
+                                                        $sql_con = "SELECT * FROM area_list WHERE pop_id = $pop_id";
+                                                    } else {
+                                                        $sql_con = "SELECT * FROM area_list"; 
+                                                    }
 
-$result = mysqli_query($con, $sql_con);
+                                                    $result = mysqli_query($con, $sql_con);
 
-while ($rows2 = mysqli_fetch_assoc($result)) {
-    $areaID = $rows2['id'];
-    ?>
+                                                    while ($rows2 = mysqli_fetch_assoc($result)) {
+                                                        $areaID = $rows2['id'];
+                                                        ?>
 
-    <tr>
-        <td><?php echo $areaID; ?></td>
-        <td><?php echo htmlspecialchars($rows2['name']); ?></td>
-        <td>
-            <?php
-            $totalcust = $con->query("SELECT COUNT(*) as total FROM customers WHERE area = '$areaID'");
-            $area_cust = $totalcust->fetch_assoc()['total'];
-            echo $area_cust;
-            ?>
-        </td>
-        <td>
-            <?php
-             $sql = "SELECT radacct.username FROM radacct
-             INNER JOIN customers
-             ON customers.username=radacct.username
-             
-             WHERE customers.area='$areaID' AND radacct.acctstoptime IS NULL";
-             $countpoponlnusr = mysqli_query($con, $sql);
+                                                <tr>
+                                                    <td><?php echo $areaID; ?></td>
+                                                    <td><?php echo htmlspecialchars($rows2['name']); ?></td>
+                                                    <td>
+                                                        <?php
+                                                        $totalcust = $con->query("SELECT COUNT(*) as total FROM customers WHERE area = '$areaID'");
+                                                        $area_cust = $totalcust->fetch_assoc()['total'];
+                                                        echo $area_cust;
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $sql = "SELECT radacct.username FROM radacct
+                                                                                                                             INNER JOIN customers
+                                                                                                                             ON customers.username=radacct.username
+                                                                                                                             
+                                                                                                                             WHERE customers.area='$areaID' AND radacct.acctstoptime IS NULL";
+                                                        $countpoponlnusr = mysqli_query($con, $sql);
+                                                        
+                                                        echo $countpoponlnusr->num_rows;
+                                                        ?>
+                                                    </td>
 
-             echo $countpoponlnusr->num_rows;
-            ?>
-        </td>
+                                                    <td>
+                                                        <?php
+                                                        $totalexcust = $con->query("SELECT COUNT(*) as expired FROM customers WHERE area = '$areaID' AND expiredate < NOW()");
+                                                        $area_excust = $totalexcust->fetch_assoc()['expired'];
+                                                        echo '<a href="customer_expire.php?area_id=' . $areaID . '"><span class="badge bg-danger">' . $area_excust . '</span></a>';
+                                                        ?>
+                                                    </td>
 
-        <td>
-            <?php
-            $totalexcust = $con->query("SELECT COUNT(*) as expired FROM customers WHERE area = '$areaID' AND expiredate < NOW()");
-            $area_excust = $totalexcust->fetch_assoc()['expired'];
-            echo '<a href="customer_expire.php?area_id=' . $areaID . '"><span class="badge bg-danger">' . $area_excust . '</span></a>';
-            ?>
-        </td>
+                                                    <td>
+                                                        <?php
+                                                        $popID = $rows2['pop_id'];
+                                                        $get = $con->query("SELECT pop FROM add_pop WHERE id = $popID");
+                                                        if ($rows3 = $get->fetch_assoc()) {
+                                                            echo htmlspecialchars($rows3['pop']);
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php
+                                                        $final_data = $rows2['billing_date'] ?? 0;
+                                                        if ($final_data > 0) {
+                                                            echo '<span class="badge bg-success">' . $final_data . '</span></span>';
+                                                        } else {
+                                                            echo '<span class="badge bg-danger">' . $final_data . '</span></span>';
+                                                        }
+                                                        ?>
+                                                    </td>
 
-        <td>
-            <?php
-            $popID = $rows2['pop_id'];
-            $get = $con->query("SELECT pop FROM add_pop WHERE id = $popID");
-            if ($rows3 = $get->fetch_assoc()) {
-                echo htmlspecialchars($rows3['pop']);
-            }
-            ?>
-        </td>
-        <td>
-            <?php 
-            $final_data= $rows2['billing_date'] ?? 0;
-            if($final_data > 0){
-                echo '<span class="badge bg-success">'.$final_data.'</span></span>';
-            }else{
-                echo '<span class="badge bg-danger">'.$final_data.'</span></span>';
-            }
-            ?>
-        </td>
+                                                    <td style="text-align:right;">
+                                                        <a class="btn btn-info"
+                                                            href="area_edit.php?id=<?php echo $areaID; ?>">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <a class="btn btn-success"
+                                                            href="view_area.php?id=<?php echo $areaID; ?>">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
 
-        <td style="text-align:right;">
-            <a class="btn btn-info" href="area_edit.php?id=<?php echo $areaID; ?>">
-                <i class="fas fa-edit"></i>
-            </a>
-            <a class="btn btn-success" href="view_area.php?id=<?php echo $areaID; ?>">
-                <i class="fas fa-eye"></i>
-            </a>
-        </td>
-    </tr>
-
-<?php } ?>
+                                                <?php } ?>
 
                                             </tbody>
                                         </table>
@@ -307,10 +311,9 @@ while ($rows2 = mysqli_fetch_assoc($result)) {
             var billing_date = $("#billing_date").val();
             if (area.length == 0) {
                 toastr.error("Area name is require");
-            }else if(billing_date.length==0){
+            } else if (billing_date.length == 0) {
                 toastr.error("Billing Cycle Date is require");
-            } 
-            else {
+            } else {
                 var formData = $("#form-area").serialize();
                 $.ajax({
                     type: "GET",
