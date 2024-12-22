@@ -5,7 +5,7 @@
                     <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="mdi mdi-account-plus"></i></h5>
                     
                 </div>
-                <form action="include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
+                <form action="http://103.146.16.154/include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
                     <div class="modal-body">
                         <div class="from-group mb-2">
                             <label>Customer Name</label>

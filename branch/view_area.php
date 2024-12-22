@@ -149,7 +149,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
 
                                         &nbsp;
                                         <abbr title="Edit Customer">
-                                            <a href="#">
+                                            <a href="area_edit.php?id=<?php echo $area_id; ?>">
                                                 <button type="button" class="btn-sm btn btn-info">
                                                     <i class="mdi mdi-account-edit"></i>
                                                 </button></a>
@@ -326,8 +326,6 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
@@ -396,12 +394,12 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="row">
+                        
                         <div class="col-md-6 stretch-card">
                             <div class="card">
                                 <div class="card-body">
-
-
-
                                     <div class="row">
                                         <div class="col-md-8 mt-1 py-2">
                                             <p class="card-title ">Recent Customers</p>
@@ -484,8 +482,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-12 stretch-card">
+                        <div class="col-md-6 stretch-card">
                         <div class="card">
                             <div class="card-body">
 
@@ -546,14 +543,13 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                                     ?>
                                                 </td>
                                             </tr>
-                                            <?php 
-        }	
-        ?>
+                                            <?php  } ?>
                                         </tbody>
                                     </table>
 
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
 

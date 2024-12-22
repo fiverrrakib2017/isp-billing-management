@@ -219,7 +219,7 @@ if (file_exists($users_right_path)) {
 
                                     <tr>
                                         <td><?php echo $areaID; ?></td>
-                                        <td><?php echo htmlspecialchars($rows2['name']); ?></td>
+                                        <td><a href="view_area.php?id=<?php echo $areaID; ?>"><?php echo htmlspecialchars($rows2['name']); ?></a></td>
                                         <td>
                                             <?php
                                             $totalcust = $con->query("SELECT COUNT(*) as total FROM customers WHERE area = '$areaID'");
