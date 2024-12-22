@@ -447,8 +447,6 @@ if (file_exists($users_right_path)) {
                 loadPopOptions();
                 loadAreaOptions();
             }
-            // loadPopOptions();
-            // loadAreaOptions();
 
             function loadPopOptions() {
                 $.ajax({

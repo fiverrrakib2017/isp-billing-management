@@ -45,7 +45,18 @@ if(isset($_GET['add_area_house'])) {
   exit; 
 }
 if(isset($_GET['load_house_no'])) {
-    $result = $con->query("SELECT * FROM area_house");
+  $pop_id=0; 
+  $condition='';
+  if(isset($_SESSION['user_pop'])){
+    $pop_id = $_SESSION['user_pop'];
+    $condition = "WHERE pop_id='$pop_id'";
+  }
+
+  if($pop_id==0){
+    $condition = '';
+  }
+
+    $result = $con->query("SELECT * FROM area_house $condition");
     $response = '<option value="0">---Select---</option>';
     while ($row = $result->fetch_assoc()) {
       $response .= '<option value="' . htmlspecialchars($row['id']) . '">' 

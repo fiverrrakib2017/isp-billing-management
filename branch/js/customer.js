@@ -86,6 +86,122 @@ $(document).on('change', '#customer_area', function() {
     });
 });
 
+
+$("#customer_add").click(function() {
+    var customer_request_id = $("#customer_request_id").val();
+    var fullname = $("#customer_fullname").val();
+    var package = $("#customer_package").val();
+    var username = $("#customer_username").val();
+    var password = $("#customer_password").val();
+    var mobile = $("#customer_mobile").val();
+    var address = $("#customer_address").val();
+    var expire_date = $("#customer_expire_date").val();
+    var area = $("#customer_area").val();
+    var pop = $("#customer_pop").val();
+    var nid = $("#customer_nid").val();
+    var con_charge = $("#customer_con_charge").val();
+    var price = $("#customer_price").val();
+    var remarks = $("#customer_remarks").val();
+    var status = $("#customer_status").val();
+    var liablities = $("#customer_liablities").val();
+    var customer_houseno = $("#customer_houseno").val();
+    var user_type = 1;
+   customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status);
+
+});
+
+function customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status) {
+    if (fullname.length == 0) {
+        toastr.error("Customer name is require");
+    } else if (package.length == 0) {
+        toastr.error("Customer Package is require");
+    } else if (username.length == 0) {
+        toastr.error("Username is require");
+    } else if (password.length == 0) {
+        toastr.error("Password is require");
+    } else if (mobile.length == 0) {
+        toastr.error("Mobile number is require");
+    } else if (expire_date.length == 0) {
+        toastr.error("Expire Date is require");
+    } else if (pop.length == 0) {
+        toastr.error("POP/Branch is require");
+    } else if (area.length == 0) {
+        toastr.error("Area is require");
+    }else if (con_charge.length == 0) {
+        toastr.error("Connection Charge is require");
+    } else if (price.length == 0) {
+        toastr.error("price is require");
+    } else if (status.length == 0) {
+        toastr.error("Status is require");
+    } else if (liablities.length == 0) {
+        toastr.error("Liablities is require");
+    }else {
+        $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+        $("#customer_add").prop("disabled", true);
+        var addCustomerData = 0;
+        $.ajax({
+            type: 'POST',
+            url: '../../include/customers_server.php',
+            data: {
+                addCustomerData: addCustomerData,
+                customer_request_id:customer_request_id,
+                fullname: fullname,
+                package: package,
+                username: username,
+                password: password,
+                mobile: mobile,
+                address: address,
+                expire_date: expire_date,
+                area: area,
+                customer_houseno: customer_houseno,
+                pop: pop,
+                con_charge: con_charge,
+                price: price,
+                remarks: remarks,
+                liablities: liablities,
+                nid: nid,
+                status: status,
+                user_type: user_type,
+            },
+            success: function(responseData) {
+                $("#customer_add").html('Add Customer');
+                $("#customer_add").prop("disabled", false);
+                if (responseData == 1) {
+                    toastr.success("Added Successfully");
+                     /*GET Last id With callback function */
+                        get_customer_last_id(function(last_id) {
+                        //$('#customers_table').DataTable().ajax.reload();
+                        $("#addCustomerModal").modal('hide');
+                        $("#customer_details_show_modal").modal('show');
+                        $("#details-name").html(fullname);
+                        $("#details-username").html(username);
+                        $("#details-mobile").html(mobile);
+                        $("#details-address").html(address);
+                        $(".go_to_profile").attr("href", "profile.php?clid=" + last_id);
+                    });
+                } else {
+                    toastr.error(responseData);
+                    $("#customer_add").html('Add Customer');
+                    $("#customer_add").prop("disabled", false);
+                }
+            }
+        });
+    }
+}
+function get_customer_last_id(callback) {
+    $.ajax({
+        type: 'POST',
+        url: "../../include/customers_server.php",
+        data: {
+            get_customer_last_id: 1
+        },
+        success: function(response) {
+            /*Response Customer Callback function*/
+            callback(response); 
+        }
+    });
+}
+
 function copyDetails() {
     let customerDetails = "";
 
@@ -124,98 +240,209 @@ function copyDetails() {
     return false; 
 }
 
-$("#customer_add").click(function() {
-    var fullname = $("#customer_fullname").val();
-    var package = $("#customer_package").val();
-    var username = $("#customer_username").val();
-    var password = $("#customer_password").val();
-    var mobile = $("#customer_mobile").val();
-    var address = $("#customer_address").val();
-    var expire_date = $("#customer_expire_date").val();
-    var area = $("#customer_area").val();
-    var pop = $("#customer_pop").val();
-    var nid = $("#customer_nid").val();
-    var con_charge = $("#customer_con_charge").val();
-    var price = $("#customer_price").val();
-    var remarks = $("#customer_remarks").val();
-    var status = $("#customer_status").val();
-    var liablities = $("#customer_liablities").val();
-    var user_type = 1;
 
-    customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
-        con_charge, price, remarks,liablities, nid, status)
 
-});
+function copyDetailsssss() {
 
-function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
-    con_charge, price, remarks,liablities, nid, status) {
-    if (fullname.length == 0) {
-        toastr.error("Customer name is require");
-    } else if (package.length == 0) {
-        toastr.error("Customer Package is require");
-    } else if (username.length == 0) {
-        toastr.error("Username is require");
-    } else if (password.length == 0) {
-        toastr.error("Password is require");
-    } else if (mobile.length == 0) {
-        toastr.error("Mobile number is require");
-    } else if (expire_date.length == 0) {
-        toastr.error("Expire Date is require");
-    } else if (pop.length == 0) {
-        toastr.error("POP/Branch is require");
-    } else if (area.length == 0) {
-        toastr.error("Area is require");
-    } else if (con_charge.length == 0) {
-        toastr.error("Connection Charge is require");
-    } else if (price.length == 0) {
-        toastr.error("price is require");
-    } else if (status.length == 0) {
-        toastr.error("Status is require");
-    } else if (liablities.length == 0) {
-        toastr.error("Liablities is require");
-    }else {
-        $("#customer_add").html(
-            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-        var addCustomerData = 0;
-        $.ajax({
-            type: 'POST',
-            url: '../../include/customers_server.php',
-            data: {
-                addCustomerData: addCustomerData,
-                fullname: fullname,
-                package: package,
-                username: username,
-                password: password,
-                mobile: mobile,
-                address: address,
-                expire_date: expire_date,
-                area: area,
-                pop: pop,
-                con_charge: con_charge,
-                price: price,
-                remarks: remarks,
-                liablities: liablities,
-                nid: nid,
-                status: status,
-                user_type: user_type,
-            },
-            success: function(responseData) {
-                if (responseData == 1) {
-                    toastr.success("Added Successfully");
-                    $('#customers_table').DataTable().ajax.reload();
-                    $("#addCustomerModal").modal('hide');
-                    $("#customer_details_show_modal").modal('show');
-                    $("#details-name").html(fullname);
-                    $("#details-username").html(username);
-                    $("#details-mobile").html(mobile);
-                    $("#details-address").html(address);
-                    // setTimeout(() => {
-                    //     location.reload();
-                    // }, 1000);
-                } else {
-                    toastr.error(responseData);
-                }
-            }
+    let customerDetails = "";
+
+    $('#customer-details p').each(function() {
+        customerDetails += $(this).text() + "\n";
+    });
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(customerDetails)
+            .then(() => {
+                toastr.success("Copied the details:\n" + customerDetails); 
+            })
+            .catch(err => {
+                console.error("Failed to copy details: ", err);
+                alert("Failed to copy details!");
+            });
+    } else {
+        let tempInput = $("<textarea>");
+        $("body").append(tempInput);
+        tempInput.val(customerDetails).select();
+
+        document.execCommand("copy");
+
+        tempInput.remove();
+
+        toastr.success("Copied the details"); 
+    }
+
+    return false;
+    
+
+    return false;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(customerDetails).then(() => {
+            toastr.success("Copied the details");
+        }).catch((err) => {
+            console.error("Failed to copy details: ", err);
+            toastr.error("Failed to copy details!");
         });
+    } else {
+        let tempTextarea = document.createElement("textarea");
+        tempTextarea.value = customerDetails;
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+        tempTextarea.setSelectionRange(0, 99999);
+
+        try {
+            document.execCommand("copy");
+            toastr.success("Copied the details");
+        } catch (err) {
+            console.error("Fallback: Failed to copy details: ", err);
+            toastr.error("Fallback: Failed to copy details!");
+        }
+
+        document.body.removeChild(tempTextarea);
     }
 }
+
+
+$("#addCustomerModal").on('show.bs.modal', function (event) {
+    /*Check if select2 is already initialized*/
+    if (!$('#customer_area').hasClass("select2-hidden-accessible")) {
+        $("#customer_area").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_houseno').hasClass("select2-hidden-accessible")) {
+        $("#customer_houseno").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_package').hasClass("select2-hidden-accessible")) {
+        $("#customer_package").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_status').hasClass("select2-hidden-accessible")) {
+        $("#customer_status").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_liablities').hasClass("select2-hidden-accessible")) {
+        $("#customer_liablities").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+    if (!$('#customer_pop').hasClass("select2-hidden-accessible")) {
+        $("#customer_pop").select2({
+            dropdownParent: $("#addCustomerModal"),
+            placeholder: "---Select---"
+        });
+    }
+}); 
+$("#addHouseModal").on('show.bs.modal', function (event) {
+    /*Check if select2 is already initialized*/
+    if (!$('#area_id').hasClass("select2-hidden-accessible")) {
+        $("#area_id").select2({
+            dropdownParent: $("#addHouseModal"),
+            placeholder: "---Select---"
+        });
+    }
+}); 
+$(document).on('click','#add_area',function(){
+    // var formData=$("#form-area").serialize();
+    var area_id=$("select[name='area_id']").val();
+    var house_no=$("input[name='house_no']").val();
+    var note=$("input[name='note']").val();
+    var lat=$("input[name='lat']").val();
+    var lng=$("input[name='lng']").val();
+    var formData = "area_id=" + area_id + 
+                    "&house_no=" + house_no + 
+                    "&note=" + note + 
+                    "&lat=" + lat + 
+                    "&lng=" + lng;
+    $.ajax({
+        type:'POST',
+        url:'../../include/add_area.php?add_area_house',
+        data:formData,
+        cache:false,
+        success:function(response){
+            if(response==1){
+                $("#addHouseModal").modal('hide');
+                toastr.success("Successfully Added");
+                load_house_no(); 
+            }
+        }
+    });
+});
+load_house_no(); 
+function load_house_no() {
+    $.ajax({
+        type: "POST",
+        url: "../../include/add_area.php?load_house_no",
+        success: function(response) {
+            $("#customer_houseno").html(response);
+        }
+    });
+}
+
+function loadGoogleMapsScript() {
+    return new Promise((resolve, reject) => {
+        if (window.google) {
+            resolve(window.google); 
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBuBbBNNwQbS81QdDrQOMq2WlSFiU1QdIs&callback=initMap2";
+        script.async = true;
+        script.defer = true;
+
+        script.onload = () => {
+            resolve(window.google);
+        };
+
+        script.onerror = (error) => {
+            reject(error);
+        };
+
+        document.body.appendChild(script);
+    });
+}
+
+function initMap2() {
+    const initialLocation = { lat: 23.5565964, lng: 90.7866716 };
+    const map = new google.maps.Map(document.getElementById("show_map"), {
+        center: initialLocation,
+        zoom: 12,
+    });
+
+    let marker;
+
+    map.addListener("click", (event) => {
+        const clickedLocation = event.latLng;
+
+        if (!marker) {
+            marker = new google.maps.Marker({
+                position: clickedLocation,
+                map: map,
+            });
+        } else {
+            marker.setPosition(clickedLocation);
+        }
+        document.getElementById("lat").value = clickedLocation.lat();
+        document.getElementById("lng").value = clickedLocation.lng();
+    });
+}
+
+(async () => {
+    try {
+        await loadGoogleMapsScript();
+        initMap2(); 
+    } catch (error) {
+        console.error("Google Maps API:", error);
+    }
+})();
+
+
