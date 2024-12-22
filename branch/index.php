@@ -150,8 +150,15 @@ function timeAgo($startdate) {
 
                             <a href="con_request.php" class="btn-sm btn btn-warning mb-1">Connection Request
                                 <?php
-                                if ($allCstmr = $con->query("SELECT * FROM customers WHERE user_type=$auth_usr_type AND pop=$auth_usr_POP_id AND status=3")) {
-                                    //echo $allCstmr->num_rows;
+                                $pop_id=0; 
+                                if(!empty($_SESSION['user_pop']) && isset($_SESSION['user_pop'])){
+                                    $pop_id = $_SESSION['user_pop'];
+                                    $condition = "WHERE pop_id='$pop_id'";
+                                }
+                                if(empty($pop_id)){
+                                    $condition = "";
+                                }
+                                if ($allCstmr = $con->query("SELECT * FROM `customer_request` $condition")) {
                                     if ($allCstmr->num_rows > 0) {
                                         echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
                                     } else {
@@ -167,9 +174,7 @@ function timeAgo($startdate) {
 
                             <button type="button" data-bs-toggle="modal" data-bs-target="#ticketModal" class="btn-sm btn btn-success mb-1">Add Ticket</button>
 
-                            <!-- <a href="bkash.php?a=15" class="btn-sm btn mb-1"> 
-                               <img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png" class="img-fluid" height="50px" width="100px">
-                            </a> -->
+                          
                             <button type="button" class="btn-sm btn mb-1" data-bs-toggle="modal" data-bs-target="#bkash_paymentModal"> 
                                <img src="images/bkash_payment_logo.svg" class="img-fluid" height="50px" width="80px">
                             </button>
@@ -1209,270 +1214,10 @@ function timeAgo($startdate) {
     </div>
 
  
-    <div class="modal fade" id="ticketModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header  bg-success">
-                    <h5 class="modal-title text-white " id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="mdi mdi-account-plus"></i></h5>
-                    
-                </div>
-                <form action="../include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
-                    <div class="modal-body">
-                        <div class="from-group mb-2">
-                            <label>Customer Name</label>
-                            <select class="form-select" name="customer_id" id="ticket_customer_id" style="width: 100%;"></select>
-						</div>
-                        <div class="from-group mb-2">
-                            <label for="">Ticket For</label>
-                            <select id="ticket_for" name="ticket_for" class="form-select" required>
-                                <option value="Home Connection">Home Connection</option>
-                                <option value="POP">POP Support</option>
-                                <option value="Corporate">Corporate</option>
-                                
-                            </select>
-                        </div>
-                        <div class="from-group mb-2">
-                            <label for=""> Complain Type </label>
-                            <select id="ticket_complain_type" name="ticket_complain_type" class="form-select" style="width: 100%;" ></select>
-
-                        </div>
-                        <div class="from-group mb-2">
-                            <label for="">Ticket Priority</label>
-                            <select id="ticket_priority" name="ticket_priority" type="text" class="form-select" style="width: 100%;">
-                            <option >---Select---</option>
-                            <option value="1">Low</option>
-                            <option value="2">Normal</option>
-                            <option value="3">Standard</option>
-                            <option value="4">Medium</option>
-                            <option value="5">High</option>
-                            <option value="6">Very High</option>
-                            </select>
-						</div>
-                        <div class="from-group mb-2">
-                            <label for="">Assigned To</label>
-                            <select id="ticket_assigned" name="assigned" class="form-select" style="width: 100%;"></select>
-                        </div>
-                        <div class="from-group mb-2">
-                            <label for="">Note</label>
-                            <input id="notes" type="text" name="notes" class="form-control" placeholder="Enter Your Note">
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Save changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="modal fade bs-example-modal-lg" tabindex="-1"
-        aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"><span
-                            class="mdi mdi-account-check mdi-18px"></span> &nbsp;New
-                        customer</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-                </div>
-                <div class="">
-                    <form id="customer_form">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Full Name</label>
-                                            <input id="customer_fullname" type="text"
-                                                class="form-control "
-                                                placeholder="Enter Your Fullname" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Username <span
-                                                    id="usernameCheck"></span></label>
-                                            <input id="customer_username" type="text"
-                                                class="form-control " name="username"
-                                                placeholder="Enter Your Username"
-                                                oninput="checkUsername();" />
-
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Password</label>
-                                            <input id="customer_password" type="password"
-                                                class="form-control " name="password"
-                                                placeholder="Enter Your Password" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Mobile no.</label>
-                                            <input id="customer_mobile" type="text"
-                                                class="form-control " name="mobile"
-                                                placeholder="Enter Your Mobile Number" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Expired Date</label>
-                                            <select id="customer_expire_date"
-                                                class="form-select">
-                                                <option value="<?php echo date('d'); ?>">
-                                                    <?php echo date('d'); ?></option>
-                                                <?php
-                                                if ($exp_cstmr = $con->query('SELECT * FROM customer_expires')) {
-                                                    while ($rowsssss = $exp_cstmr->fetch_array()) {
-                                                        $exp_date = $rowsssss['days'];
-                                                
-                                                        echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
-                                                    }
-                                                }
-                                                
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Address</label>
-                                            <input id="customer_address" type="text"
-                                                class="form-control" name="address"
-                                                placeholder="Enter Your Addres" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 ">
-                                        <div class="form-group mb-2">
-                                            <label>POP/Branch</label>
-                                            <select id="customer_pop" class="form-select">
-                                                <option value="">Select Pop/Branch
-                                                </option>
-                                                <?php
-                                                if ($pop = $con->query("SELECT * FROM add_pop WHERE id=$auth_usr_POP_id")) {
-                                                    while ($rows = $pop->fetch_array()) {
-                                                        $id = $rows['id'];
-                                                        $name = $rows['pop'];
-                                                
-                                                        echo '<option value="' . $id . '">' . $name . '</option>';
-                                                    }
-                                                }
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 ">
-                                        <div class="form-group mb-2">
-                                            <label>Area/Location</label>
-                                            <select id="customer_area" class="form-select"
-                                                name="area">
-                                                <option>Select Area</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Nid Card Number</label>
-                                            <input id="customer_nid" type="text"
-                                                class="form-control" name="nid"
-                                                placeholder="Enter Your Nid Number" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Package</label>
-                                            <select id="customer_package"
-                                                class="form-select">
-
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Connection Charge</label>
-                                            <input id="customer_con_charge" type="text"
-                                                class="form-control" name="con_charge"
-                                                placeholder="Enter Connection Charge"
-                                                value="500" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Package Price</label>
-                                            <input disabled id="customer_price"
-                                                type="text" class="form-control"
-                                                value="00" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Remarks</label>
-                                            <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Status</label>
-                                            <select id="customer_status"
-                                                class="form-select">
-                                                <option value="">Select Status
-                                                </option>
-                                                <option value="0">Disable</option>
-                                                <option value="1">Active</option>
-                                                <option value="2">Expire</option>
-                                                <option value="3">Request</option>
-                                            </select>
-                                        </div>
-
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Liablities</label>
-                                            <select id="customer_liablities"
-                                                class="form-select">
-                                                <option value="">---Select---
-                                                </option>
-                                                <option value="0">No</option>
-                                                <option value="1">Yes</option>
-                                            </select>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger"
-                        data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" id="customer_add">Add
-                        Customer</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
-
+    <!-- Customer Modal -->
+    <?php include 'modal/customer_modal.php'; ?>
+    <!-- Tickets Modal -->
+    <?php include 'modal/tickets_modal.php'; ?>
     <!-- Bkash Payment  Modal -->
     <div class="modal fade" id="bkash_paymentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -1523,6 +1268,8 @@ function timeAgo($startdate) {
         echo file_get_contents($url);
         
     ?>
+    <script src="js/customer.js"></script>
+    <script src="js/tickets.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("input[name='received_amount']").keyup(function(){
@@ -1872,176 +1619,6 @@ function timeAgo($startdate) {
                 }
 
             }
-
-
-
-
-
-
-
-
-
-
-            /********************************Customer script*************************************/
-        $(document).on('keyup', '#customer_username', function() {
-            var customer_username = $("#customer_username").val();
-            $.ajax({
-                type: 'POST',
-                url: "../include/customers_server.php",
-                data: {
-                    current_username: customer_username
-                },
-                success: function(response) {
-                    $("#usernameCheck").html(response);
-                }
-            });
-        });
-
-        $(document).on('change', '#customer_pop', function() {
-            var pop_id = $("#customer_pop").val();
-            // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "../include/customers_server.php",
-                data: {
-                    current_pop_name: pop_id
-                },
-                success: function(response) {
-                    $("#customer_area").html(response);
-                }
-            });
-        });
-        $(document).on('change', '#customer_pop', function() {
-            var pop_id = $("#customer_pop").val();
-            // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "../include/customers_server.php",
-                data: {
-                    pop_name: pop_id,
-                    getCustomerPackage: 0
-                },
-                success: function(response) {
-                    $("#customer_package").html(response);
-                }
-            });
-        });
-        $(document).on('change', '#customer_package', function() {
-            var packageId = $("#customer_package").val();
-            var pop_id = $("#customer_pop").val();
-            // alert(pop_id);
-            $.ajax({
-                type: 'POST',
-                url: "../include/customers_server.php",
-                data: {
-                    package_id: packageId,
-                    pop_id: pop_id,
-                    getPackagePrice: 0
-                },
-                success: function(response) {
-                    $("#customer_price").val(response);
-                }
-            });
-        });
-
-
-
-
-        $("#customer_add").click(function() {
-            var fullname = $("#customer_fullname").val();
-            var package = $("#customer_package").val();
-            var username = $("#customer_username").val();
-            var password = $("#customer_password").val();
-            var mobile = $("#customer_mobile").val();
-            var address = $("#customer_address").val();
-            var expire_date = $("#customer_expire_date").val();
-            var area = $("#customer_area").val();
-            var pop = $("#customer_pop").val();
-            var nid = $("#customer_nid").val();
-            var con_charge = $("#customer_con_charge").val();
-            var price = $("#customer_price").val();
-            var remarks = $("#customer_remarks").val();
-            var status = $("#customer_status").val();
-            var liablities = $("#customer_liablities").val();
-            var user_type = <?php echo $auth_usr_type; ?>;
-
-            customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
-                con_charge, price, remarks, liablities, nid, status)
-
-        });
-
-        function customerAdd(user_type, fullname, package, username, password, mobile, address, expire_date, area, pop,
-            con_charge, price, remarks, liablities, nid, status) {
-            if (fullname.length == 0) {
-                toastr.error("Customer name is require");
-            } else if (package.length == 0) {
-                toastr.error("Customer Package is require");
-            } else if (username.length == 0) {
-                toastr.error("Username is require");
-            } else if (password.length == 0) {
-                toastr.error("Password is require");
-            } else if (mobile.length == 0) {
-                toastr.error("Mobile number is require");
-            } else if (expire_date.length == 0) {
-                toastr.error("Expire Date is require");
-            } else if (pop.length == 0) {
-                toastr.error("POP/Branch is require");
-            } else if (area.length == 0) {
-                toastr.error("Area is require");
-            } else if (con_charge.length == 0) {
-                toastr.error("Connection Charge is require");
-            } else if (price.length == 0) {
-                toastr.error("price is require");
-            } else if (status.length == 0) {
-                toastr.error("Status is require");
-            } else if (liablities.length == 0) {
-                toastr.error("liablities is require");
-            } else {
-                $("#customer_add").html(
-                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-                var addCustomerData = 0;
-                $.ajax({
-                    type: 'POST',
-                    url: '../include/customers_server.php',
-                    data: {
-                        addCustomerData: addCustomerData,
-                        fullname: fullname,
-                        package: package,
-                        username: username,
-                        password: password,
-                        mobile: mobile,
-                        address: address,
-                        expire_date: expire_date,
-                        area: area,
-                        pop: pop,
-                        con_charge: con_charge,
-                        price: price,
-                        remarks: remarks,
-                        liablities: liablities,
-                        nid: nid,
-                        status: status,
-                        user_type: user_type,
-                    },
-                    success: function(responseData) {
-                        if (responseData == 1) {
-                            toastr.success("Added Successfully");
-                            $("#addCustomerModal").modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
-                        } else {
-                            toastr.error(responseData);
-                        }
-                    }
-                });
-            }
-        }
-
-
-
-
-
-
 
             /******************************** Message Script*************************************/
             $(document).on('change', '#currentMessageTemp', function() {
