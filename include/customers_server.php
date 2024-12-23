@@ -34,6 +34,7 @@ if (isset($_POST['updateCustomer'])) {
     $remarks = $_POST['remarks'];
     $connection_charge = $_POST['connection_charge'];
     $expiredate = $_POST['expiredate'];
+    $liablities = $_POST['liablities'];
 
     
 	
@@ -54,7 +55,7 @@ if (isset($_POST['updateCustomer'])) {
         }
     }
 /**/
-    $result = $con->query("UPDATE customers SET fullname='$fullname', username='$username', password='$password', package='$package', mobile='$mobile', address='$address', area='$area', nid='$nid', remarks='$remarks', price='$price', con_charge='$connection_charge',expiredate='$expiredate'  WHERE id='$lstid'");
+    $result = $con->query("UPDATE customers SET fullname='$fullname', username='$username', password='$password', package='$package', mobile='$mobile', address='$address', area='$area', nid='$nid', remarks='$remarks', price='$price', liablities='$liablities', con_charge='$connection_charge',expiredate='$expiredate'  WHERE id='$lstid'");
     // UPDATE redcheck
 	$con->query("UPDATE radcheck SET value='$password', username='$username' WHERE username='$CustomerUserName'");
 	// UPDATE radreplay

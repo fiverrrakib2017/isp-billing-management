@@ -270,8 +270,7 @@ if (file_exists($users_right_path)) {
         <a class="btn btn-info" href="users_profile_edit.php?id='.$userId.'"><i class="fas fa-edit"></i></a>
         <a class="btn btn-success" href="users_profile.php?id='.$userId.'"><i class="fas fa-eye"></i>
         </a>
-        <a class="btn btn-danger" href="user_delete.php?id='.$userId.'"><i class=" fas fa-trash"></i>
-        </a>
+       
         </td>
      </tr>'; 
         }
@@ -324,7 +323,7 @@ if (file_exists($users_right_path)) {
         var userdta = "0";
         $.ajax({
             type: "GET",
-            url: "include/users.php?list",
+            url: "../../include/users.php?list",
             data: userdta,
             cache: false,
             success: function(userlist) {
@@ -353,10 +352,9 @@ if (file_exists($users_right_path)) {
                  	toastr.error("Role is required");
                  }else{
                  	var userdta = $("#user_form").serialize();
-                    alert(userdta);
             $.ajax({
                 type: "GET",
-                url: "include/users.php?add",
+                url: "../../include/users_server.php?add",
                 data: userdta,
                 cache: false,
                 success: function(repp) {

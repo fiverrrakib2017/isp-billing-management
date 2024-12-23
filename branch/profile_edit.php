@@ -36,6 +36,7 @@ if (isset($_GET['clid'])) {
             $pop = $rows['pop'];
             $price = $rows['price'];
             $expiredate = $rows['expiredate'];
+            $liablities = $rows['liablities'];
         }
     }
 }
@@ -219,13 +220,13 @@ if (isset($_GET['clid'])) {
                                     </div>
                                     <div class="row">
                                         <div class="col-sm">
-                                            <div class="form-group">
+                                            <div class="form-group mb-2">
                                                 <label>Remarks</label>
                                                 <textarea id="remarks" type="text" class="form-control" name="remarks"><?php echo $remarks; ?></textarea>
                                             </div>
                                         </div>
                                         <div class="col-sm">
-                                            <div class="form-group">
+                                            <div class="form-group mb-2">
                                                 <label>Connection Charge</label>
                                                 <input id="connection_charge" type="text" class="form-control" name="remarks" value="<?php echo $con_charge; ?>" />
                                             </div>
@@ -233,16 +234,40 @@ if (isset($_GET['clid'])) {
                                     </div>
                                     <div class="row">
                                         <div class="col-sm">
-                                            <div class="form-group">
+                                            <div class="form-group mb-2">
                                                 <label>Expire Date</label>
                                                 <input id="expiredate" type="date" class="form-control" name="expiredate" value="<?php echo $expiredate; ?>">
                                             </div>
                                         </div>
                                         <div class="col-sm">
-                                            <div class="form-group">
+                                            <div class="form-group mb-2">
                                             <label>Price</label>
                                             <input id="price" type="text" class="form-control" name="price" value="<?php echo $price; ?>">
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <div class="form-group mb-2">
+                                            <label>Liabilites</label>
+                                            <select name="liablities" id="liablities" class="form-select">
+                                                <?php 
+                                                
+                                                if($liablities == 0){
+                                                    echo '<option value="0" selected>No</option>';
+                                                    echo '<option value="1">Yes</option>';
+                                                }else{
+                                                    echo '<option value="1" selected>Yes</option>';
+                                                    echo '<option value="0">No</option>';
+                                                }
+                                                
+                                                ?>
+                                            </select>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-sm">
+                                            
                                         </div>
                                     </div>
                                     <div class="row">
@@ -297,6 +322,7 @@ if (isset($_GET['clid'])) {
                 var connection_charge = $("#connection_charge").val();
                 var expiredate = $("#expiredate").val();
                 var price = $("#price").val();
+                var liablities = $("#liablities").val();
                 
                 if (fullname.length == 0) {
                     toastr.error("Fullnae is require");
@@ -338,6 +364,7 @@ if (isset($_GET['clid'])) {
                             connection_charge: connection_charge,
                             expiredate:expiredate,
                             price:price,
+                            liablities:liablities,
                             updateCustomer: updateCustomer
                         },
                         success: function(response) {
