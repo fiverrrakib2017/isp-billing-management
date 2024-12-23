@@ -15,7 +15,7 @@
 	$last_login=$_GET["lastlogin"];
 
 
-    $con->query("UPDATE users SET fullname='$fullname', username='$username',password='$password',mobile='$mobile',email='$email',role='$role' WHERE id=$userId      ");
+    $con->query("UPDATE users SET fullname='$fullname', username='$username',password='$password',mobile='$mobile',email='$email',role='$role' WHERE id=$userId ");
    
 }
 
