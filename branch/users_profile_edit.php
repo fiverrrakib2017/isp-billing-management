@@ -181,7 +181,7 @@ if (isset($_GET["id"])) {
 
     <?php 
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/Footer.php';
         
         echo file_get_contents($url);
     ?>
