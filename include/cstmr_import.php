@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'db_connect.php';
-
+date_default_timezone_set('Asia/Dhaka');
 if (isset($_GET['file_import'])) {
     if (isset($_FILES['import_file_name'])) {
         $file = $_FILES['import_file_name'];
@@ -57,11 +57,13 @@ if (isset($_GET['file_import'])) {
 }
 
 if (isset($_POST['customImprt'])) {
+    
     $directory = '../csv/';
     $files = scandir($directory);
     foreach ($files as $file) {
         if (pathinfo($file, PATHINFO_EXTENSION) === 'csv') {
             $CSVvar = fopen($directory . $file, 'r');
+           
             if ($CSVvar !== false) {
                 for ($i = 0; ($data = fgetcsv($CSVvar)); $i++) {
                     if ($i > 0) {
@@ -74,7 +76,8 @@ if (isset($_POST['customImprt'])) {
                         $DataAreaname = $data[6];
                         $DataPrice = $data[7];
                         $DataExpireDate = $data[8];
-
+                       
+                        $DataExpireDate = date('Y-m-d', strtotime($DataExpireDate));
                         // Check User name existence
                         $result = $con->query("SELECT * FROM customers WHERE username='$DataUsername' LIMIT 1");
                         $DataUsrNameexst = mysqli_num_rows($result);
