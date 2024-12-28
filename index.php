@@ -333,7 +333,7 @@ echo $popCounts['offline'];
                                                     ?>
                                                 </span>
                                                 Tickets
-                                                <br>  <img src="images/icon/online.png" height="10" width="10"/>Completed(233232) <br> <img src="images/icon/offline.png" height="10" width="10"/>Incompleted(2323)
+                                                <br>  <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Completed(<?php echo get_ticket_count($con,'Complete')?>) <br> <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Incompleted(<?php echo get_ticket_count($con,'Active')?>)
                                             </div>
                                         </div>
                                     </div>

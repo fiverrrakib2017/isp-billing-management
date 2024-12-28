@@ -138,4 +138,19 @@ function get_count_pop_and_area_with_online_and_offline($con,$table_name,$column
     ];
 }
 
+
+function get_ticket_count($con, $value){
+    $ticket_count = 0;
+    $sql = "SELECT COUNT(*) as ticket_count FROM ticket WHERE ticket_type = ?";
+    $stmt = $con->prepare($sql);
+    $stmt->bind_param('s', $value);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($result && $row = $result->fetch_assoc()) {
+        $ticket_count = $row['ticket_count'] ?? 0;
+    }
+    $stmt->close();
+    return $ticket_count;
+}
+
 ?>
