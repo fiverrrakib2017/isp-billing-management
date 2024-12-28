@@ -109,5 +109,33 @@ function get_online_users($area_id,$pop_id,$con) {
     return $_online_users;
 };
 
+function get_count_pop_and_area_with_online_and_offline($con,$table_name,$column_name) {
+    $online_count = 0;
+    $offline_count=0; 
+    /*Fetch The all Entries from the table*/
+    if($_all_data = $con->query("SELECT * FROM $table_name")) {
+        while($_all_data_row =$_all_data->fetch_array()){
+            $id=$_all_data_row['id'];
+            /*Count The data from table*/
+            $get_data=$con->query("SELECT COUNT(*) as online_count 
+                    FROM radacct
+                    INNER JOIN customers 
+                    ON customers.username = radacct.username
+                    WHERE customers.$column_name = '$id' AND radacct.acctstoptime IS NULL"); 
+            if($get_data){
+                $row = $get_data->fetch_assoc();
+                $online_count += ($row['online_count'] > 0) ? 1 : 0;
+                $offline_count += ($row['online_count'] == 0) ? 1 : 0;
+            }else{
+                $offline_count ++; 
+            }
+
+        }
+    }
+    return [
+        'online' => $online_count,
+        'offline' => $offline_count,
+    ];
+}
 
 ?>

@@ -57,7 +57,6 @@ if (isset($_GET['file_import'])) {
 }
 
 if (isset($_POST['customImprt'])) {
-    
     $directory = '../csv/';
     $files = scandir($directory);
     foreach ($files as $file) {

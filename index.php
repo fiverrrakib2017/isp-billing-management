@@ -4,6 +4,7 @@ include 'include/security_token.php';
 include 'include/db_connect.php';
 include 'include/users_right.php';
 include 'include/pop_security.php';
+include 'include/functions.php';
 
 function timeAgo($startdate)
 {
@@ -49,7 +50,6 @@ function timeAgo($startdate)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <?php include 'style.php'; ?>
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist-plugin-legend/0.6.2/chartist-plugin-legend.min.css"> -->
 </head>
 
 <body data-sidebar="dark">
@@ -153,7 +153,7 @@ function timeAgo($startdate)
                                                 }
                                                 ?>
                                             </span>
-                                            Online
+                                            <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online
                                         </div>
                                     </div>
                                 </div>
@@ -247,12 +247,26 @@ function timeAgo($startdate)
 
                                                 <span class="counter text-brown">
                                                     <?php
-                                                    if ($onlinecstmr = $con->query('SELECT * FROM add_pop')) {
-                                                        echo $onlinecstmr->num_rows;
+                                                    if ($data = $con->query('SELECT * FROM add_pop')) {
+                                                        echo $data->num_rows;
                                                     }
                                                     ?>
                                                 </span>
-                                                POP/Branch
+                                                POP/Branch 
+                                                <br>  
+<img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online(
+<?php
+$popCounts = get_count_pop_and_area_with_online_and_offline($con, 'add_pop', 'pop');
+echo $popCounts['online'];
+?>
+) 
+<br>  
+<img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline(
+<?php
+echo $popCounts['offline'];
+?>
+)
+
 
                                             </div>
                                         </div>
@@ -277,7 +291,20 @@ function timeAgo($startdate)
                                                     ?>
                                                 </span>
                                                 Area
-
+                                                <br>  
+<img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online(
+<?php
+$popCounts = get_count_pop_and_area_with_online_and_offline($con, 'area_list', 'area');
+echo $popCounts['online'];
+?>
+) 
+<br>  
+<img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline(
+<?php
+echo $popCounts['offline'];
+?>
+)
+                                                    
 
                                             </div>
                                         </div>
@@ -306,6 +333,7 @@ function timeAgo($startdate)
                                                     ?>
                                                 </span>
                                                 Tickets
+                                                <br>  <img src="images/icon/online.png" height="10" width="10"/>Completed(233232) <br> <img src="images/icon/offline.png" height="10" width="10"/>Incompleted(2323)
                                             </div>
                                         </div>
                                     </div>
