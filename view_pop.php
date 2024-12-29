@@ -782,6 +782,15 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                     </div>
                 </div>
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="map" style="height: 400px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
@@ -791,7 +800,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Area Name</th>
-                                              
+                                                
                                                 <th><img src="images/icon/online.png" height="10"
                                                         width="10" /> Online</th>
                                                 <th><img src="images/icon/expired.png" height="10"
@@ -1210,6 +1219,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
     <?php include 'script.php'; ?>
     <script type="text/javascript" src="js/customer.js"></script>
+    <script type="text/javascript" src="js/google_map.js"></script>
     <script type="text/javascript">
         $("#customer_table_area").DataTable();
         /*************************simple-line-chart Start**************************************************/
@@ -1628,9 +1638,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                 }
             }
         });
+    /*************************Google Map Load**********************************************************/
+    loadMaps(<?= $popid; ?>);
     </script>
-
-   
 
 </body>
 

@@ -1,7 +1,7 @@
 <?php 
 include "db_connect.php";
 
-if(isset($_GET['add_area_for_google_map'])){
+if(isset($_GET['add_area_for_google_map']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
   $area_name= $_POST['area'];
   $pop_id= $_POST['pop_id'];
   $lat= $_POST['lat'];
@@ -12,9 +12,20 @@ if(isset($_GET['add_area_for_google_map'])){
   echo 1; 
 }
 
-if(isset($_GET['get_locations_for_google_map'])){
-
-  $sql = "SELECT name, lat, lng FROM google_map";
+if(isset($_GET['get_locations_for_google_map']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+  $condition = '';
+  if(isset($_GET['pop_id']) && $_GET['pop_id'] > 0){
+    $pop_id = $_GET['pop_id'];
+    $condition = "WHERE pop_id='$pop_id'";  
+  }
+  if(isset($_GET['area_id']) && $_GET['area_id'] > 0){
+    $area_id = $_GET['area_id'];
+    $condition = "WHERE area_id='$area_id'";  
+  }
+  if($condition==''){
+    $condition = "WHERE 1";
+  }
+  $sql = "SELECT * FROM area_house  $condition";
   $result = $con->query($sql);
 
   $locations = [];
