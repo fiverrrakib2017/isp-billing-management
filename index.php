@@ -368,102 +368,103 @@ echo $popCounts['offline'];
 
                         <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
+                                <div class="card-header bg-white text-black">
+                                    <h4 class="card-title">POP/Branch</h4>
+                                </div>
                                 <div class="card-body">
-                                    <div>
-                                        <table class="table table-bordered dt-responsive nowrap"
-                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>POP Name</th>
-                                                    <th>Total</th>
-                                                    <th><img src="images/icon/online.png" height="10"
-                                                            width="10" /> Online</th>
-                                                    <th><img src="images/icon/expired.png" height="10"
-                                                            width="10" /> Expired</th>
-                                                    <th><img src="images/icon/disabled.png" height="10"
-                                                            width="10" /> Disabled</th>
+                                    <table class="table table-bordered dt-responsive nowrap"
+                                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>POP Name</th>
+                                                <th>Total</th>
+                                                <th><img src="images/icon/online.png" height="10"
+                                                        width="10" /> Online</th>
+                                                <th><img src="images/icon/expired.png" height="10"
+                                                        width="10" /> Expired</th>
+                                                <th><img src="images/icon/disabled.png" height="10"
+                                                        width="10" /> Disabled</th>
 
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                $sql = "SELECT * FROM add_pop LIMIT 5";
-                                                $result = mysqli_query($con, $sql);
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $sql = "SELECT * FROM add_pop LIMIT 9";
+                                            $result = mysqli_query($con, $sql);
 
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-                                                   $pop_ID = $rows['id'];
-                                                ?>
+                                            while ($rows = mysqli_fetch_assoc($result)) {
+                                                $pop_ID = $rows['id'];
+                                            ?>
 
-                                                <tr>
-                                                    <td><?php echo $rows['id']; ?></td>
-                                                    <td><a
-                                                            href="view_pop.php?id=<?php echo $pop_ID; ?>"><?php echo $rows['pop']; ?></a>
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        
-                                                        $sql = "SELECT * FROM customers WHERE pop='$pop_ID'";
-                                                        $countpopusr = mysqli_query($con, $sql);
-                                                        
-                                                        echo $countpopusr->num_rows;
-                                                        
-                                                        ?>
+                                            <tr>
+                                                <td><?php echo $rows['id']; ?></td>
+                                                <td><a
+                                                        href="view_pop.php?id=<?php echo $pop_ID; ?>"><?php echo $rows['pop']; ?></a>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    
+                                                    $sql = "SELECT * FROM customers WHERE pop='$pop_ID'";
+                                                    $countpopusr = mysqli_query($con, $sql);
+                                                    
+                                                    echo $countpopusr->num_rows;
+                                                    
+                                                    ?>
 
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        
-                                                        $sql = "SELECT radacct.username FROM radacct
-                                                                                                                                                                                INNER JOIN customers
-                                                                                                                                                                                ON customers.username=radacct.username
-                                                                                                                                                                                
-                                                                                                                                                                                WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
-                                                        $countpoponlnusr = mysqli_query($con, $sql);
-                                                        
-                                                        echo $countpoponlnusr->num_rows;
-                                                        
-                                                        ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    
+                                                    $sql = "SELECT radacct.username FROM radacct
+                                                            INNER JOIN customers
+                                                            ON customers.username=radacct.username
+                                                            
+                                                            WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
+                                                    $countpoponlnusr = mysqli_query($con, $sql);
+                                                    
+                                                    echo $countpoponlnusr->num_rows;
+                                                    
+                                                    ?>
 
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $sql = "SELECT * FROM customers WHERE pop='$pop_ID' AND NOW() > expiredate";
-                                                        $countxprd = mysqli_query($con, $sql);
-                                                        $totalexprs = $countxprd->num_rows;
-                                                        if ($totalexprs == 0) {
-                                                            echo $totalexprs;
-                                                        } else {
-                                                            echo "<span class='badge bg-danger'>$totalexprs</span>";
-                                                        }
-                                                        
-                                                        //
-                                                        
-                                                        ?>
-                                                    </td>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $sql = "SELECT * FROM customers WHERE pop='$pop_ID' AND NOW() > expiredate";
+                                                    $countxprd = mysqli_query($con, $sql);
+                                                    $totalexprs = $countxprd->num_rows;
+                                                    if ($totalexprs == 0) {
+                                                        echo $totalexprs;
+                                                    } else {
+                                                        echo "<span class='badge bg-danger'>$totalexprs</span>";
+                                                    }
+                                                    
+                                                    //
+                                                    
+                                                    ?>
+                                                </td>
 
-                                                    <td>
-                                                        <?php
-                                                        $disableQ = "SELECT * FROM customers WHERE pop='$pop_ID' AND status='0'";
-                                                        $countdsbld = mysqli_query($con, $disableQ);
-                                                        $totaldsbld = $countdsbld->num_rows;
-                                                        if ($totaldsbld == 0) {
-                                                            echo $totaldsbld;
-                                                        } else {
-                                                            echo "<span class='badge bg-danger'>$totaldsbld</span>";
-                                                        }
-                                                        
-                                                        //
-                                                        
-                                                        ?>
-                                                    </td>
+                                                <td>
+                                                    <?php
+                                                    $disableQ = "SELECT * FROM customers WHERE pop='$pop_ID' AND status='0'";
+                                                    $countdsbld = mysqli_query($con, $disableQ);
+                                                    $totaldsbld = $countdsbld->num_rows;
+                                                    if ($totaldsbld == 0) {
+                                                        echo $totaldsbld;
+                                                    } else {
+                                                        echo "<span class='badge bg-danger'>$totaldsbld</span>";
+                                                    }
+                                                    
+                                                    //
+                                                    
+                                                    ?>
+                                                </td>
 
-                                                </tr>
-                                                <?php } ?>
+                                            </tr>
+                                            <?php } ?>
 
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -514,7 +515,7 @@ echo $popCounts['offline'];
                                 <div class="card-body">
 
                                     <div class="table-responsive">
-                                        <table id="tickets_table" class="table">
+                                        <table id="tickets_table" class="table table-bordered dt-responsive nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>Status</th>
@@ -739,7 +740,7 @@ echo $popCounts['offline'];
                                         </div>
                                     </div>
 
-                                    <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr">
+                                    <div id="simple-line-chart" class="" dir="ltr" style="height: 310px;">
                                     </div>
 
                                 </div>
