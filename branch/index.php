@@ -183,9 +183,219 @@ function timeAgo($startdate) {
                     </div>
                     <?php include 'Card/branch_panel_card.php';?>
                     <div class="row">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#branch_user"
+                                            role="tab">
+                                            <span class="d-none d-md-block">Users (
+
+                                                <?php if ($totalCustomers = $con->query("SELECT * FROM customers WHERE pop=$auth_usr_POP_id ")) {
+                                                    echo $totalCustomers->num_rows;
+                                                }
+                                                
+                                                ?>
+
+                                                )</span><span class="d-block d-md-none"><i
+                                                    class="mdi mdi-account-check h5"></i></span>
+                                        </a>
+                                    </li>
+
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#tickets" role="tab">
+                                            <span class="d-none d-md-block">Tickets
+                                            </span><span class="d-block d-md-none"><i
+                                                    class="mdi mdi-home-variant h5"></i></span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#recharge_history"
+                                            role="tab">
+                                            <span class="d-none d-md-block">Recharge History</span><span
+                                                class="d-block d-md-none"><i
+                                                    class="mdi mdi-battery-charging h5"></i></span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#packages" role="tab">
+                                            <span class="d-none d-md-block">Package</span><span
+                                                class="d-block d-md-none"><i class="mdi mdi-package h5"></i></span>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#pop_transaction"
+                                            role="tab">
+                                            <span class="d-none d-md-block">Transaction Statment</span><span
+                                                class="d-block d-md-none"><i
+                                                    class="mdi mdi-currency-bdt h5"></i></span>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+
+                                    <div class="tab-pane active p-3" id="branch_user" role="tabpanel">
+                                        <div class="card">
+
+                                            <div class="card-body">
+                                                <table id="customers_table"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th><input type="checkbox" id="checkedAll"
+                                                                    name="checkedAll" class="form-check-input"></th>
+                                                            <th>ID</th>
+                                                            <th>Name</th>
+                                                            <th>Package</th>
+                                                            <th>Amount</th>
+                                                            <th>Expired Date</th>
+                                                            <th>Expired Date</th>
+                                                            <th>User Name</th>
+                                                            <th>Mobile no.</th>
+                                                            <th>POP/Branch</th>
+                                                            <th>Area/Location</th>
+                                                            <th>Liablities</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="customer-list">
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane p-3" id="tickets" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <table id="tickets_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>No.</th>
+                                                            <th>Status</th>
+                                                            <th>Created</th>
+                                                            <th>Priority</th>
+                                                            <th>Customer Name</th>
+                                                            <th>Phone Number</th>
+                                                            <th>Issues</th>
+                                                            <th>Pop/Area</th>
+                                                            <th>Assigned Team</th>
+                                                            <th>Ticket For</th>
+                                                            <th>Acctual Work</th>
+                                                            <th>Percentage</th>
+                                                            <th>Note</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane p-3" id="recharge_history" role="tabpanel">
+                                        <div class="card">
+
+                                            <div class="card-body">
+                                                <table id="recharge_history_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Recharged date</th>
+                                                            <th>Customer Name</th>
+                                                            <th>Months</th>
+                                                            <th>Paid until</th>
+                                                            <th>Amount</th>
+                                                        </tr>
+                                                    </thead>
+                                                   
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="tab-pane p-3" id="packages" role="tabpanel">
+                                        <div class="card">
+
+                                            <div class="card-body">
+                                                <table id="package_datatable"
+                                                    class="table table-bordered dt-responsive nowrap"
+                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Package List</th>
+                                                            <th>Purchase Price</th>
+                                                            <th>Sale's Price</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="package-list">
+                                                        <?php
+                                                        $increment = 1;
+                                                        $sql = "SELECT * FROM branch_package WHERE pop_id='$auth_usr_POP_id'";
+                                                        $result = mysqli_query($con, $sql);
+
+                                                        while ($rows = mysqli_fetch_assoc($result)) {
+
+                                                        ?>
+
+                                                        <tr>
+                                                            <td><?php echo $increment++; ?></td>
+
+                                                            <td><?php echo $rows['package_name']; ?></td>
+                                                            <td><?php echo $rows['p_price']; ?></td>
+                                                            <td><?php echo $rows['s_price']; ?></td>
+
+
+                                                        </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="tab-pane p-3" id="pop_transaction" role="tabpanel">
+                                        <div class="card">
+                                            <div class="card-body">
+                                               <?php include 'Table/transaction_history_table.php';?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="row">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="map" style="height: 400px;"></div>
+                                    </div>
+                                </div>
+                            </div>                         
+                        </div>
+                    </div>
+                    <div class="row">
 
                     <div class="col-md-7 grid-margin stretch-card">
                             <div class="card">
+                                <div class="card-header text-black bg-white">
+                                    <h4 class="card-title">POP/Branch Area</h4>
+                                </div>
                                 <div class="card-body">
 
                                 <div class="table-responsive">
@@ -505,7 +715,7 @@ function timeAgo($startdate) {
                                             </div>
                                         </div>
 
-                                        <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr"></div>
+                                        <div id="simple-line-chart" style="height: 310px;"></div>
 
                                     </div>
                                 </div>
@@ -843,204 +1053,7 @@ function timeAgo($startdate) {
                         </div>
                     </div>
                     <!-- end row -->
-                    <div class="">
-                    <div class="row">
-                        <div class="card">
-                            <div class="card-body">
-
-                                <!-- Nav tabs -->
-                                <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" data-bs-toggle="tab" href="#branch_user"
-                                            role="tab">
-                                            <span class="d-none d-md-block">Users (
-
-                                                <?php if ($totalCustomers = $con->query("SELECT * FROM customers WHERE pop=$auth_usr_POP_id ")) {
-                                                    echo $totalCustomers->num_rows;
-                                                }
-                                                
-                                                ?>
-
-                                                )</span><span class="d-block d-md-none"><i
-                                                    class="mdi mdi-account-check h5"></i></span>
-                                        </a>
-                                    </li>
-
-
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#tickets" role="tab">
-                                            <span class="d-none d-md-block">Tickets
-                                            </span><span class="d-block d-md-none"><i
-                                                    class="mdi mdi-home-variant h5"></i></span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#recharge_history"
-                                            role="tab">
-                                            <span class="d-none d-md-block">Recharge History</span><span
-                                                class="d-block d-md-none"><i
-                                                    class="mdi mdi-battery-charging h5"></i></span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#packages" role="tab">
-                                            <span class="d-none d-md-block">Package</span><span
-                                                class="d-block d-md-none"><i class="mdi mdi-package h5"></i></span>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#pop_transaction"
-                                            role="tab">
-                                            <span class="d-none d-md-block">Transaction Statment</span><span
-                                                class="d-block d-md-none"><i
-                                                    class="mdi mdi-currency-bdt h5"></i></span>
-                                        </a>
-                                    </li>
-                                </ul>
-
-                                <!-- Tab panes -->
-                                <div class="tab-content">
-
-                                    <div class="tab-pane active p-3" id="branch_user" role="tabpanel">
-                                        <div class="card">
-
-                                            <div class="card-body">
-                                                <table id="customers_table"
-                                                    class="table table-bordered dt-responsive nowrap"
-                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th><input type="checkbox" id="checkedAll"
-                                                                    name="checkedAll" class="form-check-input"></th>
-                                                            <th>ID</th>
-                                                            <th>Name</th>
-                                                            <th>Package</th>
-                                                            <th>Amount</th>
-                                                            <th>Expired Date</th>
-                                                            <th>Expired Date</th>
-                                                            <th>User Name</th>
-                                                            <th>Mobile no.</th>
-                                                            <th>POP/Branch</th>
-                                                            <th>Area/Location</th>
-                                                            <th>Liablities</th>
-                                                            <th></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="customer-list">
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane p-3" id="tickets" role="tabpanel">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <table id="tickets_datatable"
-                                                    class="table table-bordered dt-responsive nowrap"
-                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>No.</th>
-                                                            <th>Status</th>
-                                                            <th>Created</th>
-                                                            <th>Priority</th>
-                                                            <th>Customer Name</th>
-                                                            <th>Phone Number</th>
-                                                            <th>Issues</th>
-                                                            <th>Pop/Area</th>
-                                                            <th>Assigned Team</th>
-                                                            <th>Ticket For</th>
-                                                            <th>Acctual Work</th>
-                                                            <th>Percentage</th>
-                                                            <th>Note</th>
-                                                            <th></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody></tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane p-3" id="recharge_history" role="tabpanel">
-                                        <div class="card">
-
-                                            <div class="card-body">
-                                                <table id="recharge_history_datatable"
-                                                    class="table table-bordered dt-responsive nowrap"
-                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>ID</th>
-                                                            <th>Recharged date</th>
-                                                            <th>Customer Name</th>
-                                                            <th>Months</th>
-                                                            <th>Paid until</th>
-                                                            <th>Amount</th>
-                                                        </tr>
-                                                    </thead>
-                                                   
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="tab-pane p-3" id="packages" role="tabpanel">
-                                        <div class="card">
-
-                                            <div class="card-body">
-                                                <table id="package_datatable"
-                                                    class="table table-bordered dt-responsive nowrap"
-                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>ID</th>
-                                                            <th>Package List</th>
-                                                            <th>Purchase Price</th>
-                                                            <th>Sale's Price</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="package-list">
-                                                        <?php
-                                                        $increment = 1;
-                                                        $sql = "SELECT * FROM branch_package WHERE pop_id='$auth_usr_POP_id'";
-                                                        $result = mysqli_query($con, $sql);
-
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                        ?>
-
-                                                        <tr>
-                                                            <td><?php echo $increment++; ?></td>
-
-                                                            <td><?php echo $rows['package_name']; ?></td>
-                                                            <td><?php echo $rows['p_price']; ?></td>
-                                                            <td><?php echo $rows['s_price']; ?></td>
-
-
-                                                        </tr>
-                                                        <?php } ?>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="tab-pane p-3" id="pop_transaction" role="tabpanel">
-                                        <div class="card">
-                                            <div class="card-body">
-                                               <?php include 'Table/transaction_history_table.php';?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    
 
 
                 </div> <!-- container-fluid -->
@@ -1269,6 +1282,7 @@ function timeAgo($startdate) {
         
     ?>
     <script src="js/customer.js"></script>
+    <script type="text/javascript" src="../../js/google_map.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
             $("input[name='received_amount']").keyup(function(){
@@ -2016,7 +2030,8 @@ window.jQuery.ChartC3.init()}();
 
 
         $('#expire_customer_datatable').dataTable();
-        
+          /*************************Google Map Load**********************************************************/
+          loadMaps(<?= $auth_usr_POP_id; ?>,0);
     </script>
 
 
