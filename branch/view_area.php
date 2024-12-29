@@ -148,7 +148,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
 
 
                                         &nbsp;
-                                        <abbr title="Edit Customer">
+                                        <abbr title="Edit Area">
                                             <a href="area_edit.php?id=<?php echo $area_id; ?>">
                                                 <button type="button" class="btn-sm btn btn-info">
                                                     <i class="mdi mdi-account-edit"></i>
@@ -296,267 +296,6 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                      
 
                     </div> <!-- end row-->
-                  
-                    <div class="row">
-                       
-                        <div class="col-md-6 grid-margin stretch-card">
-                            <div class="card">
-
-                                <div class="card-body">
-                                    <h4 class="card-title mb-4">Customer Statics</h4>
-
-                                    <div class="row text-center mt-4">
-                                        <div class="col-4">
-                                            <h5 class="mb-0 font-size-18">50</h5>
-                                            <p class="text-muted text-truncate">New</p>
-                                        </div>
-                                        <div class="col-4">
-                                            <h5 class="mb-0 font-size-18">44</h5>
-                                            <p class="text-muted text-truncate">Expired</p>
-                                        </div>
-                                        <div class="col-4">
-                                            <h5 class="mb-0 font-size-18">32</h5>
-                                            <p class="text-muted text-truncate">Disabled</p>
-                                        </div>
-                                    </div>
-
-                                    <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr">
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 grid-margin stretch-card">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h4 class="card-title mb-4">Ticket Statics 10 Days</h4>
-
-
-                                    <div class="row text-center mt-4">
-                                        <div class="col-3">
-                                            <h5 class="mb-0 font-size-18">
-                                                <?php
-                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
-                                                $tktsql = $con->query("SELECT * FROM ticket WHERE area_id=$area_id AND  startdate BETWEEN '$daystkt' AND NOW()");
-                                                echo $tktsql->num_rows;
-                                                ?>
-
-                                            </h5>
-                                            <p class="text-muted text-truncate">Tickets</p>
-                                        </div>
-                                        <div class="col-3">
-                                            <h5 class="mb-0 font-size-18">
-                                            <?php
-                                            $daystkt = date('Y-m-d', strtotime('-7 day'));
-                                            $area_id = (int)$area_id; 
-                                            $tktsql = $con->query("SELECT * FROM ticket WHERE area_id=$area_id AND ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
-
-                                            echo $tktsql->num_rows;
-                                            ?>
-
-
-                                            </h5>
-                                            <p class="text-muted text-truncate">Resolved</p>
-                                        </div>
-                                        <div class="col-3">
-                                            <h5 class="mb-0 font-size-18">
-                                                <?php
-                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
-                                                $tktsql = $con->query("SELECT * FROM ticket WHERE area_id=$area_id AND ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW() AND area_id=$area_id");
-                                                echo $tktsql->num_rows;
-                                                ?>
-                                            </h5>
-                                            <p class="text-muted text-truncate">Pending</p>
-                                        </div>
-
-                                        <div class="col-3">
-                                            <h5 class="mb-0 font-size-18">
-                                                <?php
-                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
-                                                $area_id = (int)$area_id; 
-                                                $tktsql = $con->query("SELECT * FROM ticket WHERE area_id='$area_id' AND ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
-                                                
-                                                echo $tktsql->num_rows ?? 0;
-                                                ?>
-                                            </h5>
-                                            <p class="text-muted text-truncate danger">Closed</p>
-                                        </div>
-
-
-                                    </div>
-
-                                    <div id="chart" dir="ltr"></div>
-
-
-
-
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        
-                        <div class="col-md-6 stretch-card">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-8 mt-1 py-2">
-                                            <p class="card-title ">Recent Customers</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button style="float: right;">
-                                                <a href="customers_new.php?area_id=<?php echo $area_id; ?>&active=1">+</a>
-                                            </button>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="table-responsive">
-                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
-                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Full Name</th>
-
-                                                    <th>POP</th>
-                                                    <th>Area</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                //AND user_type='$auth_usr_type'
-                                                $sql = "SELECT * FROM customers WHERE area=$area_id ORDER BY id DESC LIMIT 5 ";
-                                                $result = mysqli_query($con, $sql);
-
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-                                                    $username = $rows["username"];
-
-                                                ?>
-
-                                                <tr>
-                                                    <td><?php echo $rows['id']; ?></td>
-                                                    <td><a target="new"
-                                                            href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                            <?php
-                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                            $chkc = $onlineusr->num_rows;
-                                                            if ($chkc == 1) {
-                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                            } else {
-                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-                                                            }
-                                                            
-                                                            echo ' ' . $rows['fullname']; ?></a></td>
-
-                                                    <td>
-                                                        <?php
-                                                        $popID = $rows['pop'];
-                                                        $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
-                                                        while ($popRow = $allPOP->fetch_array()) {
-                                                            echo $popRow['pop'];
-                                                        }
-                                                        
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php $id = $rows['area'];
-                                                        $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-                                                        while ($popRow = $allArea->fetch_array()) {
-                                                            echo $popRow['name'];
-                                                        }
-                                                        
-                                                        ?>
-
-                                                    </td>
-
-                                                </tr>
-                                                <?php } ?>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-
-
-
-                                <div class="row">
-                                    <div class="col-md-8 mt-1 py-2">
-                                        <p class="card-title ">New Customers by months</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <button style="float: right;">
-                                            <a href="customers.php">+</a>
-                                        </button>
-                                    </div>
-                                </div>
-
-
-
-                                <div class="table-responsive">
-                                    <table id="datatables" class="table table-bordered dt-responsive nowrap"
-                                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                        <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th>Months</th>
-                                                <th>New Conn.</th>
-                                                <th>Expired Conn.</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                            for($i=1; $i<=12; $i++)
-                                            {
-                                                ?>
-                                            <tr>
-                                                <td><?php echo $i; ?></td>
-                                                <td>
-                                                    <?php
-                                                    $month = sprintf('%02d', $i);
-                                                    $currentyrMnth = date('Y') . '-' . $month;
-                                                    echo date('M-Y', strtotime($currentyrMnth));
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%' AND area=$area_id";
-                                                    $result = mysqli_query($con, $sql);
-                                                    $countconn = mysqli_num_rows($result);
-                                                    echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '&&area_id='.$area_id.'">' . $countconn . '</a>';
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%' AND area=$area_id";
-                                                    $result = mysqli_query($con, $sql);
-                                                    $countexpconn = mysqli_num_rows($result);
-                                                    echo '<a href="customer_expire.php?list=' . $currentyrMnth . ' && area_id='.$area_id.'">' . $countexpconn . '</a>';
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <?php  } ?>
-                                        </tbody>
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-
-
-                </div> <!-- container-fluid -->
-
-                <div class="">
                     <div class="row">
                         <div class="card">
                             <div class="card-body">
@@ -753,7 +492,277 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                             </div>
                         </div>
                     </div>
-                </div>
+                    <div class="row">
+                       
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+
+                                <div class="card-body">
+                                    <h4 class="card-title mb-4">Customer Statics</h4>
+
+                                    <div class="row text-center mt-4">
+                                        <div class="col-4">
+                                            <h5 class="mb-0 font-size-18">50</h5>
+                                            <p class="text-muted text-truncate">New</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <h5 class="mb-0 font-size-18">44</h5>
+                                            <p class="text-muted text-truncate">Expired</p>
+                                        </div>
+                                        <div class="col-4">
+                                            <h5 class="mb-0 font-size-18">32</h5>
+                                            <p class="text-muted text-truncate">Disabled</p>
+                                        </div>
+                                    </div>
+
+                                    <div id="simple-line-chart" class="ct-chart ct-golden-section" dir="ltr">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title mb-4">Ticket Statics 10 Days</h4>
+
+
+                                    <div class="row text-center mt-4">
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE area_id=$area_id AND  startdate BETWEEN '$daystkt' AND NOW()");
+                                                echo $tktsql->num_rows;
+                                                ?>
+
+                                            </h5>
+                                            <p class="text-muted text-truncate">Tickets</p>
+                                        </div>
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                            <?php
+                                            $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                            $area_id = (int)$area_id; 
+                                            $tktsql = $con->query("SELECT * FROM ticket WHERE area_id=$area_id AND ticket_type='Complete' AND startdate BETWEEN '$daystkt' AND NOW()");
+
+                                            echo $tktsql->num_rows;
+                                            ?>
+
+
+                                            </h5>
+                                            <p class="text-muted text-truncate">Resolved</p>
+                                        </div>
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE area_id=$area_id AND ticket_type='Active' AND startdate BETWEEN '$daystkt' AND NOW() AND area_id=$area_id");
+                                                echo $tktsql->num_rows;
+                                                ?>
+                                            </h5>
+                                            <p class="text-muted text-truncate">Pending</p>
+                                        </div>
+
+                                        <div class="col-3">
+                                            <h5 class="mb-0 font-size-18">
+                                                <?php
+                                                $daystkt = date('Y-m-d', strtotime('-7 day'));
+                                                $area_id = (int)$area_id; 
+                                                $tktsql = $con->query("SELECT * FROM ticket WHERE area_id='$area_id' AND ticket_type='Close' AND startdate BETWEEN '$daystkt' AND NOW()");
+                                                
+                                                echo $tktsql->num_rows ?? 0;
+                                                ?>
+                                            </h5>
+                                            <p class="text-muted text-truncate danger">Closed</p>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div id="chart" dir="ltr"></div>
+
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="row">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="map" style="height: 400px;"></div>
+                                    </div>
+                                </div>
+                            </div>                         
+                        </div>
+                    </div>
+                    <div class="row">
+                        
+                        <div class="col-md-6 stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8 mt-1 py-2">
+                                            <p class="card-title ">Recent Customers</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button style="float: right;">
+                                                <a href="customers_new.php?area_id=<?php echo $area_id; ?>&active=1">+</a>
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="table-responsive">
+                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
+                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Full Name</th>
+
+                                                    <th>POP</th>
+                                                    <th>Area</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                //AND user_type='$auth_usr_type'
+                                                $sql = "SELECT * FROM customers WHERE area=$area_id ORDER BY id DESC LIMIT 12";
+                                                $result = mysqli_query($con, $sql);
+
+                                                while ($rows = mysqli_fetch_assoc($result)) {
+                                                    $username = $rows["username"];
+
+                                                ?>
+
+                                                <tr>
+                                                    <td><?php echo $rows['id']; ?></td>
+                                                    <td><a target="new"
+                                                            href="profile.php?clid=<?php echo $rows['id']; ?>">
+                                                            <?php
+                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                                                            $chkc = $onlineusr->num_rows;
+                                                            if ($chkc == 1) {
+                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                                                            } else {
+                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                                                            }
+                                                            
+                                                            echo ' ' . $rows['fullname']; ?></a></td>
+
+                                                    <td>
+                                                        <?php
+                                                        $popID = $rows['pop'];
+                                                        $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
+                                                        while ($popRow = $allPOP->fetch_array()) {
+                                                            echo $popRow['pop'];
+                                                        }
+                                                        
+                                                        ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php $id = $rows['area'];
+                                                        $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
+                                                        while ($popRow = $allArea->fetch_array()) {
+                                                            echo $popRow['name'];
+                                                        }
+                                                        
+                                                        ?>
+
+                                                    </td>
+
+                                                </tr>
+                                                <?php } ?>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+
+
+
+                                <div class="row">
+                                    <div class="col-md-8 mt-1 py-2">
+                                        <p class="card-title ">New Customers by months</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button style="float: right;">
+                                            <a href="customers.php">+</a>
+                                        </button>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="table-responsive">
+                                    <table id="datatables" class="table table-bordered dt-responsive nowrap"
+                                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Months</th>
+                                                <th>New Conn.</th>
+                                                <th>Expired Conn.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            for($i=1; $i<=12; $i++)
+                                            {
+                                                ?>
+                                            <tr>
+                                                <td><?php echo $i; ?></td>
+                                                <td>
+                                                    <?php
+                                                    $month = sprintf('%02d', $i);
+                                                    $currentyrMnth = date('Y') . '-' . $month;
+                                                    echo date('M-Y', strtotime($currentyrMnth));
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%' AND area=$area_id";
+                                                    $result = mysqli_query($con, $sql);
+                                                    $countconn = mysqli_num_rows($result);
+                                                    echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '&&area_id='.$area_id.'">' . $countconn . '</a>';
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%' AND area=$area_id";
+                                                    $result = mysqli_query($con, $sql);
+                                                    $countexpconn = mysqli_num_rows($result);
+                                                    echo '<a href="customer_expire.php?list=' . $currentyrMnth . ' && area_id='.$area_id.'">' . $countexpconn . '</a>';
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <?php  } ?>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+
+                </div> <!-- container-fluid -->
+
+               
             </div>
             <!-- End Page-content -->
           
@@ -778,6 +787,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
     <!-- JAVASCRIPT -->
     <?php include '../script.php'; ?>
     <script type="text/javascript" src="js/customer.js"></script>
+    <script type="text/javascript" src="../../js/google_map.js"></script>
     <script type="text/javascript">
         /*************************simple-line-chart Start**************************************************/
         var chart = new Chartist.Line("#simple-line-chart", {
@@ -1058,6 +1068,8 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                 }
             }
         });
+          /*************************Google Map Load**********************************************************/
+          loadMaps(0,<?= $area_id; ?>);
     </script>
 </body>
 
