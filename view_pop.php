@@ -186,8 +186,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
                                         &nbsp;
                                         <abbr title="Edit Customer">
-                                            <a href="#">
-                                                <button type="button" class="btn-sm btn btn-info">
+                                            <a href="pop_edit.php?id=<?php echo $popid; ?>">
+                                                <button type="button"
+                                                    class="btn-sm btn btn-info">
                                                     <i class="mdi mdi-account-edit"></i>
                                                 </button></a>
                                         </abbr>

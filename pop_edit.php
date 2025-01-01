@@ -66,56 +66,69 @@ if (isset($_GET["id"])) {
     <div class="page-content">
         <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6 m-auto">
-                <div class="card">
-                    <div class="card-header">Update POP/Branch</div>
-                    <div class="card-body">
-                        <form action="#" id="updatePop">
-                            <div class="form-group mb-2">
+    <div class="col-md-8 m-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Update POP/Branch</h5>
+            </div>
+            <div class="card-body">
+                <form action="#" id="updatePop">
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
                                 <label for="pop">POP/Branch Name</label>
                                 <input type="text" class="form-control" id="pop" name="pop" value="<?php echo $popName; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <label for="fullname">Full Name</label>
                                 <input type="text" class="form-control" id="fullname" name="fullname" value="<?php echo $fullname; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <label for="username">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" value="<?php echo $username; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <label for="password">Password</label>
                                 <input type="text" class="form-control" id="password" name="password" value="<?php echo $password; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <label for="opening_bal">Opening Balance</label>
                                 <input type="text" class="form-control" id="opening_bal" name="opening_bal" value="<?php echo $opening_bal; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
                                 <label for="mobile_num1">Mobile Number 1</label>
                                 <input type="text" class="form-control" id="mobile_num1" name="mobile_num1" value="<?php echo $mobile_num1; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <label for="mobile_num2">Mobile Number 2</label>
                                 <input type="text" class="form-control" id="mobile_num2" name="mobile_num2" value="<?php echo $mobile_num2; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <label for="email_address">Email Address</label>
                                 <input type="text" class="form-control" id="email_address" name="email_address" value="<?php echo $email_address; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <label for="note">Note</label>
                                 <input type="text" class="form-control" id="note" name="note" value="<?php echo $note; ?>">
                             </div>
-                            <div class="form-group mb-2">
+                            <div class="form-group mb-3">
                                 <input type="hidden" name="id" value="<?php echo $id; ?>">
-                                <button type="submit" class="btn btn-success" id="up_pop_button">Update POP/Branch</button>
+                                <button type="submit" class="btn btn-success" id="up_pop_button" style="margin-top: 20px;">Update POP/Branch</button>
+                                <button onclick="history.back();" type="button" class="btn btn-danger" style="margin-top: 20px;">Back</button>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
+    </div>
+</div>
+
         </div> <!-- container -->
     </div>
     <!-- End Page-content -->
