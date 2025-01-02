@@ -111,9 +111,13 @@ if (file_exists($users_right_path)) {
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer d-flex flex-wrap justify-content-between align-items-center">
+                                <div class="card-footer flex-wrap justify-content-between align-items-center">
                                     <button class="btn btn-primary mb-2" id="send_message_btn">
                                         <i class="far fa-envelope"></i>&nbsp;Send Message
+                                    </button>
+
+                                    <button type="button" class="btn btn-info mb-2" name="customer_billing_btn">
+                                        &nbsp;Change Billing
                                     </button>
 
                                     <button type="button" class="btn btn-success mb-2" name="export_to_excel">
@@ -418,6 +422,40 @@ if (file_exists($users_right_path)) {
             </div>
         </div>
     </div>
+    <!--------------------Customer Billing Modal Modal---------------------------->
+    <div class="modal fade " id="customerBillingModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Customer Billing Change
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" id="selectedCustomerCount"></div>
+                    <form id="customer_billing_form" method="POST">
+                        <div class="form-group mb-2">
+                            <label>Billing Date:</label>
+                            <select type="text" name="customer_billing_date" class="form-select" required>
+                                <option value="">---Select---</option>
+                                <?php
+                                for ($i = 1; $i <= 31; $i++) {
+                                    echo '<option value="' . $i . '">' . $i . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" name="customer_billing_submit_btn" class="btn btn-success"><i
+                            class="mdi mdi-update"></i> Change Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
      <!------------------ Modal for Create Customer For POP/Branch ------------------>
      <?php include 'modal/customer_modal.php';?>
     <!-- Right bar overlay-->
@@ -589,13 +627,20 @@ if (file_exists($users_right_path)) {
     <script type="text/javascript">
         var table;
         $(document).ready(function() {
+            /** Get Area */
+            var get_area = "<?php echo htmlspecialchars($con->query("SELECT `id` FROM area_list WHERE pop_id='$auth_usr_POP_id' LIMIT 1")->fetch_assoc()['id'], ENT_QUOTES, 'UTF-8'); ?>";
+            
+           
             var get_area_id = "<?php echo isset($_GET['area_id']) ? $_GET['area_id'] : ''; ?>";
             if (get_area_id.length > 0) {
                
             }else{
-                loadPopOptions();
+                //loadPopOptions();
                 loadAreaOptions();
             }
+
+            /** Load POP Options */
+            
 
             function loadPopOptions() {
                 $.ajax({
@@ -642,8 +687,11 @@ if (file_exists($users_right_path)) {
 
 
                             $.each(response.data, function(key, data) {
-                                popOptions += '<option value="' + data.id + '">' + data.name +
-                                    '</option>';
+                                if (String(data.id) === String(get_area)) {
+                                    popOptions += '<option value="' + data.id + '" selected>' + data.name + '</option>';
+                                } else {
+                                    popOptions += '<option value="' + data.id + '">' + data.name + '</option>';
+                                }
                             });
 
                             popOptions += '</select></label>';
@@ -1246,6 +1294,72 @@ if (file_exists($users_right_path)) {
                     $button.prop('disabled', false);
                     $button.html('<i class="mdi mdi-swap-horizontal"></i> Change POP/Branch');
 
+                }
+            });
+        });
+        /************************** Customer Billing And Expire Section **************************/
+        $(document).on('click', 'button[name="customer_billing_btn"]', function(e) {
+            event.preventDefault();
+            var customers = [];
+            $(".checkSingle:checked").each(function() {
+                customers.push($(this).val());
+            });
+            if (customers.length == 0) {
+                toastr.error("Please select at least one customer");
+                return false;
+            }
+            // if (customers.length > 1) {
+            //     toastr.error("Sorry!! You Don't Selected One More");
+            //     return false;
+            // }
+
+            var countText = "You have selected " + customers.length + " customer.";
+            $("#customerBillingModal #selectedCustomerCount").text(countText);
+            $('#customerBillingModal').modal('show');
+        });
+
+        $(document).on('click', 'button[name="customer_billing_submit_btn"]', function(e) {
+            e.preventDefault();
+            var $button = $(this);
+            $button.prop('disabled', true);
+            $button.html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
+            );
+
+            var customers = [];
+            $(".checkSingle:checked").each(function() {
+                customers.push($(this).val());
+            });
+
+            var data = $('#customer_billing_form').serialize() + '&customers=' + JSON.stringify(customers);
+           
+            $.ajax({
+                url: '../../include/customer_server_new.php?customer_billing_request=true',
+                method: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#customerBillingModal').modal('hide');
+                        $('#customers_table').DataTable().ajax.reload();
+                    } else if (response.success === false) {
+                        if (response.errors) {
+                            $.each(response.errors, function(key, error) {
+                                toastr.error(error);
+                            });
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    toastr.error("There was an error sending the message.");
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    $button.html('<i class="mdi mdi-update"></i> Change Now');
                 }
             });
         });
