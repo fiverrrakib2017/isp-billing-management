@@ -117,6 +117,12 @@ if (file_exists($users_right_path)) {
                                             $areaIdCondition = " AND area='" . mysqli_real_escape_string($con, $_GET['area_id']) . "'";
                                         }
                                         
+                                        /* Check for pop_id in the session*/
+                                        if($popIdCondition==''){
+                                            $pop_id = $_SESSION['user_pop'] ? $_SESSION['user_pop'] : '0';
+                                            $popIdCondition = " AND pop='" . mysqli_real_escape_string($con, $pop_id) . "'";
+                                        }
+                                        
                                         /* Expire Date Filter check*/
                                         if (isset($_GET['list'])) {
                                             $ExpMnthYr = mysqli_real_escape_string($con, $_GET['list']);
@@ -124,6 +130,8 @@ if (file_exists($users_right_path)) {
                                         } else {
                                             $sql = "SELECT * FROM customers WHERE expiredate < NOW() $popIdCondition $areaIdCondition";
                                         }
+
+                                        
                                         
                                         $result = mysqli_query($con, $sql);
                                         
