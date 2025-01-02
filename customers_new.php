@@ -13,7 +13,7 @@ include 'include/users_right.php';
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include 'style.php'; ?>
-    
+
 </head>
 
 <body data-sidebar="dark">
@@ -22,7 +22,8 @@ include 'include/users_right.php';
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php $page_title="Customers";  include 'Header.php'; ?>
+        <?php $page_title = 'Customers';
+        include 'Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -67,7 +68,7 @@ include 'include/users_right.php';
 
                                 </div>
 
-                               
+
                             </div>
                         </div>
                     </div>
@@ -103,9 +104,12 @@ include 'include/users_right.php';
                                         </table>
                                     </div>
                                 </div>
-                                <div class="card-footer d-flex flex-wrap justify-content-between align-items-center">
+                                <div class="card-footer flex-wrap justify-content-between align-items-center">
                                     <button class="btn btn-primary mb-2" id="send_message_btn">
                                         <i class="far fa-envelope"></i>&nbsp;Send Message
+                                    </button>
+                                    <button type="button" class="btn btn-info mb-2" name="customer_billing_btn">
+                                        &nbsp;Change Billing
                                     </button>
 
                                     <button type="button" class="btn btn-success mb-2" name="export_to_excel">
@@ -125,14 +129,16 @@ include 'include/users_right.php';
                                     <button type="button" class="btn btn-danger mb-2" name="cash_received_btn">
                                         <i class="mdi mdi-cash-multiple"></i>&nbsp;Cash Received
                                     </button>
-                                    
-                                    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#fileImportModal">
+
+                                    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal"
+                                        data-bs-target="#fileImportModal">
                                         <img src="https://img.icons8.com/?size=100&id=117561&format=png&color=000000"
                                             class="img-fluid icon-img" style="height: 20px !important;">
                                         Import Excel File
                                     </button>
 
-                                    <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal" data-bs-target="#ticketModal">
+                                    <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal"
+                                        data-bs-target="#ticketModal">
                                         <i class="mdi mdi-ticket"></i>&nbsp;Add Ticket
                                     </button>
 
@@ -161,8 +167,8 @@ include 'include/users_right.php';
         <div class="modal-dialog " role="document">
             <div class="modal-content col-md-12">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"><span
-                            class="mdi mdi-account-check mdi-18px"></span> &nbsp;Send Message</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"><span class="mdi mdi-account-check mdi-18px"></span>
+                        &nbsp;Send Message</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -291,7 +297,8 @@ include 'include/users_right.php';
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" name="cash_received_submit_btn" class="btn btn-success"><i class="mdi mdi-cash"></i> Payment Now</button>
+                    <button type="button" name="cash_received_submit_btn" class="btn btn-success"><i
+                            class="mdi mdi-cash"></i> Payment Now</button>
                 </div>
             </div>
         </div>
@@ -302,12 +309,12 @@ include 'include/users_right.php';
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                    <i class="mdi mdi-upload"></i>  File Import
+                        <i class="mdi mdi-upload"></i> File Import
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    
+
                     <form id="file_import_form" method="POST">
                         <div class="form-group mb-2">
                             <label>Upload Your File:</label>
@@ -317,7 +324,8 @@ include 'include/users_right.php';
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" name="file_upload_submit_btn" class="btn btn-success"><i class="mdi mdi-upload"></i> Upload Now</button>
+                    <button type="button" name="file_upload_submit_btn" class="btn btn-success"><i
+                            class="mdi mdi-upload"></i> Upload Now</button>
                 </div>
             </div>
         </div>
@@ -328,7 +336,7 @@ include 'include/users_right.php';
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                    <i class="mdi mdi-swap-horizontal"></i>  Change POP/Branch
+                        <i class="mdi mdi-swap-horizontal"></i> Change POP/Branch
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -343,20 +351,55 @@ include 'include/users_right.php';
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" name="pop_change_submit_btn" class="btn btn-success"> <i class="mdi mdi-swap-horizontal"></i>  Change POP/Branch</button>
+                    <button type="button" name="pop_change_submit_btn" class="btn btn-success"> <i
+                            class="mdi mdi-swap-horizontal"></i> Change POP/Branch</button>
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
+    <!--------------------Customer Billing Modal Modal---------------------------->
+    <div class="modal fade " id="customerBillingModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Customer Billing Change
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" id="selectedCustomerCount"></div>
+                    <form id="customer_billing_form" method="POST">
+                        <div class="form-group mb-2">
+                            <label>Billing Date:</label>
+                            <select type="text" name="customer_billing_date" class="form-select" required>
+                                <option value="">---Select---</option>
+                                <?php
+                                for ($i = 1; $i <= 31; $i++) {
+                                    echo '<option value="' . $i . '">' . $i . '</option>';
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    <button type="button" name="customer_billing_submit_btn" class="btn btn-success"><i
+                            class="mdi mdi-update"></i> Change Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!------------------ Modal Customer Tickets ------------------>
-    <?php require 'modal/tickets_modal.php';?>
-    <?php require 'modal/customer_modal.php';?>
+    <?php require 'modal/tickets_modal.php'; ?>
+    <?php require 'modal/customer_modal.php'; ?>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <?php include 'script.php'; ?>
     <script src="js/tickets.js"></script>
     <script src="js/customer.js"></script>
-   
+
 
 
     <script type="text/javascript">
@@ -367,13 +410,13 @@ include 'include/users_right.php';
             var get_area_id = "<?php echo isset($_GET['area_id']) ? $_GET['area_id'] : ''; ?>";
 
             if (get_pop_id.length > 0 || get_area_id.length > 0) {
-               
-            }else{
+
+            } else {
                 loadPopOptions();
                 loadAreaOptions();
             }
 
-            
+
 
             function loadPopOptions() {
                 $.ajax({
@@ -504,27 +547,27 @@ include 'include/users_right.php';
                     url: "include/customer_server_new.php?get_customers_data=true",
                     type: 'GET',
                     data: function(d) {
-                      
+
                         /********************Finter For Active Customer*******************************/
                         <?php if (isset($_GET['active']) && !empty($_GET['active'])): ?>
-                            d.status = <?php echo $_GET['active']; ?>;
+                        d.status = <?php echo $_GET['active']; ?>;
                         <?php else: ?>
-                            d.status = $('.status_filter').val();
+                        d.status = $('.status_filter').val();
                         <?php endif; ?>
                         /********************Finter For POP ID Customer*******************************/
                         <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
-                            d.pop_id = <?php echo $_GET['pop_id']; ?>;
+                        d.pop_id = <?php echo $_GET['pop_id']; ?>;
                         <?php else: ?>
-                            d.pop_id = $('.pop_filter').val();
+                        d.pop_id = $('.pop_filter').val();
                         <?php endif; ?>
                         /********************Finter For AREA ID Customer*******************************/
                         <?php if (isset($_GET['area_id']) && !empty($_GET['area_id'])): ?>
-                            d.area_id = <?php echo $_GET['area_id']; ?>;
+                        d.area_id = <?php echo $_GET['area_id']; ?>;
                         <?php else: ?>
-                            d.area_id = $('.area_filter').val();
+                        d.area_id = $('.area_filter').val();
                         <?php endif; ?>
-                        
-                      
+
+
                     },
 
                 },
@@ -764,7 +807,7 @@ include 'include/users_right.php';
                 }
             });
         });
-         /************************** Customer Recharage Section **************************/
+        /************************** Customer Recharage Section **************************/
         $(document).on('click', 'button[name="recharge_btn"]', function(e) {
             event.preventDefault();
             var selectedCustomers = [];
@@ -786,7 +829,7 @@ include 'include/users_right.php';
             $button.prop('disabled', true);
             $button.html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
-                );
+            );
 
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
@@ -844,20 +887,21 @@ include 'include/users_right.php';
             $("#addPaymentModal #selectedCustomerCount").text(countText);
             $('#addPaymentModal').modal('show');
         });
-        
+
         $(document).on('click', 'button[name="cash_received_submit_btn"]', function(e) {
             event.preventDefault();
             var $button = $(this);
             $button.prop('disabled', true);
             $button.html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
-                );
+            );
 
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
             });
-            var data = $('#cash_received_form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            var data = $('#cash_received_form').serialize() + '&selectedCustomers=' + JSON.stringify(
+                selectedCustomers);
             $.ajax({
                 url: 'include/customer_recharge_server.php?cash_received=true',
                 method: 'POST',
@@ -898,7 +942,7 @@ include 'include/users_right.php';
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
             );
             var formData = new FormData($('#file_import_form')[0]);
-            
+
             $.ajax({
                 url: 'include/customer_server_new.php?import_file_data=true',
                 method: 'POST',
@@ -930,7 +974,7 @@ include 'include/users_right.php';
                     $button.html('<i class="mdi mdi-upload"></i> Upload Now');
                 }
             });
-            
+
         });
         /************************** Charge Customer POP/Branch **************************/
         $(document).on('click', 'button[name="pop_change_btn"]', function(e) {
@@ -943,7 +987,7 @@ include 'include/users_right.php';
             $("#changePopModal #selectedCustomerCount").text(countText);
             if (selectedCustomers.length == 0) {
                 toastr.error("Please select at least one customer");
-                return false; 
+                return false;
             }
             $.ajax({
                 url: 'include/pop_server.php?get_pop_data=1',
@@ -954,13 +998,15 @@ include 'include/users_right.php';
                         var popOptions = '<option value="">--Select POP--</option>';
 
                         $.each(response.data, function(key, data) {
-                            popOptions += '<option value="' + data.id + '">' + data.pop + '</option>';
+                            popOptions += '<option value="' + data.id + '">' + data.pop +
+                                '</option>';
                         });
 
                         $('select[name="pop_id"]').html(popOptions);
                         $('#changePopModal').modal('show');
-                        $('#changePopModal').on('shown.bs.modal', function () {
-                            if (!$('select[name="pop_id"]').hasClass("select2-hidden-accessible")) {
+                        $('#changePopModal').on('shown.bs.modal', function() {
+                            if (!$('select[name="pop_id"]').hasClass(
+                                    "select2-hidden-accessible")) {
                                 $('select[name="pop_id"]').select2({
                                     dropdownParent: $('#changePopModal')
                                 });
@@ -977,13 +1023,14 @@ include 'include/users_right.php';
             $button.prop('disabled', true);
             $button.html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
-                );
+            );
 
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
             });
-            var data = $('#change_pop_form').serialize() + '&selectedCustomers=' + JSON.stringify(selectedCustomers);
+            var data = $('#change_pop_form').serialize() + '&selectedCustomers=' + JSON.stringify(
+            selectedCustomers);
             $.ajax({
                 url: 'include/customer_server_new.php?change_pop_request=true',
                 method: 'POST',
@@ -1015,12 +1062,78 @@ include 'include/users_right.php';
 
                 }
             });
-        }); 
+        });
         /************************** Add ticket Modal Script **************************/
         ticket_modal();
         loadCustomers();
         ticket_assign();
         ticket_complain_type();
+        /************************** Customer Billing And Expire Section **************************/
+        $(document).on('click', 'button[name="customer_billing_btn"]', function(e) {
+            event.preventDefault();
+            var customers = [];
+            $(".checkSingle:checked").each(function() {
+                customers.push($(this).val());
+            });
+            if (customers.length == 0) {
+                toastr.error("Please select at least one customer");
+                return false;
+            }
+            // if (customers.length > 1) {
+            //     toastr.error("Sorry!! You Don't Selected One More");
+            //     return false;
+            // }
+
+            var countText = "You have selected " + customers.length + " customer.";
+            $("#customerBillingModal #selectedCustomerCount").text(countText);
+            $('#customerBillingModal').modal('show');
+        });
+
+        $(document).on('click', 'button[name="customer_billing_submit_btn"]', function(e) {
+            e.preventDefault();
+            var $button = $(this);
+            $button.prop('disabled', true);
+            $button.html(
+                '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...'
+            );
+
+            var customers = [];
+            $(".checkSingle:checked").each(function() {
+                customers.push($(this).val());
+            });
+
+            var data = $('#customer_billing_form').serialize() + '&customers=' + JSON.stringify(customers);
+           
+            $.ajax({
+                url: 'include/customer_server_new.php?customer_billing_request=true',
+                method: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#customerBillingModal').modal('hide');
+                        $('#customers_table').DataTable().ajax.reload();
+                    } else if (response.success === false) {
+                        if (response.errors) {
+                            $.each(response.errors, function(key, error) {
+                                toastr.error(error);
+                            });
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred: " + error);
+                    toastr.error("There was an error sending the message.");
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    $button.html('<i class="mdi mdi-update"></i> Change Now');
+                }
+            });
+        });
     </script>
 </body>
 

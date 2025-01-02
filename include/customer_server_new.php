@@ -192,6 +192,8 @@
         }
     }
 
+    /************************** Customer Billing And Expire Section **************************/
+
     if (isset($_GET['import_file_data']) && $_SERVER['REQUEST_METHOD']=='POST' && !empty($_FILES['import_file_name']['name']) && $_FILES['import_file_name']['error'] == 0) {
         // if (isset($_FILES['import_file_name']) && $_FILES['import_file_name']['error'] == 0) {
         //     $fileName = $_FILES['import_file_name']['tmp_name'];
@@ -274,5 +276,43 @@
             exit();
         }
     } 
+
+    /************************** Customer Billing And Expire Section **************************/
     
+    if (isset($_GET['customer_billing_request']) && !empty($_GET['customer_billing_request']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+        $customers = json_decode($_POST['customers'], true);
+        $customer_billing_date = isset($_POST['customer_billing_date']) ? trim($_POST['customer_billing_date']) : '';
+
+         /* Validate Filds */
+         if (empty($customer_billing_date) && $customer_billing_date !== '0') {
+             echo json_encode([
+                 'success' => false,
+                 'message' => 'Billing Date is required.',
+             ]);
+             exit();
+          }
+          if(count($customers) !== 0 && !empty($customers)) {
+            foreach ($customers as $customer_id) {
+                $expiredate = $con->query("SELECT `expiredate` FROM customers WHERE id = '$customer_id'")->fetch_assoc()['expiredate'];
+                $year=''; 
+                $month=""; 
+                for($i=0; $i<4; $i++){
+                    $year .= $expiredate[$i];
+                }
+                for($i=5; $i<7; $i++){
+                    $month .= $expiredate[$i];
+                }
+                if($customer_billing_date !== '0'){
+                    $new_expiredate = $year.'-'.$month.'-'.$customer_billing_date;
+                    $con->query("UPDATE customers SET  expiredate = '$new_expiredate' WHERE id = '$customer_id'");
+                }
+
+            }
+            echo json_encode([
+                'success' => true,
+                'message' => 'Billing Updated successfully.',
+            ]);
+            exit();
+          }
+    }
 ?>
