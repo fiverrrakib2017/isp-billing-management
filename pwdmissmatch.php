@@ -231,72 +231,60 @@ include("include/users_right.php");
                                                 </tr>
                                             </thead>
                                             <tbody id="customer-list">
-                                                <?php
-                                                $sql = "SELECT * FROM customers";
-                                                $result = mysqli_query($con, $sql);
+    <?php
+    $result = $con->query("SELECT * FROM customers");
 
-                                                while ($rows = mysqli_fetch_assoc($result)) {
+    while ($rows = mysqli_fetch_assoc($result)) {
 
-                                                    $custUsername = $rows["username"];
-                                                    $pwd = $rows["password"];
+        $custUsername = $rows["username"];
+        $pwd = $rows["password"];
 
-                                                    $pwdtry="";
-                                                    $cstpwd = $con->query("SELECT * FROM radpostauth WHERE username='$custUsername' LIMIT 1");
-                                                            while ($pwdRow = $cstpwd->fetch_array()) {
-                                                              $pwdtry = $pwdRow['pass'];
-                                                            }
-                                                    
-                                                     if($pwd==$pwdtry)
-                                                    {
+        $pwdtry = "";
+        $cstpwd = $con->query("SELECT * FROM radpostauth WHERE username='$custUsername' LIMIT 1");
+        if ($cstpwd->num_rows > 0) {
+            while ($pwdRow = $cstpwd->fetch_array()) {
+                $pwdtry = $pwdRow['pass'];
+            }
+            if ($pwdtry != $pwd) {
+                $pwdstatus = '
+                <span id="' . $custUsername . '" class="badge bg-danger">Not Matched</span>
+                <button type="button" class="btn-sm btn-info missmtchID" data-id="' . $custUsername . '" data-idp="' . $pwdtry . '">
+                    <i class="fas fa-sync"></i>
+                </button>';
+                ?>
+                <tr>
+                    <td><?php echo $rows['id']; ?></td>
+                    <td>
+                        <a target="_blank" href="profile.php?clid=<?php echo $rows['id']; ?>">
+                            <?php 
+                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$custUsername'");
+                            $chkc = $onlineusr->num_rows;
+                            if ($chkc == 1) {
+                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
+                            } else {
+                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                            }
+                            echo ' ' . $rows["fullname"]; 
+                            ?>
+                        </a>
+                    </td>
+                    <td><?php echo $custUsername; ?></td>
+                    <td><?php echo $pwdstatus; ?></td>
+                    <td><?php echo $pwd; ?></td>
+                    <td><?php echo $pwdtry; ?></td>
+                    <td>
+                        <a class="btn btn-info" target="_blank" href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
+                        <a class="btn btn-success" target="_blank" href="profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i></a>
+                    </td>
+                </tr>
+                <?php
+            }
+        }
+    }
+    ?>
+</tbody>
 
-                                                        $pwdstatus ='<span class="badge bg-success">Matched</span>';
-                                                    }
-                                                    
-                                                    elseif($pwdtry=="")
-                                                    {
-                                                        $pwdstatus ='<span class="badge bg-info">No Connection</span>';
 
-                                                    }elseif($pwdtry!=$pwd)
-                                                    {
-                                                        $pwdstatus ='<span id="'.$custUsername.'" class="badge bg-danger">Not Matched</span> <span class="badge bg-info missmtchID" data-id="'.$custUsername.'" data-idp="'.$pwdtry.'"><div class="mdi mdi-autorenew"></div></span>';
-
-                                                    }
-
-                                                    
-
-                                                ?>
-
-                                                    <tr>
-                                                        <td><?php echo $rows['id']; ?></td>
-                                                        <td><a target="_blank" href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                        <?php 
-                                                        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$custUsername'");
-                                                        $chkc = $onlineusr->num_rows;
-                                                        if($chkc==1)
-                                                        {
-                                                            echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                        } else{
-                                                            echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-
-                                                        }
-                                                        echo ' '. $rows["fullname"]; ?></a></td>
-                                                        
-                                                        <td><?php echo $pwdstatus; ?></td>
-                                                        <td><?php echo $custUsername; ?></td>
-                                                        <td><?php echo $pwd; ?></td>
-                                                        <td>
-                                                            <?php echo $pwdtry; ?>
-                                                        </td>
-                                                        
-                                                        <td>
-                                                            <a class="btn btn-info" target="_blank" href="profile_edit.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-edit"></i></a>
-                                                            <a class="btn btn-success" target="_blank" href="profile.php?clid=<?php echo $rows['id']; ?>"><i class="fas fa-eye"></i>
-                                                            </a>
-
-                                                        </td>
-                                                    </tr>
-                                                <?php } ?>
-                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
