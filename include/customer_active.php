@@ -12,5 +12,4 @@ if (isset($_GET['clid'])) {
 
 
 
-
  ?>

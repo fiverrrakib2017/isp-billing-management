@@ -3,7 +3,6 @@ include 'db_connect.php';
 if (!isset($_SESSION)) {
     session_start();
 }
-
 if (isset($_GET['show_customer_recharge_list']) && $_GET['show_customer_recharge_list'] == 'true') {
     require 'datatable.php';
     $table = 'customer_rechrg';

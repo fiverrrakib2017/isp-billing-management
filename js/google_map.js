@@ -8,6 +8,7 @@ function loadMaps(pop_id, area_id) {
         });
 }
 
+
 function _load_google_map_script() {
     return new Promise((resolve, reject) => {
         if (window.google && window.google.maps) {

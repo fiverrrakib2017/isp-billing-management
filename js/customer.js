@@ -436,6 +436,7 @@ function initMap2() {
     });
 }
 
+
 (async () => {
     try {
         await loadGoogleMapsScript();

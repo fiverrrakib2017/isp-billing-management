@@ -3,7 +3,6 @@ include("security_token.php");
 include("db_connect.php");
 include("pop_security.php");
 include("users_right.php");
-
 ?>
 
     <script type="text/javascript">

@@ -4,7 +4,6 @@ require 'datatable.php';
 if (isset($_GET['show_department_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     $table = 'department';
     $primaryKey = 'id';
-
     $columns = array(
         array('db' => 'id', 'dt' => 0),
         array(

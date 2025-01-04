@@ -2,8 +2,8 @@
 if (empty($_SESSION)) {
     session_start();
 }
-include 'db_connect.php';
 
+include 'db_connect.php';
 if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $selectedCustomers = json_decode($_POST['selectedCustomers'], true);
     $recharge_by = $_SESSION['uid'] ?? 0;

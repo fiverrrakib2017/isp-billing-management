@@ -75,7 +75,6 @@
             }
         )
     );
-   
     $condition="";
     if (!empty($_SESSION['user_pop'])) {
 		$condition = "pop = '" . $_SESSION['user_pop'] . "'";

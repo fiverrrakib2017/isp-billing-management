@@ -4,7 +4,6 @@ include 'db_connect.php';
 if (!isset($_SESSION)) {
     session_start();
 }
-
 if (isset($_GET['get_area_data'])) {
     $area_list = [];
 

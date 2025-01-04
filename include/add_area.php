@@ -79,7 +79,6 @@ if(isset($_GET['load_house_no'])) {
 
 
 
-
 if (isset($_GET["update"])) {
   $areaId = $_GET["id"];
   $area_name = $_GET["area"];

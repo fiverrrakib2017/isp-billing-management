@@ -1,4 +1,5 @@
 // Customers load function
+
 function ticket_modal(){
     $("#ticketModal").on('show.bs.modal', function (event) {
         /*Check if select2 is already initialized*/
@@ -22,6 +23,9 @@ function ticket_modal(){
         }
      }); 
 }
+
+
+
 
 function loadCustomers(selectedCustomerId) {
     $.ajax({

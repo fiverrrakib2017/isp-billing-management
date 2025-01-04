@@ -3,7 +3,6 @@ session_start();
 include "db_connect.php";
 include("security_token.php");
 include("users_right.php");
-
 if(isset($_GET["recharge"]))
 {
     if (isset($_SESSION['fullname'])) {

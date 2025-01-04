@@ -7,9 +7,6 @@ if (isset($_GET["update"])) {
   $con->query("UPDATE product_brand SET name='$name' WHERE id=$BrandId");
    
 }
-
-
-
 if(isset($_GET['add'])){
   $brand_name= $_GET['brand'];
 

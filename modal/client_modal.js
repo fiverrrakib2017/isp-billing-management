@@ -2,7 +2,6 @@
     /** Client The data from the database table **/
 	  $('#addClientModal form').submit(function(e){
 		e.preventDefault();
-
 		var form = $(this);
 		var url = form.attr('action');
 		var formData = form.serialize();

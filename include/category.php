@@ -11,7 +11,6 @@ if (isset($_GET["update"])) {
 }
 
 
-
 if(isset($_GET['add'])){
   $category_name= $_GET['category'];
 

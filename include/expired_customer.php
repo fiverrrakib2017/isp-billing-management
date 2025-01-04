@@ -1,15 +1,12 @@
 <?php 
 
 include "db_connect.php";
-
-
 if (isset($_GET["update"])) {
   $packageId=$_GET["id"];
   $days=$_GET["days"];
   $con->query("UPDATE customer_expires SET days='$days' WHERE id=$packageId");
    
 }
-
 //expire date delete function 
 if (isset($_GET['delete'])) {
     $id=$_GET['id'];
@@ -22,15 +19,11 @@ if (isset($_GET['delete'])) {
 }
 
 
-
-
-
-
-
 if (isset($_GET['add'])) {
 	$expired=$_GET["expired"];
 	$con->query("INSERT INTO customer_expires(days)VALUES('$expired')");
 	$con->close();
+  
 }
 
 if(isset($_GET['list'])){

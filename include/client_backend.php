@@ -1,7 +1,6 @@
 <?php 
  include("db_connect.php");
 	
-	
 
 	if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_client_data'])) {
         $fullname = $_POST['fullname'];

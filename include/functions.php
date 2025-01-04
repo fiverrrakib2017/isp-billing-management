@@ -1,8 +1,6 @@
 <?php 
 include 'db_connect.php'; 
 
-
-
 function get_total_amount($con, $table_name = "sales", $column_name = "total_due", $client_id = null, $invoice_id = null) {
 
     $query = "SELECT SUM($column_name) AS total_amount FROM $table_name";

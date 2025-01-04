@@ -308,6 +308,7 @@
                 }
 
             }
+            
             echo json_encode([
                 'success' => true,
                 'message' => 'Billing Updated successfully.',

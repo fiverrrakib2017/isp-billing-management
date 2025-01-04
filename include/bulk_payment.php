@@ -1,7 +1,6 @@
 <?php
 include "db_connect.php";
 if(isset($_GET['list'])){
-    
 if ($cstmr = $con -> query("SELECT * FROM customers")) {
   while($rows= $cstmr->fetch_array())
   {

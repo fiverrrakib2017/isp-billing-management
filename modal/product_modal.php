@@ -6,7 +6,6 @@
                         class="mdi mdi-account-check mdi-18px"></span> &nbsp;New Product</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
                 <div class="card">
                     <form action="#" id="productForm" enctype="multipart/form-data" method="POST">
                         <div class="card-body">

@@ -3,7 +3,6 @@
 
 include("../include/db_connect.php");
 
-
 if (isset($_POST['marketing_client_add'])) {
     $company_name = $_POST['company_name'];
     $contact_name = $_POST['contact_name'];

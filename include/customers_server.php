@@ -66,6 +66,7 @@ if (isset($_POST['updateCustomer'])) {
         echo 0;
     }
 }
+
 //username check script///////
 if (isset($_POST['current_username'])) {
 

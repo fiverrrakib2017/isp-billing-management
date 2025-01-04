@@ -1,6 +1,5 @@
 <?php
 include 'db_connect.php';
-
 /*Update POP/Branch Script*/
 if (isset($_GET['update']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     /*Sanitize and validate inputs*/

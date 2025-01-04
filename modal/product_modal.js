@@ -5,6 +5,7 @@ $('#addproductModal').on('shown.bs.modal', function () {
             dropdownParent: $('#addproductModal')
         });
     }
+    
     if (!$('#category').hasClass("select2-hidden-accessible")) {
         $("#category").select2({
             dropdownParent: $('#addproductModal')

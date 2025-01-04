@@ -1,7 +1,6 @@
 <?php
 include "../include/db_connect.php";
 if(isset($_GET['id'])){
-    
   $clientId =$_GET['id'];
 if ($marketing_client = $con -> query("SELECT * FROM marketing_client WHERE id='$clientId'")) {
   while($rows= $marketing_client->fetch_array()){

@@ -7,5 +7,4 @@ echo "<option value=''>Select</option>";
 while ($rows=$res->fetch_assoc()) {
 	echo "<option value='{$rows['id']}'>{$rows['mobile']}</option>";
 }
-
 ?>
