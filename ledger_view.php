@@ -289,9 +289,6 @@ if (isset($_GET['id'])) {
                         if (response == 1) {
                             toastr.success("Add Successfully ");
                             $('#addModal').modal('hide');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
                         } else {
                             toastr.error("Please Try Again");
                         }

@@ -150,20 +150,20 @@ function timeAgo($startdate) {
 
                             <a href="con_request.php" class="btn-sm btn btn-warning mb-1">Connection Request
                                 <?php
-                                // $pop_id=0; 
-                                // if(!empty($_SESSION['user_pop']) && isset($_SESSION['user_pop'])){
-                                //     $pop_id = $_SESSION['user_pop'];
-                                //     $condition = "WHERE pop_id='$pop_id'";
-                                // }
-                                // if(empty($pop_id)){
-                                //     $condition = "";
-                                // }
-                                // if ($allCstmr = $con->query("SELECT * FROM `customer_request` $condition")) {
-                                //     if ($allCstmr->num_rows > 0) {
-                                //         echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
-                                //     } else {
-                                //     }
-                                // }
+                                $pop_id=0; 
+                                if(!empty($_SESSION['user_pop']) && isset($_SESSION['user_pop'])){
+                                    $pop_id = $_SESSION['user_pop'];
+                                    $condition = "WHERE pop_id='$pop_id'";
+                                }
+                                if(empty($pop_id)){
+                                    $condition = "";
+                                }
+                                if ($allCstmr = $con->query("SELECT * FROM `customer_request` $condition")) {
+                                    if ($allCstmr->num_rows > 0) {
+                                        echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
+                                    } else {
+                                    }
+                                }
 
 
 

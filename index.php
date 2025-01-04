@@ -139,7 +139,7 @@ function timeAgo($startdate)
                     </div>
                     <div class="row">
 
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col-md-6 col-xl-2">
                             <div class="card">
                                 <div class="card-body">
                                     <div class="mini-stat">
@@ -149,7 +149,7 @@ function timeAgo($startdate)
                                             <span class="counter text-primary">
                                                 <?php
                                                 if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
-                                                    echo $onlinecstmr->num_rows;
+                                                    echo $onlinecst = $onlinecstmr->num_rows;
                                                 }
                                                 ?>
                                             </span>
@@ -159,8 +159,35 @@ function timeAgo($startdate)
                                 </div>
                             </div>
                         </div> <!-- End col -->
+						
+						<div class="col-md-6 col-xl-2">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-secondary me-0 float-end"><i
+                                                class="fas fa-user-times"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-muted">
+                                                <?php
+												if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1'")) {
+                                                         $totalcstmr = $totalCustomer->num_rows;
+                                                    }
+                                                    
+                                                    
+                                                	echo $totalcstmr-$onlinecst;
+												
+												
+                                                ?>
+                                            </span>
+                                            <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- End col -->
+						
 
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col-md-6 col-xl-2">
                             <a href="customers.php">
                                 <div class="card">
                                     <div class="card-body">
@@ -169,10 +196,9 @@ function timeAgo($startdate)
                                                     class="fas fa-users"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-success">
-                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1'")) {
-                                                        echo $totalcstmr = $totalCustomer->num_rows;
-                                                    }
-                                                    
+                                                    <?php 
+                                                        echo $totalcstmr;
+                                                
                                                     ?>
                                                 </span>
                                                 Active Customers
@@ -187,15 +213,15 @@ function timeAgo($startdate)
 
 
 
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col-md-6 col-xl-2">
                             <div class="card">
                                 <a href="customer_expire.php">
                                     <div class="card-body">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-danger me-0 float-end"><i
-                                                    class="fas fa-exclamation-triangle"></i></span>
+                                                    class="fas fa-user-clock"></i></span>
                                             <div class="mini-stat-info">
-                                                <span class="counter text-danger">
+                                                <span class="counter text-secondary">
                                                     <?php if ($AllExcstmr = $con->query('SELECT * FROM `customers` WHERE  NOW() > expiredate')) {
                                                         echo $AllExcstmr->num_rows;
                                                     }
@@ -209,15 +235,15 @@ function timeAgo($startdate)
                                 </a>
                             </div>
                         </div> <!-- End col -->
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col-md-6 col-xl-2">
                             <div class="card">
                                 <a href="customer_disabled.php">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-secondary me-0 float-end"><i
-                                                    class="fas fa-user-slash"></i></span>
+                                            <span class="mini-stat-icon bg-brown me-0 float-end"><i
+                                                    class="fas fa-user-lock"></i></span>
                                             <div class="mini-stat-info">
-                                                <span class="counter text-secondary">
+                                                <span class="counter text-danger">
                                                     <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0'")) {
                                                         echo $dsblcstmr->num_rows;
                                                     }
@@ -230,7 +256,30 @@ function timeAgo($startdate)
                                 </a>
                             </div>
                         </div><!--end col -->
+						      <div class="col-md-6 col-xl-2">
+                            <div class="card">
+                                <a href="con_request.php">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-warning me-0 float-end"><i
+                                                    class="fas fa-user-plus"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-secondary">
+                                                    <?php if ($requestcst = $con->query("SELECT * FROM customer_request WHERE status='0'")) {
+                                                        echo $requestcst->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                Request
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div><!--end col -->
                     </div> <!-- end row-->
+
+
 
                     <!-- New Row-->
                     <div class="row">
@@ -254,18 +303,18 @@ function timeAgo($startdate)
                                                 </span>
                                                 POP/Branch 
                                                 <br>  
-<img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online(
+<img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online 
 <?php
 $popCounts = get_count_pop_and_area_with_online_and_offline($con, 'add_pop', 'pop');
 echo $popCounts['online'];
 ?>
-) 
+ 
 <br>  
-<img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline(
+<img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline 
 <?php
 echo $popCounts['offline'];
 ?>
-)
+
 
 
                                             </div>
@@ -292,18 +341,18 @@ echo $popCounts['offline'];
                                                 </span>
                                                 Area
                                                 <br>  
-<img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online(
+<img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online 
 <?php
 $popCounts = get_count_pop_and_area_with_online_and_offline($con, 'area_list', 'area');
 echo $popCounts['online'];
 ?>
-) 
+ 
 <br>  
-<img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline(
+<img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline 
 <?php
 echo $popCounts['offline'];
 ?>
-)
+
                                                     
 
                                             </div>
@@ -333,7 +382,7 @@ echo $popCounts['offline'];
                                                     ?>
                                                 </span>
                                                 Tickets
-                                                <br>  <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Completed(<?php echo get_ticket_count($con,'Complete')?>) <br> <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Incompleted(<?php echo get_ticket_count($con,'Active')?>)
+                                                <br>  <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Completed <?php echo get_ticket_count($con,'Complete')?> <br> <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Incompleted <?php echo get_ticket_count($con,'Active')?>
                                             </div>
                                         </div>
                                     </div>
@@ -355,6 +404,7 @@ echo $popCounts['offline'];
                                                     ?>
                                                 </span>
                                                 Routers
+												<br> <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online <?php echo 0;?> <br> <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline <?php echo 0;?>
                                             </div>
                                         </div>
                                     </div>
@@ -575,6 +625,14 @@ echo $popCounts['offline'];
                                                             $cstmrID = $stmr['id'];
                                                             $username = $stmr['username'];
                                                             $cstmr_fullname = $stmr['fullname'];
+															$cstmr_area = $stmr['area'];
+                                                        }
+														
+														// Area name
+														$customerArea = $con->query("SELECT * FROM area_list WHERE id=$cstmr_area");
+                                                        while ($stmrAr = $customerArea->fetch_array()) {
+                                                            $stmrAria = $stmrAr['name'];
+                                                            
                                                         }
                                                         ?>
 
@@ -593,6 +651,9 @@ echo $popCounts['offline'];
 
                                                         <a href="profile.php?clid=<?php echo $cstmrID; ?>"
                                                             target="_blank"> <?php echo $cstmr_fullname; ?></a>
+															
+															</br>
+															<span class=" fas fa-map-marker-alt text-muted"><i> <?php echo $stmrAria; ?></i></span>
                                                     </td>
 
                                                     </td>

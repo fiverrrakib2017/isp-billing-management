@@ -4,6 +4,36 @@ include 'include/db_connect.php';
 include 'include/pop_security.php';
 include 'include/users_right.php';
 
+function timeAgo($startdate)
+{
+    /*Convert startdate to a timestamp*/
+    $startTimestamp = strtotime($startdate);
+    $currentTimestamp = time();
+
+    /* Calculate the difference in seconds*/
+    $difference = $currentTimestamp - $startTimestamp;
+
+    /*Define time intervals*/
+    $units = [
+        'year' => 31536000,
+        'month' => 2592000,
+        'week' => 604800,
+        'day' => 86400,
+        'hour' => 3600,
+        'min' => 60,
+        'second' => 1,
+    ];
+
+    /*Check for each time unit*/
+    foreach ($units as $unit => $value) {
+        if ($difference >= $value) {
+            $time = floor($difference / $value);
+            return '<img src="images/icon/online.png" height="10" width="10"/>' . ' ' . $time . ' ' . $unit . ($time > 1 ? 's' : '') . '';
+        }
+    }
+    /*If the difference is less than a second*/
+    return '<img src="images/icon/online.png" height="10" width="10"/> just now';
+}
 ?>
 
 <!doctype html>
@@ -126,9 +156,20 @@ include 'include/users_right.php';
                                                                 <div class="col-md-6">
                                                                     <div class="form-group mb-2">
                                                                         <label>Request By</label>
-                                                                        <input id="customer_req_request_by"
-                                                                            type="text" class="form-control "
-                                                                            placeholder="Enter Name" />
+																		
+																		<select id="customer_req_request_by" type="text"
+                                                                            class="form-select" style="width: 100%;">
+                                                                            <option value="0">---Select---</option>
+                                                                            <?php
+                                                                            
+                                                                            $ename = $con->query('SELECT * FROM employees');
+                                                                            while ($orwen = $ename->fetch_array()) {
+                                                                                echo '<option value="' . $orwen['name'] . '">' . $orwen['name'] . '</option>';
+                                                                            }
+                                                                            ?>
+                                                                        </select>
+																		
+                                                                        
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -162,7 +203,7 @@ include 'include/users_right.php';
                                             style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                    <th>ID</th>
+                                                    <th>Req. Time</th>
                                                     <th>FullName</th>
                                                     <th>Mobile no.</th>
                                                     <th>Area</th>
@@ -180,7 +221,7 @@ include 'include/users_right.php';
                                                 ?>
 
                                                 <tr>
-                                                    <td><?php echo $rows['id']; ?></td>
+                                                    <td><?php echo timeAgo($rows['req_date'])." ~ ".$rows['req_date']; ?></td>
                                                     <td><?php echo $rows['fullname']; ?></td>
 
 

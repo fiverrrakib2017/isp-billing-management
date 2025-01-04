@@ -29,6 +29,17 @@
         <!-- Custom styles for this template -->
         <link href="css/style.css" rel="stylesheet">
         <style>
+		
+		/* Style the video: 100% width and height to cover the entire window */
+#myVideo {
+  
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
+}
+
+
             .bg-custom {
                 background: linear-gradient(135deg, #4fa3fc, #6d5dfc);
                 padding: 60px 0;
@@ -144,11 +155,18 @@
         
 
       <!--START HOME-->
-    <section class="section home" id="home" style="background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 128, 0, 0.7)), url('') no-repeat center center/cover; height: 100vh; display: flex; align-items: center;">
-        <div class="bg-overlay"></div>
+    <section class="section home" id="home" style="background: url('images/Star-Communication-optical-network.png') no-repeat center center/cover;">
+	
+        <div class="bg-overlay"><!-- The video -->
+<video autoplay muted loop id="myVideo">
+  <source src="video/star_bg.mp4" type="video/mp4">
+</video></div>
         <div class="container">
+		
             <div class="row justify-content-center">
+
                 <div class="col-md-8 text-white text-center">
+				
                     <h1 class="welcome_text text-success">Welcome To SR Communication</h1>
                     <h1 class="home-title">High-Speed Internet for Your Home & Business</h1>
                     <p class="mt-4 home-subtitle">

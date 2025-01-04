@@ -343,7 +343,7 @@ require('routeros/routeros_api.class.php');
                             $nasname = $rows['nasname'];
                             $api_usr = $rows['api_user'];
                             $api_pswd = $rows['api_password'];
-                            $api_server = $rows['server'];
+                            $api_server = $rows['api_ip'];
 							$api_port = $rows['ports'];
                            ?>
 
@@ -365,7 +365,7 @@ require('routeros/routeros_api.class.php');
 
 							   $READ = $API->read(true);
 
-							   $ARRAY = $API->parseResponse($READ);
+							   //$ARRAY = $API->parseResponse($READ);
 
 							   
 							    echo "Uptime: ".$READ['0']['uptime']."<br>";
@@ -397,7 +397,7 @@ require('routeros/routeros_api.class.php');
                             <td><?php echo $rows['secret']; ?></td>
                             <td><?php echo $rows['api_user']; ?></td>
                             <td><?php echo $rows['description']; ?></td>
-                            <td><?php echo $rows['server']; ?></td>
+                            <td><?php echo $rows['api_ip']; ?></td>
                             <td>
                                 <!-- <a href="include/nas_delete.php?clid=<?php echo $rows['id']; ?>" class="btn-sm btn btn-danger" onclick=" return confirm('Are You Sure');">Delete
                                 </a> -->

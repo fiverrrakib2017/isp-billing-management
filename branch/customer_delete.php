@@ -1,7 +1,7 @@
 <?php 
 
 
-include '../include/db_connect.php';
+include 'include/db_connect.php';
 
 if (isset($_GET['clid'])) {
 	 $id=$_GET['clid'];

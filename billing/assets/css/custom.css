@@ -1,0 +1,72 @@
+div#formArea {
+  border: 1px solid #fffefe;
+  padding: 39px;
+  margin: 22px;
+  box-shadow: 1px 4px 15px grey;
+  background: #f1f1f1;
+}
+#footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: black;
+  text-align: center;
+}
+input#credit {
+  margin-top: 19px;
+  border: 1px solid black;
+}
+input#form{
+  border: 1px solid #b8b8b8;
+  color: black;
+}
+select#form {
+    border: 1px solid #b8b8b8;
+    color: black;
+}
+.imgUpIcon {
+  position: absolute;
+  font-size: 25px;
+  margin-top: 112px;
+  margin-left: 95px;
+  color: #68ff0a;
+  border-radius: 50%;
+  /* background: black; */
+  font-weight: 900;
+  width: 45px;
+  height: 40px;
+}
+.profile {
+  position: relative;
+}
+button#uploadBtn {
+  border-radius: 50%;
+  font-size: 19px;
+}
+.form-control {
+  border: 1px solid #b8b8b8;
+  font-weight: 400;
+  font-size: 0.875rem;
+}
+textarea.form-control {
+  height: 37px;
+}
+.IconStyle {
+  font-size: 16px;
+}
+.customBtn {
+  margin-top: 5px;
+}
+.user_nameSt {
+  margin-left: -129px;
+}
+
+/* here is custom dropdown select option*/
+.P_details{
+  padding: 10px;
+  margin: 4px;
+}
+.fontStyels {
+    font-size: 20px;
+}

@@ -19,18 +19,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $mail= new PHPMailer(true);
 
-    /* SMTP Configuration*/
+    // SMTP Configuration
     $mail->isSMTP();
-    $mail->Host = 'smtp.gmail.com'; 
-    $mail->Port = 465; 
+    $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP server address
+    $mail->Port = 465; // Replace with your SMTP server port
     $mail->SMTPAuth = true;
-    $mail->Username = 'rakibas375@gmail.com'; 
-    $mail->Password = 'gwjufuyqfilbwfez'; 
+    $mail->Username = 'rakibas375@gmail.com'; // Replace with your SMTP username
+    $mail->Password = 'gwjufuyqfilbwfez'; // Replace with your SMTP password
     
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; 
-    $mail->setFrom('rakibas375@gmail.com','Received Web Mail');
+    $mail->setFrom('rakibas375@gmail.com','Account Successful register');
 
-    /* Email content*/
+    // // Email content
     $mail->isHTML(true);
     $mail->addAddress($email_address);
     $mail->Subject = $email_subject;

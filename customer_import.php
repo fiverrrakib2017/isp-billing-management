@@ -86,18 +86,18 @@ include 'include/users_right.php';
                                             </thead>
                                             <tbody id="customer-list">
                                                 <?php
-                                                $directory = "csv/"; 
-                                                $files = scandir($directory); 
-                                                $upldNo = 1;
+        $directory = "csv/"; 
+        $files = scandir($directory); 
+        $upldNo = 1;
 
-                                                foreach ($files as $file) {
-                                                    if (pathinfo($file, PATHINFO_EXTENSION) === "csv") {
-                                                        $CSVvar = fopen($directory . $file, "r");
-                                                        if ($CSVvar !== FALSE) {
-                                                            $i = 0;
-                                                            while ($data = fgetcsv($CSVvar)) {
-                                                                if ($i > 0) { 
-                                                                    ?>
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === "csv") {
+                $CSVvar = fopen($directory . $file, "r");
+                if ($CSVvar !== FALSE) {
+                    $i = 0;
+                    while ($data = fgetcsv($CSVvar)) {
+                        if ($i > 0) { 
+                            ?>
                                                 <tr>
                                                     <td><?php echo $upldNo++; ?></td>
                                                     <td><?php echo htmlspecialchars($data[0]); ?></td>

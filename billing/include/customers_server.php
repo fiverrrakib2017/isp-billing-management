@@ -32,6 +32,7 @@ if (isset($_POST['updateCustomer'])) {
     $nid = $_POST['nid'];
     $remarks = $_POST['remarks'];
     $connection_charge = $_POST['connection_charge'];
+    $expiredate = $_POST['expiredate'];
 
     
 	
@@ -52,7 +53,7 @@ if (isset($_POST['updateCustomer'])) {
         }
     }
 /**/
-    $result = $con->query("UPDATE customers SET fullname='$fullname', username='$username', password='$password', package='$package', mobile='$mobile', address='$address', area='$area', nid='$nid', remarks='$remarks', con_charge='$connection_charge'  WHERE id='$lstid'");
+    $result = $con->query("UPDATE customers SET fullname='$fullname', username='$username', password='$password', package='$package', mobile='$mobile', address='$address', area='$area', nid='$nid', remarks='$remarks', con_charge='$connection_charge',expiredate='$expiredate'  WHERE id='$lstid'");
     // UPDATE redcheck
 	$con->query("UPDATE radcheck SET value='$password', username='$username' WHERE username='$CustomerUserName'");
 	// UPDATE radreplay
@@ -100,7 +101,7 @@ if (isset($_POST['current_pop_name'])) {
 if (isset($_POST['srch_pop_name'])) {
     $srch_pop_name = $_POST['srch_pop_name'];
     //$result=$con->query("");
-	//echo '<option value='all'>'All'</option>';
+	echo '<option value="all">All</option>';
     if ($allArea = $con->query("SELECT * FROM `area_list` WHERE pop_id='$srch_pop_name' ")) {
         while ($rowsssss = $allArea->fetch_array()) {
             $AreaName = $rowsssss['name'];
@@ -188,7 +189,7 @@ if (isset($_POST['addCustomerData'])) {
 
         //Update account recharge and transection
         $custID = $con->insert_id;
-        $recharge_by=$_SESSION['username'];
+        $recharge_by=isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
         $con->query("INSERT INTO customer_rechrg(customer_id, pop_id,months, sales_price, purchase_price,ref,rchrg_until,type,rchg_by,datetm) 
           VALUES('$custID','$pop','1','$package_sales_price','$package_purchase_price', 'On Connection', '$exp_date','1','$recharge_by',NOW())");
         echo 1;
@@ -271,6 +272,52 @@ if (isset($_POST['pwdmissname']) && !empty($_POST['pwdmissname'])) {
 }
 
 
+if(isset($_POST['area_id'])){
+    $popID = $_POST['area_id'];
+    
+    // Fetch customer based on area_id
+    $query = "SELECT * FROM customers WHERE area = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("i", $popID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+  
+    if($result->num_rows > 0){
+        echo '<option>---Select---</option>';
+        echo '<option value="all">All</option>';
+        while($row = $result->fetch_assoc()){
+            echo ' <option value="'.$row['id'].'">['.$row['id'].'] - '.$row['username'].' || '.$row['fullname'].', ('.$row['mobile'].')</option>';
+        }
+    } else {
+        echo '<option>No Customers found</option>';
+    }
+  
+    $stmt->close();
+    $con->close();
+  }
+
+if(isset($_POST['get_customer_phone_number'])){
+    $customerID = $_POST['get_customer_phone_number'];
+    
+    // Fetch customer phone number 
+    $query = "SELECT * FROM customers WHERE id = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("i", $customerID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+  
+    if($result->num_rows > 0){
+        while($row = $result->fetch_assoc()){
+            echo $row['mobile'];
+        }
+    } else {
+        
+    }
+  
+    $stmt->close();
+    $con->close();
+  }
+  
 
 
 

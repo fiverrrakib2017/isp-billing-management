@@ -582,8 +582,8 @@ include("include/users_right.php");
             });
         }
     });
-    loadDepartment();
-    function loadDepartment(){
+    loadEmployee();
+    function loadEmployee(){
         $.ajax({
             type: 'GET', 
             url: 'include/hrm_server.php', 

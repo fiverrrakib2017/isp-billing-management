@@ -177,9 +177,9 @@ if (isset($_GET['show_customer_dues_data']) && $_GET['show_customer_dues_data'] 
     } else {
         //.$condition = "DAY(expiredate) BETWEEN 1 AND 10 AND pop = '1'";
         $condition = "DAY(expiredate) BETWEEN 1 AND 10 
-        AND MONTH(expiredate) = MONTH(CURDATE()) 
-        AND YEAR(expiredate) = YEAR(CURDATE())
-        AND pop = '1'";
+AND MONTH(expiredate) = MONTH(CURDATE()) 
+AND YEAR(expiredate) = YEAR(CURDATE())
+AND pop = '1'";
         $total_price = $row['total_price'];
     }
     /* Output JSON for DataTables to handle*/
