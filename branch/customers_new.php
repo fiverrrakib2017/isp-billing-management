@@ -150,9 +150,9 @@ if (file_exists($users_right_path)) {
                                         <i class="mdi mdi-ticket"></i>&nbsp;Add Ticket
                                     </button>
 
-                                    <button type="button" class="btn btn-success mb-2" name="pop_change_btn">
+                                    <!-- <button type="button" class="btn btn-success mb-2" name="pop_change_btn">
                                         <i class="fas fa-angle-double-right"></i>&nbsp;Change POP/Branch
-                                    </button>
+                                    </button> -->
                                 </div>
 
                             </div>
