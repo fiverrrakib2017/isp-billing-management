@@ -138,9 +138,10 @@ function timeAgo($startdate)
 
                     </div>
                     <div class="row">
-
+						
                         <div class="col-md-6 col-xl-2">
                             <div class="card">
+							<a href="customers_new.php?online=1">
                                 <div class="card-body">
                                     <div class="mini-stat">
                                         <span class="mini-stat-icon bg-primary me-0 float-end"><i
@@ -157,11 +158,15 @@ function timeAgo($startdate)
                                         </div>
                                     </div>
                                 </div>
+								</a>
                             </div>
                         </div> <!-- End col -->
 						
+						
+						
 						<div class="col-md-6 col-xl-2">
                             <div class="card">
+							<a href="offline.php">
                                 <div class="card-body">
                                     <div class="mini-stat">
                                         <span class="mini-stat-icon bg-secondary me-0 float-end"><i
@@ -183,6 +188,7 @@ function timeAgo($startdate)
                                         </div>
                                     </div>
                                 </div>
+								</a>
                             </div>
                         </div> <!-- End col -->
 						

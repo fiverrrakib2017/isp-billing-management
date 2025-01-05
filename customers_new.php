@@ -548,23 +548,30 @@ include 'include/users_right.php';
                     type: 'GET',
                     data: function(d) {
 
-                        /********************Finter For Active Customer*******************************/
+                        /********************Filter For Active Customer*******************************/
                         <?php if (isset($_GET['active']) && !empty($_GET['active'])): ?>
                         d.status = <?php echo $_GET['active']; ?>;
                         <?php else: ?>
                         d.status = $('.status_filter').val();
                         <?php endif; ?>
-                        /********************Finter For POP ID Customer*******************************/
+                        /********************Filter For POP ID Customer*******************************/
                         <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
                         d.pop_id = <?php echo $_GET['pop_id']; ?>;
                         <?php else: ?>
                         d.pop_id = $('.pop_filter').val();
                         <?php endif; ?>
-                        /********************Finter For AREA ID Customer*******************************/
+                        /********************Filter For AREA ID Customer*******************************/
                         <?php if (isset($_GET['area_id']) && !empty($_GET['area_id'])): ?>
                         d.area_id = <?php echo $_GET['area_id']; ?>;
                         <?php else: ?>
                         d.area_id = $('.area_filter').val();
+                        <?php endif; ?>
+                        /********************Filter For Online Customer*******************************/
+                        <?php if (isset($_GET['online']) && !empty($_GET['online'])): ?>
+                        d.status = "online";
+                        $("#customers_table_length").hide();
+                        <?php else: ?>
+                        d.status = $('.status_filter').val();
                         <?php endif; ?>
 
 
