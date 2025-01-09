@@ -142,12 +142,19 @@
                 ";
             } elseif ($status == 'offline') {
                 $status = "0";
-                $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
-                                AND NOT EXISTS (
+                // $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
+                //                 AND NOT EXISTS (
+                //                     SELECT 1 FROM radacct 
+                //                     WHERE radacct.username = customers.username 
+                //                     AND radacct.acctstoptime IS NOT NULL
+                //                 )";
+                $condition .= (!empty($condition) ? " AND " : "") . "
+                                EXISTS (
                                     SELECT 1 FROM radacct 
                                     WHERE radacct.username = customers.username 
                                     AND radacct.acctstoptime IS NOT NULL
-                                )";
+                                )
+                            ";
             } else {
                 $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
             }

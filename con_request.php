@@ -203,6 +203,7 @@ function timeAgo($startdate)
                                             style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
+                                                    <th>ID</th>
                                                     <th>Req. Time</th>
                                                     <th>FullName</th>
                                                     <th>Mobile no.</th>
@@ -221,6 +222,7 @@ function timeAgo($startdate)
                                                 ?>
 
                                                 <tr>
+                                                    <td><?php echo $rows['id']; ?></td>
                                                     <td><?php echo timeAgo($rows['req_date'])." ~ ".$rows['req_date']; ?></td>
                                                     <td><?php echo $rows['fullname']; ?></td>
 
@@ -371,10 +373,10 @@ function timeAgo($startdate)
             if (confirm("Are you sure you want to Approve?")) {
                 var row = $(this).closest('tr');
                 var customer_requeest_id = row.find('td:nth-child(1)').text().trim();
-                var customer_requeest_fullname = row.find('td:nth-child(2)').text().trim();
-                var customer_requeest_mobile = row.find('td:nth-child(3)').text().trim();
-                var customer_requeest_area = row.find('td:nth-child(4)').text().trim();
-                var customer_requeest_address = row.find('td:nth-child(5)').text().trim();
+                var customer_requeest_fullname = row.find('td:nth-child(3)').text().trim();
+                var customer_requeest_mobile = row.find('td:nth-child(4)').text().trim();
+                var customer_requeest_area = row.find('td:nth-child(5)').text().trim();
+                var customer_requeest_address = row.find('td:nth-child(6)').text().trim();
                 $("#addCustomerModal").modal('show');
 
                 if (customer_requeest_fullname.length > 0) {
