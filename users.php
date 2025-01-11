@@ -68,8 +68,7 @@ include "include/pop_security.php";
                                 </div>
                                 <div class="d-flex justify-content-between align-items-end flex-wrap">
                                     <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"
-                                 data-bs-toggle="modal" data-bs-target="#client-add-popup" style="margin-bottom: 12px;">&nbsp;&nbsp;New
-                              User</button>
+                                 data-bs-toggle="modal" data-bs-target="#addModal" style="margin-bottom: 12px;">&nbsp;&nbsp;New User</button>
                           </div>
                             </div>
                         </div>
@@ -77,80 +76,7 @@ include "include/pop_security.php";
 
 
 
-                    <div class="modal fade" id="client-add-popup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">
-                                <span class="mdi mdi-account-check mdi-18px"></span> &nbsp;New User
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="user_form">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                    <div class="form-group mb-3">
-                                        <label for="fullname">Full Name</label>
-                                        <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Enter Your Fullname" />
-                                    </div>
-                                    <div class="form-group mb-3 d-none">
-                                        <label for=""></label>
-                                        <input type="text" class="form-control" id="add_user_data" name="add_user_data" value="1"/>
-                                    </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label for="username">User Name</label>
-                                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter Your Username" />
-                                    </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label for="password">Password</label>
-                                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter Your Password" />
-                                    </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label for="mobile">Mobile no.</label>
-                                        <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Your Mobile Number" />
-                                    </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label for="email">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter Your Email" />
-                                    </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label for="role">Role</label>
-                                        <select class="form-select" id="role" name="role">
-                                        <option value="">Select</option>
-                                        <option value="Operations">Operations</option>
-                                        <option value="ACCOUNTS">ACCOUNTS</option>
-                                        <option value="SUPPORT">SUPPORT</option>
-                                        <option value="HR & Admin">HR & Admin</option>
-                                        <option value="NOC">NOC</option>
-                                        <option value="SALES">SALES</option>
-                                        <option value="BANK">BANK</option>
-                                        <option value="BILLING">BILLING</option>
-                                        <option value="CUSTOMERS">CUSTOMERS</option>
-                                        <option value="SUPPLIERS">SUPPLIERS</option>
-                                        </select>
-                                    </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary" id="user_add">Save changes</button>
-                                </div>
-                                </form>
-                            </div>
-                            </div>
-                        </div>
-                    </div>
+                 
                      
 
 
@@ -241,7 +167,81 @@ include "include/pop_security.php";
         </div>
         <!-- END layout-wrapper -->
 
-       
+           <!-- Add Modal -->
+<div class="modal fade bs-example-modal-lg" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content col-md-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    <span class="mdi mdi-account-check mdi-18px"></span> &nbsp;Add New User
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="include/users_server.php?add_user=true" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="fullname">Full Name</label>
+                                <input type="text" class="form-control" id="fullname" name="fullname" placeholder="Enter Your Fullname" />
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="username">User Name</label>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Enter Your Username" />
+
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="password">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter Your Password" />
+                            </div>
+
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="mobile">Mobile no.</label>
+                                    <input type="text" class="form-control" id="mobile" name="mobile" placeholder="Enter Your Mobile Number" />
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter Your Email" />
+
+                            </div>
+                            <div class="form-group mb-3">
+                                        <label for="role">Role</label>
+                                        <select class="form-select" id="role" name="role">
+                                        <option value="">Select</option>
+                                        <option value="Operations">Operations</option>
+                                        <option value="Staff">Staff</option>
+                                        <option value="ACCOUNTS">ACCOUNTS</option>
+                                        <option value="SUPPORT">SUPPORT</option>
+                                        <option value="HR & Admin">HR & Admin</option>
+                                        <option value="NOC">NOC</option>
+                                        <option value="SALES">SALES</option>
+                                        <option value="BANK">BANK</option>
+                                        <option value="BILLING">BILLING</option>
+                                        <option value="CUSTOMERS">CUSTOMERS</option>
+                                        <option value="SUPPLIERS">SUPPLIERS</option>
+                                        </select>
+                                    </div>
+
+                        </div>
+                    </div>
+
+                   
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
         <!-- Right bar overlay-->
         <div class="rightbar-overlay"></div>
@@ -257,52 +257,43 @@ include "include/pop_security.php";
                 window.location.href = "user_delete.php?id=" + userId;
             }
         }
+        /**  Add **/
+    $('#addModal form').submit(function(e){
+        e.preventDefault();
 
-        $("#user_add").click(function(e) {
-            e.preventDefault(); 
-        // Collect form values
-        var fullname = $("#fullname").val();
-        var username = $("#username").val();
-        var password = $("#password").val();
-        var mobile = $("#mobile").val();
-        var email = $("#email").val();
-        var role = $("#role").val();
-
-        // Validate form fields
-        if (fullname.length == 0) {
-            toastr.error('Full Name is required');
-        } else if (username.length == 0) {
-            toastr.error('Username is required');
-        } else if (password.length == 0) {
-            toastr.error('Password is required');
-        } else if (mobile.length == 0) {
-            toastr.error('Mobile Number is required');
-        } else if (email.length == 0) {
-            toastr.error('Email is required');
-        } else if (role.length == 0) {
-            toastr.error("Role is required");
-        } else {
-            var userData = $("#user_form").serialize();
-
-            /*AJAX request to backend*/ 
-            $.ajax({
-                type: "GET", 
-                url: "include/users_server.php?add", 
-                data: userData,
-                cache: false,
-                success: function(response) {
-                    console.log(response); 
-                    toastr.success("User added successfully");
+        var form = $(this);
+        var url = form.attr('action');
+        var formData = form.serialize();
+        $.ajax({
+            type:'POST',
+            'url':url,
+            data: formData,
+            dataType:'json',
+            success: function (response) {
+                if (response.success) {
+                    $('#addModal').modal('hide'); 
+                    toastr.success(response.message); 
                     setTimeout(() => {
-                            location.reload();
-                        }, 500);
-                    },
-                    error: function(xhr, status, error) {
-                        toastr.error(xhr.responseText);
-                    }
-                });
+                        location.reload();
+                    }, 500);
+                } else {
+                    toastr.error(response.message); 
+                }
+            },
+
+
+            error: function (xhr, status, error) {
+                /** Handle  errors **/
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $.each(errors, function(key, value) {
+                        toastr.error(value[0]); 
+                    });
+                }
             }
         });
+    });
+       
     });
     </script>
 

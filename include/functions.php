@@ -151,4 +151,28 @@ function get_ticket_count($con, $value){
     return $ticket_count;
 }
 
+/**
+ * Check if a value exists in a specific column of a database table
+ *
+ * @param mysqli $con The database connection
+ * @param string $table The name of the table
+ * @param string $column The column to check
+ * @param string $value The value to check for uniqueness
+ * @return bool True if the value exists, false otherwise
+ */
+function isUniqueColumn($con, $table, $column, $value)
+{
+    $query = "SELECT COUNT(*) as count FROM $table WHERE $column = ?";
+    $stmt = $con->prepare($query);
+    if ($stmt) {
+        $stmt->bind_param("s", $value);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row['count'] > 0;
+    }
+    return false;
+}
+
+
 ?>
