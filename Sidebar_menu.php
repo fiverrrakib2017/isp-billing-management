@@ -21,21 +21,14 @@
                                 
                                 ?>
                             </li> 
-
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff'): ?>  
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-account-check"></i>
                                     <span>Customer </span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <!-- <li><a href="customers.php">Total Customer List</a></li> -->
                                     <li><a href="customers_new.php">Customer List</a></li>
-                                    <!-- <li><a href="bulk_payment.php">Bulk Recharge</a></li> -->
-                                    <!-- <li><a href="active_cstmr_list.php">Active Customer List</a></li>
-                                    <li><a href="customer_expire.php">Expired Customer List</a></li>
-                                    <li><a href="customer_free_con.php">Free Customer List</a></li> -->
-                                  
-
                                     <li>
                                         <a href="con_request.php">Connection Request 
                                             <?php 
@@ -61,17 +54,22 @@
                                     <!-- <li><a href="area.php">Area</a></li> -->
                                 </ul>
                             </li>
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="mdi mdi-antenna"></i>
-                                    <span>Pop/Area Managment</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="pop_branch.php">Pop Branch</a></li>
-                                    <li><a href="pop_area.php">Pop Area</a></li>
-                                    <li><a href="area_house_no.php">House/Holding/Building</a></li>
-                                </ul>
-                            </li>
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?>  
+                           
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="mdi mdi-antenna"></i>
+                                        <span>Pop/Area Mgt</span>
+                                    </a>
+                                    <ul class="sub-menu" aria-expanded="false">
+                                        <li><a href="pop_branch.php">Pop Branch</a></li>
+                                        <li><a href="pop_area.php">Pop Area</a></li>
+                                        <li><a href="area_house_no.php">House/Holding/Building</a></li>
+                                    </ul>
+                                </li>
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?>     
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-account-plus-outline"></i>
@@ -83,6 +81,8 @@
                                     <li><a href="expired.php">Expired Date</a></li>
                                 </ul>
                             </li>
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-ticket-outline"></i>
@@ -95,7 +95,8 @@
                                     <li><a href="works.php"> Works  </a></li>
                                 </ul>
                             </li>
-
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
                            <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-book"></i>
@@ -114,6 +115,8 @@
                                     <li><a href="bank_maping.php">Bank Mapping  </a></li>
                                 </ul>
                             </li>
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
                            <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-book"></i>
@@ -127,7 +130,8 @@
                                     <li><a href="employee.php">Employee</a></li>
                                 </ul>
                             </li>
-                            
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Accounts'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class=" far fa-save"></i>
@@ -148,9 +152,9 @@
                                     <li><a href="supplier.php">Supplier</a></li>
                                 </ul>
                             </li>
-                            
+                            <?php endif; ?>
 
-                            
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class= "fa fa-file"></i>
@@ -165,6 +169,8 @@
                                     <li><a href="bkash_search.php">bKash Search</a></li>
                                 </ul>
                             </li>
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class= "far fa-envelope"></i>
@@ -178,6 +184,8 @@
                                     <li><a href="sms_report.php">Report</a></li>
                                 </ul>
                             </li>
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class= "fas fa-user-friends"></i>
@@ -188,6 +196,8 @@
                                     <li><a href="users_log.php">Users Log</a></li>
                                 </ul>
                             </li>
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class= "mdi mdi-power-settings menu-icon"></i>
@@ -199,5 +209,6 @@
                                     <li><a href="password_change.php">Password Change</a></li>
                                 </ul>
                             </li>
+                            <?php endif; ?>
                         </ul>
                     </div>
