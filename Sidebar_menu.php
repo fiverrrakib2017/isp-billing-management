@@ -21,7 +21,7 @@
                                 
                                 ?>
                             </li> 
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff'): ?>  
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff' || $_SESSION['details']['role']=='Supports'): ?>  
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-account-check"></i>
@@ -55,7 +55,7 @@
                                 </ul>
                             </li>
                             <?php endif; ?>
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?>  
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Supports'): ?>  
                            
                                 <li>
                                     <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -69,7 +69,7 @@
                                     </ul>
                                 </li>
                             <?php endif; ?>
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?>     
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Supports'): ?>     
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-account-plus-outline"></i>
@@ -82,7 +82,7 @@
                                 </ul>
                             </li>
                             <?php endif; ?>
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff'): ?> 
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff' || $_SESSION['details']['role']=='Supports'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-ticket-outline"></i>
@@ -96,7 +96,7 @@
                                 </ul>
                             </li>
                             <?php endif; ?>
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Accounts'): ?> 
                            <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-book"></i>
@@ -116,7 +116,7 @@
                                 </ul>
                             </li>
                             <?php endif; ?>
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='HR & Admin'): ?> 
                            <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-book"></i>
