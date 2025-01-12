@@ -1,4 +1,7 @@
 <?php
+$protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";  
+$CurPageURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];  
+
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -59,7 +62,8 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     // Clear session data
     unset($_SESSION['id_token'], $_SESSION['app_key'], $_SESSION['final_amount'], $_SESSION['pop_id']);
 
-    header('Location: http://103.146.16.154');
+    header("Location: $CurPageURL");
+    exit; 
 }
 
 

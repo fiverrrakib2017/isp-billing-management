@@ -2,20 +2,21 @@
 include("../include/db_connect.php");
 include ("../include/functions.php");
 session_start();
+if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')   
+$call_back_url = "https://";   
+else  
+$call_back_url = "http://";    
+$call_back_url.= $_SERVER['HTTP_HOST'];   
+
+ $call_back_url.'/branch/index.php';  
 /*install Process*/
-$callbackURL = 'http://103.146.16.154/branch/index.php'; 
+$callbackURL = $call_back_url; 
 $app_key = 'OEOyCIxZuEtF76cS5RzVaaWstc'; 
 $app_secret = 'h2EXSWTQ6iTQIjEwz83vnT80wzd7k8wJ4YBMKhvXhJnVG6Cm7hPX'; 
 $username = '01831550088'; 
 $password = 'Q4gp%tVJ-#%'; 
 $base_url = 'https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout';
-// $callbackURL = 'http://103.146.16.154/branch/index.php'; 
-// $app_key = '0vWQuCRGiUX7EPVjQDr0EUAYtc'; 
-// $app_secret = 'jcUNPBgbcqEDedNKdvE4G1cAK7D3hCjmJccNPZZBq96QIxxwAMEx'; 
-// $username = '01770618567'; 
-// $password = 'D7DaC<*E*eG'; 
-// $base_url = 'https://tokenized.sandbox.bka.sh/v1.2.0-beta/tokenized/checkout';
-/* Grant Token*/
+
 function getGrantToken($base_url, $username, $password, $app_key, $app_secret) {
     
     $post_token = array(
