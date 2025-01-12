@@ -152,27 +152,7 @@ function timeAgo($startdate) {
 
                             <button type="button" data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn-sm btn btn-success mb-1"><i class="mdi mdi-account-plus"></i> Add Customer</button>
 
-                            <a href="con_request.php" class="btn-sm btn btn-warning mb-1">Connection Request
-                                <?php
-                                $pop_id=0; 
-                                if(!empty($_SESSION['user_pop']) && isset($_SESSION['user_pop'])){
-                                    $pop_id = $_SESSION['user_pop'];
-                                    $condition = "WHERE pop_id='$pop_id'";
-                                }
-                                if(empty($pop_id)){
-                                    $condition = "";
-                                }
-                                if ($allCstmr = $con->query("SELECT * FROM `customer_request` $condition")) {
-                                    if ($allCstmr->num_rows > 0) {
-                                        echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
-                                    } else {
-                                    }
-                                }
-
-
-
-                                ?>
-                            </a>
+                           
 
                             <button type="button" data-bs-toggle="modal" data-bs-target="#sendMessage" class="btn-sm btn btn-primary mb-1"><i class="far fa-envelope"></i> SMS Notification</button>
 
