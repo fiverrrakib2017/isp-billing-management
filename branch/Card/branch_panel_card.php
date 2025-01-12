@@ -59,7 +59,7 @@
                                                     <?php
                                                     
                                                     $todayDate=date('Y-m-d');
-                                                     if ($AllExcstmr = $con->query("SELECT * FROM customers WHERE expiredate < NOW() AND user_type=$auth_usr_type AND pop=$auth_usr_POP_id")) {
+                                                     if ($AllExcstmr = $con->query("SELECT * FROM customers WHERE expiredate < NOW()  AND pop=$auth_usr_POP_id")) {
                                                         echo  $AllExcstmr->num_rows;
                                                     }
 
@@ -114,7 +114,7 @@
                                                         while ($rows = $pop_payment->fetch_array()) {
                                                             $totalpaid += $rows["purchase_price"];
                                                         }
-                                                        echo  $currentBal - $totalpaid;
+                                                        echo  number_format($currentBal - $totalpaid);
                                                     }
                                                 }
 
@@ -141,7 +141,7 @@
                                                     while ($rows = $pop_payment->fetch_array()) {
                                                         $stotalpaid += $rows["paid_amount"];
                                                     }
-                                                    echo $stotalpaid;
+                                                    echo number_format($stotalpaid);
                                                 }
                                                 ?>
                                             </span>
@@ -175,7 +175,7 @@
                                                             $paidAmount += $rows["amount"];
                                                         }
                                                     }
-                                                    echo round( $totalAmount - $paidAmount);
+                                                    echo number_format( $totalAmount - $paidAmount);
                                                     ?>
 
                                                 </span>
@@ -201,7 +201,7 @@
                                                     while ($rowsdp = $pop_dupayment->fetch_array()) {
                                                         $stotalDupaid += $rowsdp['paid_amount'];
                                                     }
-                                                    echo $stotalDupaid;
+                                                    echo number_format($stotalDupaid);
                                                 }
                                                 ?>
                                             </span>
