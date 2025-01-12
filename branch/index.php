@@ -53,7 +53,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
 
     date_default_timezone_set('Asia/Dhaka');
     $todayDate = date('H:i A, d-M-Y');
-    $percent_amount =  $amount * 0.02;
+    $percent_amount = $amount-$amount * 0.02;
     $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$percent_amount','$percent_amount','Recharge','2','$recharge_by','$todayDate')");
 
     // Clear session data

@@ -175,7 +175,7 @@
                                                             $paidAmount += $rows["amount"];
                                                         }
                                                     }
-                                                    echo $totalAmount - $paidAmount;
+                                                    echo round( $totalAmount - $paidAmount);
                                                     ?>
 
                                                 </span>
