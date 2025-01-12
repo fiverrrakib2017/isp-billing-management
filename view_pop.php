@@ -325,7 +325,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                         while ($rows = $pop_payment->fetch_array()) {
                                                             $totalpaid += $rows["purchase_price"];
                                                         }
-                                                        echo  $currentBal - $totalpaid;
+                                                        echo  number_format($currentBal - $totalpaid);
                                                     }
                                                 }
 
@@ -353,7 +353,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
                                                         $stotalpaid += $rows["paid_amount"];
                                                     }
-                                                    echo $stotalpaid;
+                                                    echo number_format($stotalpaid);
                                                 }
                                                 ?>
                                             </span>
@@ -388,7 +388,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                             $paidAmount += $rows["amount"];
                                                         }
                                                     }
-                                                    echo $totalAmount - $paidAmount;
+                                                    echo number_format($totalAmount - $paidAmount);
                                                     ?>
 
                                                 </span>
@@ -415,7 +415,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                     while ($rowsdp = $pop_dupayment->fetch_array()) {
                                                         $stotalDupaid += $rowsdp['paid_amount'];
                                                     }
-                                                    echo $stotalDupaid;
+                                                    echo number_format($stotalDupaid);
                                                 }
                                                 ?>
                                             </span>
