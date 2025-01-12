@@ -66,18 +66,23 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                         $package_id = $rows['package'];
                         $expiredDate = $rows['expiredate'];
                         $username = $rows['username'];
-                        $customer_package_price = $rows['price'];
+                        $pop_id = $rows['pop'];
+                        //$customer_package_price = $rows['price'];
                     }
                 }
                 /****************GET package purchase sales price******************************/
                 $package_sales_price = null;
-                $package_purchase_price = $customer_package_price * intval($chrg_mnths);
+              
 
-                if ($get_all_customer = $con->query("SELECT s_price , p_price from branch_package WHERE id=$package_id")) {
+                if ($get_all_customer = $con->query("SELECT s_price , p_price from branch_package WHERE pkg_id=$package_id AND pop_id=$pop_id")) {
                     while ($rows = $get_all_customer->fetch_assoc()) {
                         $package_sales_price = $rows['s_price'];
+                        $customer_package_price = $rows['p_price'];
                     }
                 }
+                $package_purchase_price = $customer_package_price * intval($chrg_mnths);
+                //echo $package_purchase_price; exit; 
+
                 if (!empty($package_sales_price) && isset($package_sales_price) && !empty($package_purchase_price) && isset($package_purchase_price)) {
                     /***********Ensure sufficient balance ************/
                     if ($package_purchase_price > $_current_pop_balance) {
@@ -134,6 +139,7 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
             $con->close();
         }
     }
+    exit; 
 }
 
 /***************************** Cash Received ************************************/
@@ -253,12 +259,9 @@ if (isset($_POST['add_recharge_data'])) {
         $totalCurrentBal = $popBalance - $rechargeBalance;
     }
 
-    //এখন কন্ডিশন দিব যদি পপ এর টাকা কম হয় তাহলে ডাটাবেজ এর কানেকশন বন্দ করে দিবো , recharge করতে দিবো নাহ ,
     if ($package_purchase_price > $totalCurrentBal) {
         echo 'Please Recharge This Pop/Branch';
     } else {
-        //পপের বেলেন্স চেক করা শেষ এখন কাস্টমার  আইডি ধরে তার expire date বের করবো , কারন রিচারজ হলে অই তারিখ টা বাড়িয়ে দিবো ।
-
         if ($cstmr = $con->query("SELECT * FROM customers WHERE id='$customer_id'")) {
             while ($rows = $cstmr->fetch_array()) {
                 $lstid = $rows['id'];
@@ -302,8 +305,8 @@ if (isset($_POST['add_recharge_data'])) {
         $balanceamount = $TotalrchgAmt - $TotalPaidAmt;
         $con->query("UPDATE customers SET expiredate='$exp_date', status='1', rchg_amount='$TotalrchgAmt', paid_amount='$TotalPaidAmt', balance_amount='$balanceamount' WHERE id='$customer_id'");
 
-        //$con -> query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
-        //$con -> query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package')");
+        $con -> query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
+        $con -> query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package')");
         echo 1;
         $con->close();
     }
