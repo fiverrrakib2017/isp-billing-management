@@ -7,12 +7,8 @@ $call_back_url = "https://";
 else  
 $call_back_url = "http://";    
 $call_back_url.= $_SERVER['HTTP_HOST'];   
-if($_GET['landing_page'] && !empty($_GET['landing_page'])){
-    $call_back_url.'/customer_landing_page.php?clid='.$_GET['customer_id'].'';  
-}else{
-    //$call_back_url.'/branch/index.php';   
-}
 
+ $call_back_url.'/branch/index.php';  
 /*install Process*/
 $callbackURL = $call_back_url; 
 $app_key = 'OEOyCIxZuEtF76cS5RzVaaWstc'; 
@@ -97,7 +93,15 @@ function createPayment($base_url, $id_token, $app_key, $callbackURL, $amount, $p
 
     curl_close($url);
 
-    $response = json_decode($result_data, true); 
+    $response = json_decode($result_data, true);
+    // if (isset($response['statusCode']) && $response['statusMessage'] === 'Successful') {
+    //     date_default_timezone_set('Asia/Dhaka');
+    //     $todayDate = date('H:i A, d-M-Y');
+    //     executePayment($base_url,$id_token,$app_key,$response['paymentID']);
+    //     $con->query("INSERT INTO pop_transaction(pop_id, amount, paid_amount, action, transaction_type, recharge_by, date)
+    //             VALUES ('$pop_id', '$amount', '$amount', 'Recharge', '1', '$recharge_by', '$todayDate')");
+
+    // } 
     $_SESSION['id_token'] = $id_token;
     $_SESSION['app_key'] =$app_key;
     $_SESSION['final_amount']=$amount;
@@ -170,7 +174,11 @@ if (isset($_GET['submit_payment']) && !empty($_GET['submit_payment'])) {
  
     if ($id_token) {
         $paymentResponse = createPayment($base_url, $id_token, $app_key, $callbackURL, $amount,$pop_id,$recharge_by,$con);
-       
+        // echo $paymentResponse['paymentID']; 
+        // echo '<pre>';
+        // print_r($paymentResponse['paymentID']); 
+        // echo '</pre>';
+        // exit; 
         if (!empty($paymentResponse['paymentID']) && !empty($paymentResponse['statusMessage']) && $paymentResponse['statusMessage'] === 'Successful') {
             if (isset($paymentResponse['bkashURL'])) {      
                 header("Location: " . $paymentResponse['bkashURL']);

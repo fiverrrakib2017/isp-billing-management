@@ -1,32 +1,4 @@
-<?php
-date_default_timezone_set("Asia/Dhaka");
-include 'include/db_connect.php';
-if (isset($_GET['clid'])) {
 
-    $clid = $_GET['clid'];
-    if ($cstmr = $con->query("SELECT * FROM customers WHERE id='$clid'")) {
-        while ($rows = $cstmr->fetch_array()) {
-            $lstid = $rows["id"];
-            $fullname = $rows["fullname"];
-            $package = $rows["package"];
-            $packagename = $rows["package_name"];
-            $username = $rows["username"];
-            $password = $rows["password"];
-            $mobile = $rows["mobile"];
-            $pop = $rows["pop"];
-            $area = $rows["area"];
-            $address = $rows["address"];
-            $expiredDate = $rows["expiredate"];
-            $createdate = $rows["createdate"];
-            $profile_pic = $rows["profile_pic"];
-            $nid = $rows["nid"];
-            $price = $rows["price"];
-            $remarks = $rows["remarks"];
-            $liablities = $rows["liablities"];
-        }      
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -64,7 +36,7 @@ if (isset($_GET['clid'])) {
 
       <form action="" method="post">
         <div class="input-group mb-3">
-          <input readonly type="text" class="form-control" placeholder="Full name" value="<?php echo $fullname ?? ''; ?>">
+          <input readonly type="text" class="form-control" placeholder="Full name" value="Rakib Mahmud">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-user"></span>
@@ -72,7 +44,7 @@ if (isset($_GET['clid'])) {
           </div>
         </div>
         <div class="input-group mb-3">
-          <input readonly type="text" class="form-control" placeholder="Package" value="<?php echo $packagename ?? ''; ?>">
+          <input readonly type="text" class="form-control" placeholder="Package" value="1MBPS">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -80,18 +52,7 @@ if (isset($_GET['clid'])) {
           </div>
         </div>
         <div class="input-group mb-3">
-        <?php 
-            $todayDate = date("Y-m-d");
-            if ($expiredDate <= $todayDate) {
-                echo '<br>';
-                echo ' <input readonly type="text" class="form-control" value="Expired" style="color:red">';
-            } else {
-                $expiredDate = new DateTime($expiredDate);
-                $formattedDate = $expiredDate->format('d-M-Y');
-                echo ' <input readonly type="text" class="form-control" value="Expire Will be '.$formattedDate.'">';
-            }
-        ?>
-         
+          <input type="password" class="form-control" placeholder="Retype password">
           <div class="input-group-append">
             <div class="input-group-text">
                 <i class="fas fa-clock"></i>
@@ -103,7 +64,7 @@ if (isset($_GET['clid'])) {
       <div class="social-auth-links text-center">
       
         
-        <a type="button" id="bkash_payment_btn" class="btn btn-block btn-danger">
+        <a href="#" class="btn btn-block btn-danger">
         <img src="images/Bkash-Logo.jpg" alt="Bkash" style="width: 20px; margin-right: 8px;">
           Pay With Bkash
         </a>
@@ -120,19 +81,5 @@ if (isset($_GET['clid'])) {
 <script src="https://adminlte.io/themes/v3/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://adminlte.io/themes/v3/dist/js/adminlte.min.js?v=3.2.0"></script>
-<script type="text/javascript">
-    $("#bkash_payment_btn").on('click',function(e){
-            e.preventDefault();
-        var amount=<?php echo $price; ?>;
-        var pop_id=<?php echo $pop; ?>;
-        var customer_id=<?php echo $lstid; ?>;
-        
-        if (!amount || amount <= 0) {
-            toastr.error("Invalid payment amount!");
-            return;
-        }
-        window.location.href = `http://<?php echo $_SERVER['HTTP_HOST']; ?>/branch/bkash.php?amount=${amount}&pop_id=${pop_id}&submit_payment=1&landing_page=1&customer_id=${customer_id}`;
-    });
-</script>
 </body>
 </html>
