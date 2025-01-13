@@ -3,14 +3,19 @@ session_start();
 $_SESSION["uid"];
 $_SESSION["username"];
 $_SESSION["tcoken"];
-/*Check user is loged in */
+
+/*******************CREATE CSRF TOKEN GENERATE BY RAKIB***************************/
+if(empty($_SESSION['csrf_token'])){
+	$_SESSION['csrf_token']=bin2hex(random_bytes(32)); 
+}
+/*********************Check user is loged in *************************************/
 if(empty($_SESSION["username"]) || empty($_SESSION['uid']))
 {
 	
 	header('location: login.php');
 	exit; 
 }
-/*Include Database Connection*/
+/*************************************Include Database Connection*************************************/
 if(!file_exists('db_connect.php')){
 	include 'db_connect.php';
 }else{

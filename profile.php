@@ -1024,7 +1024,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
          showModal();
 
          function download_qr_code(customer_id){
-            const qrData = `http://103.146.16.154/profile.php?clid=${customer_id}`;
+            const qrData = `http://103.146.16.154/customer_landing_page.php?clid=${customer_id}`;
          
             /*Clear previous QR code*/ 
             $('#qrCodeContainer').html('');
