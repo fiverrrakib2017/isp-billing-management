@@ -86,6 +86,11 @@ if (isset($_GET['clid'])) {
                            <div class="col-md-6"></div>
                            <div class="col-md-6">
                               <div class="d-flex py-2" style="float:right;">
+                                 <abbr title="Download QR ">
+                                 <button type="button"class="btn-sm btn btn-success" onclick="download_qr_code(<?php echo $clid; ?>)">
+                                 <i class="mdi mdi-qrcode"></i>
+                                 </button></abbr>
+                                 &nbsp;
                                  <abbr title="Password Change">
                                  <button type="button" data-bs-target="#customerPasswordChangeModal" data-bs-toggle="modal" class="btn-sm btn btn-info">
                                  <i class="mdi mdi-key"></i>
@@ -982,6 +987,25 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                   </form>
                </div>
             </div>
+             <!-------------------- QR CODE  Modal---------------------------->
+               <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                           <div class="modal-header">
+                              <h5 class="modal-title" id="qrCodeModalLabel">QR Code</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                           </div>
+                           <div class="modal-body text-center">
+                              <div id="qrCodeContainer"></div>
+                           </div>
+                           <div class="modal-footer">
+                              <button type="button" class="btn btn-success" id="downloadButton">Download QR Code</button>
+                              <button type="button" class="btn btn-info" id="print_qr_code_btn">Print QR Code</button>
+                              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                           </div>
+                        </div>
+                  </div>
+               </div>
             <?php include 'Footer.php';?>
          </div>
          <!-- end main content-->
@@ -991,12 +1015,46 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
       <div class="rightbar-overlay"></div>
       <?php include 'script.php';?>
        <!-- Include Tickets js File -->
-    <script src="js/tickets.js"></script>
+         <script src="js/tickets.js"></script>
+         <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
         <script type="text/javascript">
          $('#tickets_table').dataTable();
          $('#recharge_data_table').dataTable();
          $('#user_activity_data_table').dataTable();
          showModal();
+
+         function download_qr_code(customer_id){
+            const qrData = `http://103.146.16.154/profile.php?clid=${customer_id}`;
+         
+            /*Clear previous QR code*/ 
+            $('#qrCodeContainer').html('');
+
+            /* Generate QR Code*/
+            QRCode.toDataURL(qrData, { width: 200 }, function (err, url) {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                $('#qrCodeContainer').html(`<img src="${url}" id="qrCodeImage" alt="QR Code">`);
+
+                $('#downloadButton').off('click').on('click', function () {
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = url;
+                    downloadLink.download = 'QRCode.png';
+                    downloadLink.click();
+                });
+                /*Print QR Code Button*/
+                $("#print_qr_code_btn").off('click').on('click',function(){
+                  const printWindow = window.open('', '_blank');
+                    //printWindow.document.write('<html><head><title>Print QR Code</title></head><body>');
+                    printWindow.document.write(`<div style="text-align: center;"><h3>Welcome To SR Communication</h3><img src="${url}" alt="QR Code"></div>`);
+                    printWindow.document.write('</body></html>');
+                    printWindow.document.close();
+                    printWindow.print();
+                });
+                $('#qrCodeModal').modal('show');
+            });
+        }
 
          function showModal() {
              $("#rechargeBtn").click(function() {
