@@ -392,6 +392,7 @@ include 'include/users_right.php';
     <?php include 'script.php'; ?>
     <script src="js/tickets.js"></script>
     <script src="js/customer.js"></script>
+    <script src="js/Ajax.js"></script>
 
 
 
@@ -1012,10 +1013,44 @@ include 'include/users_right.php';
                                 });
                             }
                         });
+                        get_area();
                     }
                 }
             });
         });
+        $("#changePopModal select[name='pop_id']").change(function(){
+            var pop_id=$(this).val();
+            get_area(pop_id);
+        });
+        function get_area(pop_id) {
+                $.ajax({
+                    url: 'include/area_server.php?get_area_data=1',
+                    type: 'GET',
+                    data:{pop_id:pop_id},
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success == true) {
+                            var areaOptions = '<option value="">--Select Area--</option>';
+
+                            $.each(response.data, function(key, data) {
+                                areaOptions += '<option value="' + data.id + '">' + data.name +
+                                    '</option>';
+                            });
+                            $('select[name="area_id"]').html(areaOptions);
+                            $('#changePopModal').on('shown.bs.modal', function() {
+                            if (!$('select[name="area_id"]').hasClass(
+                                        "select2-hidden-accessible")) {
+                                    $('select[name="area_id"]').select2({
+                                        dropdownParent: $('#changePopModal')
+                                    });
+                                }
+                            });
+
+                        }
+
+                    }
+                });
+            }
 
         $(document).on('click', 'button[name="pop_change_submit_btn"]', function(e) {
             event.preventDefault();
