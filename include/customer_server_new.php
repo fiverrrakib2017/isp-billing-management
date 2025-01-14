@@ -166,11 +166,14 @@
     }
 
     if (isset($_GET['change_pop_request']) && !empty($_GET['change_pop_request']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        //echo json_encode(['data'=>$_POST]); exit;
         $selectedCustomers = json_decode($_POST['selectedCustomers'], true);
         $updated_by = $_SESSION['uid'] ?? 0;
        
         $errors = [];
         $pop_id = isset($_POST['pop_id']) ? trim($_POST['pop_id']) : '';
+        $area_id = isset($_POST['area_id']) ? trim($_POST['area_id']) : 0;
         /* Validate Filds */
         if (empty($pop_id) && $pop_id !== '0') {
           $errors['pop_id'] = 'POP/Branch is required.';
@@ -183,16 +186,19 @@
             ]);
             exit();
         }
-        /* Get Customer id, pop id,package id*/
+        $area_condition="";
+        /* Get Customer id, pop id*/
         if (count($selectedCustomers) !== 0 && !empty($selectedCustomers)) {
             foreach ($selectedCustomers as $customer_id) {
                 if ($get_customer_list = $con->query('SELECT * FROM customers WHERE id=' . $customer_id . ' ')) {
                     while ($rows = $get_customer_list->fetch_assoc()) {
                         $customer_id = $rows['id'];
-
                     }
                 }
-                $con->query("UPDATE customers SET pop = '$pop_id' WHERE id = '$customer_id'");
+                if(isset($area_id) && !empty($area_id) && $area_id > 0){
+                    $area_condition=",area=$area_id"; 
+                }
+                $con->query("UPDATE customers SET pop = '$pop_id' $area_condition WHERE id = '$customer_id'");
             }
             echo json_encode(['success' => true, 'message' => 'POP/Branch Changed successfully.']);
             exit();
