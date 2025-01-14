@@ -32,7 +32,7 @@ if (isset($_GET['clid'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Registration Page</title>
+  <title>Payment Process</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -121,18 +121,11 @@ if (isset($_GET['clid'])) {
 <!-- AdminLTE App -->
 <script src="https://adminlte.io/themes/v3/dist/js/adminlte.min.js?v=3.2.0"></script>
 <script type="text/javascript">
-    $("#bkash_payment_btn").on('click',function(e){
-            e.preventDefault();
-        var amount=<?php echo $price; ?>;
-        var pop_id=<?php echo $pop; ?>;
-        var customer_id=<?php echo $lstid; ?>;
-        
-        if (!amount || amount <= 0) {
-            toastr.error("Invalid payment amount!");
-            return;
-        }
-        window.location.href = `http://<?php echo $_SERVER['HTTP_HOST']; ?>/branch/bkash.php?amount=${amount}&pop_id=${pop_id}&submit_payment=1&landing_page=1&customer_id=${customer_id}`;
-    });
+
+  $("#bkash_payment_btn").on('click',function(){
+    console.log(window.location.href);
+     window.location.href = `http://<?php echo $_SERVER['HTTP_HOST']; ?>/include/Bkash_payment.php?customer_recharge=true&pop_id=${pop_id}&landing_page=1&customer_id=${customer_id}`;
+  });
 </script>
 </body>
 </html>

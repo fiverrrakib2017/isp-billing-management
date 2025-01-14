@@ -96,9 +96,9 @@ if (isset($_GET['clid'])) {
                                  <i class="mdi mdi-key"></i>
                                  </button></abbr>
                                  &nbsp;
-                                 <abbr title="Complain">
-                                 <button type="button" data-bs-target="#ticketModal" data-bs-toggle="modal" class="btn-sm btn btn-warning ">
-                                 <i class="mdi mdi-alert-outline"></i>
+                                 <abbr title="Add Ticket">
+                                 <button type="button" data-bs-target="#ticketModal" data-bs-toggle="modal" class="btn-sm btn btn-info ">
+                                 <i class="mdi mdi-ticket"></i>
                                  </button></abbr>
                                  &nbsp;
                                  <abbr title="Recharge">

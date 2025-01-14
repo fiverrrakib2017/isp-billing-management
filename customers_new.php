@@ -126,17 +126,6 @@ include 'include/users_right.php';
                                         <i class="mdi mdi-battery-charging-20"></i>&nbsp;Recharge
                                     </button>
 
-                                    <button type="button" class="btn btn-danger mb-2" name="cash_received_btn">
-                                        <i class="mdi mdi-cash-multiple"></i>&nbsp;Cash Received
-                                    </button>
-
-                                    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal"
-                                        data-bs-target="#fileImportModal">
-                                        <img src="https://img.icons8.com/?size=100&id=117561&format=png&color=000000"
-                                            class="img-fluid icon-img" style="height: 20px !important;">
-                                        Import Excel File
-                                    </button>
-
                                     <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal"
                                         data-bs-target="#ticketModal">
                                         <i class="mdi mdi-ticket"></i>&nbsp;Add Ticket
@@ -346,6 +335,10 @@ include 'include/users_right.php';
                         <div class="form-group mb-1">
                             <label>Transfer To POP/Branch</label>
                             <select type="text" name="pop_id" class="form-select" style="width: 100%;"></select>
+                        </div>
+                        <div class="form-group mb-1">
+                            <label>Area</label>
+                            <select type="text" name="area_id" class="form-select" style="width: 100%;"></select>
                         </div>
                     </form>
                 </div>
