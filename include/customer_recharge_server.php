@@ -64,8 +64,10 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                 if ($get_all_customer = $con->query("SELECT * from customers WHERE id=$customer_id")) {
                     while ($rows = $get_all_customer->fetch_assoc()) {
                         $package_id = $rows['package'];
+                        $package = $rows['package_name'];
                         $expiredDate = $rows['expiredate'];
                         $username = $rows['username'];
+                        $password = $rows['password'];
                         $pop_id = $rows['pop'];
                         //$customer_package_price = $rows['price'];
                     }
@@ -101,6 +103,9 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                     }
                     /*Insert Recharge Data*/
                     $con->query("INSERT INTO customer_rechrg(customer_id, pop_id, months, sales_price, purchase_price,discount, ref, rchrg_until, type, rchg_by, datetm) VALUES('$customer_id', '$pop_id', '$chrg_mnths', '$package_sales_price', '$package_purchase_price','0.00', '$RefNo', '$exp_date', '$tra_type', '$recharge_by', NOW())");
+
+                    $con -> query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
+                    $con -> query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package')");
 
                     /*Update Customer New Balance AND Expire Date */
                     $_customer_total_paid_amount = 0;
@@ -351,6 +356,7 @@ if (isset($_POST['addCustomerDuePayment'])) {
     }
 
     $con->close();
+    exit; 
 }
 
 // Temporary recharge ######
@@ -383,6 +389,7 @@ if (isset($_POST['customer_temp_recharge'])) {
         echo 0;
     }
     $con->close();
+    exit; 
 }
 
 if (isset($_POST['undo_customer_recharge'])) {
@@ -417,6 +424,7 @@ if (isset($_POST['undo_customer_recharge'])) {
         echo 0;
     }
     $con->close();
+    exit; 
 }
 
 
