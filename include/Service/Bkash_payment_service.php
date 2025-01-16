@@ -1,9 +1,6 @@
 <?php
 
-$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
-$protocol . $_SERVER['HTTP_HOST'] . '/index.php';
 
-require '../Config.php';
 class BkashPaymentService
 {
     private $baseUrl;
@@ -52,7 +49,7 @@ class BkashPaymentService
             'amount' => $amount,
             'intent' => 'sale',
             'currency' => 'BDT',
-            'merchantInvoiceNumber' => 'TRANSID-' . strtoupper(uniqid()),
+            'merchantInvoiceNumber' =>"TRANSID-".strtoupper(uniqid()),
         ];
 
         $url = curl_init("$this->baseUrl/create");

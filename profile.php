@@ -87,18 +87,19 @@ if (isset($_GET['clid'])) {
                            <div class="col-md-6">
                               <div class="d-flex py-2" style="float:right;">
                                  <abbr title="Download QR ">
-                                 <button type="button"class="btn-sm btn btn-success" onclick="download_qr_code(<?php echo $clid; ?>)">
-                                 <i class="mdi mdi-qrcode"></i>
-                                 </button></abbr>
+                                    <button type="button"class="btn-sm btn btn-success" onclick="download_qr_code(<?php echo $clid; ?>)">
+                                    <i class="mdi mdi-qrcode"></i>
+                                    </button>
+                                 </abbr>
                                  &nbsp;
                                  <abbr title="Password Change">
                                  <button type="button" data-bs-target="#customerPasswordChangeModal" data-bs-toggle="modal" class="btn-sm btn btn-info">
                                  <i class="mdi mdi-key"></i>
                                  </button></abbr>
                                  &nbsp;
-                                 <abbr title="Add Ticket">
-                                 <button type="button" data-bs-target="#ticketModal" data-bs-toggle="modal" class="btn-sm btn btn-info ">
-                                 <i class="mdi mdi-ticket"></i>
+                                 <abbr title="Complain">
+                                 <button type="button" data-bs-target="#ticketModal" data-bs-toggle="modal" class="btn-sm btn btn-warning ">
+                                 <i class="mdi mdi-alert-outline"></i>
                                  </button></abbr>
                                  &nbsp;
                                  <abbr title="Recharge">
@@ -273,14 +274,37 @@ if ($onlineusr->num_rows == 1) {
     echo '<span class="badge bg-danger">Offline</span>';
 }
 
-if ($DeviceMC = $con->query("SELECT callingstationid, framedipaddress FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
+if ($DeviceMC = $con->query("SELECT nasipaddress, nasportid, callingstationid, framedipaddress FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
     while ($mac_rows = $DeviceMC->fetch_array()) {
-        $DeviceMAC = $mac_rows["callingstationid"];
+        $nasipaddress = $mac_rows["nasipaddress"];
+		$RouterPortID = $mac_rows["nasportid"];
+		$DeviceMAC = $mac_rows["callingstationid"];
         $framedipaddress = $mac_rows["framedipaddress"];
     }
-    echo $DeviceMAC;
+	
+	// Router name
+	if($nasipaddress !="")
+	{
+		$NASFND = $con->query("SELECT shortname FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
+		while ($nas_rows = $NASFND->fetch_array()) 
+		{
+			$NASname = $nas_rows["shortname"];
+		}
+
+	}
+	else
+	{
+		$NASname = "Not Found!";
+	}
+	/**/
+	echo '</br>';
+    echo '<b>Router:</b> '.$NASname.' ~ '.$nasipaddress;
+	echo '</br>';
+    echo '<b>Interface:</b> '.$RouterPortID;
     echo '</br>';
-    echo $framedipaddress;
+	echo '<b>MAC:</b> '.$DeviceMAC;
+    echo '</br>';
+    echo '<b>Remote IP:</b> '.$framedipaddress;
     echo '</br>';
 
     if (strlen($DeviceMAC) > 6) {
@@ -299,7 +323,7 @@ if ($DeviceMC = $con->query("SELECT callingstationid, framedipaddress FROM radac
 ?>
                                                 </div>
                                                 <div class="col">
-                                                   <p>
+                                                   
                                                       <?php
 if ($onlineusr->num_rows == 1) {
     echo '<b><abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr> Online </b> <br/>';
@@ -318,7 +342,7 @@ if ($onlineusr->num_rows == 1) {
                 $Upload = number_format($Upload, 3);
 
                 //echo date("Y-m-d h:i:sa", strtotime($on_rowss["acctstarttime"]));
-                echo '<span class="fas fa-caret-down" style="color:red;"> ' . $Download . ' GB</span><br/><span class="fas fa-caret-up" style="color:purple;"> ' . $Upload . ' GB</span><br/>';
+                echo '<span class="fas fa-arrow-alt-circle-down" style="color:red;"> ' . $Download . ' GB</span><br/><span class="fas fa-arrow-alt-circle-up" style="color:purple;"> ' . $Upload . ' GB</span><br/>';
                 echo '<span class="fas fa-link text-green"></span><strong><span style="color:blue;"> ' . date("h:i:s A", strtotime($on_rowss["acctstarttime"])) . "</span></strong>";
 
             }
@@ -348,30 +372,11 @@ if ($onlineusr->num_rows == 1) {
 }
 
 ?>
-                                                   </p>
+                                                  
                                                 </div>
                                                 <div class="col">
-                                                   <b>Monthly Uses</b>
-                                                   <p>
-                                                      <?php
-$currentMonth = date("m");
-if ($lastused = $con->query("SELECT SUM(acctinputoctets)/1000/1000/1000 AS GB_IN, SUM(acctoutputoctets)/1000/1000/1000 AS GB_OUT FROM
-                                                         radacct WHERE username='$username' AND  MONTH(acctstarttime)='$currentMonth'")) {
-    $r_usd_rows = $lastused->fetch_array();
-    $Download = $r_usd_rows["GB_OUT"];
-    $Download = number_format($Download, 3);
-    $Upload = $r_usd_rows["GB_IN"];
-    $Upload = number_format($Upload, 3);
-
-    echo '<span class="fas fa-caret-down" style="color:red;"> ' . $Download . ' GB</span><br/><span class="fas fa-caret-up" style="color:purple;"> ' . $Upload . ' GB</span><br/>';
-
-}
-?>
-                                                   </p>
-                                                </div>
-                                                <div class="col">
-                                                   <b>Expired Date</b><br>
-                                                   <p><?php
+												<b>Expired Date</b><br>
+<?php
 if ($usrstatus = $con->query("SELECT * FROM radcheck WHERE username='$username' LIMIT 1")) {
 
     $radusrname = $usrstatus->num_rows;
@@ -380,10 +385,10 @@ if ($usrstatus = $con->query("SELECT * FROM radcheck WHERE username='$username' 
 if ($radusrname == 1) {
     $expiredDate = new DateTime($expiredDate);
     $expiredDate = $expiredDate->format('d-M-Y');
-    echo "<span style='color:green; solid;'>Active</span> <br>" . $expiredDate;
+    echo "<span style='color:green;'><b>Active</b></span> <br>" . $expiredDate;
 } else {
 
-    echo '<a href="?clid=' . $clid . '&disable=false"><span style="color:red;">Disabled</span></a>';
+    echo '<a href="?clid=' . $clid . '&disable=false"><span style="color:red;"><b>Disabled</b></span></a>';
 }
 echo '<br>';
 $gracetime = $con->query("SELECT DATEDIFF(grace_expired, NOW()) AS time FROM customers WHERE grace_expired>=NOW() AND username='$username'");
@@ -394,7 +399,27 @@ if ($gracetime->num_rows == 1) {
 
 }
 
-?></p>
+?>
+                                                   <b>Monthly Uses</b>
+												   </br>
+                                                  
+                                                      <?php
+$currentMonth = date("m");
+if ($lastused = $con->query("SELECT SUM(acctinputoctets)/1000/1000/1000 AS GB_IN, SUM(acctoutputoctets)/1000/1000/1000 AS GB_OUT FROM
+                                                         radacct WHERE username='$username' AND  MONTH(acctstarttime)='$currentMonth'")) {
+    $r_usd_rows = $lastused->fetch_array();
+    $Download = $r_usd_rows["GB_OUT"];
+    $Download = number_format($Download, 3);
+    $Upload = $r_usd_rows["GB_IN"];
+    $Upload = number_format($Upload, 3);
+
+    echo '<span class=" fas fa-arrow-alt-circle-down" style="color:red;"> ' . $Download . ' GB</span><br/><span class=" fas fa-arrow-alt-circle-up" style="color:purple;"> ' . $Upload . ' GB</span><br/>';
+
+}
+?>
+                                                   
+                                                
+                                                   
                                                 </div>
                                              </div>
                                           </div>
@@ -988,7 +1013,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                </div>
             </div>
              <!-------------------- QR CODE  Modal---------------------------->
-               <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+             <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                            <div class="modal-header">
@@ -1014,21 +1039,19 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
       <!-- Right bar overlay-->
       <div class="rightbar-overlay"></div>
       <?php include 'script.php';?>
+      <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
        <!-- Include Tickets js File -->
-         <script src="js/tickets.js"></script>
-         <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="js/tickets.js"></script>
         <script type="text/javascript">
          $('#tickets_table').dataTable();
          $('#recharge_data_table').dataTable();
          $('#user_activity_data_table').dataTable();
          showModal();
-
          function download_qr_code(customer_id){
             const qrData = `http://103.146.16.154/self.php?clid=${customer_id}`;
          
             /*Clear previous QR code*/ 
             $('#qrCodeContainer').html('');
-
             /* Generate QR Code*/
             QRCode.toDataURL(qrData, { width: 200 }, function (err, url) {
                 if (err) {
@@ -1036,7 +1059,6 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                     return;
                 }
                 $('#qrCodeContainer').html(`<img src="${url}" id="qrCodeImage" alt="QR Code">`);
-
                 $('#downloadButton').off('click').on('click', function () {
                     const downloadLink = document.createElement('a');
                     downloadLink.href = url;

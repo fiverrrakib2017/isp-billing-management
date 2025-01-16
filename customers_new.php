@@ -521,8 +521,8 @@ include 'include/users_right.php';
                     [0, "desc"]
                 ],
                 "lengthChange": true,
-                "processing": true,
-                "serverSide": true,
+                "processing": false,
+                "serverSide": false,
                 columnDefs: [{
                     orderable: false,
                     className: 'select-checkbox',
@@ -569,6 +569,9 @@ include 'include/users_right.php';
                         <?php endif; ?>
 
 
+                    },
+                    beforeSend: function() {
+                        $(".dataTables_empty").html('<img src="assets/images/loading.gif" style="background-color: transparent"/>');
                     },
 
                 },

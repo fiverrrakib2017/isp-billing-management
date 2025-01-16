@@ -4,6 +4,7 @@ if (empty($_SESSION)) {
 }
 
 include 'db_connect.php';
+
 if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $selectedCustomers = json_decode($_POST['selectedCustomers'], true);
     $recharge_by = $_SESSION['uid'] ?? 0;
@@ -531,5 +532,45 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
         SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
     );
 }
+
+
+
+
+ /************** Customer Recharge With Bkash Payment Method ***************/
+
+if(isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['customer_recharge_with_payment_getway'])){
+   $customer_id= $_GET['customer_id'];
+    $customer_amount=$con->query("SELECT price From `customers` WHERE id=$customer_id")->fetch_assoc()['price']; 
+    $pop_id=$con->query("SELECT pop From `customers` WHERE id=$customer_id")->fetch_assoc()['pop']; 
+     
+    include 'Service/Bkash_payment_service.php';
+    include 'Config.php';
+     
+    $callback_url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $callback_url .= $_SERVER['HTTP_HOST'] . '/self.php?clid='.$customer_id.'';
+    
+    $bk=new BkashPaymentService($config);
+    $idToken = $bk->getGrantToken();
+    $bk->createPayment( $idToken,$callback_url, $customer_amount, '12345');
+    
+    if(!empty($idToken) && isset($idToken)){
+        /* Create Payment*/
+        $_payment_response = $bk->createPayment( $idToken,$callback_url, $customer_amount, '12345');
+        if (!empty($_payment_response['paymentID']) && !empty($_payment_response['statusMessage']) && $_payment_response['statusMessage'] === 'Successful') {
+            if (isset($_payment_response['bkashURL'])) {      
+                 header("Location: " . $_payment_response['bkashURL']);
+                exit;
+            } else {
+                echo "Error creating payment.";
+            }
+        } 
+    }else{
+        echo json_encode([
+            'success'=>false,
+            'message'=>'Error Generate Token',
+        ]);
+    }
+}
+
 
 ?>
