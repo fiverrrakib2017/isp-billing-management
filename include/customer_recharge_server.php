@@ -570,7 +570,79 @@ if(isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['custom
             'message'=>'Error Generate Token',
         ]);
     }
+    exit; 
+}
+ /************** Show Credit Recharge List ***************/
+ if (isset($_GET['get_credit_recharge_list']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    $from_date = isset($_GET['from_date']) ? $_GET['from_date'] : null;
+    $to_date = isset($_GET['to_date']) ? $_GET['to_date'] : null;
+
+    $whereClause = '';
+    if ($from_date && $to_date) {
+        $whereClause = " AND cr.daterm BETWEEN '$from_date' AND '$to_date'";
+    } elseif ($from_date) {
+        $whereClause = " AND cr.daterm >= '$from_date'";
+    } elseif ($to_date) {
+        $whereClause = " AND cr.daterm <= '$to_date'";
+    }
+
+    $query = "
+        SELECT 
+            c.id AS customer_id, 
+            c.username, 
+            MAX(u.fullname) AS fullname,
+            c.mobile, 
+            COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
+            COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
+            (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
+            COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due,
+            COALESCE(SUM(CASE WHEN cr.type = '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_due_paid
+        FROM 
+            customers c
+        LEFT JOIN 
+            customer_rechrg cr ON c.id = cr.customer_id
+        LEFT JOIN 
+            users u ON cr.rchg_by = u.id
+        WHERE 
+            1=1 $whereClause
+        GROUP BY 
+            c.id, c.username, c.mobile 
+        HAVING 
+            total_due > 0;
+    ";
+
+    $result = $con->query($query);
+
+    $response = ['rows' => '', 'footer' => '', 'total_due_sum' => 0];
+
+    if ($result->num_rows > 0) {
+        $total_due_sum = 0;
+        while ($row = $result->fetch_assoc()) {
+            $total_due_sum += $row['total_due'];
+            $response['rows'] .= "<tr>
+                <td><a href='profile.php?clid={$row['customer_id']}'>{$row['username']}</a></td>
+                <td>{$row['mobile']}</td>
+                <td>{$row['total_recharge']}</td>
+                <td>{$row['total_paid']}</td>
+                <td>{$row['total_due']}</td>
+                <td>{$row['fullname']}</td>
+            </tr>";
+        }
+
+        $response['footer'] = "<tr>
+            <td colspan='4'><strong>Total Due</strong></td>
+            <td class='text-danger'><strong>{$total_due_sum}</strong></td>
+            <td></td>
+        </tr>";
+        $response['total_due_sum'] = $total_due_sum;
+    } else {
+        $response['rows'] = "<tr><td colspan='6'>No customers with due amounts found</td></tr>";
+    }
+
+    echo json_encode($response);
 }
 
-
 ?>
+
+
+

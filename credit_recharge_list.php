@@ -4,26 +4,6 @@ include("include/db_connect.php");
 include("include/pop_security.php");
 include("include/users_right.php");
 
-$sql = "
-    SELECT 
-        c.id AS customer_id, 
-        c.username, 
-        c.mobile, 
-        COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
-        COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
-        (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
-        COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due,
-        COALESCE(SUM(CASE WHEN cr.type = '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_due_paid
-    FROM 
-        customers c
-    LEFT JOIN 
-        customer_rechrg cr ON c.id = cr.customer_id
-    GROUP BY 
-        c.id
-    HAVING 
-        total_due > 0"; 
-
-$result = $con->query($sql);
 
 ?>
 
@@ -37,7 +17,7 @@ $result = $con->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include 'style.php';?>
     <style>
-@media print {
+/* @media print {
     body {
         visibility: hidden;
     }
@@ -75,7 +55,7 @@ $result = $con->query($sql);
     button {
         display: none;
     }
-}
+} */
 </style>
 </head>
 
@@ -126,170 +106,7 @@ $result = $con->query($sql);
                                     <!-- <button data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" id="addBtn" style="margin-bottom: 12px;">&nbsp;&nbsp;New customer</button> -->
                                 </div>
 
-                                <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" id="addCustomerModal" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel"><span class="mdi mdi-account-check mdi-18px"></span> &nbsp;New customer</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="">
-                                                <form id="customer_form">
-                                                    <div class="card">
-                                                        <div class="card-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Full Name</label>
-                                                                        <input id="customer_fullname" type="text" class="form-control " placeholder="Enter Your Fullname" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Username <span id="usernameCheck"></span></label>
-                                                                        <input id="customer_username" type="text" class="form-control " name="username" placeholder="Enter Your Username" oninput="checkUsername();" />
-
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Password</label>
-                                                                        <input id="customer_password" type="password" class="form-control " name="password" placeholder="Enter Your Password" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Mobile no.</label>
-                                                                        <input id="customer_mobile" type="text" class="form-control " name="mobile" placeholder="Enter Your Mobile Number" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Expired Date</label>
-                                                                        <select id="customer_expire_date" class="form-select">
-                                                                            <option value="<?php echo date("d"); ?>"><?php echo date("d"); ?></option>
-                                                                            <?php
-                                                                            if ($exp_cstmr = $con->query("SELECT * FROM customer_expires")) {
-                                                                                while ($rowsssss = $exp_cstmr->fetch_array()) {
-
-
-                                                                                    $exp_date = $rowsssss["days"];
-
-                                                                                    echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
-                                                                                }
-                                                                            }
-
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Address</label>
-                                                                        <input id="customer_address" type="text" class="form-control" name="address" placeholder="Enter Your Addres" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6 ">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>POP/Branch</label>
-                                                                        <select id="customer_pop" class="form-select">
-                                                                            <option value="">Select Pop/Branch</option>
-                                                                            <?php
-                                                                            if ($pop = $con->query("SELECT * FROM add_pop ")) {
-                                                                                while ($rows = $pop->fetch_array()) {
-
-
-                                                                                    $id = $rows["id"];
-                                                                                    $name = $rows["pop"];
-
-                                                                                    echo '<option value="' . $id . '">' . $name . '</option>';
-                                                                                }
-                                                                            }
-                                                                            ?>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6 ">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Area/Location</label>
-                                                                        <select id="customer_area" class="form-select" name="area">
-                                                                            <option>Select Area</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Nid Card Number</label>
-                                                                        <input id="customer_nid" type="text" class="form-control" name="nid" placeholder="Enter Your Nid Number" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Package</label>
-                                                                        <select id="customer_package" class="form-select">
-
-
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Connection Charge</label>
-                                                                        <input id="customer_con_charge" type="text" class="form-control" name="con_charge" placeholder="Enter Connection Charge" value="500" />
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group mb-2">
-                                                                        <label>Package Price</label>
-                                                                        <input disabled id="customer_price" type="text" class="form-control" value="00" />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Remarks</label>
-                                                                        <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Status</label>
-                                                                        <select id="customer_status" class="form-select">
-                                                                            <option value="">Select Status</option>
-                                                                            <option value="0">Disable</option>
-                                                                            <option value="1">Active</option>
-                                                                            <option value="2">Expire</option>
-                                                                            <option value="3">Request</option>
-                                                                        </select>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-success" id="customer_add">Add Customer</button>
-                                            </div>
-                                        </div><!-- /.modal-content -->
-                                    </div><!-- /.modal-dialog -->
-                                </div>
+                               
                             </div>
                         </div>
                     </div>
@@ -297,11 +114,7 @@ $result = $con->query($sql);
                         <div class="col-md-12 stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="col-md-6 float-md-right grid-margin-sm-0">
-                                        <div class="form-group">
-
-                                        </div>
-                                    </div>
+                                    
                                     <div class="table-responsive ">
                                         <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
@@ -311,40 +124,12 @@ $result = $con->query($sql);
                                                     <th>Recharged</th>
                                                     <th>Total Paid</th>
                                                     <th>Total Due</th>
+                                                    <th>Recharge By</th>
                                                 </tr>
                                             </thead>
-                                            <tbody >
-                                            <?php
-                                                if ($result->num_rows > 0) {
-                                                    $total_due_sum = 0;
-                                                    while($row = $result->fetch_assoc()) {
-                                                        $total_due_sum += $row['total_due'];
-                                                        echo "<tr>";
-                                                        echo "<td> <a href='profile.php?clid=" . $row['customer_id'] . "'>" . $row['username'] . "</a> </td>";
-                                                        echo "<td>" . $row['mobile'] . "</td>";
-                                                        echo "<td>" . $row['total_recharge'] . "</td>";
-                                                        echo "<td>" . $row['total_paid'] . "</td>";
-                                                        echo "<td>" . $row['total_due'] . "</td>";
-                                                      
-                                                        echo "</tr>";
-                                                    }
-                                                    
-                                                } else {
-                                                    echo "<tr><td colspan='4'>No customers with due amounts found</td></tr>";
-                                                }
-                                                ?>
-                                                
-                                            </tbody>
-                                            <tfooter>
-                                            <tr>
-                                                <td colspan="4"><strong>Total Due</strong></td>
-                                                <td><strong><?php echo $total_due_sum; ?></strong></td>
-                                                <td></td>
-                                            </tr>
-                                            </tfooter>
+                                            <tbody id="customer-data"></tbody>
+                                            <tfoot id="total-footer"> </tfoot>
                                         </table>
-                                        <!-- <button class="btn-sm btn btn-success" onclick="printTable()">Print</button> -->
-                                        <button class="btn btn btn-success" id="export_to_excel">Export</button>
                                     </div>
                                 </div>
                             </div>
@@ -365,8 +150,54 @@ $result = $con->query($sql);
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
     <?php include 'script.php';?>
-    <script>
-        $("#customers_table").DataTable();
+    <script type="text/javascript">
+        var from_date_filter = '<label style="margin-left: 10px;">';
+        from_date_filter += '<input type="date" id="from_date" class="form-control from_date_filter">';
+        from_date_filter += '</input></label>';
+
+        var to_date_filter = '<label style="margin-left: 10px;">';
+        to_date_filter += '<input type="date" id="to_date" class="form-control to_date_filter">';
+        to_date_filter += '</input></label>';
+
+        var export_button = '<button style="margin-left: 10px;" class="btn btn-success" id="export_to_excel">Export</button>';
+
+        setTimeout(() => {
+            $('.dataTables_length').append(from_date_filter);
+            $('.dataTables_length').append(to_date_filter);
+            $('.dataTables_length').append(export_button);
+        }, 500);
+       
+        show_credit_recharge_list();
+        function show_credit_recharge_list(){
+            $.ajax({
+                url: 'include/customer_recharge_server.php?get_credit_recharge_list=true', 
+                type: 'GET',
+                data: function(d) {
+                    d.from_date = $('.from_date_filter').val(); 
+                    d.to_date = $('.to_date_filter').val(); 
+                },
+                dataType: 'json',
+                success: function (response) {
+                    $('#customer-data').html(response.rows);
+                    $('#total-footer').html(response.footer); 
+                    $('#customers_table').DataTable();
+                },
+                error: function () {
+                    alert('Failed to load customer data.');
+                },
+            });
+        }
+        /* Apply date filter*/
+        // $('#from_date, #to_date').on('change', function() {
+        //     //show_credit_recharge_list();
+        //     alert('okkkk');
+        // });
+        $(document).on('change','#from_date',function(){
+            show_credit_recharge_list();
+        });
+        $(document).on('change','#to_date',function(){
+            show_credit_recharge_list();
+        });
         function printTable() {
             var divToPrint = document.getElementById('customers_table');
             var newWin = window.open('', '_blank');
@@ -408,7 +239,7 @@ $result = $con->query($sql);
                 let link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
                 link.setAttribute("download", "customers.csv");
-                document.body.appendChild(link); // Required for Firefox
+                document.body.appendChild(link); 
                 link.click();
                 document.body.removeChild(link);
             });
