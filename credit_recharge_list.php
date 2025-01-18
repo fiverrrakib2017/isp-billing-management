@@ -159,45 +159,72 @@ include("include/users_right.php");
         to_date_filter += '<input type="date" id="to_date" class="form-control to_date_filter">';
         to_date_filter += '</input></label>';
 
-        var export_button = '<button style="margin-left: 10px;" class="btn btn-success" id="export_to_excel">Export</button>';
+        var _filter_button = '<button style="margin-left: 10px;" class="btn btn-success" id="search_btn">Search</button>';
+
+        var export_button = '<button style="margin-left: 10px;" class="btn btn-info" id="export_to_excel">Export</button>';
 
         setTimeout(() => {
             $('.dataTables_length').append(from_date_filter);
             $('.dataTables_length').append(to_date_filter);
+            $('.dataTables_length').append(_filter_button);
             $('.dataTables_length').append(export_button);
         }, 500);
+        // $('#customers_table').DataTable({
+        //     initComplete: function() {
+        //         $('.dataTables_length').append(from_date_filter);
+        //         $('.dataTables_length').append(to_date_filter);
+        //         $('.dataTables_length').append(_filter_button);
+        //         $('.dataTables_length').append(export_button);
+        //     }
+        // });
        
         show_credit_recharge_list();
-        function show_credit_recharge_list(){
+        function show_credit_recharge_list(from_date,to_date){
             $.ajax({
                 url: 'include/customer_recharge_server.php?get_credit_recharge_list=true', 
                 type: 'GET',
-                data: function(d) {
-                    d.from_date = $('.from_date_filter').val(); 
-                    d.to_date = $('.to_date_filter').val(); 
+                data:  {
+                    from_date :from_date,
+                    to_date : to_date, 
                 },
                 dataType: 'json',
                 success: function (response) {
                     $('#customer-data').html(response.rows);
                     $('#total-footer').html(response.footer); 
-                    $('#customers_table').DataTable();
+                    if ($.fn.DataTable.isDataTable('#customers_table')) {
+                        $('#customers_table').DataTable().empty(); 
+                    }
+                    $('#customers_table').DataTable(); 
                 },
                 error: function () {
                     alert('Failed to load customer data.');
                 },
             });
         }
-        /* Apply date filter*/
-        // $('#from_date, #to_date').on('change', function() {
-        //     //show_credit_recharge_list();
-        //     alert('okkkk');
+        $(document).on('click','#search_btn',function(){
+            var from_date=  $('.from_date_filter').val(); 
+          
+            var to_date=  $('.to_date_filter').val(); 
+            if (!from_date) {
+                toastr.error("From Date is required.");
+            } else if (!to_date) {
+                toastr.error("To Date is required.");
+            } else {
+                show_credit_recharge_list(from_date, to_date);
+            }
+        });
+        // $("#search_btn").on('change',function(){
+        //   var from_date=  $('.from_date_filter').val(); 
+        //   var to_date=  $('.to_date_filter').val(); 
+        //   if(from_date.length==''){
+        //     toastr.error("From Date is Require"); 
+        //   }else if(to_date.length==''){
+        //     toastr.error("To Date is Require"); 
+        //   }else{
+        //     show_credit_recharge_list(from_date,to_date); 
+        //   }
         // });
-        $(document).on('change','#from_date',function(){
-            show_credit_recharge_list();
-        });
-        $(document).on('change','#to_date',function(){
-            show_credit_recharge_list();
-        });
+        
         function printTable() {
             var divToPrint = document.getElementById('customers_table');
             var newWin = window.open('', '_blank');

@@ -579,11 +579,11 @@ if(isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['custom
 
     $whereClause = '';
     if ($from_date && $to_date) {
-        $whereClause = " AND cr.daterm BETWEEN '$from_date' AND '$to_date'";
+        $whereClause = " AND cr.datetm BETWEEN '$from_date' AND '$to_date'";
     } elseif ($from_date) {
-        $whereClause = " AND cr.daterm >= '$from_date'";
+        $whereClause = " AND cr.datetm >= '$from_date'";
     } elseif ($to_date) {
-        $whereClause = " AND cr.daterm <= '$to_date'";
+        $whereClause = " AND cr.datetm <= '$to_date'";
     }
 
     $query = "
@@ -592,6 +592,7 @@ if(isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['custom
             c.username, 
             MAX(u.fullname) AS fullname,
             c.mobile, 
+            cr.datetm,
             COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
             COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
             (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
