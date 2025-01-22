@@ -243,7 +243,7 @@ function timeAgo($startdate)
                         </div> <!-- End col -->
                         <div class="col-md-6 col-xl-2">
                             <div class="card">
-                                <a href="customer_disabled.php">
+                                <a href="customers_new.php?disabled=1">
                                     <div class="card-body">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-brown me-0 float-end"><i

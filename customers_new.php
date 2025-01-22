@@ -583,6 +583,13 @@ include 'include/users_right.php';
                         <?php else: ?>
                         d.status = $('.status_filter').val();
                         <?php endif; ?>
+                        /********************Filter For Disabled Customer*******************************/
+                        <?php if (isset($_GET['disabled']) && !empty($_GET['disabled'])): ?>
+                        d.status = "disabled";
+                        $("#customers_table_length").hide();
+                        <?php else: ?>
+                        d.status = $('.status_filter').val();
+                        <?php endif; ?>
 
 
                     },
