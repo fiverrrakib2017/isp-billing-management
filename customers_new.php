@@ -545,9 +545,11 @@ include 'include/users_right.php';
                         /********************Filter For Active Customer*******************************/
                         <?php if (isset($_GET['active']) && !empty($_GET['active'])): ?>
                         d.status = <?php echo $_GET['active']; ?>;
+                        $("#customers_table_length").hide();
                         <?php else: ?>
                         d.status = $('.status_filter').val();
                         <?php endif; ?>
+                        
                         /********************Filter For POP ID Customer*******************************/
                         <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
                         d.pop_id = <?php echo $_GET['pop_id']; ?>;
@@ -570,6 +572,13 @@ include 'include/users_right.php';
                         /********************Filter For Online Customer*******************************/
                         <?php if (isset($_GET['offline']) && !empty($_GET['offline'])): ?>
                         d.status = "offline";
+                        $("#customers_table_length").hide();
+                        <?php else: ?>
+                        d.status = $('.status_filter').val();
+                        <?php endif; ?>
+                        /********************Filter For expired Customer*******************************/
+                        <?php if (isset($_GET['expired']) && !empty($_GET['expired'])): ?>
+                        d.status = "expired";
                         $("#customers_table_length").hide();
                         <?php else: ?>
                         d.status = $('.status_filter').val();

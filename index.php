@@ -194,7 +194,7 @@ function timeAgo($startdate)
 						
 
                         <div class="col-md-6 col-xl-2">
-                            <a href="customers.php">
+                            <a href="customers_new.php?active=1">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="mini-stat">
@@ -221,7 +221,7 @@ function timeAgo($startdate)
 
                         <div class="col-md-6 col-xl-2">
                             <div class="card">
-                                <a href="customer_expire.php">
+                                <a href="customers_new.php?expired=1">
                                     <div class="card-body">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-danger me-0 float-end"><i
