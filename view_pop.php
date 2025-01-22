@@ -215,8 +215,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
                     <div class="row">
 
-                        <div class="col-md-6 col-xl-3">
+                    <div class="col">
                             <div class="card">
+							<a href="customers_new.php?online=1&pop_id=<?php echo $popid; ?>">
                                 <div class="card-body">
                                     <div class="mini-stat">
                                         <span class="mini-stat-icon bg-primary me-0 float-end"><i
@@ -225,17 +226,50 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             <span class="counter text-primary">
                                                 <?php
                                                  echo get_online_users($area_id=null,$pop_id=$popid,$con);
+
                                                 ?>
                                             </span>
-                                            Online
+                                            <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online
                                         </div>
                                     </div>
                                 </div>
+								</a>
                             </div>
                         </div> <!-- End col -->
+						
+						
+						
+						<div class="col">
+                            <div class="card">
+							<a href="customers_new.php?offline=1&pop_id=<?php echo $popid; ?>">
+                                <div class="card-body">
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-secondary me-0 float-end"><i
+                                                class="fas fa-user-times"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-muted">
+                                                <?php
+												if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1' AND pop=$popid")) {
+                                                         $totalcstmr = $totalCustomer->num_rows;
+                                                    }
+                                                    
+                                                    
+                                                	echo $totalcstmr-$onlinecst;
+												
+												
+                                                ?>
+                                            </span>
+                                            <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline
+                                        </div>
+                                    </div>
+                                </div>
+								</a>
+                            </div>
+                        </div> <!-- End col -->
+						
 
-                        <div class="col-md-6 col-xl-3">
-                            <a href="customers_new.php?pop_id=<?php echo $popid; ?>&active=1">
+                        <div class="col">
+                            <a href="customers_new.php?active=1&pop_id=<?php echo $popid; ?>">
                                 <div class="card">
                                     <div class="card-body">
                                         <div class="mini-stat">
@@ -243,10 +277,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                     class="fas fa-users"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-success">
-                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1' AND pop=$popid")) {
-                                                        echo $totalcstmr = $totalCustomer->num_rows;
-                                                    }
-                                                    
+                                                    <?php 
+                                                        echo $totalcstmr;
+                                                
                                                     ?>
                                                 </span>
                                                 Active Customers
@@ -257,21 +290,17 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                             </a>
                         </div> <!--End col -->
 
-
-
-
-
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col">
                             <div class="card">
-                                <a href="customer_expire.php?pop_id=<?php echo $popid; ?>">
+                                <a href="customers_new.php?expired=1&pop_id=<?php echo $popid; ?>">
                                     <div class="card-body">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-danger me-0 float-end"><i
-                                                    class="fas fa-exclamation-triangle"></i></span>
+                                                    class="fas fa-user-clock"></i></span>
                                             <div class="mini-stat-info">
-                                                <span class="counter text-danger">
+                                                <span class="counter text-secondary">
                                                     <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate AND pop=$popid")) {
-                                                        echo $AllExcstmr->num_rows;
+                                                        echo $AllExcstmr->num_rows ?? '0';
                                                     }
                                                     
                                                     ?>
@@ -283,15 +312,15 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                 </a>
                             </div>
                         </div> <!-- End col -->
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col">
                             <div class="card">
-                                <a href="customer_disabled.php?pop_id=<?php echo $popid; ?>">
+                                <a href="customers_new.php?disabled=1&pop_id=<?php echo $popid; ?>">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-secondary me-0 float-end"><i
-                                                    class="fas fa-user-slash"></i></span>
+                                            <span class="mini-stat-icon bg-brown me-0 float-end"><i
+                                                    class="fas fa-user-lock"></i></span>
                                             <div class="mini-stat-info">
-                                                <span class="counter text-secondary">
+                                                <span class="counter text-danger">
                                                     <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND pop=$popid")) {
                                                         echo $dsblcstmr->num_rows;
                                                     }
@@ -303,7 +332,10 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                     </div>
                                 </a>
                             </div>
-                        </div><!--end col -->
+                        </div>
+
+
+ 
                     </div> <!-- end row-->
                     
                     <div class="row">
@@ -572,8 +604,8 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                         <div class="card">
                                             <div class="card-body">
                                                 <table id="tickets_datatable"
-                                                    class="table table-bordered dt-responsive nowrap"
-                                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                class="table table-bordered dt-responsive nowrap"
+                                                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
                                                             <th>No.</th>

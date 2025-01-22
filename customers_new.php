@@ -567,28 +567,28 @@ include 'include/users_right.php';
                         d.status = "online";
                         $("#customers_table_length").hide();
                         <?php else: ?>
-                        d.status = $('.status_filter').val();
+                        //d.status = $('.status_filter').val();
                         <?php endif; ?>
                         /********************Filter For Online Customer*******************************/
                         <?php if (isset($_GET['offline']) && !empty($_GET['offline'])): ?>
                         d.status = "offline";
                         $("#customers_table_length").hide();
                         <?php else: ?>
-                        d.status = $('.status_filter').val();
+                        //d.status = $('.status_filter').val();
                         <?php endif; ?>
                         /********************Filter For expired Customer*******************************/
                         <?php if (isset($_GET['expired']) && !empty($_GET['expired'])): ?>
                         d.status = "expired";
                         $("#customers_table_length").hide();
                         <?php else: ?>
-                        d.status = $('.status_filter').val();
+                        //d.status = $('.status_filter').val();
                         <?php endif; ?>
                         /********************Filter For Disabled Customer*******************************/
                         <?php if (isset($_GET['disabled']) && !empty($_GET['disabled'])): ?>
                         d.status = "disabled";
                         $("#customers_table_length").hide();
                         <?php else: ?>
-                        d.status = $('.status_filter').val();
+                        //d.status = $('.status_filter').val();
                         <?php endif; ?>
 
 

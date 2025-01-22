@@ -139,7 +139,7 @@ function timeAgo($startdate)
                     </div>
                     <div class="row">
 						
-                        <div class="col-md-6 col-xl-2">
+                        <div class="col">
                             <div class="card">
 							<a href="customers_new.php?online=1">
                                 <div class="card-body">
@@ -164,7 +164,7 @@ function timeAgo($startdate)
 						
 						
 						
-						<div class="col-md-6 col-xl-2">
+						<div class="col">
                             <div class="card">
 							<a href="customers_new.php?offline=1">
                                 <div class="card-body">
@@ -193,7 +193,7 @@ function timeAgo($startdate)
                         </div> <!-- End col -->
 						
 
-                        <div class="col-md-6 col-xl-2">
+                        <div class="col">
                             <a href="customers_new.php?active=1">
                                 <div class="card">
                                     <div class="card-body">
@@ -215,11 +215,7 @@ function timeAgo($startdate)
                             </a>
                         </div> <!--End col -->
 
-
-
-
-
-                        <div class="col-md-6 col-xl-2">
+                        <div class="col">
                             <div class="card">
                                 <a href="customers_new.php?expired=1">
                                     <div class="card-body">
@@ -241,7 +237,7 @@ function timeAgo($startdate)
                                 </a>
                             </div>
                         </div> <!-- End col -->
-                        <div class="col-md-6 col-xl-2">
+                        <div class="col">
                             <div class="card">
                                 <a href="customers_new.php?disabled=1">
                                     <div class="card-body">
@@ -262,7 +258,7 @@ function timeAgo($startdate)
                                 </a>
                             </div>
                         </div><!--end col -->
-						      <div class="col-md-6 col-xl-2">
+						      <div class="col">
                             <div class="card">
                                 <a href="con_request.php">
                                     <div class="card-body">
