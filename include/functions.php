@@ -79,33 +79,151 @@ function get_latest_customer($con, $pop_id = null, $limit = 5) {
     return $customers;
 }
 
-function get_online_users($area_id,$pop_id,$con) {
-    $customers=[];
-    if (!empty($area_id)&&isset($area_id)) {
-        $onlinecstmr = $con->query("SELECT `username` AS online_users FROM customers WHERE  area=$area_id");
-        while($row = mysqli_fetch_assoc($onlinecstmr)) {
-            $customers[] = $row['online_users'];
+function get_online_users($area_id, $pop_id, $con) {
+    $online_users = 0;
 
-        }
+    $conditions = [];
+    if (!empty($area_id)) {
+        $conditions[] = "area = " . intval($area_id)."AND status='1'"; 
     }
-    if (!empty($pop_id)&&isset($pop_id)) {
-        $onlinecstmr = $con->query("SELECT `username` AS online_users FROM customers WHERE  pop=$pop_id");
-        while($row = mysqli_fetch_assoc($onlinecstmr)) {
-            $customers[] = $row['online_users'];
-        }
-    }
-    
-    $_online_users = 0;
-
-    foreach ($customers as $_get_customer_username) {
-        $result = $con->query("SELECT COUNT(*) AS online_count FROM radacct WHERE username='$_get_customer_username' AND acctstoptime IS NULL");
-        if ($row = $result->fetch_assoc()) {
-            $_online_users += $row['online_count'];
-        }
+    if (!empty($pop_id)) {
+        $conditions[] = "pop = " . intval($pop_id)."AND status='1'"; 
     }
 
-    return $_online_users;
-};
+    $where_clause = !empty($conditions) ? "WHERE " . implode(" OR ", $conditions) : "";
+
+    $query = "SELECT `username` FROM customers $where_clause";
+    $result = $con->query($query);
+
+    if ($result) {
+        $usernames = [];
+        while ($row = $result->fetch_assoc()) {
+            $usernames[] = $row['username'];
+        }
+
+        if (!empty($usernames)) {
+            $usernames_list = "'" . implode("','", array_map([$con, 'real_escape_string'], $usernames)) . "'";
+
+            $online_query = "
+                SELECT COUNT(DISTINCT username) AS online_count
+                FROM radacct
+                WHERE username IN ($usernames_list)
+                AND acctstoptime IS NULL
+            ";
+
+            $online_result = $con->query($online_query);
+            if ($online_result && $row = $online_result->fetch_assoc()) {
+                $online_users = $row['online_count'];
+            }
+        }
+    }
+
+    return $online_users;
+}
+
+function get_offline_users($area_id, $pop_id, $con) {
+    $offline_users = 0;
+
+    $conditions = [];
+    if (!empty($area_id)) {
+        $conditions[] = "area = " . intval($area_id)."AND status='1'"; 
+    }
+    if (!empty($pop_id)) {
+        $conditions[] = "pop = " . intval($pop_id)."AND status='1'"; 
+    }
+
+    $where_clause = !empty($conditions) ? "WHERE " . implode(" OR ", $conditions) : "";
+
+    $query = "SELECT `username` FROM customers $where_clause";
+    $result = $con->query($query);
+
+    if ($result) {
+        $usernames = [];
+        while ($row = $result->fetch_assoc()) {
+            $usernames[] = $row['username'];
+        }
+        if (!empty($usernames)) {
+            $usernames_list = "'" . implode("','", array_map([$con, 'real_escape_string'], $usernames)) . "'";
+           
+            $offline_query = "SELECT COUNT(*) AS offline_count 
+                FROM customers 
+                WHERE username NOT IN (
+                    SELECT username 
+                    FROM radacct 
+                    WHERE acctstoptime IS NULL AND acctterminatecause = ''
+                ) AND username IN ($usernames_list)";
+
+            $offline_result = $con->query($offline_query);
+            if ($offline_result && $row = $offline_result->fetch_assoc()) {
+                $offline_users = $row['offline_count'];
+            }
+        }
+    }
+
+    return $offline_users;
+}
+
+function get_filtered_customers($status, $area_id = null, $pop_id = null, $con) {
+    $condition = "";
+
+    if (!empty($area_id)) {
+        $condition .= (!empty($condition) ? " AND " : "") . "area = '" . $area_id . "'";
+    }
+
+    if (!empty($pop_id)) {
+        $condition .= (!empty($condition) ? " AND " : "") . "pop = '" . $pop_id . "'";
+    }
+
+    if (!empty($status)) {
+        if ($status == 'expired') {
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '2'";
+        } elseif ($status == 'disabled') {
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '0'";
+        } elseif ($status == 'active') {
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '1'";
+        } elseif ($status == 'online') {
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '1' 
+                                AND EXISTS (
+                                    SELECT 1 FROM radacct 
+                                    WHERE radacct.username = customers.username 
+                                    AND radacct.acctstoptime IS NULL
+                                )";
+        } elseif ($status == 'free') {
+            $condition .= (!empty($condition) ? " AND " : "") . "package = 5";
+        } elseif ($status == 'unpaid') {
+            $condition .= (!empty($condition) ? " AND " : "") . "
+                EXISTS (
+                    SELECT 1 FROM customer_rechrg 
+                    WHERE 
+                        DAY(expiredate) BETWEEN 1 AND 10 
+                        AND MONTH(expiredate) = MONTH(CURDATE()) 
+                        AND YEAR(expiredate) = YEAR(CURDATE())
+                )";
+        } elseif ($status == 'offline') {
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '1' 
+                                AND customers.username NOT IN (
+                                    SELECT username FROM radacct 
+                                    WHERE acctstoptime IS NULL AND acctterminatecause = ''
+                                )";
+        } else {
+            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+        }
+    }
+
+    $query = "SELECT * FROM customers";
+    if (!empty($condition)) {
+        $query .= " WHERE " . $condition;
+    }
+
+    $result = $con->query($query);
+    $customers = [];
+    while ($row = $result->fetch_assoc()) {
+        $customers[] = $row;
+    }
+
+    return $customers;
+}
+
 
 function get_count_pop_and_area_with_online_and_offline($con,$table_name,$column_name) {
     $online_count = 0;

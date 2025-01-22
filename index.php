@@ -174,12 +174,11 @@ function timeAgo($startdate)
                                         <div class="mini-stat-info">
                                             <span class="counter text-muted">
                                                 <?php
-												if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1'")) {
-                                                         $totalcstmr = $totalCustomer->num_rows;
+												if ($offline_customer = $con->query("SELECT * FROM customers WHERE status='1' AND username NOT IN(SELECT username FROM radacct WHERE acctstoptime IS NULL AND acctterminatecause='')")) {
+                                                        echo  $total_offline_customer = $offline_customer->num_rows;
                                                     }
                                                     
                                                     
-                                                	echo $totalcstmr-$onlinecst;
 												
 												
                                                 ?>
@@ -203,7 +202,9 @@ function timeAgo($startdate)
                                             <div class="mini-stat-info">
                                                 <span class="counter text-success">
                                                     <?php 
-                                                        echo $totalcstmr;
+                                                    if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1'")) {
+                                                        echo $totalcstmr = $totalCustomer->num_rows;
+                                                    }
                                                 
                                                     ?>
                                                 </span>
