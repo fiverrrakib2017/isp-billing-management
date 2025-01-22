@@ -567,6 +567,13 @@ include 'include/users_right.php';
                         <?php else: ?>
                         d.status = $('.status_filter').val();
                         <?php endif; ?>
+                        /********************Filter For Online Customer*******************************/
+                        <?php if (isset($_GET['offline']) && !empty($_GET['offline'])): ?>
+                        d.status = "offline";
+                        $("#customers_table_length").hide();
+                        <?php else: ?>
+                        d.status = $('.status_filter').val();
+                        <?php endif; ?>
 
 
                     },

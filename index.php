@@ -166,7 +166,7 @@ function timeAgo($startdate)
 						
 						<div class="col-md-6 col-xl-2">
                             <div class="card">
-							<a href="offline.php">
+							<a href="customers_new.php?offline=1">
                                 <div class="card-body">
                                     <div class="mini-stat">
                                         <span class="mini-stat-icon bg-secondary me-0 float-end"><i

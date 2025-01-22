@@ -256,6 +256,8 @@ include("include/users_right.php");
 	
 	
     $result = $con->query("SELECT id,fullname,username,mobile,expiredate FROM customers WHERE status='1' AND username NOT IN(SELECT username FROM radacct WHERE acctstoptime IS NULL AND acctterminatecause='')");
+    print_r($result->num_rows);exit;  
+
 
     while ($rows = mysqli_fetch_assoc($result)) {
 

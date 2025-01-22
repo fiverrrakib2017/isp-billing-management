@@ -126,6 +126,8 @@
                                     WHERE radacct.username = customers.username 
                                     AND radacct.acctstoptime IS NULL
                                 )";
+								
+			
             } elseif ($status == 'free') {
                 $condition .= (!empty($condition) ? " AND " : "") . "package = 5"; 
             } elseif ($status == 'unpaid') {
@@ -141,20 +143,12 @@
                     )
                 ";
             } elseif ($status == 'offline') {
-                $status = "0";
-                // $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
-                //                 AND NOT EXISTS (
-                //                     SELECT 1 FROM radacct 
-                //                     WHERE radacct.username = customers.username 
-                //                     AND radacct.acctstoptime IS NOT NULL
-                //                 )";
-                $condition .= (!empty($condition) ? " AND " : "") . "
-                                EXISTS (
-                                    SELECT 1 FROM radacct 
-                                    WHERE radacct.username = customers.username 
-                                    AND radacct.acctstoptime IS NOT NULL
-                                )
-                            ";
+                $status = "1";
+                 $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
+								AND customers.username NOT IN (
+                                    SELECT username FROM radacct 
+                                    WHERE acctstoptime IS NULL AND acctterminatecause=''
+                                )";
             } else {
                 $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
             }
