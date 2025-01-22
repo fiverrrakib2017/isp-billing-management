@@ -233,7 +233,7 @@ include("include/users_right.php");
                                             <tbody id="customer-list">
     <?php
 	
-	$usroffline = $con->query("SELECT * FROM area_list LIMIT 2");
+	$usroffline = $con->query("SELECT * FROM area_list");
 	while ($rowoff = $usroffline->fetch_assoc()) {
 
         $areaid = $rowoff["id"];
@@ -242,7 +242,7 @@ include("include/users_right.php");
 		?>
 		<tr>
 			<!-- <th>Check All <input type="checkbox" id="checkedAll" name="checkedAll" value="Bike"></th> -->
-			<td><?php echo $areaname; ?></td>
+			<td><b><?php echo $areaname; ?></b></td>
 			<th>Name</th>
 			
 			<td></td>
@@ -255,14 +255,12 @@ include("include/users_right.php");
 <?php
 	
 	
-    $result = $con->query("SELECT customers.username AS customername, radacct.acctstoptime
-	FROM customers
-	INNER JOIN radacct
-	WHERE customers.area='$areaid' AND radacct.acctstoptime IS NOT NULL AND customers.username=radacct.username AND customers.status !=0 ");
+    $result = $con->query("SELECT id,fullname,username,mobile,expiredate FROM customers WHERE status='1' AND username NOT IN(SELECT username FROM radacct WHERE acctstoptime IS NULL AND acctterminatecause='')");
 
     while ($rows = mysqli_fetch_assoc($result)) {
 
-        $custUsername = $rows["customername"];
+		$custfullname = $rows["fullname"];
+        $custUsername = $rows["username"];
         //$pwd = $rows["password"];
 
                 ?>
@@ -274,6 +272,7 @@ include("include/users_right.php");
 							$chkc=0;
                             $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$custUsername'");
                             $chkc = $onlineusr->num_rows;
+							//$rowlst = $onlineusr->fetch_assoc();
                             if ($chkc == 1) {
                                 echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
                             } else {
@@ -284,8 +283,8 @@ include("include/users_right.php");
                         </a>
                     </td>
                     <td><?php echo $custUsername; ?></td>
-                    <td><?php //echo $pwdstatus; ?></td>
-                    <td><?php //echo $pwd; ?></td>
+                    <td><?php echo $rows["mobile"]; ?></td>
+                    <td><?php echo $rows["expiredate"]; ?></td>
                     <td><?php //echo $pwdtry; ?></td>
                     <td>
                       
