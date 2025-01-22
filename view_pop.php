@@ -225,7 +225,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                         <div class="mini-stat-info">
                                             <span class="counter text-primary">
                                                 <?php
-                                                 echo get_online_users($area_id=null,$pop_id=$popid,$con);
+                                                   echo count(get_filtered_customers('online',$area_id=null,$pop_id=$popid,$con));
 
                                                 ?>
                                             </span>
@@ -249,12 +249,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                         <div class="mini-stat-info">
                                             <span class="counter text-muted">
                                                 <?php
-												if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1' AND pop=$popid")) {
-                                                         $totalcstmr = $totalCustomer->num_rows;
-                                                    }
-                                                    
-                                                    
-                                                	echo $totalcstmr-$onlinecst;
+												  echo count(get_filtered_customers('offline',$area_id=null,$pop_id=$popid,$con));
 												
 												
                                                 ?>
@@ -278,7 +273,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             <div class="mini-stat-info">
                                                 <span class="counter text-success">
                                                     <?php 
-                                                        echo $totalcstmr;
+                                                        echo count(get_filtered_customers('active',$area_id=null,$pop_id=$popid,$con));
                                                 
                                                     ?>
                                                 </span>
@@ -299,9 +294,8 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                     class="fas fa-user-clock"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-secondary">
-                                                    <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate AND pop=$popid")) {
-                                                        echo $AllExcstmr->num_rows ?? '0';
-                                                    }
+                                                    <?php 
+                                                      echo count(get_filtered_customers('expired',$area_id=null,$pop_id=$popid,$con));
                                                     
                                                     ?>
                                                 </span>
@@ -321,9 +315,8 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                     class="fas fa-user-lock"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
-                                                    <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND pop=$popid")) {
-                                                        echo $dsblcstmr->num_rows;
-                                                    }
+                                                    <?php 
+                                                       echo count(get_filtered_customers('disabled',$area_id=null,$pop_id=$popid,$con));
                                                     ?>
                                                 </span>
                                                 Disabled
