@@ -177,8 +177,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
 
                     <div class="row">
 
-                        <div class="col-md-6 col-xl-3">
+                    <div class="col">
                             <div class="card">
+                            <a href="customers_new.php?online=1&area_id=<?php echo $area_id; ?>">
                                 <div class="card-body">
                                     <div class="mini-stat">
                                         <span class="mini-stat-icon bg-primary me-0 float-end"><i
@@ -186,17 +187,42 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                         <div class="mini-stat-info">
                                             <span class="counter text-primary">
                                                 <?php 
-                                                    echo get_online_users($area_id,$pop_id=null,$con);
+                                                     echo count(get_filtered_customers('online',$area_id,$pop_id=null,$con));
                                                 ?>
                                             </span>
                                             Online
                                         </div>
                                     </div>
                                 </div>
+                                </a>
+                            </div>
+                        </div> <!-- End col -->
+                        <div class="col">
+                            <div class="card">
+							<a href="customers_new.php?offline=1&area_id=<?php echo $area_id; ?>">
+                                <div class="card-body">
+                                    <div class="mini-stat">
+                                        <span class="mini-stat-icon bg-secondary me-0 float-end"><i
+                                                class="fas fa-user-times"></i></span>
+                                        <div class="mini-stat-info">
+                                            <span class="counter text-muted">
+                                                <?php
+												
+                                                    
+                                                echo count(get_filtered_customers('offline',$area_id,$pop_id=null,$con));
+												
+												
+                                                ?>
+                                            </span>
+                                            <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline
+                                        </div>
+                                    </div>
+                                </div>
+								</a>
                             </div>
                         </div> <!-- End col -->
 
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col">
                             <a href="customers_new.php?area_id=<?php echo $area_id; ?>&active=1">
                                 <div class="card">
                                     <div class="card-body">
@@ -205,9 +231,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                                     class="fas fa-users"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-success">
-                                                    <?php if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1' AND area=$area_id")) {
-                                                        echo $totalcstmr = $totalCustomer->num_rows;
-                                                    }
+                                                    <?php 
+                                                    
+                                                    echo count(get_filtered_customers('active',$area_id,$pop_id=null,$con));
                                                     
                                                     ?>
                                                 </span>
@@ -223,18 +249,18 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
 
 
 
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col">
                             <div class="card">
-                                <a href="customer_expire.php?area_id=<?php echo $area_id; ?>">
+                                <a href="customers_new.php?expired=1&area_id=<?php echo $area_id; ?>">
                                     <div class="card-body">
                                         <div class="mini-stat">
                                             <span class="mini-stat-icon bg-danger me-0 float-end"><i
                                                     class="fas fa-exclamation-triangle"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
-                                                    <?php if ($AllExcstmr = $con->query("SELECT * FROM `customers` WHERE  NOW() > expiredate AND area=$area_id")) {
-                                                        echo $AllExcstmr->num_rows;
-                                                    }
+                                                    <?php 
+                                                    
+                                                    echo count(get_filtered_customers('expired',$area_id,$pop_id=null,$con));
                                                     
                                                     ?>
                                                 </span>
@@ -245,18 +271,16 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                 </a>
                             </div>
                         </div> <!-- End col -->
-                        <div class="col-md-6 col-xl-3">
+                        <div class="col">
                             <div class="card">
-                                <a href="customer_disabled.php?area_id=<?php echo $area_id; ?>">
+                                <a href="customers_new.php?disabled=1&area_id=<?php echo $area_id; ?>">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-secondary me-0 float-end"><i
-                                                    class="fas fa-user-slash"></i></span>
+                                            <span class="mini-stat-icon bg-brown me-0 float-end"><i class="fas fa-user-lock"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-secondary">
-                                                    <?php if ($dsblcstmr = $con->query("SELECT * FROM customers WHERE status='0' AND area=$area_id")) {
-                                                        echo $dsblcstmr->num_rows;
-                                                    }
+                                                    <?php 
+                                                      echo count(get_filtered_customers('disabled',$area_id,$pop_id=null,$con));
                                                     ?>
                                                 </span>
                                                 Disabled
