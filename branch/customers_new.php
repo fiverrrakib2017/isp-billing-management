@@ -780,13 +780,53 @@ if (file_exists($users_right_path)) {
                     url: url,
                     type: 'GET',
                     data: function(d) {
-                        d.status = $('.status_filter').val();
-                        d.pop_id = $('.pop_filter').val();
-                        /********************Finter For AREA ID Customer*******************************/
-                        <?php if (isset($_GET['area_id']) && !empty($_GET['area_id'])): ?>
-                            d.area_id = <?php echo $_GET['area_id']; ?>;
+                        /********************Filter For Active Customer*******************************/
+                        <?php if (isset($_GET['active']) && !empty($_GET['active'])): ?>
+                        d.status = <?php echo $_GET['active']; ?>;
+                        $("#customers_table_length").hide();
                         <?php else: ?>
-                            d.area_id = $('.area_filter').val();
+                        d.status = $('.status_filter').val();
+                        <?php endif; ?>
+                        
+                        /********************Filter For POP ID Customer*******************************/
+                        <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
+                        d.pop_id = <?php echo $_GET['pop_id']; ?>;
+                        <?php else: ?>
+                        d.pop_id = $('.pop_filter').val();
+                        <?php endif; ?>
+                        /********************Filter For AREA ID Customer*******************************/
+                        <?php if (isset($_GET['area_id']) && !empty($_GET['area_id'])): ?>
+                        d.area_id = <?php echo $_GET['area_id']; ?>;
+                        <?php else: ?>
+                        d.area_id = $('.area_filter').val();
+                        <?php endif; ?>
+                        /********************Filter For Online Customer*******************************/
+                        <?php if (isset($_GET['online']) && !empty($_GET['online'])): ?>
+                        d.status = "online";
+                        $("#customers_table_length").hide();
+                        <?php else: ?>
+                        //d.status = $('.status_filter').val();
+                        <?php endif; ?>
+                        /********************Filter For Online Customer*******************************/
+                        <?php if (isset($_GET['offline']) && !empty($_GET['offline'])): ?>
+                        d.status = "offline";
+                        $("#customers_table_length").hide();
+                        <?php else: ?>
+                        //d.status = $('.status_filter').val();
+                        <?php endif; ?>
+                        /********************Filter For expired Customer*******************************/
+                        <?php if (isset($_GET['expired']) && !empty($_GET['expired'])): ?>
+                        d.status = "expired";
+                        $("#customers_table_length").hide();
+                        <?php else: ?>
+                        //d.status = $('.status_filter').val();
+                        <?php endif; ?>
+                        /********************Filter For Disabled Customer*******************************/
+                        <?php if (isset($_GET['disabled']) && !empty($_GET['disabled'])): ?>
+                        d.status = "disabled";
+                        $("#customers_table_length").hide();
+                        <?php else: ?>
+                        //d.status = $('.status_filter').val();
                         <?php endif; ?>
                     },
                 },

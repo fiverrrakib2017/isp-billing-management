@@ -9,6 +9,7 @@ $rootPath = $_SERVER['DOCUMENT_ROOT'];
 
 $db_connect_path = $rootPath . '/include/db_connect.php';  
 $users_right_path = $rootPath . '/include/users_right.php';
+$custom_func_path = $rootPath . '/include/functions.php';
 
 if (file_exists($db_connect_path)) {
     require($db_connect_path);
@@ -16,6 +17,9 @@ if (file_exists($db_connect_path)) {
 
 if (file_exists($users_right_path)) {
     require($users_right_path);
+}
+if (file_exists($custom_func_path)) {
+    require($custom_func_path);
 }
 
 if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
