@@ -130,16 +130,30 @@ if (!isset($_SESSION)) {
 			}
 		),
 		array(
-			'db'=>'parcent',
+			'db'=>'enddate',
 			'dt'=>11,
+			'formatter'=>function($d, $row){
+				
+				 $enddate=$row["enddate"];
+				 $now_time=date('Y-m-d H:i:s');
+				if (!empty($enddate)) {
+					return acctual_work($enddate, $now_time); 
+				}else{
+					return  'Not Completed..';
+				}
+			}
 		),
 		array(
-			'db'=>'notes',
+			'db'=>'parcent',
 			'dt'=>12,
 		),
 		array(
-			'db'=>'id',
+			'db'=>'notes',
 			'dt'=>13,
+		),
+		array(
+			'db'=>'id',
+			'dt'=>14,
 			'formatter'=>function($d, $row){
 				return '
 				<button type="button" name="settings_button" data-id='.$row['id'].' class="btn-sm btn btn-danger"> <i class="fas fa-cog"></i></button>

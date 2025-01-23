@@ -434,6 +434,7 @@ if (isset($_GET['inactive'])) {
                                                             <th>Assigned Team</th>
                                                             <th>Ticket For</th>
                                                             <th>Acctual Work</th>
+                                                            <th>Completed</th>
                                                             <th>Percentage</th>
                                                             <th>Note</th>
                                                             <th></th>

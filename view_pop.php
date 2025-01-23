@@ -612,6 +612,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                             <th>Assigned Team</th>
                                                             <th>Ticket For</th>
                                                             <th>Acctual Work</th>
+                                                            <th>Completed</th>
                                                             <th>Percentage</th>
                                                             <th>Note</th>
                                                             <th></th>
