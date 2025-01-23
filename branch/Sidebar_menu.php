@@ -50,24 +50,6 @@
                                     <li><a href="customer_expire.php">Expired Customer List</a></li>
                                     <li><a href="customer_free_con.php">Free Customer List</a></li> -->
                                   
-
-                                    <li>
-                                        <a href="con_request.php">Connection Request 
-                                            <?php 
-                                                if ($allCstmr=$con->query("SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND status=3")) {
-                                                    //echo $allCstmr->num_rows;
-                                                    if ($allCstmr->num_rows > 0) {
-                                                        echo '<span class="badge rounded-pill bg-danger float-end">'.$allCstmr->num_rows.'<span>';
-                                                    }else{
-
-                                                    }
-                                                }
-
-
-
-                                                 ?>
-                                        </a>
-                                    </li>
                                     <!-- <li><a href="customer_dues.php">Customer Unpaid</a></li> -->
                                     <li><a href="customer_recharge.php">Customer Recharge</a></li>
                                     <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
