@@ -549,7 +549,7 @@ include 'include/users_right.php';
                         <?php else: ?>
                         d.status = $('.status_filter').val();
                         <?php endif; ?>
-                        
+
                         /********************Filter For POP ID Customer*******************************/
                         <?php if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])): ?>
                         d.pop_id = <?php echo $_GET['pop_id']; ?>;
@@ -591,10 +591,25 @@ include 'include/users_right.php';
                         //d.status = $('.status_filter').val();
                         <?php endif; ?>
 
+                        /********************Filter Monthly Expire Customer*******************************/
+                        <?php if (isset($_GET['expire_customer_month']) && !empty($_GET['expire_customer_month'])): ?>
+                        let expire_customer_month = "<?php echo $_GET['expire_customer_month']; ?>";
+                        d.expire_customer_month = expire_customer_month;
+                       // $("#customers_table_length").hide();
+                        <?php endif; ?>
+
+                        /********************Filter Monthly New Customer*******************************/
+                        <?php if (isset($_GET['new_customer_month']) && !empty($_GET['new_customer_month'])): ?>
+                        let new_customer_month = "<?php echo $_GET['new_customer_month']; ?>";
+                        d.new_customer_month = new_customer_month;
+                        //$("#customers_table_length").hide();
+                        <?php endif; ?>
 
                     },
                     beforeSend: function() {
-                        $(".dataTables_empty").html('<img src="assets/images/loading.gif" style="background-color: transparent"/>');
+                        $(".dataTables_empty").html(
+                            '<img src="assets/images/loading.gif" style="background-color: transparent"/>'
+                            );
                     },
 
                 },
@@ -1044,39 +1059,42 @@ include 'include/users_right.php';
                 }
             });
         });
-        $("#changePopModal select[name='pop_id']").change(function(){
-            var pop_id=$(this).val();
+        $("#changePopModal select[name='pop_id']").change(function() {
+            var pop_id = $(this).val();
             get_area(pop_id);
         });
+
         function get_area(pop_id) {
-                $.ajax({
-                    url: 'include/area_server.php?get_area_data=1',
-                    type: 'GET',
-                    data:{pop_id:pop_id},
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success == true) {
-                            var areaOptions = '<option value="">--Select Area--</option>';
+            $.ajax({
+                url: 'include/area_server.php?get_area_data=1',
+                type: 'GET',
+                data: {
+                    pop_id: pop_id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success == true) {
+                        var areaOptions = '<option value="">--Select Area--</option>';
 
-                            $.each(response.data, function(key, data) {
-                                areaOptions += '<option value="' + data.id + '">' + data.name +
-                                    '</option>';
-                            });
-                            $('select[name="area_id"]').html(areaOptions);
-                            $('#changePopModal').on('shown.bs.modal', function() {
+                        $.each(response.data, function(key, data) {
+                            areaOptions += '<option value="' + data.id + '">' + data.name +
+                                '</option>';
+                        });
+                        $('select[name="area_id"]').html(areaOptions);
+                        $('#changePopModal').on('shown.bs.modal', function() {
                             if (!$('select[name="area_id"]').hasClass(
-                                        "select2-hidden-accessible")) {
-                                    $('select[name="area_id"]').select2({
-                                        dropdownParent: $('#changePopModal')
-                                    });
-                                }
-                            });
-
-                        }
+                                    "select2-hidden-accessible")) {
+                                $('select[name="area_id"]').select2({
+                                    dropdownParent: $('#changePopModal')
+                                });
+                            }
+                        });
 
                     }
-                });
-            }
+
+                }
+            });
+        }
 
         $(document).on('click', 'button[name="pop_change_submit_btn"]', function(e) {
             event.preventDefault();
@@ -1091,7 +1109,7 @@ include 'include/users_right.php';
                 selectedCustomers.push($(this).val());
             });
             var data = $('#change_pop_form').serialize() + '&selectedCustomers=' + JSON.stringify(
-            selectedCustomers);
+                selectedCustomers);
             $.ajax({
                 url: 'include/customer_server_new.php?change_pop_request=true',
                 method: 'POST',
@@ -1164,7 +1182,7 @@ include 'include/users_right.php';
             });
 
             var data = $('#customer_billing_form').serialize() + '&customers=' + JSON.stringify(customers);
-           
+
             $.ajax({
                 url: 'include/customer_server_new.php?customer_billing_request=true',
                 method: 'POST',

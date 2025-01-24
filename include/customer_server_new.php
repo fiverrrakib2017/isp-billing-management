@@ -105,6 +105,19 @@
             // $condition .= " AND pop = '" . $_GET['pop_id'] . "'";
             $condition .= (!empty($condition) ? " AND " : ""). "pop = '" . $_GET['pop_id'] . "'";
         }
+        /*Expire Customer By Month*/
+        if (isset($_GET['expire_customer_month']) && !empty($_GET['expire_customer_month'])) {
+            $expire_month = $_GET['expire_customer_month'];
+            $condition .= (!empty($condition) ? " AND " : "") . "expiredate LIKE '%$expire_month%' ";
+        }
+    
+        /*New Customer By Month*/ 
+        if (isset($_GET['new_customer_month']) && !empty($_GET['new_customer_month'])) {
+            $new_month = $_GET['new_customer_month'];
+            $condition .= (!empty($condition) ? " AND " : "") . "createdate LIKE '%$new_month%' ";
+        }
+
+
         /* If Status is provided, */
         if (isset($_GET['status']) && !empty($_GET['status'])) {
             $status = $_GET['status'];

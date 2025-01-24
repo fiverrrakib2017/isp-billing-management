@@ -1107,9 +1107,9 @@ echo $popCounts['offline'];
                                             </thead>
                                             <tbody>
                                                 <?php
-        for($i=1; $i<=12; $i++)
-        {
-            ?>
+                                                for($i=1; $i<=12; $i++)
+                                                {
+                                                    ?>
                                                 <tr>
                                                     <td><?php echo $i; ?></td>
                                                     <td>
@@ -1124,7 +1124,7 @@ echo $popCounts['offline'];
                                                         $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
                                                         $result = mysqli_query($con, $sql);
                                                         $countconn = mysqli_num_rows($result);
-                                                        echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '">' . $countconn . '</a>';
+                                                        echo '<a href="customers_new.php?new_customer_month=' . $currentyrMnth . '">' . $countconn . '</a>';
                                                         ?>
                                                     </td>
                                                     <td>
@@ -1132,13 +1132,11 @@ echo $popCounts['offline'];
                                                         $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%'";
                                                         $result = mysqli_query($con, $sql);
                                                         $countexpconn = mysqli_num_rows($result);
-                                                        echo '<a href="customer_expire.php?list=' . $currentyrMnth . '">' . $countexpconn . '</a>';
+                                                        echo '<a href="customers_new.php?expire_customer_month=' . $currentyrMnth . '">' . $countexpconn . '</a>';
                                                         ?>
                                                     </td>
                                                 </tr>
-                                                <?php 
-        }	
-        ?>
+                                                <?php  } ?>
                                             </tbody>
                                         </table>
 
