@@ -294,7 +294,7 @@ function timeAgo($startdate)
                                                             <th>Name</th>
                                                             <th>Package</th>
                                                             <th>Amount</th>
-                                                            <th>Expired Date</th>
+                                                            <th>Create Date</th>
                                                             <th>Expired Date</th>
                                                             <th>User Name</th>
                                                             <th>Mobile no.</th>
@@ -1068,7 +1068,7 @@ function timeAgo($startdate)
                                                         $sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND createdate LIKE '%$currentyrMnth%'";
                                                         $result = mysqli_query($con, $sql);
                                                         $countconn = mysqli_num_rows($result);
-                                                        echo '<a href="customer_newcon.php?list=' . $currentyrMnth . '">' . $countconn . '</a>';
+                                                        echo '<a href="customers_new.php?new_customer_month=' . $currentyrMnth . '">' . $countconn . '</a>';
                                                         ?>
                                                     </td>
                                                     <td>
@@ -1076,7 +1076,7 @@ function timeAgo($startdate)
                                                         $sql = "SELECT * FROM customers WHERE pop=$auth_usr_POP_id AND expiredate LIKE '%$currentyrMnth%'";
                                                         $result = mysqli_query($con, $sql);
                                                         $countexpconn = mysqli_num_rows($result);
-                                                        echo '<a href="customer_expire.php?list=' . $currentyrMnth . '">' . $countexpconn . '</a>';
+                                                        echo '<a href="customers_new.php?expire_customer_month=' . $currentyrMnth . '">' . $countexpconn . '</a>';
                                                         ?>
                                                     </td>
                                                 </tr>

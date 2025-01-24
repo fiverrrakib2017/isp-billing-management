@@ -393,7 +393,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                                             <th>Name</th>
                                                             <th>Package</th>
                                                             <th>Amount</th>
-                                                            <th>Expired Date</th>
+                                                            <th>Create Date</th>
                                                             <th>Expired Date</th>
                                                             <th>User Name</th>
                                                             <th>Mobile no.</th>

@@ -37,7 +37,7 @@
                 'db' => 'createdate',
                 'dt' => 5,
                 'formatter' => function($d, $row) {
-                    return date('d-m-Y', strtotime($d));
+                    return date('Y-m-d', strtotime($d));
                 }
             ),
             array(

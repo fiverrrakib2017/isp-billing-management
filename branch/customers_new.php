@@ -95,7 +95,7 @@ if (file_exists($users_right_path)) {
                                                     <th>Name</th>
                                                     <th>Package</th>
                                                     <th>Amount</th>
-                                                    <th>Expired Date</th>
+                                                    <th>Create Date</th>
                                                     <th>Expired Date</th>
                                                     <th>User Name</th>
                                                     <th>Mobile no.</th>
@@ -827,6 +827,19 @@ if (file_exists($users_right_path)) {
                         $("#customers_table_length").hide();
                         <?php else: ?>
                         //d.status = $('.status_filter').val();
+                        <?php endif; ?>
+                        /********************Filter Monthly Expire Customer*******************************/
+                        <?php if (isset($_GET['expire_customer_month']) && !empty($_GET['expire_customer_month'])): ?>
+                        let expire_customer_month = "<?php echo $_GET['expire_customer_month']; ?>";
+                        d.expire_customer_month = expire_customer_month;
+                       // $("#customers_table_length").hide();
+                        <?php endif; ?>
+
+                        /********************Filter Monthly New Customer*******************************/
+                        <?php if (isset($_GET['new_customer_month']) && !empty($_GET['new_customer_month'])): ?>
+                        let new_customer_month = "<?php echo $_GET['new_customer_month']; ?>";
+                        d.new_customer_month = new_customer_month;
+                        //$("#customers_table_length").hide();
                         <?php endif; ?>
                     },
                 },
