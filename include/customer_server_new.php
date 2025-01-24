@@ -34,8 +34,15 @@
             array('db' => 'package_name', 'dt' => 3),
             array('db' => 'price', 'dt' => 4),
             array(
-                'db' => 'expiredate',
+                'db' => 'createdate',
                 'dt' => 5,
+                'formatter' => function($d, $row) {
+                    return date('d-m-Y', strtotime($d));
+                }
+            ),
+            array(
+                'db' => 'expiredate', 
+                'dt' => 6,
                 'formatter' => function($d, $row) {
                     $todayDate = date("Y-m-d");
                     if ($d <= $todayDate) {
@@ -45,7 +52,6 @@
                     }
                 }
             ),
-            array('db' => 'expiredate', 'dt' => 6),
             array('db' => 'username', 'dt' => 7),
             array('db' => 'mobile', 'dt' => 8),
             array(
