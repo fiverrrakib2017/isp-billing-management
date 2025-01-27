@@ -1010,7 +1010,7 @@ echo $popCounts['offline'];
 
                     <div class="row">
 
-                        <div class="col-md-12 grid-margin stretch-card">
+                        <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
                                     <h4 class="card-title mb-4">Yearly Customer Statics</h4>
@@ -1075,7 +1075,7 @@ echo $popCounts['offline'];
 
 
 
-                        <div class="col-md-12 stretch-card">
+                        <div class="col-md-6 stretch-card">
                             <div class="card">
                                 <div class="card-body">
 
@@ -1107,9 +1107,9 @@ echo $popCounts['offline'];
                                             </thead>
                                             <tbody>
                                                 <?php
-                                                for($i=1; $i<=12; $i++)
-                                                {
-                                                    ?>
+        for($i=1; $i<=12; $i++)
+        {
+            ?>
                                                 <tr>
                                                     <td><?php echo $i; ?></td>
                                                     <td>
@@ -1136,7 +1136,9 @@ echo $popCounts['offline'];
                                                         ?>
                                                     </td>
                                                 </tr>
-                                                <?php  } ?>
+                                                <?php 
+        }	
+        ?>
                                             </tbody>
                                         </table>
 
