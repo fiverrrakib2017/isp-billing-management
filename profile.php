@@ -145,9 +145,11 @@ if (isset($_GET['clid'])) {
                            <div class="col-md-6">
                               <div class="d-flex py-2" style="float:right;">
                                  <abbr title="Download QR ">
-                                    <button type="button"class="btn-sm btn btn-success" onclick="qr_function(<?php echo $clid; ?>)">
+                                 <button type="button" class="btn-sm btn btn-success" 
+                                    onclick="qr_function(<?php echo $clid; ?>, '<?php echo $fullname; ?>', '<?php echo $mobile; ?>')">
                                     <i class="mdi mdi-qrcode"></i>
-                                    </button>
+                                </button>
+
                                  </abbr>
                                  &nbsp;
                                  <abbr title="Password Change">
@@ -1107,84 +1109,109 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
          $('#recharge_data_table').dataTable();
          $('#user_activity_data_table').dataTable();
          showModal();
-         function qr_function(customer_id){
+        function qr_function(customer_id, customer_name, phone_number) {
             const qrData = `http://103.146.16.154/self.php?clid=${customer_id}`;
-         
-            /*Clear previous QR code*/ 
+
             $('#qrCodeContainer').html('');
-            /* Generate QR Code*/
+
             QRCode.toDataURL(qrData, { width: 200 }, function (err, url) {
                 if (err) {
                     console.error(err);
                     return;
                 }
-                $('#qrCodeContainer').html(`<img src="${url}" id="qrCodeImage" alt="QR Code">`);
+
+                $('#qrCodeContainer').html(`<img src="${url}" alt="QR Code" class="img-fluid">`);
+
                 $('#downloadButton').off('click').on('click', function () {
                     const downloadLink = document.createElement('a');
                     downloadLink.href = url;
                     downloadLink.download = 'QRCode.png';
                     downloadLink.click();
                 });
-                /*Print QR Code Button*/
-               //  $("#print_qr_code_btn").off('click').on('click',function(){
-               //    const printWindow = window.open('', '_blank');
-               //      printWindow.document.write(`<div style="text-align: center;"><h3>Welcome To SR Communication</h3><img src="${url}" alt="QR Code"></div>`);
-               //      printWindow.document.write('</body></html>');
-               //      printWindow.document.close();
-               //      printWindow.print();
-               //  });
-               $("#print_qr_code_btn").off('click').on('click', function () {
-    const printWindow = window.open('', '_blank');
 
-    // Thermal Printer CSS and Content
-    const printContent = `
-        <html>
-        <head>
-            <title>Print QR Code</title>
-            <style>
-                @media print {
-                    body {
-                        width: 58mm; /* Adjust for your thermal printer */
-                        font-size: 12px;
-                        margin: 0;
-                        padding: 0;
-                        text-align: center;
-                    }
-                    h3 {
-                        margin: 0;
-                    }
-                    img {
-                        display: block;
-                        margin: 10px auto;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            <div style="text-align: center;">
-                <h3>Welcome To SR Communication</h3>
-                <img src="${url}" alt="QR Code">
-            </div>
-        </body>
-        </html>
-    `;
+                $("#print_qr_code_btn").off('click').on('click', function () {
+                    const printContent = `
+                        <html>
+                        <head>
+                            <title>Print QR Code</title>
+                            <style>
+                                @media print {
+                                    body {
+                                        width: 58mm; /* Perfect for small thermal printers */
+                                        font-size: 12px;
+                                        margin: 0;
+                                        padding: 0;
+                                        text-align: center;
+                                        font-family: Arial, sans-serif;
+                                    }
+                                    .content-wrapper {
+                                        display: flex;
+                                        flex-direction: row;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        padding: 5px;
+                                    }
+                                    .qr-section {
+                                        width: 40%;
+                                        text-align: center;
+                                    }
+                                    .info-section {
+                                        width: 55%;
+                                        text-align: left;
+                                        padding-left: 10px;
+                                    }
+                                    .info-section p {
+                                        margin: 2px 0;
+                                        font-size: 12px;
+                                    }
+                                    img {
+                                        display: block;
+                                        margin: 0 auto;
+                                        max-width: 100%;
+                                    }
+                                    .footer {
+                                        text-align: center;
+                                        margin-top: 10px;
+                                        font-size: 10px;
+                                        border-top: 1px dashed #000;
+                                        padding-top: 5px;
+                                    }
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="content-wrapper">
+                                <div class="qr-section">
+                                    <img src="${url}" alt="QR Code">
+                                </div>
 
-    printWindow.document.write(printContent);
-    printWindow.document.close();
+                                <div class="info-section">
+                                    <p><strong>Name:</strong><br> ${customer_name}</p>
+                                    <p><strong>Phone:</strong> ${phone_number}</p>
+                                </div>
+                            </div>
 
-    // Trigger Print
-    printWindow.focus();
-    printWindow.print();
+                            <div class="footer">
+                                Thank you !
+                            </div>
+                        </body>
+                        </html>`;
 
-    // Close the print window after printing
-    printWindow.onafterprint = function () {
-        printWindow.close();
-    };
-});
+                    const printWindow = window.open('', '__blank', 'width=600,height=800');
+                    printWindow.document.open();
+                    printWindow.document.write(printContent);
+                    printWindow.document.close();
+
+                    printWindow.onload = function () {
+                        printWindow.print();
+                        printWindow.close();
+                    };
+                });
 
                 $('#qrCodeModal').modal('show');
             });
         }
+
 
          function showModal() {
              $("#rechargeBtn").click(function() {
