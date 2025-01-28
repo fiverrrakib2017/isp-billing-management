@@ -306,4 +306,20 @@ function isUniqueColumn($con, $table, $column, $value, $exclude=NULL)
     exit; 
 }
 
+function find_customer($id){
+    include 'db_connect.php';
+    header('Content-Type: application/json');
+    if(isset($id) && !empty($id)){
+        $customer=$con->query("SELECT * FROM `customers` WHERE id=$id");
+        if($customer->num_rows>0){
+            $row=$customer->fetch_array();
+            echo json_encode(['success'=>true,'data'=>$row]);
+        }
+       }else{
+            echo json_encode(['success'=>false,'message'=>'Customer not found']);
+       }
+}
+
+
+
 ?>
