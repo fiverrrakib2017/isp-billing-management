@@ -52,9 +52,30 @@ include 'include/users_right.php';
                                     <div class="mr-md-3 mr-xl-5">
                                         <div class="d-flex">
                                             <i class="mdi mdi-home text-muted hover-cursor"></i>
-                                            <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
+                                            <p class="text-primary mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
                                             </p>
                                             <p class="text-primary mb-0 hover-cursor">Customers</p>
+                                            <?php if($_GET['new_customer_month']):?>
+                                                <p class="text-primary mb-0 hover-cursor">/&nbsp;New Customers</p>
+                                            <?php endif; ?>
+                                            <?php if($_GET['expire_customer_month']):?>
+                                                <p class="text-primary mb-0 hover-cursor">/&nbsp; Monthly Expired Customers</p>
+                                            <?php endif; ?>
+                                            <?php if($_GET['online']):?>
+                                                <p class="text-primary mb-0 hover-cursor">/&nbsp;Online Customers</p>
+                                            <?php endif; ?>
+                                            <?php if($_GET['offline']):?>
+                                                <p class="text-primary mb-0 hover-cursor">/&nbsp;Offline Customers</p>
+                                            <?php endif; ?>
+                                            <?php if($_GET['active']):?>
+                                                <p class="text-primary mb-0 hover-cursor">/&nbsp;Active Customers</p>
+                                            <?php endif; ?>
+                                            <?php if($_GET['expired']):?>
+                                                <p class="text-primary mb-0 hover-cursor">/&nbsp;Expired Customers</p>
+                                            <?php endif; ?>
+                                            <?php if($_GET['disabled']):?>
+                                                <p class="text-primary mb-0 hover-cursor">/&nbsp;Disabled Customers</p>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
                                     <br>
