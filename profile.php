@@ -1158,7 +1158,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                     .info-section {
                                         width: 55%;
                                         text-align: left;
-                                        padding-left: 10px;
+                                        padding-left: 5px;
                                     }
                                     .info-section p {
                                         margin: 2px 0;
@@ -1171,10 +1171,11 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                     }
                                     .footer {
                                         text-align: center;
-                                        margin-top: 10px;
+                                        margin-top: 0px;
                                         font-size: 10px;
                                         border-top: 1px dashed #000;
-                                        padding-top: 5px;
+                                        padding-top: 2px;
+										
                                     }
                                 }
                             </style>
@@ -1186,18 +1187,18 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                 </div>
 
                                 <div class="info-section">
-                                    <p><strong>Name:</strong><br> ${customer_name}</p>
-                                    <p><strong>Phone:</strong> ${phone_number}</p>
+                                    <p><strong>ID: #</strong> ${customer_id}</p>
+                                    <p><strong>Name:</strong> ${customer_name}</p>
                                 </div>
                             </div>
 
                             <div class="footer">
-                                Thank you !
+                                <strong>Support: 01821 600 600</strong>
                             </div>
                         </body>
                         </html>`;
 
-                    const printWindow = window.open('', '__blank', 'width=600,height=800');
+                    const printWindow = window.open('', '__blank', 'width=800,height=800');
                     printWindow.document.open();
                     printWindow.document.write(printContent);
                     printWindow.document.close();
