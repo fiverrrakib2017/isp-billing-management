@@ -310,7 +310,7 @@ if(isset($_GET["inactive"]))
                                                                     $paidAmount = $rowss["amount"];
                                                                 }
                                                             }
-                                                            echo $totalAmount - $paidAmount;
+                                                            echo round($totalAmount - $paidAmount);
 
                                                             ?>
                                                         </td>
@@ -327,7 +327,7 @@ if(isset($_GET["inactive"]))
                                                                     $totalCustomerAmount  = $CstmrAmount['recharge_amount'];
                                                                 }
                                                             }
-                                                            echo $totalCostAmount - $totalCustomerAmount;
+                                                            echo round( $totalCostAmount - $totalCustomerAmount);
 
                                                             ?>
 

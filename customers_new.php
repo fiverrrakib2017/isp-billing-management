@@ -74,7 +74,15 @@ include 'include/users_right.php';
                                                 <p class="text-primary mb-0 hover-cursor">/&nbsp;Expired Customers</p>
                                             <?php endif; ?>
                                             <?php if($_GET['disabled']):?>
-                                                <p class="text-primary mb-0 hover-cursor">/&nbsp;Disabled Customers</p>
+                                                <p class="text-primary mb-0 hover-cursor">/&nbsp;Disabled
+                                                    
+                                                
+                                                
+                                                
+                                             
+                                                
+                                                
+                                                Customers</p>
                                             <?php endif; ?>
                                         </div>
                                     </div>
