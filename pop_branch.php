@@ -124,15 +124,15 @@ if(isset($_GET["inactive"]))
                                 </div>
                                 <div class="d-flex justify-content-between align-items-end flex-wrap">
 
-                                    <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" style="margin-bottom: 12px;">&nbsp;&nbsp;New
+                                    <button class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" data-bs-toggle="modal" data-bs-target="#addModal" style="margin-bottom: 12px;">&nbsp;&nbsp;New
                                         POP/Branch</button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addModal">
+                    <div class="modal fade " tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addModal">
                         <div class="modal-dialog" role="document">
-                            <form id="pop_branch">
+                            <form action="include/popBranch.php?add_pop=true" method="POST" enctype="multipart/form-data">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Add POP/Branch</h5>
@@ -210,7 +210,7 @@ if(isset($_GET["inactive"]))
                                     </div>
                                     <div class="modal-footer">
                                         <button type="reset" class="btn btn-danger">Reset</button>
-                                        <button type="button" id="addButton" class="btn btn-primary">Add POP/Branch</button>
+                                        <button type="submit" class="btn btn-primary">Add POP/Branch</button>
                                     </div>
                                 </div>
                             </form>
@@ -406,83 +406,44 @@ if(isset($_GET["inactive"]))
     <?php include 'script.php';?>
     
     <script type="text/javascript">
-        add_pop_branch();
+        /**  Add POP/Branch**/
+        $('#addModal form').submit(function(e) {
+                e.preventDefault();
 
-        function add_pop_branch() {
-            $("#addButton").click(function() {
-                var pop = $('#pop').val();
-                var fullname = $('#fullname').val();
-                var username = $('#username').val();
-                var password = $('#password').val();
-                var opening_bal = $('#opening_bal').val();
-                var mobile_num1 = $('#mobile_num1').val();
-                var mobile_num2 = $('#mobile_num2').val();
-                var email_address = $('#email_address').val();
-                var note = $('#note').val();
-                var user_type = $('#user_type').val();
-                addPopData(pop, fullname, username, password, opening_bal, mobile_num1, mobile_num2, email_address, note, user_type);
-            });
-        }
-        const addPopData = (pop, fullname, username, password, opening_bal, mobile_num1, mobile_num2, email_address, note, user_type) => {
-            if (pop.length == 0) {
-                toastr.error("POP/Branch name is required");
-            } else if (fullname.length == 0) {
-                toastr.error("Fullname is required");
-            } else if (username.length == 0) {
-                toastr.error("Username is required");
-            } else if (password.length == 0) {
-                toastr.error("Password is required");
-            } else if (opening_bal.length == 0) {
-                toastr.error("Type your opening balance");
-            } else if (mobile_num1.length == 0) {
-                toastr.error("Mobile Number  is required");
-            } else if (email_address.length == 0) {
-                toastr.error("Email is required");
-            } else {
-
-                var addPopData = "0";
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = form.serialize();
                 $.ajax({
-                    type: "POST",
-                    data: {
-                        pop: pop,
-                        fullname: fullname,
-                        username: username,
-                        password: password,
-                        opening_bal: opening_bal,
-                        mobile_num1: mobile_num1,
-                        mobile_num2: mobile_num2,
-                        email_address: email_address,
-                        note: note,
-                        addPopData: addPopData,
-                        user_type: user_type
-                    },
-                    url: "include/popBranch.php",
-                    cache: false,
+                    type: 'POST',
+                    'url': url,
+                    data: formData,
+                    dataType: 'json',
                     success: function(response) {
-                        if (response == 1) {
-                            toastr.success("POP/Branch Create Success");
-                            $("#addModal").modal('hide');
+                        if (response.success) {
+                            $('#addModal').modal('hide');
+                            toastr.success(response.message);
                             setTimeout(() => {
                                 location.reload();
-                            }, 1000);
+                            }, 500);
+                        }else if(response.success==false){
+                            toastr.error(response.message);
                         } else {
-                            toastr.error('Please Try Again');
+                            toastr.error(response.message);
+                        }
+                    },
+
+
+                    error: function(xhr, status, error) {
+                        /** Handle  errors **/
+                        if (xhr.status === 422) {
+                            var errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                toastr.error(value[0]);
+                            });
                         }
                     }
                 });
-
-
-            }
-        }
-
-        $(document).ready(function(){
-
-            $(".form-check form-switch").change(function() {
-                //$(this).val()
-                alert("ok");
             });
-
-        });
 
             
                        
