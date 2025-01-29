@@ -21,9 +21,15 @@ if (isset($_GET['action'])) {
             $id = $_GET['clid'] ?? null;
             check_customer_status($con, $id);
             break;
+
         case 'execute_customer_bkash_payment':
             $id = $_GET['clid'] ?? null;
             execute_customer_bkash_payment($con, $id);
+            break;
+
+        case 'customer_monthly_uses':
+            $id = $_GET['clid'] ?? null;
+            customer_monthly_uses($con, $id);
             break;
 
        
@@ -71,6 +77,20 @@ function all_customer($con){
     } else {
         echo json_encode(['success' => true, 'status' => 'offline']);
         exit; 
+    }
+ }
+ function customer_monthly_uses($con,$customer_id){
+    if(!empty($customer_id) && isset($customer_id)){
+        $username = $con->query("SELECT `username` FROM customers WHERE id=$customer_id")->fetch_assoc()['username'];
+         $currentMonth = date("m");
+        if ($lastused = $con->query("SELECT SUM(acctinputoctets)/1000/1000/1000 AS GB_IN, SUM(acctoutputoctets)/1000/1000/1000 AS GB_OUT FROM radacct WHERE username='$username' AND  MONTH(acctstarttime)='$currentMonth'")) {
+            $r_usd_rows = $lastused->fetch_array();
+            $Download = $r_usd_rows["GB_OUT"];
+            $Download = number_format($Download, 3);
+            $Upload = $r_usd_rows["GB_IN"];
+            $Upload = number_format($Upload, 3);
+            echo json_encode(['success' => true, 'data' => ['download' => $Download, 'upload' => $Upload]]);
+        }
     }
  }
 
