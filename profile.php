@@ -1110,7 +1110,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
          $('#user_activity_data_table').dataTable();
          showModal();
         function qr_function(customer_id, customer_name, phone_number) {
-            const qrData = `http://103.146.16.154/self.php?clid=${customer_id}`;
+            const qrData = `https://sr-wifi.net?clid=${customer_id}`;
 
             $('#qrCodeContainer').html('');
 
