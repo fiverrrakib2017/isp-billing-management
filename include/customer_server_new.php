@@ -172,6 +172,11 @@
                 $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
             }
         }
+        if (!empty($_GET['search']['value'])) {
+            $search_value = $_GET['search']['value'];
+            $condition .= (!empty($condition) ? " AND " : "") . "(customers.username LIKE '$search_value%'  OR customers.mobile LIKE '$search_value%')";
+        }
+        
         /* Output JSON for DataTables to handle*/
         echo json_encode(
             SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
