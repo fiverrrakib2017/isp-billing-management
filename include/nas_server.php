@@ -50,26 +50,26 @@ if ($nas = $con -> query("SELECT * FROM nas")) {
 
 
 
-if(isset($_GET['add']))
-	{
+// if(isset($_GET['add']))
+// 	{
 	 
-		$nasname = $_GET['ip'];
-		$shortname = $_GET['name'];
-		$type = "otherss";
-    $ports = $_GET['ports'];
-    $secret = $_GET['secret'];
-    //$server = $_GET['server'];
-   // $community = $_GET['community'];
-    //$description = $_GET['description'];
-    $api_user = $_GET['api_user'];
-    $api_pass = $_GET['api_pass'];
+// 		$nasname = $_GET['ip'];
+// 		$shortname = $_GET['name'];
+// 		$type = "otherss";
+//     $ports = $_GET['ports'];
+//     $secret = $_GET['secret'];
+//     //$server = $_GET['server'];
+//    // $community = $_GET['community'];
+//     //$description = $_GET['description'];
+//     $api_user = $_GET['api_user'];
+//     $api_pass = $_GET['api_pass'];
 	
-		$con -> query("INSERT INTO nas(nasname,shortname,type,ports,secret,api_user,api_pass) VALUES('$nasname','$shortname','$type','$ports','$secret','$api_user','$api_pass')");
-		$con -> close();
+// 		$con -> query("INSERT INTO nas(nasname,shortname,type,ports,secret,api_user,api_pass) VALUES('$nasname','$shortname','$type','$ports','$secret','$api_user','$api_pass')");
+// 		$con -> close();
 	 
-	}
+// 	}
 
-/*Add POP/Branch Script*/
+/*Add Nas Router Script*/
 if (isset($_GET['add_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 	require 'functions.php';
     /* validate inputs*/
@@ -86,62 +86,21 @@ if (isset($_GET['add_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $community = trim($_POST['community'])?? '';
     $description = trim($_POST['description']);
 
-    /* Validate pop name */
-    if (empty($nas_name)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'NAS name is required!',
-        ]);
-        exit;
-    }
-    /* Validate short_name */
-    if (empty($short_name)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Short Name is required!',
-        ]);
-        exit;
-    }
-    /* Validate port */
-    if (empty($port)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Port is required!',
-        ]);
-        exit;
-    }
-    /* Validate secret */
-    if (empty($secret)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Secret is required!',
-        ]);
-        exit;
-    }
-    /* Validate api_user */
-    if (empty($api_user)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Api User is required!',
-        ]);
-        exit;
-    }
-    /* Validate Api Pass */
-    if (empty($api_pass)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Api Pass is required!',
-        ]);
-        exit;
-    }
-    /* Validate  location */
-    if (empty($location)) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Location is required!',
-        ]);
-        exit;
-    }
+    /* Validate pop nas_name */
+  __validate_input($nas_name,'NAS name');
+  /* Validate short_name */
+  __validate_input($short_name,'Short Name');
+  /* Validate port */
+  __validate_input($port,'Port');
+  /* Validate secret */
+  __validate_input($secret,'Secret');
+  /* Validate api_user */
+  __validate_input($api_user,'Api User');
+  /* Validate Api Pass */
+  __validate_input($api_pass,'Api Pass');
+  /* Validate  location */
+  __validate_input($location,'Location');
+
    $result= $con -> query("INSERT INTO nas(`nasname`, `shortname`, `type`, `ports`, `secret`, `api_user`, `api_password`, `api_ip`, `server`, `location`, `community`, `description`) VALUES('$nas_name', '$short_name', '$type', '$port', '$secret', '$api_user', '$api_pass', '$api_ip', '$server', '$location', '$community', '$description')");
 		$con -> close();
 
@@ -162,4 +121,95 @@ if (isset($_GET['add_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 
-  ?>
+if (isset($_GET['get_nas_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+  $_id = intval($_GET['id']);
+
+  /* Prepare the SQL statement*/
+  $stmt = $con->prepare("SELECT * FROM nas WHERE id = ?");
+  $stmt->bind_param("i", $_id);
+
+  /*Execute the statement*/ 
+  if ($stmt->execute()) {
+      $result = $stmt->get_result();
+
+      if ($result->num_rows > 0) {
+          $data = $result->fetch_assoc();
+          $response = array("success" => true, "data" => $data);
+      } else {
+          $response = array("success" => false, "message" => "No record found!");
+      }
+  } else {
+      $response = array("success" => false, "message" => "Error executing query: " . $stmt->error);
+  }
+
+  /*Close the statement*/
+  $stmt->close();
+  $con->close();
+
+  /* Return the response as JSON*/
+  echo json_encode($response);
+  exit;
+}
+
+
+/*Update NAS Router Script*/
+if (isset($_GET['update_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+	require 'functions.php';
+  $id = trim($_POST['id']);
+  $nas_name = trim($_POST['nas_name']);
+  $short_name = trim($_POST['short_name']);
+  $type = trim($_POST['type']);
+  $port = trim($_POST['port']);
+  $secret = trim($_POST['secret']);
+  $api_user = trim($_POST['api_user']);
+  $api_pass = trim($_POST['api_pass']);
+  $api_ip = trim($_POST['api_ip']);
+  $server = trim($_POST['server'])?? '';
+  $location = trim($_POST['location']);
+  $community = trim($_POST['community'])?? '';
+  $description = trim($_POST['description']);
+
+  /* Validate pop nas_name */
+  __validate_input($nas_name,'NAS name');
+  /* Validate short_name */
+  __validate_input($short_name,'Short Name');
+  /* Validate port */
+  __validate_input($port,'Port');
+  /* Validate secret */
+  __validate_input($secret,'Secret');
+  /* Validate api_user */
+  __validate_input($api_user,'Api User');
+  /* Validate Api Pass */
+  __validate_input($api_pass,'Api Pass');
+  /* Validate  location */
+  __validate_input($location,'Location');
+
+	/* Update query */
+  $result= $con ->query("UPDATE nas SET `nasname`='$nas_name', `shortname`='$short_name', `type`='$type', `ports`='$port', `secret`='$secret', `api_user`='$api_user', `api_password`='$api_pass', `api_ip`='$api_ip', `server`='$server', `location`='$location', `community`='$community', `description`='$description' WHERE `id`='$id'");
+  if($result){
+    echo json_encode([
+        'success' => true,
+        'message' => 'Updated successfully!',
+    ]);
+    exit;
+  }else{
+    echo json_encode([
+        'success' => false,
+        'message' => 'Failed to update!',
+    ]);
+    exit;
+  }
+  $con -> close();
+  exit; 
+
+}
+
+function __validate_input($value,$field){
+  if (empty($value)) {
+    echo json_encode([
+        'success' => false,
+        'message' => ''.$field.' is required!',
+    ]);
+    exit;
+  }
+}

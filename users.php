@@ -424,7 +424,7 @@ include 'include/pop_security.php';
                 });
             });
             /** Update The data from the database table **/
-    $('#editModal form').submit(function(e){
+            $('#editModal form').submit(function(e){
                 e.preventDefault();
 
                 var form = $(this);

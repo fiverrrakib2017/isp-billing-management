@@ -101,6 +101,7 @@ require 'routeros/routeros_api.class.php';
                             $result=mysqli_query($con,$sql);
 
                             while ($rows=mysqli_fetch_assoc($result)) {
+                                $id = $rows['id'];
                                 $nasname = $rows['nasname'];
                                 $api_usr = $rows['api_user'];
                                 $api_pswd = $rows['api_password'];
@@ -159,6 +160,7 @@ require 'routeros/routeros_api.class.php';
                                                     <td><?php echo $rows['description']; ?></td>
                                                     <td><?php echo $rows['api_ip']; ?></td>
                                                     <td>
+                                                    <button type="button" name="edit_button" class="btn-sm btn btn-info" data-id="<?php echo $id; ?>"><i class="fas fa-edit"></i></button>
                                                         <!-- <a href="include/nas_delete.php?clid=<?php echo $rows['id']; ?>" class="btn-sm btn btn-danger" onclick=" return confirm('Are You Sure');">Delete
                                     </a> -->
                                                     </td>
@@ -309,6 +311,134 @@ require 'routeros/routeros_api.class.php';
             </div>
         </div>
     </div>
+    <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content col-md-12">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        <span class="mdi mdi-account-check mdi-18px"></span> &nbsp;Add New NAS
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="include/nas_server.php?update_data=true" method="POST" enctype="multipart/form-data">
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>NAS Name</label>
+                                            <input type="text" name="id" class="d-none">
+                                            <input name="nas_name" type="text" class="form-control "
+                                                placeholder="Enter Nas Name" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Short Name</label>
+                                            <input name="short_name" type="text" class="form-control "
+                                                placeholder="Enter Your IP" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Type</label>
+                                            <input name="type" type="text"class="form-control "
+                                                placeholder="Enter Type" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Port</label>
+                                            <input name="port" type="text"class="form-control "
+                                                placeholder="Enter Port" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 ">
+                                        <div class="form-group mb-2">
+                                            <label>Secret</label>
+                                            <input name="secret" type="text"class="form-control "
+                                                placeholder="Enter API Secret" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <div class="form-group mb-2">
+                                            <label>API User</label>
+                                            <input name="api_user" type="text"class="form-control "
+                                                placeholder="Enter API User" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>API Password</label>
+                                            <input name="api_pass" type="password" class="form-control"
+                                                placeholder="Enter API Password" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Api IP</label>
+                                            <input name="api_ip" type="text" class="form-control"
+                                                placeholder="Enter Api IP" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Server</label>
+                                            <input name="server" type="text" class="form-control"
+                                                placeholder="Enter Server" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Location</label>
+                                            <input name="location" type="text" class="form-control"
+                                                placeholder="Enter Location" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Community</label>
+                                            <input name="community" type="text" class="form-control"
+                                                placeholder="Enter Community" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-2">
+                                            <label>Description</label>
+                                            <textarea name="description" type="text" class="form-control"
+                                                placeholder="Enter Description"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div id="deleteModal" class="modal fade">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
@@ -368,6 +498,96 @@ require 'routeros/routeros_api.class.php';
                                 toastr.error(value[0]);
                             });
                         }
+                    }
+                });
+            });
+            $(document).on('click',"button[name='edit_button']",function(){
+                var id=$(this).data('id');
+                $.ajax({
+                    url: "include/nas_server.php?get_nas_data=true", 
+                    type: "GET",
+                    data: { id: id }, 
+                    dataType:'json',
+                    success: function(response) {
+                        if (response.success) {
+                        $('#editModal').modal('show');
+                        $('#editModal input[name="id"]').val(response.data.id);
+                        $('#editModal input[name="nas_name"]').val(response.data.nasname);
+                        $('#editModal input[name="short_name"]').val(response.data.shortname);
+                        $('#editModal input[name="type"]').val(response.data.type);
+                        $('#editModal input[name="port"]').val(response.data.ports);
+                        $('#editModal input[name="secret"]').val(response.data.secret);
+                        $('#editModal input[name="api_user"]').val(response.data.api_user);
+                        $('#editModal input[name="api_pass"]').val(response.data.api_password);
+                        $('#editModal input[name="api_ip"]').val(response.data.api_ip);
+                        $('#editModal input[name="server"]').val(response.data.server);
+                        $('#editModal input[name="location"]').val(response.data.location);
+                        $('#editModal input[name="community"]').val(response.data.community);
+                        $('#editModal textarea[name="description"]').val(response.data.description);
+                        } else {
+                            toastr.error("Error fetching data for edit: " + response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error('Failed to fetch department details');
+                    }
+                });
+            });
+            /** Update The data from the database table **/
+            $('#editModal form').submit(function(e){
+                e.preventDefault();
+
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = form.serialize();
+
+                /*Get the submit button*/
+                var submitBtn = form.find('button[type="submit"]');
+
+                /*Save the original button text*/
+                var originalBtnText = submitBtn.html();
+
+                /*Change button text to loading state*/
+                    
+
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = form.serialize();
+                /** Use Ajax to send the delete request **/
+                $.ajax({
+                    type:'POST',
+                    'url':url,
+                    data: formData,
+                    dataType:'json',
+                    beforeSend: function () {
+                        form.find(':input').prop('disabled', true);
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            $('#editModal').modal('hide');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 500);
+
+                        }
+                        if(response.success==false){
+                            toastr.error(response.message);
+                        }
+                    },
+
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 422) {
+                            var errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                toastr.error(value[0]);
+                            });
+                        } else {
+                            toastr.error("An error occurred. Please try again.");
+                        }
+                    },
+                    complete:function(){
+                        form.find(':input').prop('disabled', false);
                     }
                 });
             });
