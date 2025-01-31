@@ -320,6 +320,36 @@ function find_customer($id){
        }
 }
 
+function timeAgo($startdate)
+{
+    /*Convert startdate to a timestamp*/
+    $startTimestamp = strtotime($startdate);
+    $currentTimestamp = time();
 
+    /* Calculate the difference in seconds*/
+    $difference = $currentTimestamp - $startTimestamp;
+
+    /*Define time intervals*/
+    $units = [
+        'year' => 31536000,
+        'month' => 2592000,
+        'week' => 604800,
+        'day' => 86400,
+        'hour' => 3600,
+        'min' => 60,
+        'second' => 1,
+    ];
+
+    /*Check for each time unit*/
+    foreach ($units as $unit => $value) {
+        if ($difference >= $value) {
+            $time = floor($difference / $value);
+            return '<img src="images/icon/online.png" height="10" width="10"/>' . ' ' . $time . ' ' . $unit . ($time > 1 ? 's' : '') . '';
+        }
+    }
+    /*If the difference is less than a second*/
+    return '<img src="images/icon/online.png" height="10" width="10"/> just now';
+    exit; 
+}
 
 ?>

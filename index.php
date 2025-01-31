@@ -6,36 +6,7 @@ include 'include/users_right.php';
 include 'include/pop_security.php';
 include 'include/functions.php';
 
-function timeAgo($startdate)
-{
-    /*Convert startdate to a timestamp*/
-    $startTimestamp = strtotime($startdate);
-    $currentTimestamp = time();
 
-    /* Calculate the difference in seconds*/
-    $difference = $currentTimestamp - $startTimestamp;
-
-    /*Define time intervals*/
-    $units = [
-        'year' => 31536000,
-        'month' => 2592000,
-        'week' => 604800,
-        'day' => 86400,
-        'hour' => 3600,
-        'min' => 60,
-        'second' => 1,
-    ];
-
-    /*Check for each time unit*/
-    foreach ($units as $unit => $value) {
-        if ($difference >= $value) {
-            $time = floor($difference / $value);
-            return '<img src="images/icon/online.png" height="10" width="10"/>' . ' ' . $time . ' ' . $unit . ($time > 1 ? 's' : '') . '';
-        }
-    }
-    /*If the difference is less than a second*/
-    return '<img src="images/icon/online.png" height="10" width="10"/> just now';
-}
 
 ?>
 
@@ -83,38 +54,44 @@ function timeAgo($startdate)
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-md-6 col-sm-12">
+                            <!-- New Request -->
+                            <a href="con_request.php" class="btn btn-warning  mb-1">   <i class="fas fa-user-clock"></i> New Request
+                                <?php
+                                if ($allCstmr = $con->query('SELECT * FROM customer_request WHERE status=0')) {
+                                    if ($allCstmr->num_rows > 0) {
+                                        echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
+                                    } else {
+
+                                    }
+                                }
+                                
+                                ?>
+                            </a>
+                            <!-- Add Customer -->
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#addCustomerModal"
+                                class=" btn btn-success mb-1">  <i class="fas fa-user-plus"></i> Add
+                                Customer</button>
+
                             <!-- Recharge Now -->
                             <button type="button" data-bs-toggle="modal" data-bs-target="#addRechargeModal"
                                 class="btn btn-primary mb-1">
                                 <i class="fas fa-bolt"></i> Recharge Now
                             </button>
 
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#addCustomerModal"
-                                class=" btn btn-success mb-1">  <i class="fas fa-user-plus"></i> Add
-                                Customer</button>
-
-                            <a href="con_request.php" class="btn btn-dark mb-1">   <i class="fas fa-user-clock"></i> New Request
-                                <?php
-                                if ($allCstmr = $con->query('SELECT * FROM customer_request WHERE status=0')) {
-                                    if ($allCstmr->num_rows > 0) {
-                                        echo '<span class="badge rounded-pill bg-danger float-end">' . $allCstmr->num_rows . '<span>';
-                                    } else {
-                                    }
-                                }
-                                
-                                ?>
-                            </a>
-
-                            <button type="button" id="addSmsBtn" class="btn btn-primary mb-1">  <i class="far fa-envelope"></i> SMS Notification</button>
-
+                           
                             <button type="button" data-bs-toggle="modal" data-bs-target="#ticketModal"
-                                class="btn btn-success mb-1"> <i class="fas fa-ticket-alt"></i> Add Ticket</button>
+                            class="btn btn-success mb-1"> <i class="fas fa-ticket-alt"></i> Add Ticket</button>
+                            
+
+                            <button type="button" id="addSmsBtn" class="btn btn-primary text-blue mb-1">  <i class="fas fa-envelope"></i> SMS Notification</button>
+
+                          
                         </div>
                         <div class="col-md-6 col-sm-12">
                             <div class="d-flex flex-wrap justify-content-md-end justify-content-center align-items-center gap-3 p-2 bg-light ">
                                 <div class="d-flex align-items-center">
                                     <i class="fas fa-clock text-primary me-1"></i>
-                                    <strong class="text-dark">Date And Time:</strong>
+                                    <!-- <strong class="text-dark">Date And Time:</strong> -->
                                     <span class="text-info ms-1">
                                         <?php 
                                        $dbtime = $con->query('SELECT NOW() AS dbtime');
@@ -143,8 +120,8 @@ function timeAgo($startdate)
                                         $cronupdt = $con->query('SELECT * FROM cron');
                                         $rowcron = $cronupdt->fetch_assoc();
 
-                                        echo date_format(date_create($rowcron['date']), 'd M, Y h:i A'); 
-                                        
+                                        //echo date_format(date_create($rowcron['date']), 'd M, Y h:i A'); 
+                                        echo timeAgo($rowcron['date']);
                                         
                                         ?>
                                     </span>
@@ -395,8 +372,8 @@ function timeAgo($startdate)
                                 <a href="allTickets.php">
                                     <div class="card-body">
                                         <div class="mini-stat">
-                                            <span class="mini-stat-icon bg-warning me-0 float-end"><i
-                                                    class="fas fa-notes-medical"></i></span>
+                                            <span class="mini-stat-icon bg-success me-0 float-end"><i
+                                                    class="fas fa-ticket-alt"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
                                                     <?php if ($dsblcstmr = $con->query('SELECT * FROM ticket')) {

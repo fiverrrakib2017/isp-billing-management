@@ -79,7 +79,7 @@
                             <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff' || $_SESSION['details']['role']=='Supports'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="mdi mdi-ticket-outline"></i>
+                                    <i class="fas fa-ticket-alt"></i>
                                     <span>Tickets</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
