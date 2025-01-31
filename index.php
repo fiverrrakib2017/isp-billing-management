@@ -82,16 +82,18 @@ function timeAgo($startdate)
             <div class="page-content">
                 <div class="container-fluid">
                     <div class="row mb-2">
-                        <div class="col-md-6 col-sm-6">
+                        <div class="col-md-6 col-sm-12">
+                            <!-- Recharge Now -->
                             <button type="button" data-bs-toggle="modal" data-bs-target="#addRechargeModal"
-                                class="btn-sm btn btn-primary mb-1"><i class="mdi mdi-battery-charging-90"></i> Recharge
-                                Now</button>
+                                class="btn btn-primary mb-1">
+                                <i class="fas fa-bolt"></i> Recharge Now
+                            </button>
 
                             <button type="button" data-bs-toggle="modal" data-bs-target="#addCustomerModal"
-                                class="btn-sm btn btn-success mb-1"><i class="mdi mdi-account-plus"></i> Add
+                                class=" btn btn-success mb-1">  <i class="fas fa-user-plus"></i> Add
                                 Customer</button>
 
-                            <a href="con_request.php" class="btn-sm btn btn-warning mb-1">Connection Request
+                            <a href="con_request.php" class="btn btn-dark mb-1">   <i class="fas fa-user-clock"></i> New Request
                                 <?php
                                 if ($allCstmr = $con->query('SELECT * FROM customer_request WHERE status=0')) {
                                     if ($allCstmr->num_rows > 0) {
@@ -103,94 +105,108 @@ function timeAgo($startdate)
                                 ?>
                             </a>
 
-                            <button type="button" id="addSmsBtn" class="btn-sm btn btn-primary mb-1"><i
-                                    class="far fa-envelope"></i> SMS Notification</button>
+                            <button type="button" id="addSmsBtn" class="btn btn-primary mb-1">  <i class="far fa-envelope"></i> SMS Notification</button>
 
                             <button type="button" data-bs-toggle="modal" data-bs-target="#ticketModal"
-                                class="btn-sm btn btn-success mb-1">Add Ticket</button>
+                                class="btn btn-success mb-1"> <i class="fas fa-ticket-alt"></i> Add Ticket</button>
                         </div>
-                        <div class="col-md-6">
-                            <div class="float-end">
-                                <abbr title="Date And Time ">
-                                    <button type="button" class="btn-sm btn btn-info">
-                                        <i class="mdi mdi-clock-outline"></i>
-                                    </button></abbr>
-                                &nbsp;
-                                <abbr title="Up Time">
-                                    <button type="button" id="rechargeBtn" class="btn-sm btn btn-primary ">
-                                        <i class="mdi mdi-server"></i>
-                                    </button></abbr>
-                                &nbsp;
-                                <abbr title="Cloud Server">
-                                    <button type="button" class="btn-sm btn btn-secondary">
-                                        <i class="mdi mdi-cloud-outline"></i>
-                                    </button></abbr>
-                                &nbsp;
-                                <abbr title="Payment received">
-                                    <button type="button" data-bs-target="#addPaymentModal" data-bs-toggle="modal"
-                                        class="btn-sm btn btn-info ">
-                                        <i class="mdi mdi mdi-cash-multiple"></i>
-                                    </button></abbr>
-                                &nbsp;
+                        <div class="col-md-6 col-sm-12">
+                            <div class="d-flex flex-wrap justify-content-md-end justify-content-center align-items-center gap-3 p-2 bg-light ">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock text-primary me-1"></i>
+                                    <strong class="text-dark">Date And Time:</strong>
+                                    <span class="text-info ms-1">
+                                        <?php 
+                                       $dbtime = $con->query('SELECT NOW() AS dbtime');
+                                       $rowd = $dbtime->fetch_assoc();
+                                       echo date_format(date_create($rowd['dbtime']), 'd M, Y h:i A'); 
+                                      
+                                        ?>
+                                    </span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-hourglass-half text-warning me-1"></i>
+                                    <strong class="text-dark">Uptime:</strong>
+                                    <span class="text-info ms-1">
+                                        <?php 
+                                        $exec_uptime = preg_split('/[\s]+/', trim(shell_exec('uptime')));
+                                        echo $uptime = $exec_uptime[2] . ' Days';
+                                        
+                                        ?>
+                                    </span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-database text-success me-1"></i>
+                                    <strong class="text-dark">DB Sync:</strong>
+                                    <span class="text-info ms-1">
+                                        <?php 
+                                        $cronupdt = $con->query('SELECT * FROM cron');
+                                        $rowcron = $cronupdt->fetch_assoc();
 
+                                        echo date_format(date_create($rowcron['date']), 'd M, Y h:i A'); 
+                                        
+                                        
+                                        ?>
+                                    </span>
+                                </div>
                             </div>
                         </div>
+
 
                     </div>
                     <div class="row">
-						
+
                         <div class="col">
                             <div class="card">
-							<a href="customers_new.php?online=1">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-primary me-0 float-end"><i
-                                                class="fas fa-user-check"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-primary">
-                                                <?php
-                                                if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
-                                                    echo $onlinecst = $onlinecstmr->num_rows;
-                                                }
-                                                ?>
-                                            </span>
-                                            <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online
+                                <a href="customers_new.php?online=1">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-primary me-0 float-end"><i
+                                                    class="fas fa-user-check"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-primary">
+                                                    <?php
+                                                    if ($onlinecstmr = $con->query('SELECT * FROM radacct WHERE acctstoptime IS NULL')) {
+                                                        echo $onlinecst = $onlinecstmr->num_rows;
+                                                    }
+                                                    ?>
+                                                </span>
+                                                <img src="images/icon/online.png" height="10"
+                                                    width="10" />&nbsp;Online
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-								</a>
+                                </a>
                             </div>
                         </div> <!-- End col -->
-						
-						
-						
-						<div class="col">
+
+
+
+                        <div class="col">
                             <div class="card">
-							<a href="customers_new.php?offline=1">
-                                <div class="card-body">
-                                    <div class="mini-stat">
-                                        <span class="mini-stat-icon bg-secondary me-0 float-end"><i
-                                                class="fas fa-user-times"></i></span>
-                                        <div class="mini-stat-info">
-                                            <span class="counter text-muted">
-                                                <?php
-												if ($offline_customer = $con->query("SELECT * FROM customers WHERE status='1' AND username NOT IN(SELECT username FROM radacct WHERE acctstoptime IS NULL AND acctterminatecause='')")) {
-                                                        echo  $total_offline_customer = $offline_customer->num_rows;
+                                <a href="customers_new.php?offline=1">
+                                    <div class="card-body">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-secondary me-0 float-end"><i
+                                                    class="fas fa-user-times"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-muted">
+                                                    <?php
+                                                    if ($offline_customer = $con->query("SELECT * FROM customers WHERE status='1' AND username NOT IN(SELECT username FROM radacct WHERE acctstoptime IS NULL AND acctterminatecause='')")) {
+                                                        echo $total_offline_customer = $offline_customer->num_rows;
                                                     }
                                                     
-                                                    
-												
-												
-                                                ?>
-                                            </span>
-                                            <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline
+                                                    ?>
+                                                </span>
+                                                <img src="images/icon/disabled.png" height="10"
+                                                    width="10" />&nbsp;Offline
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-								</a>
+                                </a>
                             </div>
                         </div> <!-- End col -->
-						
+
 
                         <div class="col">
                             <a href="customers_new.php?active=1">
@@ -201,11 +217,11 @@ function timeAgo($startdate)
                                                     class="fas fa-users"></i></span>
                                             <div class="mini-stat-info">
                                                 <span class="counter text-success">
-                                                    <?php 
+                                                    <?php
                                                     if ($totalCustomer = $con->query("SELECT * FROM customers WHERE status='1'")) {
                                                         echo $totalcstmr = $totalCustomer->num_rows;
                                                     }
-                                                
+                                                    
                                                     ?>
                                                 </span>
                                                 Active Customers
@@ -259,7 +275,7 @@ function timeAgo($startdate)
                                 </a>
                             </div>
                         </div><!--end col -->
-						      <div class="col">
+                        <div class="col">
                             <div class="card">
                                 <a href="con_request.php">
                                     <div class="card-body">
@@ -304,19 +320,21 @@ function timeAgo($startdate)
                                                     }
                                                     ?>
                                                 </span>
-                                                POP/Branch 
-                                                <br>  
-<img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online 
-<?php
-$popCounts = get_count_pop_and_area_with_online_and_offline($con, 'add_pop', 'pop');
-echo $popCounts['online'];
-?>
- 
-<br>  
-<img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline 
-<?php
-echo $popCounts['offline'];
-?>
+                                                POP/Branch
+                                                <br>
+                                                <img src="images/icon/online.png" height="10"
+                                                    width="10" />&nbsp;Online
+                                                <?php
+                                                $popCounts = get_count_pop_and_area_with_online_and_offline($con, 'add_pop', 'pop');
+                                                echo $popCounts['online'];
+                                                ?>
+
+                                                <br>
+                                                <img src="images/icon/disabled.png" height="10"
+                                                    width="10" />&nbsp;Offline
+                                                <?php
+                                                echo $popCounts['offline'];
+                                                ?>
 
 
 
@@ -343,20 +361,22 @@ echo $popCounts['offline'];
                                                     ?>
                                                 </span>
                                                 Area
-                                                <br>  
-<img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online 
-<?php
-$popCounts = get_count_pop_and_area_with_online_and_offline($con, 'area_list', 'area');
-echo $popCounts['online'];
-?>
- 
-<br>  
-<img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline 
-<?php
-echo $popCounts['offline'];
-?>
+                                                <br>
+                                                <img src="images/icon/online.png" height="10"
+                                                    width="10" />&nbsp;Online
+                                                <?php
+                                                $popCounts = get_count_pop_and_area_with_online_and_offline($con, 'area_list', 'area');
+                                                echo $popCounts['online'];
+                                                ?>
 
-                                                    
+                                                <br>
+                                                <img src="images/icon/disabled.png" height="10"
+                                                    width="10" />&nbsp;Offline
+                                                <?php
+                                                echo $popCounts['offline'];
+                                                ?>
+
+
 
                                             </div>
                                         </div>
@@ -385,7 +405,10 @@ echo $popCounts['offline'];
                                                     ?>
                                                 </span>
                                                 Tickets
-                                                <br>  <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Completed <?php echo get_ticket_count($con,'Complete')?> <br> <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Incompleted <?php echo get_ticket_count($con,'Active')?>
+                                                <br> <img src="images/icon/online.png" height="10"
+                                                    width="10" />&nbsp;Completed <?php echo get_ticket_count($con, 'Complete'); ?> <br> <img
+                                                    src="images/icon/disabled.png" height="10"
+                                                    width="10" />&nbsp;Incompleted <?php echo get_ticket_count($con, 'Active'); ?>
                                             </div>
                                         </div>
                                     </div>
@@ -407,7 +430,10 @@ echo $popCounts['offline'];
                                                     ?>
                                                 </span>
                                                 Routers
-												<br> <img src="images/icon/online.png" height="10" width="10"/>&nbsp;Online <?php echo 0;?> <br> <img src="images/icon/disabled.png" height="10" width="10"/>&nbsp;Offline <?php echo 0;?>
+                                                <br> <img src="images/icon/online.png" height="10"
+                                                    width="10" />&nbsp;Online <?php echo 0; ?> <br> <img
+                                                    src="images/icon/disabled.png" height="10"
+                                                    width="10" />&nbsp;Offline <?php echo 0; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -470,10 +496,10 @@ echo $popCounts['offline'];
                                                     <?php
                                                     
                                                     $sql = "SELECT radacct.username FROM radacct
-                                                            INNER JOIN customers
-                                                            ON customers.username=radacct.username
-                                                            
-                                                            WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
+                                                                                                                INNER JOIN customers
+                                                                                                                ON customers.username=radacct.username
+                                                                                                                
+                                                                                                                WHERE customers.pop='$pop_ID' AND radacct.acctstoptime IS NULL";
                                                     $countpoponlnusr = mysqli_query($con, $sql);
                                                     
                                                     echo $countpoponlnusr->num_rows;
@@ -628,14 +654,13 @@ echo $popCounts['offline'];
                                                             $cstmrID = $stmr['id'];
                                                             $username = $stmr['username'];
                                                             $cstmr_fullname = $stmr['fullname'];
-															$cstmr_area = $stmr['area'];
+                                                            $cstmr_area = $stmr['area'];
                                                         }
-														
-														// Area name
-														$customerArea = $con->query("SELECT * FROM area_list WHERE id=$cstmr_area");
+                                                        
+                                                        // Area name
+                                                        $customerArea = $con->query("SELECT * FROM area_list WHERE id=$cstmr_area");
                                                         while ($stmrAr = $customerArea->fetch_array()) {
                                                             $stmrAria = $stmrAr['name'];
-                                                            
                                                         }
                                                         ?>
 
@@ -654,9 +679,10 @@ echo $popCounts['offline'];
 
                                                         <a href="profile.php?clid=<?php echo $cstmrID; ?>"
                                                             target="_blank"> <?php echo $cstmr_fullname; ?></a>
-															
-															</br>
-															<span class=" fas fa-map-marker-alt text-muted"><i> <?php echo $stmrAria; ?></i></span>
+
+                                                        </br>
+                                                        <span class=" fas fa-map-marker-alt text-muted"><i>
+                                                                <?php echo $stmrAria; ?></i></span>
                                                     </td>
 
                                                     </td>
@@ -804,7 +830,8 @@ echo $popCounts['offline'];
                                         </div>
                                     </div>
 
-                                    <div id="simple-line-chart" class="" dir="ltr" style="height: 310px;">
+                                    <div id="simple-line-chart" class="" dir="ltr"
+                                        style="height: 310px;">
                                     </div>
 
                                 </div>
@@ -1444,64 +1471,63 @@ echo $rowcron['date'];
 
 
         new Chartist.Line("#simple-line-chart", {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    series: [
-        {
-            name: 'New Customers',
-            data: [<?php
-                for ($i = 1; $i <= 12; $i++) {
-                    $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
-                    $sql = "SELECT COUNT(*) AS new_customers FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
-                    $result = mysqli_query($con, $sql);
-                    $row = mysqli_fetch_assoc($result);
-                    echo $row['new_customers'] . ',';
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            series: [{
+                    name: 'New Customers',
+                    data: [<?php
+                    for ($i = 1; $i <= 12; $i++) {
+                        $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                        $sql = "SELECT COUNT(*) AS new_customers FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
+                        $result = mysqli_query($con, $sql);
+                        $row = mysqli_fetch_assoc($result);
+                        echo $row['new_customers'] . ',';
+                    }
+                    ?>]
+                },
+                {
+                    name: 'Active Customers',
+                    data: [<?php
+                    for ($i = 1; $i <= 12; $i++) {
+                        $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                        $sql = "SELECT COUNT(*) AS active_customers FROM customers WHERE status = '1' AND createdate LIKE '%$currentyrMnth%'";
+                        $result = mysqli_query($con, $sql);
+                        $row = mysqli_fetch_assoc($result);
+                        echo $row['active_customers'] . ',';
+                    }
+                    ?>]
+                },
+                {
+                    name: 'Expired Customers',
+                    data: [<?php
+                    for ($i = 1; $i <= 12; $i++) {
+                        $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                        $sql = "SELECT COUNT(*) AS expired_customers FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
+                        $result = mysqli_query($con, $sql);
+                        $row = mysqli_fetch_assoc($result);
+                        echo $row['expired_customers'] . ',';
+                    }
+                    ?>]
+                },
+                {
+                    name: 'Disabled Customers',
+                    data: [<?php
+                    for ($i = 1; $i <= 12; $i++) {
+                        $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
+                        $sql = "SELECT COUNT(*) AS disabled_customers FROM customers WHERE status = '0' AND createdate LIKE '%$currentyrMnth%'";
+                        $result = mysqli_query($con, $sql);
+                        $row = mysqli_fetch_assoc($result);
+                        echo $row['disabled_customers'] . ',';
+                    }
+                    ?>]
                 }
-            ?>]
-        },
-        {
-            name: 'Active Customers',
-            data: [<?php
-                for ($i = 1; $i <= 12; $i++) {
-                    $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
-                    $sql = "SELECT COUNT(*) AS active_customers FROM customers WHERE status = '1' AND createdate LIKE '%$currentyrMnth%'";
-                    $result = mysqli_query($con, $sql);
-                    $row = mysqli_fetch_assoc($result);
-                    echo $row['active_customers'] . ',';
-                }
-            ?>]
-        },
-        {
-            name: 'Expired Customers',
-            data: [<?php
-                for ($i = 1; $i <= 12; $i++) {
-                    $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
-                    $sql = "SELECT COUNT(*) AS expired_customers FROM customers WHERE expiredate LIKE '%$currentyrMnth%'";
-                    $result = mysqli_query($con, $sql);
-                    $row = mysqli_fetch_assoc($result);
-                    echo $row['expired_customers'] . ',';
-                }
-            ?>]
-        },
-        {
-            name: 'Disabled Customers',
-            data: [<?php
-                for ($i = 1; $i <= 12; $i++) {
-                    $currentyrMnth = date('Y') . '-' . str_pad($i, 2, '0', STR_PAD_LEFT);
-                    $sql = "SELECT COUNT(*) AS disabled_customers FROM customers WHERE status = '0' AND createdate LIKE '%$currentyrMnth%'";
-                    $result = mysqli_query($con, $sql);
-                    $row = mysqli_fetch_assoc($result);
-                    echo $row['disabled_customers'] . ',';
-                }
-            ?>]
-        }
-    ]
-}, {
-    fullWidth: true,
-    chartPadding: {
-        right: 40
-    },
-    plugins: [Chartist.plugins.tooltip()]
-});
+            ]
+        }, {
+            fullWidth: true,
+            chartPadding: {
+                right: 40
+            },
+            plugins: [Chartist.plugins.tooltip()]
+        });
 
 
 
