@@ -542,8 +542,8 @@ include 'include/users_right.php';
                     [0, "desc"]
                 ],
                 "lengthChange": true,
-                "processing": true,
-                "serverSide": true,
+                "processing": false,
+                "serverSide": false,
                 columnDefs: [{
                     orderable: false,
                     className: 'select-checkbox',

@@ -1265,6 +1265,8 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                 }, 1000);
                             } else if(response == 2) {
                                 toastr.error("Please Recharge This POP Account");
+                            }else{
+                                toastr.error(response);
                             }
 
                         }
