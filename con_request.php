@@ -216,7 +216,7 @@ function timeAgo($startdate)
                                             <tbody id="customer-list">
                                                 <?php
                                                  $sql="SELECT * FROM customer_request WHERE status=0 ORDER BY id DESC";
-                                                $result = mysqli_query($con, $sql);
+                                                $result = $con->query($sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
 
@@ -245,7 +245,7 @@ function timeAgo($startdate)
 
                                                     <td>
 
-                                                        <button type="submit" id="approve_button" type="button"
+                                                        <button type="button" id="approve_button" 
                                                             class="btn btn-success">Approve</button>
 
                                                         <button type="button" class="btn btn-danger delete-btn"
@@ -379,6 +379,7 @@ function timeAgo($startdate)
                 var customer_requeest_mobile = row.find('td:nth-child(4)').text().trim();
                 var customer_requeest_area = row.find('td:nth-child(5)').text().trim();
                 var customer_requeest_address = row.find('td:nth-child(6)').text().trim();
+              
                 $("#addCustomerModal").modal('show');
 
                 if (customer_requeest_fullname.length > 0) {

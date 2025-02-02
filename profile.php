@@ -1217,7 +1217,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
          function showModal() {
              $("#rechargeBtn").click(function() {
                  $("#rechargeModal").modal('show');
-                 $("#month").on('click', function() {
+                 $("#month").on('change', function() {
                      var month = $("#month").val();
                      var amount = $("#amount").val();
                      totalAmount = (month * amount);
@@ -1247,7 +1247,10 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                     "&add_recharge_data=0";
                 if (month.length == 0 && $("#tra_type").val() != 4) {
                     toastr.error("Select Month");
-                } else if (tra_type === '' || tra_type === null || tra_type === '---Select---') {
+                }else if(mainAmount.length == 0){
+                    toastr.error("Payable Amount Required");
+                } 
+                else if (tra_type === '' || tra_type === null || tra_type === '---Select---') {
                     toastr.error("Select Transaction Type");
                 } else {
                     $("#recharge-button").disabled;

@@ -308,9 +308,9 @@ if (isset($_POST['getCustomerPackage'])) {
 if (isset($_POST['getPackagePrice'])) {
     $packageId = $_POST['package_id'];
     $pop_id = $_POST['pop_id'];
-    if ($allArea = $con->query("SELECT s_price FROM branch_package WHERE pkg_id='$packageId' AND pop_id=$pop_id   ")) {
+    if ($allArea = $con->query("SELECT p_price FROM branch_package WHERE pkg_id='$packageId' AND pop_id=$pop_id   ")) {
         while ($rowsssss = $allArea->fetch_array()) {
-            echo $rowsssss['s_price'];
+            echo $rowsssss['p_price'];
         }
     }
 }
@@ -321,12 +321,12 @@ if (isset($_POST['getPackagePrice'])) {
 if (isset($_POST['addCustomerData'])) {
     $customer_request_id = $_POST['customer_request_id'] ?? 0;
     $fullname = $_POST['fullname'];
-    $package = $_POST['package'];
+   $package = $_POST['package'];
     $username = $_POST['username'];
     $password = $_POST['password'];
     $mobile = $_POST['mobile'];
     $exp_date = $_POST['expire_date'];
-    $pop = $_POST['pop'];
+   $pop = $_POST['pop'];
     $area = $_POST['area'];
     $area_house_id = is_numeric($_POST['customer_houseno']) ? intval($_POST['customer_houseno']) : '0';
     $address = $_POST['address'];
@@ -337,20 +337,17 @@ if (isset($_POST['addCustomerData'])) {
     $liablities = $_POST['liablities'];
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
-    //$chrg_mnths = "5";
+
     // One month from a specific date
     $exp_date = date('Y-m-d', strtotime('+1 month', strtotime(date('Y-m-' . $exp_date))));
-    //$exp_date = date('Y-m-d', strtotime('+'.$chrg_mnths.' month', strtotime(date('Y-m-'.$exp_date))));
 
-    //প্যাকেজ এর  আইডি থেকে এর নেম টা বের করে ডাটাবেজ টেবিল এ দিয়ে দিবো , ব্যাস খাতাম , 
-    if ($allPack = $con->query("SELECT * FROM branch_package WHERE id=$package")) {
+    if ($allPack = $con->query("SELECT * FROM branch_package WHERE pkg_id=$package AND pop_id=$pop")) {
         while ($rowssss = $allPack->fetch_array()) {
             $package_name = $rowssss['package_name'];
             $package_purchase_price = $rowssss['p_price'];
             $package_sales_price = $rowssss['s_price'];
         }
     }
-
     /*Check Pop Blance */
     if ($pop_payment = $con->query("SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$pop' ")) {
         while ($rows = $pop_payment->fetch_array()) {
@@ -370,13 +367,8 @@ if (isset($_POST['addCustomerData'])) {
     } else {
 
     $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,area_house_id,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area','$area_house_id',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0')");
-    /*Change the customer Reqeust status*/
-    if($customer_request_id > 0){
-        $con->query("UPDATE customer_request SET status='1' WHERE id='$customer_request_id'");
-    }
+    
     if ($result == true) {
-
-        //Update account recharge and transection
         $custID = $con->insert_id;
         $recharge_by=isset($_SESSION["uid"]) ? intval($_SESSION["uid"]) : 0;
         $con->query("INSERT INTO customer_rechrg(customer_id, pop_id,months, sales_price, purchase_price,discount,ref,rchrg_until,type,rchg_by,datetm) 
@@ -384,6 +376,10 @@ if (isset($_POST['addCustomerData'])) {
         echo 1;
     } else {
         echo "Problem Is : " . $con->error;
+    }
+    /*Change the customer Reqeust status*/
+    if($customer_request_id > 0){
+        $con->query("UPDATE customer_request SET status='1' WHERE id='$customer_request_id'");
     }
     $con->query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
     $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package_name')");
@@ -397,13 +393,6 @@ if (isset($_POST['getCustomerSpecificId'])) {
             $package_name = $rows['package_name'];
             echo '<option value="">' . $package_name . '</option>';
         }
-        // if($allPackage=$con->query("SELECT * FROM radgroupcheck where id=$packageId")){
-        //     //echo '<option value="'.$row['id'].'">'.$row['groupname'].'</option>';
-        //         while($row=$allPackage->fetch_array()){
-        //             echo '<option value="'.$row['id'].'">'.$row['groupname'].'</option>'; 
-        //         }
-        //     } 
-
     }
 }
 //get specifik customer package and display frontend 
