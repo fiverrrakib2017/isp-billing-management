@@ -269,7 +269,7 @@ include "include/db_connect.php";
     </thead>
     <tbody id="tableBody">
     <?php 
-$sql = "SELECT u.id, DATE(cr.datetm) AS recharge_date, SUM(cr.sales_price) AS total_collection, u.fullname AS recharge_by_name  FROM customer_rechrg cr JOIN users u ON cr.rchg_by = u.id WHERE cr.status = '0' GROUP BY u.id, DATE(cr.datetm), u.fullname ORDER BY recharge_date DESC";
+$sql = "SELECT u.id, DATE(cr.datetm) AS recharge_date, SUM(cr.purchase_price) AS total_collection, u.fullname AS recharge_by_name  FROM customer_rechrg cr JOIN users u ON cr.rchg_by = u.id WHERE cr.status = '0' GROUP BY u.id, DATE(cr.datetm), u.fullname ORDER BY recharge_date DESC";
 $result = mysqli_query($con, $sql);
 
 while ($rows = mysqli_fetch_assoc($result)) {
