@@ -239,8 +239,8 @@ include("include/users_right.php");
                             var status_filter = '<label style="margin-left: 10px;"> ';
                             status_filter += '<select class="status_filter form-select select2">';
                             status_filter += '<option value="">--Select Status--</option>';
-                            status_filter += ' <option value="Active">Active</option>';
-                            status_filter += '<option value="New" >New</option>';
+                            status_filter += ' <option value="Active" selected>Active</option>';
+                            status_filter += '<option value="New">New</option>';
                             status_filter += '<option value="Open">Open</option>';
                             status_filter += '<option value="Complete">Complete</option>';
                             status_filter += ' <option value="Close">Close</option>';
@@ -255,6 +255,7 @@ include("include/users_right.php");
                             $('.dataTables_length').append(status_filter);
                             $('.select2').select2();
                             }, 500);
+                           
                         }
                        
                     }
@@ -276,6 +277,7 @@ include("include/users_right.php");
                     data: function(d) {
                         d.pop_id = received_pop_id.length > 0 ? received_pop_id : $('.pop_filter').val();
                         d.area_id = received_area_id.length > 0 ? received_area_id : $('.area_filter').val();
+                        d.status = $('.status_filter').val() || 'Active';
                       
                     },
                     beforeSend: function() {
@@ -297,9 +299,11 @@ include("include/users_right.php");
         });          
         /* Status filter change event*/
         $(document).on('change', '.status_filter', function(){
-            var status_filter_result = $('.status_filter').val() || '';
-            table.columns(1).search(status_filter_result).draw();
-        });   
+            //var status_filter_result = $('.status_filter').val() || '';
+           // table.columns(1).search(status_filter_result).draw();
+            table.ajax.reload();
+        }); 
+          
         $(document).on('change', '.customer_filter', function(){
             var status_filter_result = $('.customer_filter').val() || '';
             table.columns(4).search(status_filter_result).draw();

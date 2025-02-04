@@ -117,9 +117,10 @@ include 'include/db_connect.php';
     <div class="rightbar-overlay"></div>
     <?php require 'script.php'; ?>
     <script type="text/javascript">
+
     /* From Date */
     var from_date = `<label style="margin-left: 20px;">
-                        <input class="from_date form-control" type="date" style="width: 150px; display: inline;">
+                        <input class="from_date form-control" type="date" value="<?php echo date('Y-m-d');?>" style="width: 150px; display: inline;">
                     </label>`;
 
     /* To Date */
@@ -158,8 +159,8 @@ include 'include/db_connect.php';
         info: true,
         order: [[0, "desc"]],
         lengthChange: true,
-        processing: true,
-        serverSide: true,
+        processing: false,
+        serverSide: false,
         lengthMenu: [
             [10, 25, 50, -1],
             [10, 25, 50, 'All']
@@ -171,8 +172,8 @@ include 'include/db_connect.php';
             url: "include/customer_recharge_server.php?get_recharge_data=true",
             type: 'GET',
             data: function(d) {
-                d.from_date = $('.from_date').val();
-                d.to_date = $('.to_date').val();
+                d.from_date = $('.from_date').val() || '<?php echo date('Y-m-d');?>';
+                d.to_date = $('.to_date').val() || '<?php echo date('Y-m-d');?>';
                 d.type = $('.status_filter').val();
             },
             beforeSend: function() {

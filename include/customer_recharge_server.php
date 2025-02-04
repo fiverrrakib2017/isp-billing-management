@@ -438,83 +438,75 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
         array(
             'db' => 'id', 
             'dt' => 0,
-            
         ),
         array(
-            'db'        => 'datetm',
-            'dt'        => 1,
-            'formatter' => function($d, $row) use ($con) {
+            'db' => 'datetm',
+            'dt' => 1,
+            'formatter' => function($d, $row) {
                 return date('d-m-Y', strtotime($d));
             }
         ),
         array('db' => 'customer_id', 
             'dt' => 2,
             'formatter' => function($d, $row) use ($con) {
-                $customer_id = $d;
-                $allCustomer = $con->query("SELECT username FROM customers WHERE id=$customer_id");
+                $allCustomer = $con->query("SELECT username FROM customers WHERE id = $d");
                 $row = $allCustomer->fetch_array();
-                $username= $row['username'];
-                $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                    $chkc = $onlineusr->num_rows;
-                    $status = ($chkc == 1) 
-                        ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' 
-                        : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-                    return $status . ' <a href="profile.php?clid=' . $customer_id . '">' . $username . '</a>';
+                $username = $row['username'];
+                $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username = '$username'");
+                $chkc = $onlineusr->num_rows;
+                $status = ($chkc == 1) 
+                    ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' 
+                    : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                return $status . ' <a href="profile.php?clid=' . $d . '">' . $username . '</a>';
             }
-
         ),
         array('db' => 'months', 'dt' => 3),
         array('db' => 'type', 
-        'dt' => 4,
-        'formatter'=>function($d,$row){
-            if($d=='0'){
-                return '<span class="badge bg-danger">Credit</span>';
-            }else if($d =='1'){
-                return '<span class="badge bg-success">Cash</span>';
-            }else if($d =='2'){
-                return '<span class="badge bg-info">Bkash</span>';
-            }else if($d =='3'){
-                return '<span class="badge bg-info">Nagad</span>';
-            }else if($d =='4'){
-                return '<span class="badge bg-warning">Due Paid</span>';
+            'dt' => 4,
+            'formatter' => function($d, $row) {
+                switch($d) {
+                    case '0': return '<span class="badge bg-danger">Credit</span>';
+                    case '1': return '<span class="badge bg-success">Cash</span>';
+                    case '2': return '<span class="badge bg-info">Bkash</span>';
+                    case '3': return '<span class="badge bg-info">Nagad</span>';
+                    case '4': return '<span class="badge bg-warning">Due Paid</span>';
+                    default: return '';
+                }
             }
-        }
         ),
-        
         array('db' => 'rchrg_until', 'dt' => 5),
         array('db' => 'purchase_price', 'dt' => 6),
-      
     );
-    $condition="";
+
+    $condition = "";
 
     if (!empty($_SESSION['user_pop'])) {
         $condition .= "pop_id = '" . $_SESSION['user_pop'] . "'";
-    } else {
-      
     }
 
-    /* If 'area_id' is provided, */
     if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
-        $condition .= (!empty($condition) ? " AND " : ""). "area = '" . $_GET['area_id'] . "'";
+        $condition .= (!empty($condition) ? " AND " : "") . "area = '" . $_GET['area_id'] . "'";
     }
-    /* If 'pop_id' is provided, */
+
     if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
-        // $condition .= " AND pop = '" . $_GET['pop_id'] . "'";
-        $condition .= (!empty($condition) ? " AND " : ""). "pop_id = '" . $_GET['pop_id'] . "'";
+        $condition .= (!empty($condition) ? " AND " : "") . "pop_id = '" . $_GET['pop_id'] . "'";
     }
-    if(!empty($_GET['from_date']) && !empty($_GET['to_date'])){
+
+    if (!empty($_GET['from_date']) && !empty($_GET['to_date'])) {
         $from_date = date('Y-m-d 00:00:00', strtotime($_GET['from_date']));
         $to_date = date('Y-m-d 23:59:59', strtotime($_GET['to_date']));
         $condition .= (!empty($condition) ? " AND " : "") . "datetm BETWEEN '$from_date' AND '$to_date'";
     }
-    if(!empty($_GET['type'])){
+
+    if (!empty($_GET['type'])) {
         $type = $_GET['type']; 
-        if($type=='Credit'){
+        if ($type == 'Credit') {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '0'";
-        }else if($type =='1' || $type =='2' || $type =='3' || $type =='4'){
+        } else if (in_array($type, ['1', '2', '3', '4'])) {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
         }
     }
+
     
     /* Output JSON for DataTables to handle*/
     // echo json_encode(

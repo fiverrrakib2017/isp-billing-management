@@ -183,6 +183,10 @@ if (!isset($_SESSION)) {
 	if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
 		$condition .= " AND pop_id = '" . mysqli_real_escape_string($con, $_GET['pop_id']) . "'";
 	}
+	/*Check Ticket Status*/
+	if(!empty($_GET['status'])){
+		$condition .= " AND ticket_type = '" . mysqli_real_escape_string($con, $_GET['status']) . "'";
+	}
 	/* Output JSON for DataTables to handle*/
 	echo json_encode(
 		SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
