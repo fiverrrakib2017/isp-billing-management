@@ -451,24 +451,46 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
             'dt' => 2,
             'formatter' => function($d, $row) use ($con) {
                 $customer_id = $d;
-                $allCustomer = $con->query("SELECT fullname FROM customers WHERE id=$customer_id");
+                $allCustomer = $con->query("SELECT username FROM customers WHERE id=$customer_id");
                 $row = $allCustomer->fetch_array();
-                return $row['fullname'];
+                $username= $row['username'];
+                $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                    $chkc = $onlineusr->num_rows;
+                    $status = ($chkc == 1) 
+                        ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' 
+                        : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                    return $status . ' <a href="profile.php?clid=' . $customer_id . '">' . $username . '</a>';
             }
 
         ),
         array('db' => 'months', 'dt' => 3),
+        array('db' => 'type', 
+        'dt' => 4,
+        'formatter'=>function($d,$row){
+            if($d=='0'){
+                return '<span class="badge bg-danger">Credit</span>';
+            }else if($d =='1'){
+                return '<span class="badge bg-success">Cash</span>';
+            }else if($d =='2'){
+                return '<span class="badge bg-info">Bkash</span>';
+            }else if($d =='3'){
+                return '<span class="badge bg-info">Nagad</span>';
+            }else if($d =='4'){
+                return '<span class="badge bg-warning">Due Paid</span>';
+            }
+        }
+        ),
         
-        array('db' => 'rchrg_until', 'dt' => 4),
-        array('db' => 'purchase_price', 'dt' => 5),
+        array('db' => 'rchrg_until', 'dt' => 5),
+        array('db' => 'purchase_price', 'dt' => 6),
       
     );
     $condition="";
 
     if (!empty($_SESSION['user_pop'])) {
-        $condition = "pop_id = '" . $_SESSION['user_pop'] . "'";
+        $condition .= "pop_id = '" . $_SESSION['user_pop'] . "'";
     } else {
-        //$condition = "package = 5"; 
+      
     }
 
     /* If 'area_id' is provided, */
@@ -480,57 +502,36 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
         // $condition .= " AND pop = '" . $_GET['pop_id'] . "'";
         $condition .= (!empty($condition) ? " AND " : ""). "pop_id = '" . $_GET['pop_id'] . "'";
     }
-    /* If Status is provided, */
-    if (isset($_GET['status']) && !empty($_GET['status'])) {
-        $status = $_GET['status'];
-    
-        if ($status == 'expired') {
-            $status = "2";
-            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
-        } elseif ($status == 'disabled') {
-            $status = "0";
-            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
-        } elseif ($status == 'active') {
-            $status = "1";
-            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
-        } elseif ($status == 'online') {
-            $status = "1";
-            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
-                            AND EXISTS (
-                                SELECT 1 FROM radacct 
-                                WHERE radacct.username = customers.username 
-                                AND radacct.acctstoptime IS NULL
-                            )";
-        } elseif ($status == 'free') {
-            $condition .= (!empty($condition) ? " AND " : "") . "package = 5"; 
-        } elseif ($status == 'unpaid') {
-            $popID = $_SESSION['user_pop'] ?? 1;
-            $condition .= (!empty($condition) ? " AND " : "") . "
-                EXISTS (
-                    SELECT 1 FROM customer_rechrg 
-                    WHERE 
-                        DAY(expiredate) BETWEEN 1 AND 10 
-                        AND MONTH(expiredate) = MONTH(CURDATE()) 
-                        AND YEAR(expiredate) = YEAR(CURDATE())
-                        AND pop = '$popID'
-                )
-            ";
-        } elseif ($status == 'offline') {
-            $status = "0";
-            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "' 
-                            AND NOT EXISTS (
-                                SELECT 1 FROM radacct 
-                                WHERE radacct.username = customers.username 
-                                AND radacct.acctstoptime IS NOT NULL
-                            )";
-        } else {
-            $condition .= (!empty($condition) ? " AND " : "") . "customers.status = '" . $status . "'";
+    if(!empty($_GET['from_date']) && !empty($_GET['to_date'])){
+        $from_date = date('Y-m-d 00:00:00', strtotime($_GET['from_date']));
+        $to_date = date('Y-m-d 23:59:59', strtotime($_GET['to_date']));
+        $condition .= (!empty($condition) ? " AND " : "") . "datetm BETWEEN '$from_date' AND '$to_date'";
+    }
+    if(!empty($_GET['type'])){
+        $type = $_GET['type']; 
+        if($type=='Credit'){
+            $condition .= (!empty($condition) ? " AND " : "") . "type = '0'";
+        }else if($type =='1' || $type =='2' || $type =='3' || $type =='4'){
+            $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
         }
     }
+    
     /* Output JSON for DataTables to handle*/
-    echo json_encode(
-        SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
-    );
+    // echo json_encode(
+    //     SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
+    // );
+    $totalQuery = "SELECT SUM(purchase_price) as total FROM $table " . (!empty($condition) ? " WHERE $condition" : "");
+    $totalResult = $con->query($totalQuery);
+    $totalRow = $totalResult->fetch_assoc();
+    $totalAmount = $totalRow['total'] ?? 0;
+
+   
+    $response = SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition);
+    $response['totalAmount'] = number_format((float)$totalAmount, 2, '.', '');
+
+    echo json_encode($response);
+    exit; 
+
 }
 
 
@@ -586,33 +587,33 @@ if(isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['custom
         $whereClause = " AND cr.datetm <= '$to_date'";
     }
 
-    $query = "
-        SELECT 
-            c.id AS customer_id, 
-            c.username, 
-            MAX(u.fullname) AS fullname,
-            c.mobile, 
-            cr.datetm,
-            COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
-            COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
-            (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
-            COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due,
-            COALESCE(SUM(CASE WHEN cr.type = '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_due_paid
-        FROM 
-            customers c
-        LEFT JOIN 
-            customer_rechrg cr ON c.id = cr.customer_id
-        LEFT JOIN 
-            users u ON cr.rchg_by = u.id
-        WHERE 
-            1=1 $whereClause
-        GROUP BY 
-            c.id, c.username, c.mobile 
-        HAVING 
-            total_due > 0;
-    ";
+    
 
-    $result = $con->query($query);
+
+    $result = $con->query("SELECT 
+    c.id AS customer_id, 
+    c.username, 
+    MAX(u.fullname) AS fullname,
+    c.mobile, 
+    cr.datetm,
+    GROUP_CONCAT(DISTINCT cr.months ORDER BY cr.rchrg_until DESC SEPARATOR ', ') AS due_months,
+    COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
+    COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
+    (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
+     COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due,
+    COALESCE(SUM(CASE WHEN cr.type = '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_due_paid
+FROM 
+    customers c
+LEFT JOIN 
+    customer_rechrg cr ON c.id = cr.customer_id
+LEFT JOIN 
+    users u ON cr.rchg_by = u.id
+WHERE 
+    1=1 $whereClause
+GROUP BY 
+    c.id, c.username, c.mobile 
+HAVING 
+    total_due > 0");
 
     $response = ['rows' => '', 'footer' => '', 'total_due_sum' => 0];
 
@@ -626,6 +627,7 @@ if(isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['custom
                 <td>{$row['total_recharge']}</td>
                 <td>{$row['total_paid']}</td>
                 <td>{$row['total_due']}</td>
+                <td>{$row['due_months']}</td>
                 <td>{$row['fullname']}</td>
             </tr>";
         }

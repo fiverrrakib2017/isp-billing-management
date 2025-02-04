@@ -124,11 +124,61 @@ include("include/users_right.php");
                                                     <th>Recharged</th>
                                                     <th>Total Paid</th>
                                                     <th>Total Due</th>
+                                                    <th>Month</th>
                                                     <th>Recharge By</th>
                                                 </tr>
                                             </thead>
-                                            <tbody id="customer-data"></tbody>
-                                            <tfoot id="total-footer"> </tfoot>
+                                            <?php 
+                                            
+                                            $result = $con->query("SELECT 
+    c.id AS customer_id, 
+    c.username, 
+    MAX(u.fullname) AS fullname,
+    c.mobile, 
+    MAX(cr.datetm) AS datetm,
+    GROUP_CONCAT(
+        DISTINCT DATE_FORMAT(DATE_SUB(cr.datetm, INTERVAL 1 MONTH), '%M %Y') 
+        ORDER BY cr.rchrg_until DESC SEPARATOR ', '
+    ) AS due_months,  -- ✅ যেই মাসের টাকা বাকি আছে, সেটার নাম দেখাবে
+    COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
+    COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
+    (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
+     COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due,
+    COALESCE(SUM(CASE WHEN cr.type = '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_due_paid
+FROM 
+    customers c
+LEFT JOIN 
+    customer_rechrg cr ON c.id = cr.customer_id
+LEFT JOIN 
+    users u ON cr.rchg_by = u.id
+-- WHERE 
+--     1=1 $whereClause
+GROUP BY 
+    c.id, c.username, c.mobile  
+HAVING 
+    total_due > 0
+
+
+
+");
+
+while ($row = $result->fetch_assoc()) {
+    echo "<tr>";
+    echo "<td>{$row['username']}</td>";
+    echo "<td>{$row['mobile']}</td>";
+    echo "<td>{$row['total_recharge']}</td>";
+    echo "<td>{$row['total_paid']}</td>";
+    echo "<td>{$row['total_due']}</td>";
+    echo "<td>{$row['due_months']}</td>";
+    echo "<td>{$row['fullname']}</td>";
+    echo "</tr>";
+}
+                                            
+                                            
+                                            
+                                            ?>
+                                            <!-- <tbody id="customer-data"></tbody>
+                                            <tfoot id="total-footer"> </tfoot> -->
                                         </table>
                                     </div>
                                 </div>
