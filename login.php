@@ -1,49 +1,68 @@
 <?php
+
+if(!isset($_SESSION)){
+    session_start();
+}
 include "include/db_connect.php";
 
 if (isset($_POST["login"])) {
-    $password = $_POST["password"];
-    $username = $_POST["username"];
+    $username = trim($_POST["username"]);
+    $password = trim($_POST["password"]);
 
-    /*Fetch user data from the database*/ 
-    $usr = $con->query("SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1");
-    $usrext = $usr->num_rows;
+    if (!empty($username) && !empty($password)) {
+        /* Fetch user securely using prepared statement*/
+        $stmt = $con->prepare("SELECT id, username, fullname, role, password FROM users WHERE username = ? LIMIT 1");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if ($usrext == 1) {
-        /* Fetch user details*/
-        while ($rows = $usr->fetch_array()) {
-            $uid = $rows["id"];
-            $username = $rows["username"];
-            $ufullname = $rows["fullname"];
-            $role = $rows["role"];
-        }
+        if ($result->num_rows === 1) {
+            $row = $result->fetch_assoc();
+            /*Set session variables*/ 
+            $_SESSION["uid"] = $row["id"];
+            $_SESSION["username"] = $row["username"];
+            $_SESSION["fullname"] = $row["fullname"];
+            $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
 
-        /*Start session and set session variables*/ 
-        session_start();
-        $_SESSION["uid"] = $uid;
-        $_SESSION["username"] = $username;
-        $_SESSION["fullname"] = $ufullname;
+            /*Log user's IP*/ 
+            $loggeIP = $_SERVER['REMOTE_ADDR'];
+            $stmt = $con->prepare("INSERT INTO user_login_log(username, time, ip, status) VALUES (?, NOW(), ?, 'Success')");
+            $stmt->bind_param("ss", $username, $loggeIP);
+            $stmt->execute();
 
-        /*Log the user's IP address*/ 
-        $loggeIP = $_SERVER['REMOTE_ADDR'];
-        $con->query("INSERT INTO user_login_log(username, time, ip, status) VALUES('$username', NOW(), '$loggeIP', 'Success')");
-        $con->query("UPDATE users SET lastlogin=NOW() WHERE username='$username' AND password='$password'");
+            /*Update last login time & store CSRF token*/ 
+            $stmt = $con->prepare("UPDATE users SET lastlogin = NOW(), csrf_token = ? WHERE username = ?");
+            $stmt->bind_param("ss", $_SESSION['csrf_token'], $username);
+            $stmt->execute();
 
-        /* Redirect based on the user's role*/
-        if ($role == 'BILLING') {
-            header("Location: billing/index.php");
-            exit;
-        } else {
             header("Location: index.php");
-            exit;
+            exit();
+        } else {
+            $wrong_info = "Username or Password is incorrect!";
         }
-    } else {
+
         /* Log failed login attempt*/
-        $loggeIP = $_SERVER['REMOTE_ADDR'];
-        $con->query("INSERT INTO user_login_log(username, time, ip, status) VALUES('$username', NOW(), '$loggeIP', 'Failed')");
-        $wrong_info = "Username or Password Wrong!";
+        $stmt = $con->prepare("INSERT INTO user_login_log(username, time, ip, status) VALUES (?, NOW(), ?, 'Failed')");
+        $stmt->bind_param("ss", $username, $_SERVER['REMOTE_ADDR']);
+        $stmt->execute();
+    } else {
+        $wrong_info = "Please enter both username and password!";
     }
 }
+
+if (isset($_SESSION["uid"])) {
+    $stmt = $con->prepare("SELECT csrf_token FROM users WHERE id=?");
+    $stmt->bind_param("i", $_SESSION["uid"]);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    if ($user && $_SESSION["csrf_token"] === $user["csrf_token"]) {
+        header("Location: index.php");
+        exit();
+    }
+}
+
 ?>
 
 

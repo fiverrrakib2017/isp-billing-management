@@ -9,6 +9,8 @@
                                             <div class="mini-stat-info">
                                                 <span class="counter text-teal">
                                                 <?php
+                                                $currentBal=0;
+                                                $totalpaid=0;
                                                 if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
                                                         $currentBal += $rows["balance"];
@@ -39,7 +41,7 @@
                                         <div class="mini-stat-info">
                                             <span class="counter text-teal">
                                             <?php
-
+                                                $stotalpaid = 0;
                                                 if ($pop_payment = $con->query(" SELECT `paid_amount` FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
                                                     while ($rows = $pop_payment->fetch_array()) {
                                                         $stotalpaid += $rows["paid_amount"];
@@ -65,12 +67,12 @@
                                             <div class="mini-stat-info">
                                                 <span class="counter text-danger">
                                                     <?php
-                                                    
+                                                    $totalAmount = 0;
+                                                    $paidAmount = 0;
                                                     if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
                                                         while ($rows = $pop_payment->fetch_array()) {
                                                             $totalAmount += $rows["balance"];
                                                         }
-                                                        $totalAmount;
                                                     }
     
                                                     if ($pop_payment = $con->query("SELECT SUM(paid_amount) AS amount FROM `pop_transaction` WHERE pop_id=$auth_usr_POP_id  ")) {
@@ -99,7 +101,7 @@
                                         <div class="mini-stat-info">
                                             <span class="counter text-teal">
                                             <?php
-
+                                                $stotalDupaid = 0;
                                                 if ($pop_dupayment = $con->query(" SELECT paid_amount FROM pop_transaction WHERE pop_id='$auth_usr_POP_id' AND transaction_type='5' ")) {
                                                     while ($rowsdp = $pop_dupayment->fetch_array()) {
                                                         $stotalDupaid += $rowsdp['paid_amount'];

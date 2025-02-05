@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || $_SERVER['SERVER_PORT'] == 443 ? 'https://' : 'http://';
 $CurPageURL = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
@@ -65,36 +68,24 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     exit();
 }
 
-function timeAgo($startdate)
-{
-    /*Convert startdate to a timestamp*/
-    $startTimestamp = strtotime($startdate);
-    $currentTimestamp = time();
 
-    /* Calculate the difference in seconds*/
-    $difference = $currentTimestamp - $startTimestamp;
+// if (isset($_SESSION["uid"])) {
+//     $stmt = $con->prepare("SELECT csrf_token FROM users WHERE id=?");
+//     $stmt->bind_param("i", $_SESSION["uid"]);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
+//     $user = $result->fetch_assoc();
 
-    /*Define time intervals*/
-    $units = [
-        'year' => 31536000,
-        'month' => 2592000,
-        'week' => 604800,
-        'day' => 86400,
-        'hour' => 3600,
-        'min' => 60,
-        'second' => 1,
-    ];
+//     if ($user && $_SESSION["csrf_token"] === $user["csrf_token"]) {
+//         header("Location: index.php");
+//         exit();
+//     } else {
+//         header("Location: login.php");
+//         exit();
+//     }
+// }
 
-    /*Check for each time unit*/
-    foreach ($units as $unit => $value) {
-        if ($difference >= $value) {
-            $time = floor($difference / $value);
-            return '<img src="images/icon/online.png" height="10" width="10"/>' . ' ' . $time . ' ' . $unit . ($time > 1 ? 's' : '') . '';
-        }
-    }
-    /*If the difference is less than a second*/
-    return '<img src="images/icon/online.png" height="10" width="10"/> just now';
-}
+
 
 ?>
 

@@ -1,13 +1,11 @@
 <?php
-session_start();
+if(!isset($_SESSION)){
+	session_start();
+}
 $_SESSION["uid"];
 $_SESSION["username"];
-$_SESSION["tcoken"];
 
-/*******************CREATE CSRF TOKEN GENERATE BY RAKIB***************************/
-if(empty($_SESSION['csrf_token'])){
-	$_SESSION['csrf_token']=bin2hex(random_bytes(32)); 
-}
+
 /*********************Check user is loged in *************************************/
 if(empty($_SESSION["username"]) || empty($_SESSION['uid']))
 {
