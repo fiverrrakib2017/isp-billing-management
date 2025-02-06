@@ -156,7 +156,7 @@ LEFT JOIN
 GROUP BY 
     c.id, c.username, c.mobile  
 HAVING 
-    total_due > 0
+    total_due > 0;
 
 
 
