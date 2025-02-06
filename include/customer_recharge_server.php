@@ -232,11 +232,12 @@ if (isset($_POST['add_recharge_data'])) {
     $packageId = null;
     $_price = 0;
 
-    //how to get customer package of customers table
+    /*Get Customer information*/
     if ($allCstmr = $con->query("SELECT * FROM customers WHERE id=$customer_id")) {
         while ($rows = $allCstmr->fetch_array()) {
             $packageId = $rows['package'];
             $_price = $rows['price'];
+            $pop_id = $rows['pop'];
         }
     }
      
@@ -247,12 +248,13 @@ if (isset($_POST['add_recharge_data'])) {
     }
     
     //get customer sale's price
-    if ($allPackg = $con->query("SELECT * FROM branch_package WHERE id=$packageId")) {
+    if ($allPackg = $con->query("SELECT s_price , p_price from branch_package WHERE pkg_id=$packageId AND pop_id=$pop_id LIMIT 1")) {
         while ($rows = $allPackg->fetch_array()) {
             $package_sales_price = $rows['s_price'];
         }
     }
-    //পপ এর বেলেন্স চেক করে রিচারজ করবো ,
+    
+   /*Check POP Blance*/
     if ($pop_payment = $con->query("SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$pop_id' ")) {
         while ($rows = $pop_payment->fetch_array()) {
             $popBalance = $rows['balance'];
