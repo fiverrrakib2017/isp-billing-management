@@ -89,8 +89,6 @@
                                         </select>
                                     </div>
                                 </div>  
-                            </div>
-                            <div class="row">
                                 <div class="col">
                                 <div class="form-group mb-4">
                                         <label>Assets</label>
@@ -139,6 +137,9 @@
                                         <input type="number" class="form-control" id="s_price"  name="s_price" placeholder="Enter Your Sale's Price" required/>
                                     </div>
                                 </div>  
+                            </div>
+                            <div class="row">
+                               
                             </div>
 
                             
