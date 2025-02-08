@@ -129,6 +129,71 @@ ini_set('display_errors', 1);
 
     </div>
     <!-- END layout-wrapper -->
+     
+    <div class="modal fade bs-example-modal-lg" id="payDueModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+        <div class="modal-content col-md-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span
+                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;Due Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="include/purchase_server.php?add_due_payment=true" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="invoice_id" id="invoice_id">
+                    <div class="form-group mb-2">
+                        <label>Transaction Number</label>
+                        <input name="transaction_number" class="form-control" type="text" readonly>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Due Amount</label>
+                        <input readonly name="due_amount" placeholder="Enter Due Amount" class="form-control" type="text" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Paid Amount</label>
+                        <input name="paid_amount" placeholder="Enter Paid Amount" class="form-control" type="text" required>
+                    </div>   
+                    <div class="form-group mb-2">
+                        <label>Select Accounts</label>
+                        <select type="text" class="form-control" id="sub_ledger_id" name="sub_ledger_id"
+                            style="width: 100%;">
+                            <?php
+                            if ($ledgr = $con->query('SELECT * FROM ledger')) {
+                                echo '<option value="">Select</option>';
+                            
+                                while ($rowsitm = $ledgr->fetch_array()) {
+                                    $ldgritmsID = $rowsitm['id'];
+                                    $ledger_name = $rowsitm['ledger_name'];
+                            
+                                    echo '<optgroup label="' . $ledger_name . '">';
+                            
+                                    // Sub Ledger items list
+                                    if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+                                        while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                            $sub_ldgrid = $rowssb['id'];
+                                            $ldgr_items = $rowssb['item_name'];
+                            
+                                            echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                        }
+                                    }
+                            
+                                    echo '</optgroup>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>                 
+                                    
+                    <div class="modal-footer ">
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
     <div id="deleteModal" class="modal fade">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
@@ -226,8 +291,78 @@ ini_set('display_errors', 1);
                     });
                 }
             });
+            /*Paid Due Amount Script*/
+            $(document).on('click',"button[name='due_paid_button']",function(){
+                var id=$(this).data('id');
+                $.ajax({
+                    type: 'GET', 
+                    url: 'include/purchase_server.php?get_invoice=true',
+                    data: { invoice_id: id }, 
+                    dataType:'json',
+                    success: function(response) {
+                        if (response) {
+                            $("#payDueModal").modal('show');
+                            $("#payDueModal #invoice_id").val(response.id); 
+                            $("#payDueModal input[name='transaction_number']").val(response.transaction_number);
+                            $("#payDueModal input[name='due_amount']").val(response.total_due);
+                        } else {
+                            toastr.error("No data found for this invoice!");
+                        }
+
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        toastr.error("Error deleting item! " + error);
+                    }
+                });
+            });
+            $('#payDueModal').on('shown.bs.modal', function () {
+                if (!$('#sub_ledger_id').hasClass("select2-hidden-accessible")) {
+                    $('#sub_ledger_id').select2({
+                        dropdownParent: $('#payDueModal')
+                    });
+                }
+            });
+            $('#payDueModal form').submit(function(e){
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = form.serialize();
+                $.ajax({
+                type:'POST',
+                'url':url,
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    if(response.success){
+                        toastr.success(response.message);
+                        $("#payDueModal").modal('hide');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }else{
+                        toastr.error(response.message);
+                    }
+                },
+
+
+                error: function (xhr, status, error) {
+                    /** Handle  errors **/
+                    if (xhr.status === 422) {
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            toastr.error(value[0]); 
+                        });
+                    }
+                }
+                });
+            });
             
         });
+
+
+
+      
     </script>
 </body>
 

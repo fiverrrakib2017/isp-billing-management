@@ -68,78 +68,7 @@
 
                             <div class="row">
 
-                                <div class="col">
-                                    <div class="form-group mb-4">
-                                        <label>Purchase A/C</label>
-                                        <select id="purchase_ac" type="text" class="form-control"name="purchase_ac" required style="width: 100%;">
-                                        <?php
-                                    if ($ledgr = $con->query("SELECT * FROM ledger Where `mstr_ledger_id`=2")) {
-                                        echo '<option value="">Select</option>';
-
-                                        while ($rowsitm = $ledgr->fetch_array()) {
-                                            $ldgritmsID = $rowsitm["id"];
-                                            $ledger_name = $rowsitm["ledger_name"];
-
-                                            echo '<optgroup label="' . $ledger_name . '">';
-
-
-                                            // Sub Ledger items list
-                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
-
-
-                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
-                                                    $sub_ldgrid = $rowssb["id"];
-                                                    $ldgr_items = $rowssb["item_name"];
-
-                                                    echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
-                                                }
-                                            }
-
-
-
-                                            echo '</optgroup>';
-                                        }
-                                    }
-                                    ?>
-                                        </select>
-                                    </div>
-                                </div>            
-                                <div class="col">
-                                    <div class="form-group mb-4">
-                                        <label>Sales Account</label>
-                                        <select type="text" id="sales_ac" class="form-control" name="sales_ac" required style="width: 100%;">
-                                    <?php
-                                    if ($ledgr = $con->query("SELECT * FROM ledger Where `mstr_ledger_id`=1")) {
-                                        echo '<option value="">Select</option>';
-
-                                        while ($rowsitm = $ledgr->fetch_array()) {
-                                            $ldgritmsID = $rowsitm["id"];
-                                            $ledger_name = $rowsitm["ledger_name"];
-
-                                            echo '<optgroup label="' . $ledger_name . '">';
-
-
-                                            // Sub Ledger items list
-                                            if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
-
-
-                                                while ($rowssb = $ledgrsubitm->fetch_array()) {
-                                                    $sub_ldgrid = $rowssb["id"];
-                                                    $ldgr_items = $rowssb["item_name"];
-
-                                                    echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
-                                                }
-                                            }
-
-
-
-                                            echo '</optgroup>';
-                                        }
-                                    }
-                                    ?>
-                                        </select>
-                                    </div>
-                                </div>            
+                                  
                                 <div class="col">
                                     <div class="form-group mb-4">
                                         <label>Units</label>

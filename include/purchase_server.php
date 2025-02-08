@@ -46,12 +46,15 @@ if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             echo "<td>" . (!empty($rows['created_at']) ? date("d F Y", strtotime($rows['created_at'])) : $rows['created_at']) . "</td>";
 
 
-            echo "<td>";
+            echo "<td style='margin-right: 5px;'>";
 
             echo '<a class="btn-sm btn btn-primary" style="margin-right: 5px;" href="purchase_invoice_edit.php?id=' . $rows['id'] . '"><i class="fas fa-edit"></i></a>';
             echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/purchase_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
             echo '<button type="button" name="delete_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-danger" style="margin-right: 5px;"><i class="fas fa-trash"></i></button>';
-
+            
+            if ($rows['total_due'] > 0) {
+                echo '<button type="button" name="due_paid_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-info" style="margin-right: 5px;">  <i class="fas fa-money-bill-wave"></i> Pay Due</button>';
+            }
             echo "</td>";
             echo "</tr>";
         }
@@ -171,6 +174,7 @@ if (isset($_GET['process_payment']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->close();
     $stmt2->close();
     $con->close();
+    exit;
 }
    
 /* Add Purchase Invoice*/
@@ -183,7 +187,76 @@ if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $__response=Purchase_invoice::add_invoice($_POST);
 
     echo json_encode($__response);
+    exit;
 
+}
+if (isset($_GET['get_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    $invoice_id = intval($_GET['invoice_id']);
+    $result = $con->query("SELECT * FROM purchase WHERE id=$invoice_id");
+    if ($result->num_rows > 0) {
+        $invoice_data = $result->fetch_assoc(); 
+        echo json_encode($invoice_data);
+    } else {
+        echo json_encode(null); 
+    }
+    exit;
+}
+if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
+    $invoice_id = $_POST['invoice_id'];
+    $paid_amount = $_POST['paid_amount'];
+    $transaction_number = $_POST['transaction_number'];
+   
+    /* Check if the payment amount is valid*/
+    $total_due_amount=$con->query("SELECT total_due FROM purchase WHERE id=$invoice_id")->fetch_assoc()['total_due'];
+    if ($total_due_amount === null) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'No Due Amount Found'
+        ]);
+        exit();
+    }
+    if ($_POST['paid_amount'] > $total_due_amount) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Over Payment Not Allowed'
+        ]);
+        exit();
+    }
+    
+    /* Calculation New Due Amount*/
+    $new_due_amount=$total_due_amount-$paid_amount;
+    
+    /* Update the `purchase` table*/
+    $stmt = $con->prepare("UPDATE purchase  SET total_due = GREATEST(0, ?), total_paid = total_paid + ? 
+    WHERE id = ?");
+    $stmt->bind_param("iii", $new_due_amount, $paid_amount, $invoice_id);
+    
+    if ($stmt->execute()) {
+        /*Get Master Ledger And Ledger id*/
+        $sub_ledger_id=$_POST['sub_ledger_id'];
+        $get_all_sub_ledger= $con->query("SELECT * FROM legder_sub WHERE id =$sub_ledger_id ");
+        while($rows=$get_all_sub_ledger->fetch_array()){
+            $ledger_id=$rows['ledger_id'];
+            $mstr_ledger_id=$rows['mstr_ledger_id'];
+        }
+        $user_id=$_SESSION['uid']?? 1;
+        $date = date('Y-m-d');
+        $con->query("INSERT INTO ledger_transactions (transaction_number,user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) VALUES ('$transaction_number','$user_id', '$mstr_ledger_id', '$ledger_id', '$sub_ledger_id', '1', '$paid_amount', '$paid_amount', '1', 'note', '$date')");
+        echo json_encode([
+            'success' => true,
+            'message' => 'Payment processed successfully!',
+            'remaining_due' => $new_due_amount
+        ]);
+    } else {
+        echo json_encode([
+        'success' => false,
+        'message' => 'Update Failed'
+        ]);
+    }
+
+$stmt->close();
+
+    exit;
 }
 
 if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -191,12 +264,14 @@ if (isset($_GET['update_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $invoice_id = intval($_GET['invoice_id']);
     $__response=Purchase_invoice::update_invoice($invoice_id,$_POST);
     echo json_encode($__response);
+    exit;
 }
 if (isset($_POST['delete_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     new Purchase_invoice($con); 
     $invoice_id = intval($_POST['invoice_id']);
     $__response=Purchase_invoice::delete_invoice($invoice_id);
     echo json_encode($__response);
+    exit;
    
 }
 

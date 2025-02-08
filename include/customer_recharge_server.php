@@ -84,7 +84,6 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                     }
                 }
                 $package_purchase_price = $customer_package_price * intval($chrg_mnths);
-                //echo $package_purchase_price; exit; 
 
                 if (!empty($package_sales_price) && isset($package_sales_price) && !empty($package_purchase_price) && isset($package_purchase_price)) {
                     /***********Ensure sufficient balance ************/
