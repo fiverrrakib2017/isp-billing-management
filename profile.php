@@ -4,7 +4,9 @@ include "include/security_token.php";
 include "include/users_right.php";
 include "include/db_connect.php";
 require('routeros/routeros_api.class.php');
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if (isset($_GET['clid'])) {
 
     $clid = $_GET['clid'];
@@ -445,13 +447,17 @@ if ($usrstatus = $con->query("SELECT * FROM radcheck WHERE username='$username' 
 }
 
 if ($radusrname == 1) {
-    $expiredDate = new DateTime($expiredDate);
-    $expiredDate = $expiredDate->format('d-M-Y');
-    echo "<span style='color:green;'><b>Active</b></span> <br>" . $expiredDate;
+   if (!empty($expiredDate) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $expiredDate)) {
+       $expiredDate = new DateTime($expiredDate);
+       $expiredDate = $expiredDate->format('d-M-Y');
+       echo "<span style='color:green;'><b>Active</b></span> <br>" . $expiredDate;
+   } else {
+       echo "<span style='color:orange;'><b>Invalid Date</b></span>";
+   }
 } else {
-
-    echo '<a href="?clid=' . $clid . '&disable=false"><span style="color:red;"><b>Disabled</b></span></a>';
+   echo '<a href="?clid=' . $clid . '&disable=false"><span style="color:red;"><b>Disabled</b></span></a>';
 }
+
 echo '<br>';
 $gracetime = $con->query("SELECT DATEDIFF(grace_expired, NOW()) AS time FROM customers WHERE grace_expired>=NOW() AND username='$username'");
 if ($gracetime->num_rows == 1) {
@@ -808,7 +814,7 @@ $ticketType = $rows['ticket_type'];
 if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE customer_id='$lstid' ")) {
     while ($r_cus_rows = $recharge_customer->fetch_array()) {
         $r_id = $r_cus_rows["id"];
-        $r_cus_name = $r_cus_rows["customer_name"];
+        //$r_cus_name = $r_cus_rows["customer_name"];
         $r_cus_month = $r_cus_rows["months"];
         $r_cus_ref = $r_cus_rows["ref"];
         $r_cus_amount = $r_cus_rows["purchase_price"];
