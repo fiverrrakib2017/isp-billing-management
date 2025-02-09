@@ -464,6 +464,35 @@ if (isset($_GET["id"])) {
                 var mainFormData = $('#form-data').serializeArray();
                 var modalFormData = $('#paymentForm').serializeArray(); 
                 var allFormData = $.merge(mainFormData, modalFormData);
+                var isValid = true;
+                /*Validate each form data field*/
+                $.each(allFormData, function(index, field) {
+                    if (field.name === 'client_id' && field.value === '') {
+                        toastr.error("Suppliers must be selected!");
+                        isValid = false;
+                        return false;
+                    } else if (field.name === 'table_paid_amount' && field.value === '') {
+                        toastr.error("Paid Amount is required");
+                        isValid = false;
+                        return false;
+                    } else if (field.name === 'date' && field.value === '') {
+                        toastr.error("Date is required!");
+                        isValid = false;
+                        return false;
+                    } else if (field.name === 'table_status' && field.value === '') {
+                        toastr.error("Type is required!");
+                        isValid = false;
+                        return false;
+                    }else if(field.name === 'sub_ledger_id' && field.value === ''){
+                        toastr.error("Select Accounts is required!");
+                        isValid = false;
+                        return false;
+                    }
+                });
+
+                if (!isValid) {
+                    return false;
+                }
                 $(this).prop('disable',true).html('Saving...'); 
                 $.ajax({
                     type:'POST',
