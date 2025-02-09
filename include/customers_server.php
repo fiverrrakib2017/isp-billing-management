@@ -1,5 +1,5 @@
 <?php
-session_start();
+if(!isset($_SESSION)) session_start();
 //date_default_timezone_set('Asia/Dhaka');
 include "db_connect.php";
 
@@ -16,54 +16,6 @@ if (isset($_GET['delete'])) {
         echo  "Delete Success";
     } else {
         echo  "Error";
-    }
-}
-
-// EDIT CUSTOMER
-if (isset($_POST['updateCustomer'])) {
-    $lstid = $_POST['id'];
-    $fullname = $_POST['fullname'];
-    $area = $_POST['area'];
-    $package = $_POST['package'];
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $mobile = $_POST['mobile'];
-    $address = $_POST['address'];
-    $nid = $_POST['nid'];
-    $price = $_POST['price'];
-    $remarks = $_POST['remarks'];
-    $connection_charge = $_POST['connection_charge'];
-    $expiredate = $_POST['expiredate'];
-    $liablities = $_POST['liablities'];
-
-    
-	
-	
-	// Branch Package
-
-    if ($allArea = $con->query("SELECT * FROM customers WHERE id='$lstid' ")) {
-        while ($rowcmr = $allArea->fetch_array()) {
-            $cmrPOPid = $rowcmr['pop'];
-			$CustomerUserName = $rowcmr['username'];
-        }
-    }
-
-    if ($pkgnm = $con->query("SELECT * FROM branch_package WHERE id='$package'")) {
-
-        while ($rowspkg = $pkgnm->fetch_array()) {
-             $package_name = $rowspkg['package_name']; 
-        }
-    }
-/**/
-    $result = $con->query("UPDATE customers SET fullname='$fullname', username='$username', password='$password', package='$package', mobile='$mobile', address='$address', area='$area', nid='$nid', remarks='$remarks', price='$price', liablities='$liablities', con_charge='$connection_charge',expiredate='$expiredate'  WHERE id='$lstid'");
-    // UPDATE redcheck
-	$con->query("UPDATE radcheck SET value='$password', username='$username' WHERE username='$CustomerUserName'");
-	// UPDATE radreplay
-	$con->query("UPDATE radreply SET value='$package_name', username='$username' WHERE username='$CustomerUserName'");
-    if ($result == true) {
-        echo  1;
-    } else {
-        echo 0;
     }
 }
 
@@ -85,6 +37,7 @@ if (isset($_POST['current_username'])) {
         echo "(<span style='color:green'>User available</span>)";
         echo "<script>$('#customer_add').prop('disabled',false);</script>";
     }
+    exit; 
 }
 
 //pop dependence area
@@ -98,6 +51,7 @@ if (isset($_POST['current_pop_name'])) {
             echo '<option value=' . $AreaID . '>' . $AreaName . '</option>';
         }
     }
+    exit; 
 }
 /* Get Area Billing Cycle */
 if (isset($_POST['get_billing_cycle'])) {
@@ -291,6 +245,7 @@ if (isset($_POST['srch_pop_name'])) {
             echo '<option value='.$AreaID.'>'. $AreaName .'</option>';
         }
     }
+    exit; 
 }
 
 //dynamic customer package when click pop/branch
@@ -303,6 +258,7 @@ if (isset($_POST['getCustomerPackage'])) {
             echo '<option value="' . $rows['pkg_id'] . '">' . $rows['package_name'] . '</option>';
         }
     }
+    exit; 
 }
 //package dynamic price
 if (isset($_POST['getPackagePrice'])) {
@@ -313,6 +269,7 @@ if (isset($_POST['getPackagePrice'])) {
             echo $rowsssss['p_price'];
         }
     }
+    exit; 
 }
 
 
@@ -384,6 +341,7 @@ if (isset($_POST['addCustomerData'])) {
     $con->query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
     $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package_name')");
     }
+    exit; 
 }
 //get specifik customer package and display frontend 
 if (isset($_POST['getCustomerSpecificId'])) {
@@ -394,6 +352,7 @@ if (isset($_POST['getCustomerSpecificId'])) {
             echo '<option value="">' . $package_name . '</option>';
         }
     }
+    exit; 
 }
 //get specifik customer package and display frontend 
 if (isset($_POST['getCustomerPackagePrice'])) {
@@ -403,6 +362,7 @@ if (isset($_POST['getCustomerPackagePrice'])) {
             echo $rows['price'];
         }
     }
+    exit; 
 }
 //get specifik customer package and display frontend 
 if (isset($_POST['getCustomerPop'])) {
@@ -412,6 +372,7 @@ if (isset($_POST['getCustomerPop'])) {
             echo   $popId = $rows['pop'];
         }
     }
+    exit; 
 }
 
 
@@ -438,6 +399,7 @@ if (isset($_POST['updateCustomerData'])) {
     } else {
         echo "Error:" . $con->error;
     }
+    exit; 
 }
 
 if (isset($_POST['pwdmissname']) && !empty($_POST['pwdmissname'])) {
@@ -446,6 +408,7 @@ if (isset($_POST['pwdmissname']) && !empty($_POST['pwdmissname'])) {
     
     $con->query("UPDATE customers SET password='$pwdtry' WHERE username='$pwdmissname'");
     $con->query("UPDATE radcheck SET value='$pwdtry' WHERE username='$pwdmissname'");
+    exit; 
    
 }
 
@@ -472,58 +435,69 @@ if(isset($_POST['area_id'])){
   
     $stmt->close();
     $con->close();
+    exit; 
   }
 
-if(isset($_POST['get_customer_phone_number'])){
-    $customerID = $_POST['get_customer_phone_number'];
-    
-    // Fetch customer phone number 
-    $query = "SELECT * FROM customers WHERE id = ?";
-    $stmt = $con->prepare($query);
-    $stmt->bind_param("i", $customerID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-  
-    if($result->num_rows > 0){
-        while($row = $result->fetch_assoc()){
-            echo $row['mobile'];
-        }
-    } else {
+    if(isset($_POST['get_customer_phone_number'])){
+        $customerID = $_POST['get_customer_phone_number'];
         
+        // Fetch customer phone number 
+        $query = "SELECT * FROM customers WHERE id = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("i", $customerID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if($result->num_rows > 0){
+            while($row = $result->fetch_assoc()){
+                echo $row['mobile'];
+            }
+        }
+    
+        $stmt->close();
+        $con->close();
+        exit; 
     }
-  
-    $stmt->close();
-    $con->close();
-  }
 
   
   
-//   if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['send_message']) {
-//         echo 'okkkk'; exit; 
-//         if (isset($_POST['customer_ids']) && !empty($_POST['customer_ids'])) {
-//             $customerIds = $_POST['customer_ids'];
-//             $message = $_POST['message'];
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['update_customer']) {
+        // echo '<pre>';
+        // print_r($_POST);
 
-//             // Assuming you have a function to send messages
-//             foreach ($customerIds as $id) {
-//                 // Fetch customer's mobile number or any other details you need
-//                 $query = "SELECT mobile FROM customers WHERE id = $id";
-//                 $result = mysqli_query($con, $query);
-//                 if ($result && mysqli_num_rows($result) > 0) {
-//                     $customer = mysqli_fetch_assoc($result);
-//                     $mobileNumber = $customer['mobile'];
+        // echo '</pre>';exit; 
+        $customer_id = $_POST['customer_id'] ?? 0;
+        $fullname = $_POST['fullname'];
+       $package = $_POST['package'];
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $mobile = $_POST['mobile'];
+        $exp_date = $_POST['expire_date'];
+        $pop = $_POST['pop'];
+        $area = $_POST['area'];
+        $area_house_id = is_numeric($_POST['customer_houseno']) ? intval($_POST['customer_houseno']) : '0';
+        $address = $_POST['address'];
+        $nid = $_POST['nid'];
+        $con_charge = $_POST['con_charge'];
+        $price = $_POST['price'];
+        $remarks = $_POST['remarks'];
+        $liablities = $_POST['liablities'];
+        $status = $_POST['status'];
+        $user_type = $_POST['user_type'];
 
-//                     // Here you can integrate your SMS API or any other messaging service
-//                     // sendSMS($mobileNumber, $message);
-                    
-//                     // For demonstration, we'll just echo the mobile number and message
-//                     echo "Message sent to: " . $mobileNumber . " - Message: " . $message . "<br>";
-//                 }
-//             }
-//         } else {
-//             echo "No customer selected or message is empty.";
-//         }
-//     }
+        if ($allPack = $con->query("SELECT * FROM branch_package WHERE pkg_id=$package AND pop_id=$pop")) {
+            while ($rowssss = $allPack->fetch_array()) {
+                $package_name = $rowssss['package_name'];
+            }
+        }
+       $result= $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' WHERE id=$customer_id");
+       if($result){
+            echo json_encode(['success' => true, 'message' => 'Customer updated successfully!']);
+       }else{
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $con->error]);
+       }
+       exit; 
+    }
 
 
     if (isset($_GET['get_all_expire_customer_ids'])) {
