@@ -482,17 +482,17 @@ if(isset($_POST['area_id'])){
         $status = $_POST['status'];
         $user_type = $_POST['user_type'];
 
-        /*Customer New Expire Date*/
-        $get_customer_expire= $con->query("SELECT `expire_date` FROM customers WHERE id=$customer_id")->fetch_array()['expire_date'];
-        $year=''; 
-        $month='';
-        for($i=0; $i < 4; $i++){
-            $year .= $get_customer_expire[$i];
-        }
-        for($i=5; $i < 7; $i++){
-            $month .= $get_customer_expire[$i];
-        }
-        $new_expire_date= $year.'-'.$month.'-'.$exp_date;
+       /* Customer New Expire Date */
+       $get_customer_expire= $con->query("SELECT expiredate FROM customers WHERE id=$customer_id")->fetch_array()['expiredate'];
+       $year=''; 
+       $month='';
+       for($i=0; $i < 4; $i++){
+           $year .= $get_customer_expire[$i];
+       }
+       for($i=5; $i < 7; $i++){
+           $month .= $get_customer_expire[$i];
+       }
+      $new_expire_date= $year.'-'.$month.'-'.$exp_date;  
         /*Get Customer Package Name*/
         if ($allPack = $con->query("SELECT * FROM branch_package WHERE pkg_id=$package AND pop_id=$pop")) {
             while ($rowssss = $allPack->fetch_array()) {

@@ -104,8 +104,7 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                     /*Insert Recharge Data*/
                     $con->query("INSERT INTO customer_rechrg(customer_id, pop_id, months, sales_price, purchase_price,discount, ref, rchrg_until, type, rchg_by, datetm) VALUES('$customer_id', '$pop_id', '$chrg_mnths', '$package_sales_price', '$package_purchase_price','0.00', '$RefNo', '$exp_date', '$tra_type', '$recharge_by', NOW())");
 
-                    $con -> query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
-                    $con -> query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package')");
+                    $con -> query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
 
                     /*Update Customer New Balance AND Expire Date */
                     $_customer_total_paid_amount = 0;
@@ -312,8 +311,7 @@ if (isset($_POST['add_recharge_data'])) {
         $balanceamount = $TotalrchgAmt - $TotalPaidAmt;
         $con->query("UPDATE customers SET expiredate='$exp_date', status='1', rchg_amount='$TotalrchgAmt', paid_amount='$TotalPaidAmt', balance_amount='$balanceamount' WHERE id='$customer_id'");
 
-        $con -> query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
-        $con -> query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package')");
+        $con -> query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
         echo 1;
         $con->close();
     }

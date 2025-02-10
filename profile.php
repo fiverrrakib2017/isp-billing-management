@@ -6,6 +6,15 @@ include "include/db_connect.php";
 require('routeros/routeros_api.class.php');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
+
+$nasipaddress ="Not connected!";
+$RouterPortID ="Not Found!";
+$DeviceMAC ="Not Found!";
+$framedipaddress ="Not connected!";
+$offlineHours ="Never connected!";
+		
+		
+		
 error_reporting(E_ALL);
 if (isset($_GET['clid'])) {
 
@@ -32,11 +41,11 @@ if (isset($_GET['clid'])) {
             $liablities = $rows["liablities"];
         }
 
-        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-        $onlineusr->num_rows;
+			$onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+			$onlineusr->num_rows;
 		
-		// NAS Info
-		$rowacct = $onlineusr->fetch_array();
+			// NAS Info
+			$rowacct = $onlineusr->fetch_assoc();
 			$nasipaddress = $rowacct["nasipaddress"];
 
 			$CNRT = $con->query("SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
@@ -55,6 +64,7 @@ if (isset($_GET['clid'])) {
             if ($_GET["disable"] == 'true') {
                 $con->query("UPDATE customers SET status='0' WHERE id='$clid'");
                 $con->query("DELETE FROM radcheck WHERE username='$username'");
+				$con->query("DELETE FROM radreply WHERE username='$username'");
 				
 				     // Disconnect from RT
 					 $API = new RouterosAPI();
@@ -76,6 +86,7 @@ if (isset($_GET['clid'])) {
             } else if ($_GET["disable"] == 'false') {
                 $con->query("UPDATE customers SET status='1' WHERE id='$clid'");
                 $con->query("INSERT INTO radcheck(username,value,attribute,op) VALUES('$username','$password','Cleartext-Password',':=')");
+				$con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$packagename')");
                 header("location:?clid=$clid");
             }
         }
@@ -419,8 +430,10 @@ if ($onlineusr->num_rows == 1) {
 } else {
     echo '<b><img src="images/icon/offline.png" height="10" width="10"/> Offline </b> <br/>';
     if ($offtime = $con->query("SELECT TIMEDIFF(NOW(),acctstoptime) AS time FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
-        $off_rows = $offtime->fetch_array();
-        echo '<span class="far fa-clock"></span> <strong><span style="color:red;"> ' . $offlineHours = $off_rows["time"] . "</span></strong> Hrs <br/>";
+        $off_rows = $offtime->fetch_assoc();
+		$offlineHours = $off_rows["time"];
+		
+        echo '<span class="far fa-clock"></span> <strong><span style="color:red;"> ' . $offlineHours . "</span></strong> Hrs <br/>";
         {
 
             if ($offtimes = $con->query("SELECT acctstoptime FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
