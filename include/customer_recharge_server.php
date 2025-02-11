@@ -442,9 +442,10 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
             'db' => 'datetm',
             'dt' => 1,
             'formatter' => function($d, $row) {
-                return date('d-m-Y', strtotime($d));
+                return date('d M Y', strtotime($d));
             }
         ),
+        
         array('db' => 'customer_id', 
             'dt' => 2,
             'formatter' => function($d, $row) use ($con) {
@@ -473,7 +474,13 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
                 }
             }
         ),
-        array('db' => 'rchrg_until', 'dt' => 5),
+        array(
+            'db' => 'rchrg_until', 
+            'dt' => 5,
+            'formatter'=>function($d,$row){
+                return date('d M Y', strtotime($d));
+            }
+        ),
         array('db' => 'purchase_price', 'dt' => 6),
     );
 
@@ -505,6 +512,14 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
         }
     }
+    if (!empty($_GET['bill_collect']) && $_GET['bill_collect'] !=='0') {
+        $bill_collect_ID = intval($_GET['bill_collect']); 
+        if ($bill_collect_ID > 0) {
+            $condition = isset($condition) ? $condition . " AND " : "";
+            $condition .= "rchg_by = $bill_collect_ID";
+        }
+    }
+    
 
     
     /* Output JSON for DataTables to handle*/

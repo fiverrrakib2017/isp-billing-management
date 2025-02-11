@@ -112,7 +112,14 @@ include 'include/db_connect.php';
 
     </div>
     <!-- END layout-wrapper -->
+    <?php
+        $options = '';
+        $get_data = $con->query("SELECT id, fullname FROM users WHERE user_type='1'");
 
+        while ($row = $get_data->fetch_assoc()) {
+            $options .= '<option value="' . $row['id'] . '">' . $row['fullname'] . '</option>';
+        }
+    ?>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <?php require 'script.php'; ?>
@@ -138,6 +145,14 @@ include 'include/db_connect.php';
                         </select>
                     </label>`;
 
+     /* Bill Collect Dropdown */
+     var bill_collect = `<label style="margin-left: 10px;">
+                                <select class="bill_collect form-control" style="width: 150px; display: inline;">
+                                    <option>---Collection---</option>
+                                    <?= $options; ?>
+                                </select>
+                            </label>`;
+
     setTimeout(() => {
         let filterContainer = $('.dataTables_filter');
         let lengthContainer = $('.dataTables_length');
@@ -148,8 +163,10 @@ include 'include/db_connect.php';
         filterContainer.append(from_date);
         filterContainer.append(to_date);
         filterContainer.append(status);
+        filterContainer.append(bill_collect);
 
         $('.status_filter').select2();
+        $('.bill_collect').select2();
     }, 500); 
 
     /* DataTable Initialization */
@@ -175,6 +192,7 @@ include 'include/db_connect.php';
                 d.from_date = $('.from_date').val() || '<?php echo date('Y-m-d');?>';
                 d.to_date = $('.to_date').val() || '<?php echo date('Y-m-d');?>';
                 d.type = $('.status_filter').val();
+                d.bill_collect = $('.bill_collect').val();
             },
             beforeSend: function() {
                 $(".dataTables_empty").html(
@@ -200,6 +218,9 @@ include 'include/db_connect.php';
         $('#datatable').DataTable().ajax.reload();
     });
     $(document).on('change','.status_filter',function(){
+        $('#datatable').DataTable().ajax.reload();
+    });
+    $(document).on('change','.bill_collect',function(){
         $('#datatable').DataTable().ajax.reload();
     });
 
