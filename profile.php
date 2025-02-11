@@ -299,16 +299,16 @@ echo $createdate;
                                           </div>
                                           <div class="d-flex justify-content-between border-bottom py-2 px-3">
                                              <p><i class="mdi mdi-crosshairs-gps"></i>POP/Branch:</p>
-                                             <a href="#">
+                                             <a href="view_pop.php?id=<?=$pop;?>">
                                              <?php
-$getPopId = $pop;
-if ($getData = $con->query("SELECT * FROM add_pop WHERE id='$getPopId' ")) {
-    while ($popName = $getData->fetch_array()) {
-        echo $popName['pop'];
-    }
-}
+                                                $getPopId = $pop;
+                                                if ($getData = $con->query("SELECT * FROM add_pop WHERE id='$getPopId' ")) {
+                                                   while ($popName = $getData->fetch_array()) {
+                                                      echo $popName['pop'];
+                                                   }
+                                                }
 
-?>
+                                                ?>
                                              </a>
                                           </div>
                                           <div class="d-flex justify-content-between border-bottom py-2 px-3">
