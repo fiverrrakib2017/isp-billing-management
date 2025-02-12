@@ -127,30 +127,31 @@ include 'include/users_right.php';
                                 </div>
                                 <div class="card-footer flex-wrap justify-content-between align-items-center">
                                     <button class="btn btn-primary mb-2" id="send_message_btn">
-                                        <i class="far fa-envelope"></i>&nbsp;Send Message
+                                        <i class="fa fa-envelope"></i>&nbsp;Send Message
                                     </button>
-                                    <button type="button" class="btn btn-info mb-2" name="customer_billing_btn">
-                                        &nbsp;Change Billing
+                                   <button type="button" class="btn btn-info mb-2" name="customer_billing_btn">
+                                        <i class="fa fa-exchange-alt"></i>&nbsp;Change Billing
                                     </button>
+
 
                                     <button type="button" class="btn btn-success mb-2" name="export_to_excel">
                                         <img src="https://img.icons8.com/?size=100&id=117561&format=png&color=000000"
                                             class="img-fluid icon-img" style="height: 20px !important;">
-                                        Export To Excel
+                                        
                                     </button>
 
                                     <button type="button" onclick="printSelectedRows()" class="btn btn-danger mb-2">
-                                        <i class="fas fa-print"></i>&nbsp;Print
+                                        <i class="fas fa-print"></i>&nbsp;
                                     </button>
 
                                     <button type="button" class="btn btn-info mb-2" name="recharge_btn">
                                         <i class="mdi mdi-battery-charging-20"></i>&nbsp;Recharge
                                     </button>
 
-                                    <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal"
+                                    <!-- <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal"
                                         data-bs-target="#ticketModal">
                                         <i class="mdi mdi-ticket"></i>&nbsp;Add Ticket
-                                    </button>
+                                    </button> -->
 
                                     <button type="button" class="btn btn-success mb-2" name="pop_change_btn">
                                         <i class="fas fa-angle-double-right"></i>&nbsp;Change POP/Branch

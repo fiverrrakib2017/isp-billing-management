@@ -1,6 +1,8 @@
 <?php
 date_default_timezone_set("Asia/Dhaka");
 //SET GLOBAL time_zone = '+6:00';
+
+/*Master Databese Connection*/
 $con = new mysqli("localhost","radiususr","src@54321","radiusdb");
 $sql_details = array(
     'user' => 'radiususr', 
@@ -9,13 +11,13 @@ $sql_details = array(
     'host' => 'localhost'
 );
 
-// Check connection
+/* Check connection*/
 if (mysqli_connect_errno()) {
  echo "Failed to connect to MySQL: " . mysqli_connect_error();
  exit();
 }
 
-
+/*Company Databese Connection*/
 
 
 ?>
