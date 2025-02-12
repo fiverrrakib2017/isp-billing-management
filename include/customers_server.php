@@ -255,7 +255,7 @@ if (isset($_POST['getCustomerPackage'])) {
     if ($allArea = $con->query("SELECT * FROM branch_package WHERE  pop_id='$popId' ")) {
 
         while ($rows = $allArea->fetch_array()) {
-            echo '<option value="' . $rows['pkg_id'] . '">' . $rows['package_name'] . '</option>';
+            echo '<option value="' . $rows['id'] . '">' . $rows['package_name'] . '</option>';
         }
     }
     exit; 
@@ -264,7 +264,7 @@ if (isset($_POST['getCustomerPackage'])) {
 if (isset($_POST['getPackagePrice'])) {
     $packageId = $_POST['package_id'];
     $pop_id = $_POST['pop_id'];
-    if ($allArea = $con->query("SELECT p_price FROM branch_package WHERE pkg_id='$packageId' AND pop_id=$pop_id   ")) {
+    if ($allArea = $con->query("SELECT p_price FROM branch_package WHERE id='$packageId' AND pop_id=$pop_id   ")) {
         while ($rowsssss = $allArea->fetch_array()) {
             echo $rowsssss['p_price'];
         }
@@ -298,7 +298,7 @@ if (isset($_POST['addCustomerData'])) {
     // One month from a specific date
     $exp_date = date('Y-m-d', strtotime('+1 month', strtotime(date('Y-m-' . $exp_date))));
 
-    if ($allPack = $con->query("SELECT * FROM branch_package WHERE pkg_id=$package AND pop_id=$pop")) {
+    if ($allPack = $con->query("SELECT * FROM branch_package WHERE id=$package AND pop_id=$pop")) {
         while ($rowssss = $allPack->fetch_array()) {
             $package_name = $rowssss['package_name'];
             $package_purchase_price = $rowssss['p_price'];
@@ -462,14 +462,17 @@ if(isset($_POST['area_id'])){
   
   
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['update_customer']) {
-        
+        // echo '<pre>';
+        // print_r($_POST);
+
+        // echo '</pre>';exit; 
         $customer_id = $_POST['customer_id'] ?? 0;
         $fullname = $_POST['fullname'];
-        $package = $_POST['package'];
+       $package = $_POST['package'];
         $username = $_POST['username'];
         $password = $_POST['password'];
         $mobile = $_POST['mobile'];
-        $exp_date = $_POST['expire_date'] ? $_POST['expire_date'] : date('d');
+        $exp_date = $_POST['expire_date'];
         $pop = $_POST['pop'];
         $area = $_POST['area'];
         $area_house_id = is_numeric($_POST['customer_houseno']) ? intval($_POST['customer_houseno']) : '0';
@@ -482,25 +485,12 @@ if(isset($_POST['area_id'])){
         $status = $_POST['status'];
         $user_type = $_POST['user_type'];
 
-       /* Customer New Expire Date */
-       $get_customer_expire= $con->query("SELECT expiredate FROM customers WHERE id=$customer_id")->fetch_array()['expiredate'];
-       $year=''; 
-       $month='';
-       for($i=0; $i < 4; $i++){
-           $year .= $get_customer_expire[$i];
-       }
-       for($i=5; $i < 7; $i++){
-           $month .= $get_customer_expire[$i];
-       }
-      $new_expire_date= $year.'-'.$month.'-'.$exp_date;  
-        /*Get Customer Package Name*/
-        if ($allPack = $con->query("SELECT * FROM branch_package WHERE pkg_id=$package AND pop_id=$pop")) {
+        if ($allPack = $con->query("SELECT * FROM branch_package WHERE id=$package AND pop_id=$pop")) {
             while ($rowssss = $allPack->fetch_array()) {
                 $package_name = $rowssss['package_name'];
             }
         }
-         /*Update Customer table data*/
-       $result= $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`expiredate`='$new_expire_date',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' WHERE id=$customer_id");
+       $result= $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' WHERE id=$customer_id");
        if($result){
             echo json_encode(['success' => true, 'message' => 'Customer updated successfully!']);
        }else{

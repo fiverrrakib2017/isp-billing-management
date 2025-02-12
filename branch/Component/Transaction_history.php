@@ -9,19 +9,47 @@
                                             <div class="mini-stat-info">
                                                 <span class="counter text-teal">
                                                 <?php
-                                                $currentBal=0;
                                                 $totalpaid=0;
-                                                if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$auth_usr_POP_id' ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $currentBal += $rows["balance"];
-                                                    }
-                                                    if ($pop_payment = $con->query(" SELECT `purchase_price` FROM `customer_rechrg` WHERE pop_id='$auth_usr_POP_id' ")) {
-                                                        while ($rows = $pop_payment->fetch_array()) {
-                                                            $totalpaid += $rows["purchase_price"];
-                                                        }
-                                                        echo  number_format($currentBal - $totalpaid);
-                                                    }
-                                                }
+                                                // if ($pop_payment = $con->query(" SELECT `sales_price` FROM `customer_rechrg` WHERE pop_id='$auth_usr_POP_id' AND  type <> '4' ")) {
+                                                //     while ($rows = $pop_payment->fetch_array()) {
+                                                //         $totalpaid += $rows["sales_price"];
+                                                //     }
+                                                //     echo  number_format( $totalpaid);
+                                                // }
+                                                $total_due=$con->query("SELECT SUM(purchase_price) AS total_credit FROM customer_rechrg WHERE pop_id='$auth_usr_POP_id' AND type='0'")->fetch_array()['total_credit'];
+
+                                                $total_paid =$con->query("SELECT SUM(sales_price) AS total_paid FROM customer_rechrg WHERE pop_id='$auth_usr_POP_id' AND type!='0'")->fetch_array()['total_paid'];
+
+                                                $total_recharge_amount=$con->query("SELECT SUM(sales_price) AS total_recharge_amount FROM customer_rechrg WHERE pop_id='$auth_usr_POP_id' AND type !='4'")->fetch_array()['total_recharge_amount'];
+
+                                              // $current_balance=$total_recharge_amount-$total_paid;
+                                               echo number_format($total_recharge_amount);
+                                                ?>
+                                                </span>
+                                                Total Customer Recharge
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div> <!--End col -->
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a href="payment_history.php">
+                                        <div class="mini-stat">
+                                            <span class="mini-stat-icon bg-teal me-0 float-end"><i
+                                                    class="mdi mdi-currency-bdt fa-2x text-gray-300"></i></span>
+                                            <div class="mini-stat-info">
+                                                <span class="counter text-teal">
+                                                <?php
+                                                
+                                                
+                                                $pop_amount=$con->query("SELECT SUM(amount) AS pop_amount FROM pop_transaction WHERE pop_id='$auth_usr_POP_id'")->fetch_array()['pop_amount'] ?? 0;
+
+                                                $total_paid =$con->query("SELECT SUM(purchase_price) AS total_paid FROM customer_rechrg WHERE pop_id='$auth_usr_POP_id' AND type!='4'")->fetch_array()['total_paid'] ?? 0;
+                                                echo  number_format($pop_amount - $total_paid);
+                                                
 
                                                 ?>
                                                 </span>

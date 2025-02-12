@@ -203,6 +203,16 @@
                                     <li><a href="password_change.php">Password Change</a></li>
                                 </ul>
                             </li>
+                            <?php endif; ?> 
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
+                               <li>
+                                    <a href="company.php" class="waves-effect">
+                                        <i class="mdi mdi-domain"></i>
+                                        <span> Company </span>
+                                    </a>
+                                </li>
+
+
                             <?php endif; ?>
                         </ul>
                     </div>

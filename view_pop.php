@@ -342,17 +342,11 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                             <div class="mini-stat-info">
                                                 <span class="counter text-teal">
                                                 <?php
-                                                if ($pop_payment = $con->query(" SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$pop_id' ")) {
-                                                    while ($rows = $pop_payment->fetch_array()) {
-                                                        $currentBal += $rows["balance"];
-                                                    }
-                                                    if ($pop_payment = $con->query(" SELECT `purchase_price` FROM `customer_rechrg` WHERE pop_id='$pop_id' ")) {
-                                                        while ($rows = $pop_payment->fetch_array()) {
-                                                            $totalpaid += $rows["purchase_price"];
-                                                        }
-                                                        echo  number_format($currentBal - $totalpaid);
-                                                    }
-                                                }
+
+                                                $pop_amount=$con->query("SELECT SUM(amount) AS pop_amount FROM pop_transaction WHERE pop_id='$pop_id'")->fetch_array()['pop_amount'] ?? 0;
+
+                                                $total_paid =$con->query("SELECT SUM(purchase_price) AS total_paid FROM customer_rechrg WHERE pop_id='$pop_id' AND type!='4'")->fetch_array()['total_paid'] ?? 0;
+                                                echo  number_format($pop_amount - $total_paid);
 
                                                 ?>
                                                 </span>

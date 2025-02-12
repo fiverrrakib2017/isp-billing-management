@@ -4,7 +4,7 @@ if (empty($_SESSION)) {
 }
 
 include 'db_connect.php';
-
+$TotalrchgAmt=0;
 if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $selectedCustomers = json_decode($_POST['selectedCustomers'], true);
     $recharge_by = $_SESSION['uid'] ?? 0;
@@ -29,7 +29,10 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
         exit();
     }
    
-    /* Get Customer id, pop id,package id*/
+   
+   
+   
+    /* Get Customer id, pop id,package id*/ // Bulk Recharge
     if (count($selectedCustomers) !== 0 && !empty($selectedCustomers)) {
         foreach ($selectedCustomers as $customer_id) {
             if ($get_customer_list = $con->query('SELECT * FROM customers WHERE id=' . $customer_id . ' ')) {
@@ -44,17 +47,14 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
             $_pop_balance = 0;
             $_recharge_balance = 0;
             /*Calculate POP Balance*/
-            if ($pop_payment = $con->query('SELECT SUM(`amount`) AS pop_balance FROM `pop_transaction` where pop_id=' . $pop_id . ' ')) {
+            if ($pop_payment = $con->query('SELECT SUM(amount) AS pop_balance FROM pop_transaction where pop_id=' . $pop_id . ' ')) {
                 while ($rows = $pop_payment->fetch_assoc()) {
                     $_pop_balance = $rows['pop_balance'];
                 }
             }
             /*Calculate Recharge Balance*/
-            if ($customer_recharge = $con->query('SELECT SUM(`purchase_price`) AS recharge_balance FROM `customer_rechrg` where pop_id=' . $pop_id . ' ')) {
-                while ($rows = $customer_recharge->fetch_assoc()) {
-                    $_recharge_balance = $rows['recharge_balance'];
-                }
-            }
+            $_recharge_balance=$con->query("SELECT SUM(purchase_price) AS total_paid FROM customer_rechrg WHERE pop_id='$pop_id' AND type!='4'")->fetch_array()['total_paid'] ?? 0;
+
             /*Calculate Current Balance*/
             if (!empty($_pop_balance) && isset($_pop_balance) && !empty($_recharge_balance) && isset($_recharge_balance)) {
                 $_current_pop_balance = $_pop_balance - $_recharge_balance;
@@ -70,20 +70,21 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                         $username = $rows['username'];
                         $password = $rows['password'];
                         $pop_id = $rows['pop'];
-                        //$customer_package_price = $rows['price'];
+                        $customer_package_price = $rows['price'];
                     }
                 }
                 /****************GET package purchase sales price******************************/
                 $package_sales_price = null;
               
 
-                if ($get_all_customer = $con->query("SELECT s_price , p_price from branch_package WHERE pkg_id=$package_id AND pop_id=$pop_id")) {
+                if ($get_all_customer = $con->query("SELECT s_price, p_price FROM branch_package WHERE id=$package_id AND pop_id=$pop_id")) {
                     while ($rows = $get_all_customer->fetch_assoc()) {
-                        $package_sales_price = $rows['s_price'];
-                        $customer_package_price = $rows['p_price'];
+                        $customer_sales_price = $rows['s_price'];
+                        //$customer_package_price = $rows['p_price'];
                     }
                 }
                 $package_purchase_price = $customer_package_price * intval($chrg_mnths);
+                $package_sales_price = $customer_sales_price * intval($chrg_mnths);
 
                 if (!empty($package_sales_price) && isset($package_sales_price) && !empty($package_purchase_price) && isset($package_purchase_price)) {
                     /***********Ensure sufficient balance ************/
@@ -102,7 +103,7 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                         $exp_date = date('Y-m-d', strtotime("+$chrg_mnths month", strtotime($today)));
                     }
                     /*Insert Recharge Data*/
-                    $con->query("INSERT INTO customer_rechrg(customer_id, pop_id, months, sales_price, purchase_price,discount, ref, rchrg_until, type, rchg_by, datetm) VALUES('$customer_id', '$pop_id', '$chrg_mnths', '$package_sales_price', '$package_purchase_price','0.00', '$RefNo', '$exp_date', '$tra_type', '$recharge_by', NOW())");
+                    $con->query("INSERT INTO customer_rechrg(customer_id, pop_id, months, sales_price, purchase_price, discount, ref, rchrg_until, type, rchg_by, datetm) VALUES('$customer_id', '$pop_id', '$chrg_mnths', '$package_sales_price', '$package_purchase_price','0.00', '$RefNo', '$exp_date', '$tra_type', '$recharge_by', NOW())");
 
                     $con -> query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
 
@@ -111,7 +112,7 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                     $_customer_total_due_amount = 0;
                     $_customer_total_recharge_amount = 0;
                     /**** Get Customer total paid amount *************/
-                    if ($customer_total_paid_amount = $con->query("SELECT SUM(`purchase_price`) as customer_total_paid_amount FROM customer_rechrg WHERE customer_id='$customer_id' AND type!='0'")) {
+                    if ($customer_total_paid_amount = $con->query("SELECT SUM(purchase_price) as customer_total_paid_amount FROM customer_rechrg WHERE customer_id='$customer_id' AND type!='0'")) {
                         while ($rows = $customer_total_paid_amount->fetch_assoc()) {
                             $_customer_total_paid_amount = $rows['customer_total_paid_amount'];
                         }
@@ -199,7 +200,7 @@ if (isset($_GET['cash_received']) && !empty($_GET['cash_received']) && $_SERVER[
           }
         
           /* Insert Recharge Data */
-          $result = $con->query("INSERT INTO `customer_rechrg`( `customer_id`, `pop_id`, `months`, `sales_price`, `purchase_price`,`discount`, `ref`, `rchrg_until`, `type`, `rchg_by`, `datetm`, `status`) VALUES ('$customer_id', '$pop_id', '0', '0', '$received_amount', '0.00', '$received_remarks', '2023-06-02', '4', '$recharge_by',  NOW() , '0')"); 
+          $result = $con->query("INSERT INTO customer_rechrg( customer_id, pop_id, months, sales_price, purchase_price,discount, ref, rchrg_until, type, rchg_by, datetm, status) VALUES ('$customer_id', '$pop_id', '0', '0', '$received_amount', '0.00', '$received_remarks', '2023-06-02', '4', '$recharge_by',  NOW() , '0')"); 
           if ($result) {
               /* Update Customer Balance */
               $result_paid = $con->query("SELECT SUM(purchase_price) as customer_total_paid_amount FROM customer_rechrg WHERE customer_id = $customer_id AND type != '0' ");
@@ -245,24 +246,21 @@ if (isset($_POST['add_recharge_data'])) {
         $discount_amount=$main_amount - $package_purchase_price ?? 0;
     }
     
-    //get customer sale's price
-    if ($allPackg = $con->query("SELECT s_price , p_price from branch_package WHERE pkg_id=$packageId AND pop_id=$pop_id LIMIT 1")) {
+    //get customer sale's price [Use id for package id]
+    if ($allPackg = $con->query("SELECT s_price, p_price FROM branch_package WHERE id=$packageId AND pop_id=$pop_id LIMIT 1")) {
         while ($rows = $allPackg->fetch_array()) {
-            $package_sales_price = $rows['s_price'];
+             $customer_sales_price = $rows['s_price'];
         }
     }
-    
+    $package_sales_price = $customer_sales_price * intval($chrg_mnths);
    /*Check POP Blance*/
-    if ($pop_payment = $con->query("SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$pop_id' ")) {
+    if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM pop_transaction WHERE pop_id='$pop_id' ")) {
         while ($rows = $pop_payment->fetch_array()) {
             $popBalance = $rows['balance'];
         }
-        if ($customer_recharge = $con->query(" SELECT SUM(`purchase_price`) AS amount FROM `customer_rechrg` WHERE pop_id='$pop_id' ")) {
-            while ($rows = $customer_recharge->fetch_array()) {
-                $rechargeBalance = $rows['amount'];
-            }
-        }
-        $totalCurrentBal = $popBalance - $rechargeBalance;
+        $_recharge_balance=$con->query("SELECT SUM(purchase_price) AS total_paid FROM customer_rechrg WHERE pop_id='$pop_id' AND type!='4'")->fetch_array()['total_paid'] ?? 0;
+
+        $totalCurrentBal = $popBalance - $_recharge_balance;
     }
 
     if ($package_purchase_price > $totalCurrentBal) {
@@ -288,7 +286,7 @@ if (isset($_POST['add_recharge_data'])) {
         
         $con->query("INSERT INTO customer_rechrg(customer_id,pop_id,months,sales_price,purchase_price,discount,ref,rchrg_until,type,rchg_by,datetm) VALUES('$customer_id','$pop_id','$chrg_mnths','$package_sales_price','$main_amount','$discount_amount','$RefNo','$exp_date','$tra_type','$recharge_by',NOW())");
 
-        $con->query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
+        //$con->query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
         // Total Paid amount
         if ($ttlpdamt = $con->query("SELECT SUM(purchase_price) AS TotalPaidAmt FROM customer_rechrg WHERE customer_id='$customer_id' AND type!='0'")) {
             while ($rowspd = $ttlpdamt->fetch_array()) {
@@ -309,6 +307,7 @@ if (isset($_POST['add_recharge_data'])) {
             }
         }
         $balanceamount = $TotalrchgAmt - $TotalPaidAmt;
+				
         $con->query("UPDATE customers SET expiredate='$exp_date', status='1', rchg_amount='$TotalrchgAmt', paid_amount='$TotalPaidAmt', balance_amount='$balanceamount' WHERE id='$customer_id'");
 
         $con -> query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
@@ -442,10 +441,9 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
             'db' => 'datetm',
             'dt' => 1,
             'formatter' => function($d, $row) {
-                return date('d M Y', strtotime($d));
+                return date('d-m-Y', strtotime($d));
             }
         ),
-        
         array('db' => 'customer_id', 
             'dt' => 2,
             'formatter' => function($d, $row) use ($con) {
@@ -474,13 +472,7 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
                 }
             }
         ),
-        array(
-            'db' => 'rchrg_until', 
-            'dt' => 5,
-            'formatter'=>function($d,$row){
-                return date('d M Y', strtotime($d));
-            }
-        ),
+        array('db' => 'rchrg_until', 'dt' => 5),
         array('db' => 'purchase_price', 'dt' => 6),
     );
 
@@ -512,14 +504,6 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
         }
     }
-    if (!empty($_GET['bill_collect']) && $_GET['bill_collect'] !=='0') {
-        $bill_collect_ID = intval($_GET['bill_collect']); 
-        if ($bill_collect_ID > 0) {
-            $condition = isset($condition) ? $condition . " AND " : "";
-            $condition .= "rchg_by = $bill_collect_ID";
-        }
-    }
-    
 
     
     /* Output JSON for DataTables to handle*/
