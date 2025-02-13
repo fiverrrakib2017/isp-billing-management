@@ -2,7 +2,7 @@
 if(!isset($_SESSION)) session_start();
 //date_default_timezone_set('Asia/Dhaka');
 include "db_connect.php";
-
+include 'functions.php';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -340,6 +340,12 @@ if (isset($_POST['addCustomerData'])) {
     }
     $con->query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
     $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package_name')");
+    }
+    /*send Notification*/
+    try {
+        send_notification("".$fullname." New Customer Added", '<i class="fas fa-user"></i>', "http://103.146.16.154/profile.php?clid=".$custID, 'unread');
+    } catch (Exception $e) {
+        error_log('Error in sending notification: '.$e->getMessage());
     }
     exit; 
 }
