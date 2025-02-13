@@ -823,88 +823,8 @@ include 'include/functions.php';
                         <div class="col-md-6 stretch-card">
                             <div class="card">
                                 <div class="card-body">
-
-
-
-                                    <div class="row">
-                                        <div class="col-md-8 mt-1 py-2">
-                                            <p class="card-title ">Recent Customers</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button style="float: right;">
-                                                <a href="customers.php">+</a>
-                                            </button>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="table-responsive">
-                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
-                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Full Name</th>
-
-                                                    <th>POP</th>
-                                                    <th>Area</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                //AND user_type='$auth_usr_type'
-                                                $sql = "SELECT * FROM customers ORDER BY id DESC LIMIT 5 ";
-                                                $result = mysqli_query($con, $sql);
-
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-                                                    $username = $rows["username"];
-
-                                                ?>
-
-                                                <tr>
-                                                    <td><?php echo $rows['id']; ?></td>
-                                                    <td><a target="new"
-                                                            href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                            <?php
-                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                            $chkc = $onlineusr->num_rows;
-                                                            if ($chkc == 1) {
-                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                            } else {
-                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-                                                            }
-                                                            
-                                                            echo ' ' . $rows['fullname']; ?></a></td>
-
-                                                    <td>
-                                                        <?php
-                                                        $popID = $rows['pop'];
-                                                        $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
-                                                        while ($popRow = $allPOP->fetch_array()) {
-                                                            echo $popRow['pop'];
-                                                        }
-                                                        
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php $id = $rows['area'];
-                                                        $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-                                                        while ($popRow = $allArea->fetch_array()) {
-                                                            echo $popRow['name'];
-                                                        }
-                                                        
-                                                        ?>
-
-                                                    </td>
-
-                                                </tr>
-                                                <?php } ?>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                     <h4 class="card-title mb-4">Tickets Counts By Month</h4>
+                                    <canvas id="complaintChart" width="400" height="200"></canvas>  
                                 </div>
                             </div>
                         </div>
@@ -914,98 +834,9 @@ include 'include/functions.php';
                             <div class="card">
                                 <div class="card-body">
 
-
-
-                                    <div class="row">
-                                        <div class="col-md-8 mt-1 py-2">
-                                            <p class="card-title ">Recent Expired</p>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button style="float: right;">
-                                                <a href="customers.php">+</a>
-                                            </button>
-                                        </div>
-                                    </div>
-
-
-
-                                    <div class="table-responsive">
-                                        <table id="datatables" class="table table-bordered dt-responsive nowrap"
-                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Full Name</th>
-
-                                                    <th>POP</th>
-                                                    <th>Area</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                //AND user_type='$auth_usr_type'
-                                                $sql = "SELECT * FROM customers WHERE expiredate<NOW() ORDER BY id DESC LIMIT 5 ";
-                                                $result = mysqli_query($con, $sql);
-
-                                                while ($rows = mysqli_fetch_assoc($result)) {
-                                                    $username = $rows["username"];
-
-                                                ?>
-
-                                                <tr>
-                                                    <td><?php echo $rows['id']; ?></td>
-                                                    <td><a target="new"
-                                                            href="profile.php?clid=<?php echo $rows['id']; ?>">
-                                                            <?php
-                                                            $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-                                                            $chkc = $onlineusr->num_rows;
-                                                            if ($chkc == 1) {
-                                                                echo '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>';
-                                                            } else {
-                                                                echo '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-                                                            }
-                                                            
-                                                            echo ' ' . $rows['fullname']; ?></a></td>
-
-                                                    <td>
-                                                        <?php
-                                                        $popID = $rows['pop'];
-                                                        $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID ");
-                                                        while ($popRow = $allPOP->fetch_array()) {
-                                                            echo $popRow['pop'];
-                                                        }
-                                                        
-                                                        ?>
-                                                    </td>
-                                                    <td>
-                                                        <?php $id = $rows['area'];
-                                                        $allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-                                                        while ($popRow = $allArea->fetch_array()) {
-                                                            echo $popRow['name'];
-                                                        }
-                                                        
-                                                        ?>
-
-                                                    </td>
-
-                                                </tr>
-                                                <?php } ?>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-
-
-
-
-
-
-
-
                     </div>
 
 
@@ -1686,6 +1517,71 @@ echo $rowcron['date'];
             "use strict";
             window.jQuery.ChartC3.init()
         }();
+
+        <?php
+                
+                /*Total Current Year And Last Year get*/ 
+                $currentYear = date("Y");
+                $lastYear = $currentYear - 1;
+
+                $query = "SELECT MONTH(startdate) as month, YEAR(startdate) as year, COUNT(*) as total_complaints 
+                          FROM ticket
+                          WHERE YEAR(startdate) IN ('$currentYear', '$lastYear') 
+                          GROUP BY YEAR(startdate), MONTH(startdate)";
+
+                $result = $con->query($query);
+
+                $complaintsData = [];
+                while ($row = $result->fetch_assoc()) {
+                    $complaintsData[] = $row;
+                }
+
+                $con->close();
+
+                $labels = [];
+                $datasetCurrentYear = [];
+                $datasetLastYear = [];
+
+                for ($i = 1; $i <= 12; $i++) {
+                    $labels[] = date("F", mktime(0, 0, 0, $i, 1));
+
+                    $currentData = array_filter($complaintsData, function ($d) use ($i, $currentYear) {
+                        return $d['month'] == $i && $d['year'] == $currentYear;
+                    });
+
+                    $lastData = array_filter($complaintsData, function ($d) use ($i, $lastYear) {
+                        return $d['month'] == $i && $d['year'] == $lastYear;
+                    });
+
+                    $datasetCurrentYear[] = !empty($currentData) ? array_values($currentData)[0]['total_complaints'] : 0;
+                    $datasetLastYear[] = !empty($lastData) ? array_values($lastData)[0]['total_complaints'] : 0;
+                }
+                ?>
+
+                let labels = <?php echo json_encode($labels); ?>;
+                let datasetCurrentYear = <?php echo json_encode($datasetCurrentYear); ?>;
+                let datasetLastYear = <?php echo json_encode($datasetLastYear); ?>;
+
+                new Chart(document.getElementById("complaintChart"), {
+                    type: "line",
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "<?php echo $currentYear; ?> Complaints",
+                                data: datasetCurrentYear,
+                                borderColor: "blue",
+                                fill: false
+                            },
+                            {
+                                label: "<?php echo $lastYear; ?> Complaints",
+                                data: datasetLastYear,
+                                borderColor: "red",
+                                fill: false
+                            }
+                        ]
+                    }
+                });
 
 
         $('#expire_customer_datatable').dataTable();

@@ -311,13 +311,13 @@ if (isset($_POST['add_recharge_data'])) {
 				
         $con->query("UPDATE customers SET expiredate='$exp_date', status='1', rchg_amount='$TotalrchgAmt', paid_amount='$TotalPaidAmt', balance_amount='$balanceamount' WHERE id='$customer_id'");
         
-        /*send Notification*/
-        $get_customer_fullname=$con->query("SELECT fullname FROM customers WHERE id=$customer_id")->fetch_array()['fullname'] ?? 'Unknown Customer';
-        try {
-            send_notification("".$get_customer_fullname." Recharge Successfully", '<i class="mdi mdi-battery-charging-90"></i>', "http://103.146.16.154/profile.php?clid=".$customer_id, 'unread');
-        } catch (Exception $e) {
-            error_log('Error in sending notification: '.$e->getMessage());
-        }
+        // /*send Notification*/
+        // $get_customer_fullname=$con->query("SELECT fullname FROM customers WHERE id=$customer_id")->fetch_array()['fullname'] ?? 'Unknown Customer';
+        // try {
+        //     send_notification("".$get_customer_fullname." Recharge Successfully", '<i class="mdi mdi-battery-charging-90"></i>', "http://103.146.16.154/profile.php?clid=".$customer_id, 'unread');
+        // } catch (Exception $e) {
+        //     error_log('Error in sending notification: '.$e->getMessage());
+        // }
        
          /*Update Data For mickrotik*/
         $con -> query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
