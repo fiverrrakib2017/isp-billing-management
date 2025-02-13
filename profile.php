@@ -381,6 +381,15 @@ if ($DeviceMC = $con->query("SELECT nasipaddress, nasportid, callingstationid, f
     echo '</br>';
     echo '<b>Remote IP:</b> '.$framedipaddress;
     echo '</br>';
+	
+	////////////// Mikrotik package detected
+		$cstpckg = $con->query("SELECT value FROM radreply WHERE username='$username' LIMIT 1");
+		if ($cstpckg->num_rows == 1) {
+			//echo '<br><b><span style="color:red;">Grace Time</span></b><br>';
+			$cpkg_rows = $cstpckg->fetch_array();
+			echo '<b>Detected pkg. </b>' . $cpkg_rows["value"].'</br>';
+
+		}
 
     if (strlen($DeviceMAC) > 6) {
 
@@ -463,13 +472,17 @@ if ($radusrname == 1) {
    if (!empty($expiredDate) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $expiredDate)) {
        $expiredDate = new DateTime($expiredDate);
        $expiredDate = $expiredDate->format('d-M-Y');
-       echo "<span style='color:green;'><b>Active</b></span> <br>" . $expiredDate;
+       echo "<span style='color:green;'><b>Active</b></span>";	
+	   echo "<br>" . $expiredDate;
+	   
    } else {
        echo "<span style='color:orange;'><b>Invalid Date</b></span>";
    }
 } else {
    echo '<a href="?clid=' . $clid . '&disable=false"><span style="color:red;"><b>Disabled</b></span></a>';
 }
+
+
 
 echo '<br>';
 $gracetime = $con->query("SELECT DATEDIFF(grace_expired, NOW()) AS time FROM customers WHERE grace_expired>=NOW() AND username='$username'");
@@ -631,17 +644,7 @@ if ($duepmt = $con->query("SELECT SUM(discount) AS discount_amount FROM customer
                                              <!-- Nav tabs -->
                                              <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
                                                 <li class="nav-item">
-                                                   <a class="nav-link active" data-bs-toggle="tab" href="#usr_usage" role="tab">
-                                                   <span class="d-none d-md-block">User Usage</span><span class="d-block d-md-none"><i class="mdi mdi-email h5"></i></span>
-                                                   </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                   <a class="nav-link" data-bs-toggle="tab" href="#usr_activity" role="tab">
-                                                   <span class="d-none d-md-block">User Activity</span><span class="d-block d-md-none"><i class="mdi mdi-email h5"></i></span>
-                                                   </a>
-                                                </li>
-                                                <li class="nav-item">
-                                                   <a class="nav-link" data-bs-toggle="tab" href="#tickets" role="tab">
+                                                   <a class="nav-link active" data-bs-toggle="tab" href="#tickets" role="tab">
                                                    <span class="d-none d-md-block">Tickets
                                                    </span><span class="d-block d-md-none"><i class="mdi mdi-home-variant h5"></i></span>
                                                    </a>
@@ -651,10 +654,22 @@ if ($duepmt = $con->query("SELECT SUM(discount) AS discount_amount FROM customer
                                                    <span class="d-none d-md-block">Customers Recharge</span><span class="d-block d-md-none"><i class="mdi mdi-account h5"></i></span>
                                                    </a>
                                                 </li>
+                                                <li class="nav-item">
+                                                   <a class="nav-link " data-bs-toggle="tab" href="#usr_usage" role="tab">
+                                                   <span class="d-none d-md-block">User Usage</span><span class="d-block d-md-none"><i class="mdi mdi-email h5"></i></span>
+                                                   </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                   <a class="nav-link" data-bs-toggle="tab" href="#usr_activity" role="tab">
+                                                   <span class="d-none d-md-block">User Activity</span><span class="d-block d-md-none"><i class="mdi mdi-email h5"></i></span>
+                                                   </a>
+                                                </li>
+                                               
+                                               
                                              </ul>
                                              <!-- Tab panes -->
                                              <div class="tab-content">
-                                                <div class="tab-pane active p-3" id="usr_usage" role="tabpanel">
+                                                <div class="tab-pane  p-3" id="usr_usage" role="tabpanel">
                                                    <div class="card">
                                                       <div class="card-body">
                                                          <div class="table-responsive">
@@ -748,7 +763,7 @@ if ($usrs_activity = $con->query("SELECT * FROM radpostauth WHERE username='$use
                                                       </div>
                                                    </div>
                                                 </div>
-                                                <div class="tab-pane p-3" id="tickets" role="tabpanel">
+                                                <div class="tab-pane active p-3" id="tickets" role="tabpanel">
                                                    <div class="card">
                                                       <div class="card-body">
                                                          <div class="table-responsive">
@@ -762,44 +777,47 @@ if ($usrs_activity = $con->query("SELECT * FROM radpostauth WHERE username='$use
                                                                </thead>
                                                                <tbody id="ticket-list">
                                                                   <?php
-$sql = "SELECT * FROM ticket WHERE customer_id=$lstid  ";
-$result = mysqli_query($con, $sql);
+                                                               $sql = "SELECT * FROM ticket WHERE customer_id=$lstid  ";
+                                                               $result = mysqli_query($con, $sql);
 
-while ($rows = mysqli_fetch_assoc($result)) {
+                                                               while ($rows = mysqli_fetch_assoc($result)) {
 
-    ?>
+                                                                  ?>
                                                                   <tr>
                                                                      <td>
                                                                         <?php
-$complain_typeId = $rows["complain_type"];
-    $ticketsId = $rows["id"];
-    if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-        while ($rowss = $allCom->fetch_array()) {
-            $topicName = $rowss['topic_name'];
-            echo '<a href="tickets_edit.php?id=' . $ticketsId . '">' . $topicName . '</a>';
-        }
-    }
-    ?>
+                                                                           $complain_typeId = $rows["complain_type"];
+                                                                              $ticketsId = $rows["id"];
+                                                                              if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
+                                                                                 while ($rowss = $allCom->fetch_array()) {
+                                                                                       $topicName = $rowss['topic_name'];
+                                                                                       echo '<a href="tickets_edit.php?id=' . $ticketsId . '">' . $topicName . '</a>';
+                                                                                 }
+                                                                              }
+                                                                              ?>
                                                                      </td>
                                                                      <td>
                                                                         <?php
-$ticketType = $rows['ticket_type'];
-    if ($ticketType == "Active") {
-        echo "<span class='badge bg-success'>Active</span>";
-    } else if ($ticketType == "Open") {
-        echo "<span class='badge bg-info'>Open</span>";
-    } else if ($ticketType == "New") {
-        echo "<span class='badge bg-danger'>New</span>";
-    } else if ($ticketType == "Complete") {
-        echo "<span class='badge bg-success'>Complete</span>";
-    }
+                                                                           $ticketType = $rows['ticket_type'];
+                                                                              if ($ticketType == "Active") {
+                                                                                 echo "<span class='badge bg-success'>Active</span>";
+                                                                              } else if ($ticketType == "Open") {
+                                                                                 echo "<span class='badge bg-info'>Open</span>";
+                                                                              } else if ($ticketType == "New") {
+                                                                                 echo "<span class='badge bg-danger'>New</span>";
+                                                                              } else if ($ticketType == "Complete") {
+                                                                                 echo "<span class='badge bg-success'>Complete</span>";
+                                                                              }
 
-    ?>
+                                                                           ?>
                                                                      </td>
-                                                                     <td><?php echo $rows["startdate"]; ?></td>
+                                                                     <td>
+                                                                        <?php 
+                                                                           echo  date('d M Y', strtotime($rows["startdate"]));
+                                                                        ?>
+                                                                     </td>
                                                                   </tr>
-                                                                  <?php
-}?>
+                                                                  <?php } ?>
                                                                </tbody>
                                                             </table>
                                                          </div>

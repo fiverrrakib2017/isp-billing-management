@@ -1,4 +1,5 @@
 <?php
+include 'functions.php'; 
 if (empty($_SESSION)) {
     session_start();
 }
@@ -309,9 +310,19 @@ if (isset($_POST['add_recharge_data'])) {
         $balanceamount = $TotalrchgAmt - $TotalPaidAmt;
 				
         $con->query("UPDATE customers SET expiredate='$exp_date', status='1', rchg_amount='$TotalrchgAmt', paid_amount='$TotalPaidAmt', balance_amount='$balanceamount' WHERE id='$customer_id'");
-
+        
+        /*send Notification*/
+        $get_customer_fullname=$con->query("SELECT fullname FROM customers WHERE id=$customer_id")->fetch_array()['fullname'] ?? 'Unknown Customer';
+        try {
+            send_notification("".$get_customer_fullname." Recharge Successfully", '<i class="mdi mdi-battery-charging-90"></i>', "http://103.146.16.154/profile.php?clid=".$customer_id, 'unread');
+        } catch (Exception $e) {
+            error_log('Error in sending notification: '.$e->getMessage());
+        }
+       
+         /*Update Data For mickrotik*/
         $con -> query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
         echo 1;
+        
         $con->close();
     }
 }
@@ -504,7 +515,13 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
         }
     }
-
+    if (!empty($_GET['bill_collect']) && $_GET['bill_collect'] !=='0') {
+        $bill_collect_ID = intval($_GET['bill_collect']); 
+        if ($bill_collect_ID > 0) {
+            $condition = isset($condition) ? $condition . " AND " : "";
+            $condition .= "rchg_by = $bill_collect_ID";
+        }
+    }
     
     /* Output JSON for DataTables to handle*/
     // echo json_encode(

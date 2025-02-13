@@ -351,5 +351,31 @@ function timeAgo($startdate)
     return '<img src="images/icon/online.png" height="10" width="10"/> just now';
     exit; 
 }
+/**
+ * Check if a value exists in a specific column of a database table
+ *
+ * @param mysqli $con The database connection
+ * @param string $table The name of the table
+ * @param string $column The column to check
+ * @param string $value The value to check for uniqueness
+ * @return bool True if the value exists, false otherwise
+ */
+
+function send_notification($message='', $url='', $icon='',$status='unread', $created_at=''){
+    include 'db_connect.php';
+    if (empty($created_at)) {
+        $created_at = date('Y-m-d H:i:s');
+    }
+    $result=$con->query("INSERT INTO notifications (`message`, `icon`, `url`, `status`, `created_at`) 
+              VALUES ('$message', '$url', '$icon', '$status', '$created_at')");
+              if($result){
+                return true; 
+              }else{
+                return false; 
+              }
+}
+
+
+
 
 ?>
