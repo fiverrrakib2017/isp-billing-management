@@ -21,6 +21,7 @@ include 'include/functions.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <?php include 'style.php'; ?>
+
 </head>
 
 <body data-sidebar="dark">
@@ -824,7 +825,8 @@ include 'include/functions.php';
                             <div class="card">
                                 <div class="card-body">
                                      <h4 class="card-title mb-4">Tickets Counts By Month</h4>
-                                    <canvas id="complaintChart" width="400" height="200"></canvas>  
+                                    <canvas id="complaintChart" width="400" height="200"></canvas> 
+                                       <h4 class="card-title mb-4" id="percentageChange"></h4>  
                                 </div>
                             </div>
                         </div>
@@ -1518,73 +1520,99 @@ echo $rowcron['date'];
             window.jQuery.ChartC3.init()
         }();
 
-        <?php
-                
-                /*Total Current Year And Last Year get*/ 
-                $currentYear = date("Y");
-                $lastYear = $currentYear - 1;
+      /**********************************Tickets Counts By Month *******************************/
+         <?php
+       
+        $currentYear = date("Y");
+        $lastYear = $currentYear - 1;
+        $currentMonth = date("m");
+        $lastMonth = ($currentMonth == 1) ? 12 : $currentMonth - 1;
+        $yearOfLastMonth = ($currentMonth == 1) ? $lastYear : $currentYear;
 
-                $query = "SELECT MONTH(startdate) as month, YEAR(startdate) as year, COUNT(*) as total_complaints 
-                          FROM ticket
-                          WHERE YEAR(startdate) IN ('$currentYear', '$lastYear') 
-                          GROUP BY YEAR(startdate), MONTH(startdate)";
+        $result = $con->query("SELECT MONTH(startdate) as month, YEAR(startdate) as year, COUNT(*) as total_complaints 
+                  FROM ticket 
+                  WHERE (YEAR(startdate) IN ('$currentYear', '$lastYear')) 
+                  GROUP BY YEAR(startdate), MONTH(startdate)");
 
-                $result = $con->query($query);
+        $complaintsData = [];
+        while ($row = $result->fetch_assoc()) {
+            $complaintsData[] = $row;
+        }
 
-                $complaintsData = [];
-                while ($row = $result->fetch_assoc()) {
-                    $complaintsData[] = $row;
-                }
+        $con->close();
 
-                $con->close();
+        $labels = [];
+        $datasetCurrentYear = [];
+        $datasetLastYear = [];
+        $currentMonthComplaints = 0;
+        $lastMonthComplaints = 0;
 
-                $labels = [];
-                $datasetCurrentYear = [];
-                $datasetLastYear = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $labels[] = date("F", mktime(0, 0, 0, $i, 1));
 
-                for ($i = 1; $i <= 12; $i++) {
-                    $labels[] = date("F", mktime(0, 0, 0, $i, 1));
+            $currentData = array_filter($complaintsData, function ($d) use ($i, $currentYear) {
+                return $d['month'] == $i && $d['year'] == $currentYear;
+            });
 
-                    $currentData = array_filter($complaintsData, function ($d) use ($i, $currentYear) {
-                        return $d['month'] == $i && $d['year'] == $currentYear;
-                    });
+            $lastData = array_filter($complaintsData, function ($d) use ($i, $lastYear) {
+                return $d['month'] == $i && $d['year'] == $lastYear;
+            });
 
-                    $lastData = array_filter($complaintsData, function ($d) use ($i, $lastYear) {
-                        return $d['month'] == $i && $d['year'] == $lastYear;
-                    });
+            $currentCount = !empty($currentData) ? array_values($currentData)[0]['total_complaints'] : 0;
+            $lastCount = !empty($lastData) ? array_values($lastData)[0]['total_complaints'] : 0;
 
-                    $datasetCurrentYear[] = !empty($currentData) ? array_values($currentData)[0]['total_complaints'] : 0;
-                    $datasetLastYear[] = !empty($lastData) ? array_values($lastData)[0]['total_complaints'] : 0;
-                }
-                ?>
+            $datasetCurrentYear[] = $currentCount;
+            $datasetLastYear[] = $lastCount;
 
-                let labels = <?php echo json_encode($labels); ?>;
-                let datasetCurrentYear = <?php echo json_encode($datasetCurrentYear); ?>;
-                let datasetLastYear = <?php echo json_encode($datasetLastYear); ?>;
+            if ($i == $currentMonth) {
+                $currentMonthComplaints = $currentCount;
+            }
+            if ($i == $lastMonth) {
+                $lastMonthComplaints = $currentCount;
+            }
+        }
+        if ($lastMonthComplaints > 0) {
+            $percentageChange = (($currentMonthComplaints - $lastMonthComplaints) / $lastMonthComplaints) * 100;
+        } else {
+            $percentageChange = $currentMonthComplaints > 0 ? 100 : 0;
+        }
+        ?>
 
-                new Chart(document.getElementById("complaintChart"), {
-                    type: "line",
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: "<?php echo $currentYear; ?> Complaints",
-                                data: datasetCurrentYear,
-                                borderColor: "blue",
-                                fill: false
-                            },
-                            {
-                                label: "<?php echo $lastYear; ?> Complaints",
-                                data: datasetLastYear,
-                                borderColor: "red",
-                                fill: false
-                            }
-                        ]
+        let labels = <?php echo json_encode($labels); ?>;
+        let datasetCurrentYear = <?php echo json_encode($datasetCurrentYear); ?>;
+        let datasetLastYear = <?php echo json_encode($datasetLastYear); ?>;
+        let percentageChange = <?php echo json_encode($percentageChange); ?>;
+
+        new Chart(document.getElementById("complaintChart"), {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "<?php echo $currentYear; ?> Tickets",
+                        data: datasetCurrentYear,
+                        borderColor: "blue",
+                        fill: false
+                    },
+                    {
+                        label: "<?php echo $lastYear; ?> Tickets",
+                        data: datasetLastYear,
+                        borderColor: "red",
+                        fill: false
                     }
-                });
+                ]
+            }
+        });
 
-
-        $('#expire_customer_datatable').dataTable();
+        let percentageElement = document.getElementById("percentageChange");
+        if (percentageChange > 0) {
+            percentageElement.innerHTML = "📈 Tickets increased by <span style='color: green;'>" + percentageChange.toFixed(2) + "%</span> this month!";
+        } else if (percentageChange < 0) {
+            percentageElement.innerHTML = "📉 Tickets decreased by <span style='color: red;'>" + Math.abs(percentageChange.toFixed(2)) + "%</span> this month!";
+        } else {
+            percentageElement.innerHTML = "⚖ No change in Tickets this month!";
+        }
+        /**********************************Tickets Counts By Month *******************************/
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
