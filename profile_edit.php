@@ -439,11 +439,12 @@ if (isset($_GET['clid'])) {
                                                     <div class="row mb-3">
                                                         <label for="txtCreditCardNumber" class="col-lg-3 col-form-label">Connection Type</label>
                                                         <div class="col-lg-9">
-                                                            <select id="customer_connection_type" class="form-select" style="width: 100%;">
+                                                        <select id="customer_connection_type" class="form-select" style="width: 100%;">
                                                                 <option value="">---Select---</option>
-                                                                <option value="UTP">UTP</option>
-                                                                <option value="ONU">ONU</option>
+                                                                <option value="UTP" <?= ($con_type == 'UTP') ? 'selected' : '' ?>>UTP</option>
+                                                                <option value="ONU" <?= ($con_type == 'ONU') ? 'selected' : '' ?>>ONU</option>
                                                             </select>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -566,7 +567,7 @@ if (isset($_GET['clid'])) {
             var status = $("#customer_status").val();
             var liablities = $("#customer_liablities").val();
             var customer_houseno = $("#customer_houseno").val();
-            var customer_connection_type = $("#customercustomer_connection_type_houseno").val();
+            var customer_connection_type = $("#customer_connection_type").val();
             var user_type = 1;
 
             if (fullname.length == 0) {
@@ -599,6 +600,7 @@ if (isset($_GET['clid'])) {
                 toastr.error("Address is require");
             }else if(customer_connection_type.length=='0'){
                 toastr.error("Connection Type is Require");
+                return false; 
             }
             $("#customer_update_btn").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');

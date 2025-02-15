@@ -250,10 +250,10 @@ if (isset($_POST['srch_pop_name'])) {
 
 //dynamic customer package when click pop/branch
 if (isset($_POST['getCustomerPackage'])) {
-    echo '<option value="">---Select---</option>';
+   
     $popId = $_POST['pop_name'];
     if ($allArea = $con->query("SELECT * FROM branch_package WHERE  pop_id='$popId' ")) {
-
+        echo '<option value="">---Select---</option>';
         while ($rows = $allArea->fetch_array()) {
             echo '<option value="' . $rows['id'] . '">' . $rows['package_name'] . '</option>';
         }
