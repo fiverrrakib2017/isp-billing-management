@@ -48,7 +48,7 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
             $_pop_balance = 0;
             $_recharge_balance = 0;
             /*Calculate POP Balance*/
-            if ($pop_payment = $con->query('SELECT SUM(amount) AS pop_balance FROM pop_transaction where pop_id=' . $pop_id . ' ')) {
+            if ($pop_payment = $con->query("SELECT SUM(amount) AS pop_balance FROM pop_transaction where pop_id=' . $pop_id . ' AND transaction_type !='5' ")) {
                 while ($rows = $pop_payment->fetch_assoc()) {
                     $_pop_balance = $rows['pop_balance'];
                 }
@@ -255,7 +255,7 @@ if (isset($_POST['add_recharge_data'])) {
     }
     $package_sales_price = $customer_sales_price * intval($chrg_mnths);
    /*Check POP Blance*/
-    if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM pop_transaction WHERE pop_id='$pop_id' ")) {
+    if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM pop_transaction WHERE pop_id='$pop_id' AND transaction_type !='5' ")) {
         while ($rows = $pop_payment->fetch_array()) {
             $popBalance = $rows['balance'];
         }

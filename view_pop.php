@@ -343,7 +343,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                 <span class="counter text-teal">
                                                 <?php
 
-                                                $pop_amount=$con->query("SELECT SUM(amount) AS pop_amount FROM pop_transaction WHERE pop_id='$pop_id'")->fetch_array()['pop_amount'] ?? 0;
+                                                $pop_amount=$con->query("SELECT SUM(amount) AS pop_amount FROM pop_transaction WHERE pop_id='$pop_id' AND transaction_type !='5'")->fetch_array()['pop_amount'] ?? 0;
 
                                                 $total_paid =$con->query("SELECT SUM(purchase_price) AS total_paid FROM customer_rechrg WHERE pop_id='$pop_id' AND type!='4'")->fetch_array()['total_paid'] ?? 0;
                                                 echo  number_format($pop_amount - $total_paid);

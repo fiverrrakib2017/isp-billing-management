@@ -294,7 +294,7 @@ if (isset($_POST['addCustomerData'])) {
     $liablities = $_POST['liablities'];
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
-    $con_type = $_POST['customer_connection_type'];
+    $con_type = $_POST['customer_connection_type']?? 'ONU';
 
     // One month from a specific date
     $exp_date = date('Y-m-d', strtotime('+1 month', strtotime(date('Y-m-' . $exp_date))));
@@ -306,20 +306,14 @@ if (isset($_POST['addCustomerData'])) {
             $package_sales_price = $rowssss['s_price'];
         }
     }
-    /*Check Pop Blance */
-    if ($pop_payment = $con->query("SELECT SUM(`amount`) AS balance FROM `pop_transaction` WHERE pop_id='$pop' ")) {
-        while ($rows = $pop_payment->fetch_array()) {
-            $popBalance = $rows["balance"];
-        }
-        if ($customer_recharge = $con->query(" SELECT SUM(`purchase_price`) AS amount FROM `customer_rechrg` WHERE pop_id='$pop' ")) {
-            while ($rows = $customer_recharge->fetch_array()) {
-                $rechargeBalance = $rows["amount"];
-            }
-        }
-        $totalCurrentBal = $popBalance - $rechargeBalance;
-    }
+    /*Check Pop Current  Blance */
+    $pop_amount=$con->query("SELECT SUM(amount) AS pop_amount FROM pop_transaction WHERE pop_id='$pop' AND transaction_type !='5'")->fetch_array()['pop_amount'] ?? 0;
 
-    if ($package_purchase_price > $totalCurrentBal) {
+    $total_paid =$con->query("SELECT SUM(purchase_price) AS total_paid FROM customer_rechrg WHERE pop_id='$pop' AND type!='4'")->fetch_array()['total_paid'] ?? 0;
+
+    $_Pop_balance=$pop_amount - $total_paid;
+
+    if ($package_purchase_price > $_Pop_balance) {
         echo "Insufficiant balance!
         Please Recharge POP/Branch ";
     } else {
@@ -343,11 +337,11 @@ if (isset($_POST['addCustomerData'])) {
     $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package_name')");
     }
     /*send Notification*/
-    try {
-        send_notification("".$fullname." New Customer Added", '<i class="fas fa-user"></i>', "http://103.146.16.154/profile.php?clid=".$custID, 'unread');
-    } catch (Exception $e) {
-        error_log('Error in sending notification: '.$e->getMessage());
-    }
+    // try {
+    //     send_notification("".$fullname." New Customer Added", '<i class="fas fa-user"></i>', "http://103.146.16.154/profile.php?clid=".$custID, 'unread');
+    // } catch (Exception $e) {
+    //     error_log('Error in sending notification: '.$e->getMessage());
+    // }
     exit; 
 }
 //get specifik customer package and display frontend 
