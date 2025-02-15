@@ -491,6 +491,8 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
 
     if (!empty($_SESSION['user_pop'])) {
         $condition .= "pop_id = '" . $_SESSION['user_pop'] . "'";
+    }else{
+        $condition .= "pop_id = '1'";
     }
 
     if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {

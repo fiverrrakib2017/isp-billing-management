@@ -835,7 +835,9 @@ include 'include/functions.php';
                         <div class="col-md-6 stretch-card">
                             <div class="card">
                                 <div class="card-body">
-
+                                    <h4 class="card-title mb-4">Customer Counts By Month</h4>   
+                                    <canvas id="customerChart" width="400" height="200"></canvas> 
+                                       <h4 class="card-title mb-4" id="customerPercentageChange"></h4>                 
                                 </div>
                             </div>
                         </div>
@@ -1613,6 +1615,54 @@ echo $rowcron['date'];
             percentageElement.innerHTML = "⚖ No change in Tickets this month!";
         }
         /**********************************Tickets Counts By Month *******************************/
+
+        /********************************** Customer Counts By Month *******************************/
+        <?php
+        $currentYearCustomer = date("Y");
+        $lastYearCustomer = $currentYearCustomer - 1;
+        $currentMonthCustomer = date("m");
+        $lastMonthCustomer = ($currentMonthCustomer == 1) ? 12 : $currentMonthCustomer - 1;
+        $yearOfLastMonthCustomer = ($currentMonthCustomer == 1) ? $lastYearCustomer : $currentYearCustomer;
+       
+        ?>
+        let labelsCustomer = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    
+        let datasetCustomer2025 = [50, 70, 80, 60, 90, 100, 120, 110, 105, 95, 85, 75]; 
+        let datasetCustomer2024 = [40, 60, 70, 50, 80, 90, 110, 100, 95, 85, 75, 65];
+
+
+        new Chart(document.getElementById("customerChart"), {
+            type: "line",
+            data: {
+                labels: labelsCustomer,
+                datasets: [
+                    {
+                        label: "<?php echo $currentYearCustomer;?> Customers",
+                        data: datasetCustomer2025,
+                        borderColor: "green",
+                        fill: false
+                    },
+                    {
+                        label: "<?php echo $lastYearCustomer; ?> Customers",
+                        data: datasetCustomer2024,
+                        borderColor: "orange",
+                        fill: false
+                    }
+                ]
+            }
+        });
+        let percentageElementCustomer  = document.getElementById("customerPercentageChange");
+        percentageElementCustomer.innerHTML = "📈 Customer increased by <span style='color: green;'>"+'23'+"%</span> this month!";
+        // if (percentageChangeCustomer  > 0) {
+        //     percentageElementCustomer.innerHTML = "📈 Customer increased by <span style='color: green;'>"+'23'+"%</span> this month!";
+        // } else if (percentageChangeCustomer  < 0) {
+        //     percentageElementCustomer.innerHTML = "📉 Customer decreased by <span style='color: red;'>" + '32'+ "%</span> this month!";
+        // } else {
+        //     percentageElementCustomer.innerHTML = "⚖ No change in Customer this month!";
+        // }
+
+  
+        /**********************************Customer Counts By Month *******************************/
     </script>
     <script type="text/javascript">
         $(document).ready(function() {
