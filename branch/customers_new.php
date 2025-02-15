@@ -460,12 +460,7 @@ if (file_exists($users_right_path)) {
      <?php include 'modal/customer_modal.php';?>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
-    <?php
-    $page_title = 'Customers';
-    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-    $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
-    echo file_get_contents($url);
-    ?>
+    <?php  include '../script.php';  ?>
     <script type="text/javascript" src="js/customer.js"></script>
     <script type="text/javascript">
         // Customers load function
