@@ -98,12 +98,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php
-    
-    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-    $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
-    
-    echo file_get_contents($url);
-    
+        include '../style.php';
     ?>
 
 </head>

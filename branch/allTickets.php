@@ -24,32 +24,8 @@ if (file_exists($users_right_path)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<?php
-        
-        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
-        
-        echo file_get_contents($url);
-        
-        ?>
-	<style>
-        /* div#tickets_datatable_filter {
-            display: none;
-        }
-        div#tickets_datatable_length {
-            display: flex;
-        }
-        .customer_filter {
-            width: 400px !important;
-        }
-        @media (min-width: 600px) {
-            .customer_filter {
-                width: 200px !important; 
-            }
-            
-        } */
-    </style>
-
-
+        include '../style.php';
+    ?>
 
 </head>
 
@@ -275,14 +251,7 @@ if (file_exists($users_right_path)) {
         </div>
     </div>
 
-    <?php
-        
-        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
-        
-        echo file_get_contents($url);
-        
-        ?>
+    <?php include '../script.php'; ?>
     <script type="text/javascript">
         // Customers load function
         function ticket_modal(){
