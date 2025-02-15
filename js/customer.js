@@ -105,12 +105,14 @@ $("#customer_add").click(function() {
     var status = $("#customer_status").val();
     var liablities = $("#customer_liablities").val();
     var customer_houseno = $("#customer_houseno").val();
+    var customer_connection_type = $("#customer_connection_type").val();
     var user_type = 1;
-   customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status);
+
+   customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type);
 
 });
 
-function customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status) {
+function customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type) {
     if (fullname.length == 0) {
         toastr.error("Customer name is require");
     } else if (package.length == 0) {
@@ -135,6 +137,8 @@ function customerAdd(customer_request_id,user_type, fullname, package, username,
         toastr.error("Status is require");
     } else if (liablities.length == 0) {
         toastr.error("Liablities is require");
+    }else if(customer_connection_type.length==0){
+        toastr.error("Connection Type is require");
     }else {
         $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
         $("#customer_add").prop("disabled", true);
@@ -162,6 +166,7 @@ function customerAdd(customer_request_id,user_type, fullname, package, username,
                 nid: nid,
                 status: status,
                 user_type: user_type,
+                customer_connection_type:customer_connection_type
             },
             success: function(responseData) {
                 $("#customer_add").html('Add Customer');

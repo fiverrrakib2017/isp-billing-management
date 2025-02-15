@@ -27,6 +27,7 @@ if (isset($_GET['clid'])) {
             $customer_status = $rows['status'];
             $expiredate = $rows['expiredate'];
             $liablities = $rows['liablities'];
+            $con_type = $rows['con_type'];
         }
     }
 }
@@ -434,6 +435,18 @@ if (isset($_GET['clid'])) {
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-6">
+                                                    <div class="row mb-3">
+                                                        <label for="txtCreditCardNumber" class="col-lg-3 col-form-label">Connection Type</label>
+                                                        <div class="col-lg-9">
+                                                            <select id="customer_connection_type" class="form-select" style="width: 100%;">
+                                                                <option value="">---Select---</option>
+                                                                <option value="UTP">UTP</option>
+                                                                <option value="ONU">ONU</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </fieldset>
                                     </form>
@@ -553,6 +566,7 @@ if (isset($_GET['clid'])) {
             var status = $("#customer_status").val();
             var liablities = $("#customer_liablities").val();
             var customer_houseno = $("#customer_houseno").val();
+            var customer_connection_type = $("#customercustomer_connection_type_houseno").val();
             var user_type = 1;
 
             if (fullname.length == 0) {
@@ -583,6 +597,8 @@ if (isset($_GET['clid'])) {
                 toastr.error("Nid is require");
             } else if (address.length == 0) {
                 toastr.error("Address is require");
+            }else if(customer_connection_type.length=='0'){
+                toastr.error("Connection Type is Require");
             }
             $("#customer_update_btn").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
@@ -610,6 +626,7 @@ if (isset($_GET['clid'])) {
                     nid: nid,
                     status: status,
                     user_type: user_type,
+                    customer_connection_type:customer_connection_type,
                 },
                 success: function(response) {
                     if (response.success == true) {

@@ -235,6 +235,18 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="row mb-3">
+                                <label for="txtCreditCardNumber" class="col-lg-3 col-form-label">Connection Type</label>
+                                <div class="col-lg-9">
+                                    <select id="customer_connection_type" class="form-select" style="width: 100%;">
+                                        <option value="">---Select---</option>
+                                        <option value="UTP">UTP</option>
+                                        <option value="ONU">ONU</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </fieldset>
             </form>

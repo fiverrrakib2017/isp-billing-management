@@ -294,6 +294,7 @@ if (isset($_POST['addCustomerData'])) {
     $liablities = $_POST['liablities'];
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
+    $con_type = $_POST['customer_connection_type'];
 
     // One month from a specific date
     $exp_date = date('Y-m-d', strtotime('+1 month', strtotime(date('Y-m-' . $exp_date))));
@@ -323,7 +324,7 @@ if (isset($_POST['addCustomerData'])) {
         Please Recharge POP/Branch ";
     } else {
 
-    $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,area_house_id,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area','$area_house_id',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0')");
+    $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,area_house_id,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount,con_type) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area','$area_house_id',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0','$con_type')");
     
     if ($result == true) {
         $custID = $con->insert_id;
@@ -490,13 +491,14 @@ if(isset($_POST['area_id'])){
         $liablities = $_POST['liablities'];
         $status = $_POST['status'];
         $user_type = $_POST['user_type'];
+        $con_type = $_POST['customer_connection_type'];
 
         if ($allPack = $con->query("SELECT * FROM branch_package WHERE id=$package AND pop_id=$pop")) {
             while ($rowssss = $allPack->fetch_array()) {
                 $package_name = $rowssss['package_name'];
             }
         }
-       $result= $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' WHERE id=$customer_id");
+       $result= $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type' WHERE id=$customer_id");
        if($result){
             echo json_encode(['success' => true, 'message' => 'Customer updated successfully!']);
        }else{

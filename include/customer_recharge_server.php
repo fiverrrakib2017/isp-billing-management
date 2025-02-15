@@ -514,12 +514,21 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
         } else if (in_array($type, ['1', '2', '3', '4'])) {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
         }
+    }else{
+        $condition .= (!empty($condition) ? " AND " : "") . "type != '4'";
     }
-    if (!empty($_GET['bill_collect']) && $_GET['bill_collect'] !=='0') {
+    if (!empty($_GET['bill_collect']) && $_GET['bill_collect'] !== '0') {
         $bill_collect_ID = intval($_GET['bill_collect']); 
         if ($bill_collect_ID > 0) {
-            $condition = isset($condition) ? $condition . " AND " : "";
-            $condition .= "rchg_by = $bill_collect_ID";
+            if (!empty($condition)) {
+                $condition .= " AND ";
+            }
+            if($_GET['type']=='4'){
+                $condition .= "rchg_by = $bill_collect_ID ";
+            }else{
+                $condition .= "rchg_by = $bill_collect_ID AND type != '4'";
+            }
+            
         }
     }
     
