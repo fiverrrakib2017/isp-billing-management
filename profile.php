@@ -999,7 +999,6 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                  <option value="0">On Credit</option>
                                  <option value="2">Bkash</option>
                                  <option value="3">Nagad</option>
-                                 <option value="4">Due Payment</option>
                               </select>
                            </div>
                         </form>
