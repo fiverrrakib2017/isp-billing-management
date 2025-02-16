@@ -68,18 +68,7 @@ if (isset($_GET['id']) && isset($_GET['fromDate']) && isset($_GET['endDate'])) {
                         <div class="col-md-8">
                             <div class="card ledger-card">
                                 <div class="card-header bg-primary text-white text-center">
-                                    <h4>Ledger Name: <span class="text-warning">
-                                            <?php
-                                            
-                                            $ledger_id = $data[0]['ledger_id'];
-                                            $stmt = $con->prepare('SELECT * FROM ledger WHERE id = ?');
-                                            $stmt->bind_param('i', $ledger_id);
-                                            $stmt->execute();
-                                            $result = $stmt->get_result();
-                                            $row = $result->fetch_assoc();
-                                            echo $row['ledger_name'];
-                                            ?>
-                                        </span></h4>
+                                    <h4>Ledger: </h4>
                                     <p class="mb-0">From: <strong><?php echo $_GET['fromDate']; ?></strong> | To:
                                         <strong><?php echo $_GET['endDate']; ?></strong></p>
                                 </div>

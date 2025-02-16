@@ -138,10 +138,10 @@ if (isset($_POST['getReport'])) {
         $con->close();
     } else {
         echo '<button type="button" onclick="printTable()" class="btn btn-primary"><i class="fas fa-print"></i></button> <br><br>';
-        echo '
-    <table id="reportTable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">';
-        echo '<thead><tr><th>No</th><th class="text-center">Accounts Titles And Explanations</th><th>Amount</th></tr></thead>';
+        echo '<table id="reportTable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">';
+        echo '<thead><tr><th>No</th><th class="text-center">Accounts Titles And Explanations (' . date('d M Y', strtotime($fromDate)) . ' - ' . date('d M Y', strtotime($endDate)) . ')</th><th>Amount</th></tr></thead>';
         echo '<tbody>';
+
 
         $ledgerQuery = "SELECT DISTINCT ledger_id FROM ledger_transactions 
                     WHERE mstr_ledger_id = $masterLedgerId 

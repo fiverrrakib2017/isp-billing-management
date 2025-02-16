@@ -52,7 +52,7 @@ if (isset($_SESSION['uid'])) {
                                     <div class="col-md-3">
                                         <div class="form-group mb-2">
                                             <label for="">To Date</label>
-                                            <input type="date" class="form-control" id="endDate">
+                                            <input type="date" class="form-control" id="endDate" value="<?php echo date('Y-m-d');?>">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
