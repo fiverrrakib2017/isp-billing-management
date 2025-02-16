@@ -159,7 +159,8 @@ if (isset($_POST['getReport'])) {
 
                 echo '<tr>';
                 echo '<td>' . $increment++ . '</td>';
-                echo '<td><b>' . $ledger_name . ' </b><br>';
+                // echo '<td><b>' . $ledger_name . ' </b><br>';
+                echo '<td><b><a href="show_ledger_data.php?id='.$ledger_id.'&fromDate='.$fromDate.'&endDate='.$endDate.'">' . $ledger_name . '</a></b><br>';
 
                 $ledgerTotal = 0;
 
