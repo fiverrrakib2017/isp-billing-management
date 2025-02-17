@@ -68,9 +68,19 @@ if (isset($_GET['id']) && isset($_GET['fromDate']) && isset($_GET['endDate'])) {
                         <div class="col-md-8">
                             <div class="card ledger-card">
                                 <div class="card-header bg-primary text-white text-center">
-                                    <h4>Ledger: </h4>
-                                    <p class="mb-0">From: <strong><?php echo $_GET['fromDate']; ?></strong> | To:
-                                        <strong><?php echo $_GET['endDate']; ?></strong></p>
+                                    <h4><?php
+                                    
+                                    $ledger_id = $data[0]['ledger_id'];
+                                    $stmt = $con->prepare('SELECT * FROM ledger WHERE id = ?');
+                                    $stmt->bind_param('i', $ledger_id);
+                                    $stmt->execute();
+                                    $result = $stmt->get_result();
+                                    $row = $result->fetch_assoc();
+                                    echo $row['ledger_name'] ?? 'N/A';
+                                    ?></h4>
+                                    <p class="mb-0">From: <strong><?php echo  date('d M Y', strtotime($_GET['fromDate'])) ?></strong> | To:
+                                        <strong><?php echo  date('d M Y', strtotime($_GET['endDate'])) ?></strong>
+                                    </p>
                                 </div>
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
@@ -83,10 +93,10 @@ if (isset($_GET['id']) && isset($_GET['fromDate']) && isset($_GET['endDate'])) {
                                             <thead>
                                                 <tr>
                                                     <th>No</th>
-                                                    <th>Accounts Titles And Explanations</th>
-                                                    <th>Quantity</th>
-                                                    <th>Value</th>
-                                                    <th>Total</th>
+                                                    <th class="text-center">Accounts Titles And Explanations</th>
+                                                    <th class="text-end">Quantity</th>
+                                                    <th class="text-end">Value</th>
+                                                    <th class="text-end">Total</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -100,34 +110,25 @@ if (isset($_GET['id']) && isset($_GET['fromDate']) && isset($_GET['endDate'])) {
                                                     $stmt->execute();
                                                     $result = $stmt->get_result();
                                                     $rowsss = $result->fetch_assoc();
-                                                    $sub_ledger_name = $rowsss['item_name'];
-                                                    $total_amount += $row['total'];
-                                                    echo '
-                                                                                    <tr>
-                                                                                        <td>' .
-                                                        $i .
-                                                        '</td>
-                                                                                        <td>' .
-                                                        $sub_ledger_name .
-                                                        '</td> 
-                                                                                        <td>' .
-                                                        $row['qty'] .
-                                                        '</td>
-                                                                                        <td>' .
-                                                        $row['value'] .
-                                                        '</td>
-                                                                                        <td>' .
-                                                        $row['total'] .
-                                                        '</td>
-                                                                                    </tr>
-                                                                                    ';
+                                                    $sub_ledger_name = $rowsss['item_name']?? 'N/A';
+                                                    $total_amount += $row['total'] ?? 0;
+                                                    echo '<tr>
+                                                            <td class="text-center">' . $i . '</td>
+                                                            <td>
+                                                                <span class="fw-bold text-dark fs-6">' . $sub_ledger_name . '</span><br>
+                                                                <small class="text-muted fst-italic">' . $row['note'] . '</small>
+                                                            </td>
+                                                            <td class="text-center">' . $row['qty'] . '</td>
+                                                            <td class="text-end">৳ ' . round($row['value'], 2) . '</td>
+                                                            <td class="text-end">৳ ' . round($row['total'], 2) . '</td>
+                                                        </tr>';
                                                     $i++;
                                                 }
                                                 ?>
 
                                                 <tr>
                                                     <td colspan="4" class="text-end total-row"><b>Total:</b></td>
-                                                    <td class="total-row"><b>৳ <?php echo number_format($total_amount, 2); ?></b></td>
+                                                    <td class="total-row text-end"><b>৳   <?php echo round($total_amount); ?></b></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -152,32 +153,27 @@ if (isset($_GET['id']) && isset($_GET['fromDate']) && isset($_GET['endDate'])) {
 
     <?php include 'script.php'; ?>
     <script type="text/javascript">
-        
+        function printTable() {
+            var divToPrint = document.querySelector('.ledger-card');
+            var newWin = window.open('', '_blank');
 
-    function printTable() {
-        var divToPrint = document.querySelector('.ledger-card'); 
-        var newWin = window.open('', '_blank'); 
+            newWin.document.write('<html><head><title>Ledger Report</title>');
+            newWin.document.write('<style>');
+            newWin.document.write('body { font-family: Arial, sans-serif; margin: 20px; }');
+            newWin.document.write('.ledger-card { width: 100%; padding: 20px; border: 1px solid black; }');
+            newWin.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
+            newWin.document.write('th, td { border: 1px solid black; padding: 10px; text-align: left; }');
+            newWin.document.write('th { background-color: #f2f2f2; }');
+            newWin.document.write('</style></head><body>');
 
-        newWin.document.write('<html><head><title>Ledger Report</title>');
-        newWin.document.write('<style>');
-        newWin.document.write('body { font-family: Arial, sans-serif; margin: 20px; }');
-        newWin.document.write('.ledger-card { width: 100%; padding: 20px; border: 1px solid black; }');
-        newWin.document.write('table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
-        newWin.document.write('th, td { border: 1px solid black; padding: 10px; text-align: left; }');
-        newWin.document.write('th { background-color: #f2f2f2; }');
-        newWin.document.write('</style></head><body>');
+            newWin.document.write(divToPrint.outerHTML);
+            newWin.document.write('</body></html>');
 
-        newWin.document.write(divToPrint.outerHTML); 
-        newWin.document.write('</body></html>');
-
-        newWin.document.close();
-        newWin.focus();
-        newWin.print();
-        newWin.close();
-    }
-
-
-   
+            newWin.document.close();
+            newWin.focus();
+            newWin.print();
+            newWin.close();
+        }
     </script>
 
 
