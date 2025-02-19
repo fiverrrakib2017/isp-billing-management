@@ -184,7 +184,14 @@ ini_set('display_errors', 1);
                             ?>
                         </select>
                     </div>                 
-                                    
+                    <div class="form-group mb-2">
+                        <label>Transaction Date</label>
+                        <input name="transaction_date" class="form-control" type="date" required>
+                    </div>                
+                    <div class="form-group mb-2">
+                        <label>Transaction Notes</label>
+                        <input name="transaction_note" class="form-control" type="text" placeholder="Enter Transaction Notes" required>
+                    </div>                
                     <div class="modal-footer ">
                         <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
                         <button type="submit" class="btn btn-success">Save Changes</button>

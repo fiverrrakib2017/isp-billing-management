@@ -28,14 +28,15 @@ if (isset($_GET['clid'])) {
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include 'style.php';?>
+    <?php include 'style.php'; ?>
 </head>
 
 <body data-sidebar="dark">
-   
+
     <!-- Begin page -->
     <div id="layout-wrapper">
-         <?php $page_title="Supplier's Profile"; include 'Header.php';?>
+        <?php $page_title = "Supplier's Profile";
+        include 'Header.php'; ?>
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
             <div data-simplebar class="h-100">
@@ -52,23 +53,26 @@ if (isset($_GET['clid'])) {
             <div class="page-content">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="">
-                            <div class="row">
-                                <div class="col-md-6"></div>
-                                <div class="col-md-6">
-                                    <div class="d-flex py-2" style="float:right;">
+                        <div class="col-md-12">
+                            <div class="d-flex justify-content-end align-items-center gap-2 py-2">
+                                <abbr title="Create Invoice">
+                                    <a href="purchase.php" class="btn btn-sm btn-primary ">
+                                        <i class="fas fa-money-bill-wave me-1"></i> Create Invoice
+                                    </a>
+                                </abbr>
 
-                                        <abbr title="Edit Supplier">
-                                            <button type="button" data-id="<?php echo $clid; ?>"
-                                                class="btn-sm btn btn-info edit-btn">
-                                                <i class="mdi mdi-account-edit"></i>
-                                            </button>
-                                        </abbr>
-                                    </div>
-                                </div>
+                                
+
+                                <abbr title="Edit Supplier">
+                                    <button type="button" data-id="<?php echo $clid; ?>"
+                                        class="btn btn-sm btn-info edit-btn">
+                                        <i class="mdi mdi-account-edit me-1"></i> Edit
+                                    </button>
+                                </abbr>
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="container">
                             <div class="main-body">
@@ -99,18 +103,15 @@ if (isset($_GET['clid'])) {
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="col-12 bg-white p-0 px-2 pb-3 mb-3">
-                                                    <div
-                                                        class="d-flex justify-content-between border-bottom py-2 px-3">
+                                                    <div class="d-flex justify-content-between border-bottom py-2 px-3">
                                                         <p><i class="mdi mdi-marker-check"></i> Fullname:</p>
                                                         <a href="#"><?php echo $fullname; ?></a>
                                                     </div>
-                                                    <div
-                                                        class="d-flex justify-content-between border-bottom py-2 px-3">
+                                                    <div class="d-flex justify-content-between border-bottom py-2 px-3">
                                                         <p><i class="mdi mdi-phone"></i> Mobile:</p>
                                                         <a href="#"><?php echo $mobile; ?></a>
                                                     </div>
-                                                    <div
-                                                        class="d-flex justify-content-between border-bottom py-2 px-3">
+                                                    <div class="d-flex justify-content-between border-bottom py-2 px-3">
                                                         <p><i class="fas fa-id-card"> </i> Address: </p>
                                                         <a href="#"><?php echo $address; ?></a>
                                                     </div>
@@ -236,14 +237,14 @@ if (isset($_GET['clid'])) {
                                                                                             <th>ID</th>
                                                                                             <th>Invoice Id</th>
                                                                                             <th>Amount</th>
-                                                                                            <th>Date</th>
+                                                                                            <th>Transaction Date</th>
+                                                                                            <th>Posting Date</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
                                                                                         <?php
                                     $totalCount=1;
-                                    $sql = "SELECT * FROM purchase_dues WHERE supplier_id=$lstid";
-                                    $result = mysqli_query($con, $sql);
+                                    $result =$con->query("SELECT * FROM purchase_dues WHERE supplier_id=$lstid");
                                     
                                     while ($rows = mysqli_fetch_assoc($result)) {
                                     
@@ -256,13 +257,15 @@ if (isset($_GET['clid'])) {
                                                                                             </td>
                                                                                             <td><?php echo $rows['invoice_id']; ?>
                                                                                             </td>
-                                                                                            <td><?php echo $rows['due_amount']; ?>
-                                                                                            </td>
+                                                                                            <td><?php echo $rows['due_amount']; ?></td>
+                                                                                            <td>
+                                                                                             <?php 
+                                                                                               echo  date('d F Y', strtotime($rows['transaction_date']));
+                                                                                             ?>
+                                                                                             </td>
                                                                                             <td>
                                                                                                 <?php
-                                                                                                $date = $rows['date'];
-                                                                                                $formatted_date = date('d F Y', strtotime($date));
-                                                                                                echo $formatted_date;
+                                                                                                echo date('d F Y', strtotime($rows['date']));
                                                                                                 
                                                                                                 ?>
                                                                                             </td>
@@ -280,7 +283,7 @@ if (isset($_GET['clid'])) {
                                                                 <div class="card">
                                                                     <div class="card-body">
                                                                         <div class="row">
-                                                                            <div class="table-responsive">
+                                                                            <div class="table table-responsive">
                                                                                 <table id="invoice_datatable"
                                                                                     class="table table-bordered dt-responsive nowrap"
                                                                                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -298,14 +301,14 @@ if (isset($_GET['clid'])) {
                                                                                     </thead>
                                                                                     <tbody>
                                                                                         <?php
-$sql = "SELECT * FROM purchase WHERE client_id=?";
-$stmt = $con->prepare($sql);
-$stmt->bind_param("i", $lstid);  
-$stmt->execute();
-$result = $stmt->get_result();
+                                                                                       $sql = "SELECT * FROM purchase WHERE client_id=?";
+                                                                                       $stmt = $con->prepare($sql);
+                                                                                       $stmt->bind_param("i", $lstid);  
+                                                                                       $stmt->execute();
+                                                                                       $result = $stmt->get_result();
 
-while ($rows = $result->fetch_assoc()) {
-?>
+                                                                                       while ($rows = $result->fetch_assoc()) {
+                                                                                       ?>
                                                                                         <tr>
                                                                                             <td><?php echo htmlspecialchars($rows['id']); ?>
                                                                                             </td>
@@ -348,11 +351,15 @@ while ($rows = $result->fetch_assoc()) {
                                                                                                     onclick="return confirm('Are You Sure');"
                                                                                                     href="purchase_inv_delete.php?clid=<?php echo htmlspecialchars($rows['id']); ?>"><i
                                                                                                         class="fas fa-trash"></i></a>
+                                                                                                        
+                                                                                                <?php
+                                                                                                   if ($rows['total_due'] > 0) {
+                                                                                                      echo '<button type="button" name="due_paid_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-info" style="margin-right: 5px;">  <i class="fas fa-money-bill-wave"></i> Pay Due</button>';
+                                                                                                }
+                                                                                                ?>
                                                                                             </td>
                                                                                         </tr>
-                                                                                        <?php 
-} 
-?>
+                                                                                        <?php  }  ?>
 
                                                                                     </tbody>
                                                                                 </table>
@@ -376,7 +383,7 @@ while ($rows = $result->fetch_assoc()) {
             </div>
             <!-- End Page-content -->
             <!-- Modal for addPayment -->
-            <div class="modal fade bs-example-modal-lg" id="paymentModal" tabindex="-1" role="dialog"
+            <!-- <div class="modal fade bs-example-modal-lg" id="paymentModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content col-md-12">
@@ -435,7 +442,80 @@ while ($rows = $result->fetch_assoc()) {
                         </div>
                     </div>
                 </div>
+            </div> -->
+
+            <div class="modal fade bs-example-modal-lg" id="payDueModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+        <div class="modal-content col-md-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><span
+                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;Due Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body">
+                <form action="include/purchase_server.php?add_due_payment=true" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="invoice_id" id="invoice_id">
+                    <div class="form-group mb-2">
+                        <label>Transaction Number</label>
+                        <input name="transaction_number" class="form-control" type="text" readonly>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Due Amount</label>
+                        <input readonly name="due_amount" placeholder="Enter Due Amount" class="form-control" type="text" required>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Paid Amount</label>
+                        <input name="paid_amount" placeholder="Enter Paid Amount" class="form-control" type="text" required>
+                    </div>   
+                    <div class="form-group mb-2">
+                        <label>Select Accounts</label>
+                        <select type="text" class="form-control" id="sub_ledger_id" name="sub_ledger_id"
+                            style="width: 100%;">
+                            <?php
+                            if ($ledgr = $con->query('SELECT * FROM ledger')) {
+                                echo '<option value="">Select</option>';
+                            
+                                while ($rowsitm = $ledgr->fetch_array()) {
+                                    $ldgritmsID = $rowsitm['id'];
+                                    $ledger_name = $rowsitm['ledger_name'];
+                            
+                                    echo '<optgroup label="' . $ledger_name . '">';
+                            
+                                    // Sub Ledger items list
+                                    if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+                                        while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                            $sub_ldgrid = $rowssb['id'];
+                                            $ldgr_items = $rowssb['item_name'];
+                            
+                                            echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                        }
+                                    }
+                            
+                                    echo '</optgroup>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>                 
+                    <div class="form-group mb-2">
+                        <label>Transaction Date</label>
+                        <input name="transaction_date" class="form-control" type="date" required>
+                    </div>                
+                    <div class="form-group mb-2">
+                        <label>Transaction Notes</label>
+                        <input name="transaction_note" class="form-control" type="text" placeholder="Enter Transaction Notes" required>
+                    </div>                
+                    <div class="modal-footer ">
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+    </div>
+
             <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog " role="document">
@@ -576,12 +656,12 @@ while ($rows = $result->fetch_assoc()) {
                             $('#editModal input[name="fullname"]').val(jsonResponse.data
                                 .fullname);
                             $('#editModal input[name="company"]').val(jsonResponse.data
-                            .company);
+                                .company);
                             $('#editModal input[name="phone_number"]').val(jsonResponse.data
                                 .mobile);
                             $('#editModal input[name="email"]').val(jsonResponse.data.email);
                             $('#editModal input[name="address"]').val(jsonResponse.data
-                            .address);
+                                .address);
                             $('#editModal select[name="status"]').val(jsonResponse.data.status);
                         } else {
                             toastr.error("Error fetching data for edit: " + jsonResponse
@@ -647,6 +727,73 @@ while ($rows = $result->fetch_assoc()) {
                             toastr.error("An error occurred. Please try again.");
                         }
                     },
+                });
+            });
+
+            /*Paid Due Amount Script*/
+            $(document).on('click',"button[name='due_paid_button']",function(){
+                var id=$(this).data('id');
+                $.ajax({
+                    type: 'GET', 
+                    url: 'include/purchase_server.php?get_invoice=true',
+                    data: { invoice_id: id }, 
+                    dataType:'json',
+                    success: function(response) {
+                        if (response) {
+                            $("#payDueModal").modal('show');
+                            $("#payDueModal #invoice_id").val(response.id); 
+                            $("#payDueModal input[name='transaction_number']").val(response.transaction_number);
+                            $("#payDueModal input[name='due_amount']").val(response.total_due);
+                        } else {
+                            toastr.error("No data found for this invoice!");
+                        }
+
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        toastr.error("Error deleting item! " + error);
+                    }
+                });
+            });
+            $('#payDueModal').on('shown.bs.modal', function () {
+                if (!$('#sub_ledger_id').hasClass("select2-hidden-accessible")) {
+                    $('#sub_ledger_id').select2({
+                        dropdownParent: $('#payDueModal')
+                    });
+                }
+            });
+            $('#payDueModal form').submit(function(e){
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var formData = form.serialize();
+                $.ajax({
+                type:'POST',
+                'url':url,
+                data: formData,
+                dataType: 'json',
+                success: function (response) {
+                    if(response.success){
+                        toastr.success(response.message);
+                        $("#payDueModal").modal('hide');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }else{
+                        toastr.error(response.message);
+                    }
+                },
+
+
+                error: function (xhr, status, error) {
+                    /** Handle  errors **/
+                    if (xhr.status === 422) {
+                        var errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            toastr.error(value[0]); 
+                        });
+                    }
+                }
                 });
             });
 
