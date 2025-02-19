@@ -29,6 +29,8 @@ class Base_invoivce{
         ]; 
     }
     protected function insert_invoice($table,$validator){
+
+        /*Insert purchase/sales invoice data*/
         $transaction_number=self::get_transaction_number();
          $sql = "INSERT INTO $table (transaction_number,usr_id, client_id, date, sub_total, discount, grand_total, total_due, total_paid, note, status,created_at) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         $stmt = self::$con->prepare($sql);
@@ -54,9 +56,14 @@ class Base_invoivce{
         if (!$stmt->execute()) {
             throw new Exception('Execute statement failed: ' . $stmt->error);
         }
+        $invoice_id=self::$con->insert_id;
+
+         /*Insert Inventory Transaction data*/
+         $inventory_type=$table === "purchase" ? "Supplier" : "Customer";
+         self::$con->query("INSERT INTO `inventory_transaction`(`inventory_type`,`invoice_id`, `client_id`, `user_id`, `amount`, `transaction_type`, `transaction_date`, `create_date`, `note`) VALUES ('$inventory_type','$invoice_id','$validator[client_id]','$validator[usr_id]','$validator[total_paid]','1','$validator[date]',NOW(),'Invoice Created')");
 
         return [
-            'invoice_id' => self::$con->insert_id,
+            'invoice_id' => $invoice_id,
             'transaction_number' => $transaction_number,
         ];
     }

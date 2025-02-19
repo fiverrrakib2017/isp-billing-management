@@ -821,7 +821,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
         } else if ($trnstype == "2") {
             $trnstype = "<span class='badge bg-info'>Bkash</span>";
         } else if ($trnstype == "3") {
-            $trnstype = "<span class='badge bg-success'>Nagat</span>";
+            $trnstype = "<span class='badge bg-success'>Nagad</span>";
         } else if ($trnstype == "4") {
             $trnstype = "<span class='badge bg-primary'>Due Paid</span>";
         } else if ($trnstype == "0") {

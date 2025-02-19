@@ -61,7 +61,12 @@ if (isset($_GET['clid'])) {
                                     </a>
                                 </abbr>
 
-                                
+                                <abbr title="Supplier Payment">
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#paymentModal"
+                                        class="btn btn-sm btn-success">
+                                        <i class="fas fa-hand-holding-usd me-1"></i> Due Payment
+                                    </button>
+                                </abbr>
 
                                 <abbr title="Edit Supplier">
                                     <button type="button" data-id="<?php echo $clid; ?>"
@@ -132,13 +137,9 @@ if (isset($_GET['clid'])) {
                                                                     Total Purchase's</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                                     <?php
-                                                                    $result = $con->query("SELECT SUM(grand_total) AS amount FROM purchase WHERE client_id='$clid'");
                                                                     
-                                                                    if ($result) {
-                                                                        $row = $result->fetch_assoc();
-                                                                        $totalAmount = $row['amount'] ?? 0;
-                                                                        echo $totalAmount;
-                                                                    }
+                                                                    $total_amount = $con->query("SELECT SUM(grand_total) AS amount FROM purchase WHERE client_id='$clid' ")->fetch_array()['amount'] ?? 0;
+                                                                    echo floatval($total_amount);
                                                                     ?>
                                                                 </div>
                                                             </div>
@@ -157,13 +158,9 @@ if (isset($_GET['clid'])) {
                                                                     Total Paid</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                                     <?php
-                                                                    $result = $con->query("SELECT SUM(total_paid) AS amount FROM purchase WHERE client_id='$clid'");
                                                                     
-                                                                    if ($result) {
-                                                                        $row = $result->fetch_assoc();
-                                                                        $totalAmount = $row['amount'] ?? 0;
-                                                                        echo $totalAmount;
-                                                                    }
+                                                                    $total_paid_amount = $con->query("SELECT SUM(amount) AS total_paid FROM inventory_transaction WHERE client_id='$clid' AND transaction_type  !='4' AND inventory_type='Supplier'")->fetch_array()['total_paid'] ?? 0;
+                                                                    echo floatval( $total_paid_amount);
                                                                     ?>
                                                                 </div>
                                                             </div>
@@ -182,13 +179,7 @@ if (isset($_GET['clid'])) {
                                                                     Total Due</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                                     <?php
-                                                                    $result = $con->query("SELECT SUM(total_due) AS amount FROM purchase WHERE client_id='$clid'");
-                                                                    
-                                                                    if ($result) {
-                                                                        $row = $result->fetch_assoc();
-                                                                        $totalAmount = $row['amount'] ?? 0;
-                                                                        echo $totalAmount;
-                                                                    }
+                                                                    echo floatval($total_amount - $total_paid_amount);
                                                                     ?>
                                                                 </div>
                                                             </div>
@@ -235,37 +226,53 @@ if (isset($_GET['clid'])) {
                                                                                     <thead>
                                                                                         <tr>
                                                                                             <th>ID</th>
-                                                                                            <th>Invoice Id</th>
                                                                                             <th>Amount</th>
+                                                                                            <th>Note</th>
+                                                                                            <th>Transaction Type</th>
                                                                                             <th>Transaction Date</th>
                                                                                             <th>Posting Date</th>
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
                                                                                         <?php
-                                    $totalCount=1;
-                                    $result =$con->query("SELECT * FROM purchase_dues WHERE supplier_id=$lstid");
-                                    
-                                    while ($rows = mysqli_fetch_assoc($result)) {
-                                    
-                                    ?>
+                                                                                          $totalCount=1;
+                                                                                          $result =$con->query("SELECT * FROM inventory_transaction WHERE inventory_type='Supplier' AND  client_id=$lstid");
+                                                                                          
+                                                                                          while ($rows = mysqli_fetch_assoc($result)) {
+                                                                                          
+                                                                                          ?>
                                                                                         <tr>
                                                                                             <td>
                                                                                                 <?php
                                                                                                 echo $totalCount++;
                                                                                                 ?>
                                                                                             </td>
-                                                                                            <td><?php echo $rows['invoice_id']; ?>
+                                                                                            <td><?php echo $rows['amount']; ?>
                                                                                             </td>
-                                                                                            <td><?php echo $rows['due_amount']; ?></td>
-                                                                                            <td>
-                                                                                             <?php 
-                                                                                               echo  date('d F Y', strtotime($rows['transaction_date']));
-                                                                                             ?>
-                                                                                             </td>
+                                                                                            <td><?php echo $rows['note']; ?>
+                                                                                            </td>
                                                                                             <td>
                                                                                                 <?php
-                                                                                                echo date('d F Y', strtotime($rows['date']));
+                                                                                                if ($rows['transaction_type'] == '1') {
+                                                                                                    echo "<span class='badge bg-success'>Cash</span>";
+                                                                                                } elseif ($rows['transaction_type'] == '2') {
+                                                                                                    echo "<span class='badge bg-info'>Bkash</span>";
+                                                                                                } elseif ($rows['transaction_type'] == '3') {
+                                                                                                    echo "<span class='badge bg-success'>Nagad</span>";
+                                                                                                } elseif ($rows['transaction_type'] == '4') {
+                                                                                                    echo "<span class='badge bg-primary'>Due Paid</span>";
+                                                                                                } elseif ($rows['transaction_type'] == '0') {
+                                                                                                    echo "<span class='badge bg-danger'>Crdit</span>";
+                                                                                                }
+                                                                                                ?>
+                                                                                            <td>
+                                                                                                <?php
+                                                                                                echo date('d F Y', strtotime($rows['transaction_date']));
+                                                                                                ?>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <?php
+                                                                                                echo date('d F Y', strtotime($rows['create_date']));
                                                                                                 
                                                                                                 ?>
                                                                                             </td>
@@ -351,10 +358,10 @@ if (isset($_GET['clid'])) {
                                                                                                     onclick="return confirm('Are You Sure');"
                                                                                                     href="purchase_inv_delete.php?clid=<?php echo htmlspecialchars($rows['id']); ?>"><i
                                                                                                         class="fas fa-trash"></i></a>
-                                                                                                        
+
                                                                                                 <?php
-                                                                                                   if ($rows['total_due'] > 0) {
-                                                                                                      echo '<button type="button" name="due_paid_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-info" style="margin-right: 5px;">  <i class="fas fa-money-bill-wave"></i> Pay Due</button>';
+                                                                                                if ($rows['total_due'] > 0) {
+                                                                                                    echo '<button type="button" name="due_paid_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-info" style="margin-right: 5px;">  <i class="fas fa-money-bill-wave"></i> Pay Due</button>';
                                                                                                 }
                                                                                                 ?>
                                                                                             </td>
@@ -383,55 +390,71 @@ if (isset($_GET['clid'])) {
             </div>
             <!-- End Page-content -->
             <!-- Modal for addPayment -->
-            <!-- <div class="modal fade bs-example-modal-lg" id="paymentModal" tabindex="-1" role="dialog"
+            <div class="modal fade bs-example-modal-lg" id="paymentModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content col-md-12">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel"><span
-                                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;Add Payment</h5>
+                                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;Due Payment</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="paymentForm" method="POST">
-                                <div class="form-group mb-2 d-none">
-                                    <label>Client Id</label>
-                                    <input readonly name="client_id" type="text" value="<?php echo $lstid ?? 0; ?>">
+                            <form action="include/purchase_server.php?add_due_payment=true" method="POST"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="supplier_id" id="supplier_id" value="<?php echo $clid;  ?>">
+                               
+                                <div class="form-group mb-2">
+                                    <label>Due Amount</label>
+                                    <input readonly name="due_amount" placeholder="Enter Due Amount"
+                                        class="form-control" type="text" value="<?php
+                                          echo round($total_amount - $total_paid_amount, 2);
+                                          ?>" required>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label>Invoice Id</label>
-                                    <select class="form-control" type="text" name="invoice_id">
-                                        <option value="">---Select---</option>
+                                    <label>Paid Amount</label>
+                                    <input name="paid_amount" placeholder="Enter Paid Amount" class="form-control"
+                                        type="text" required>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label>Select Accounts</label>
+                                    <select type="text" class="form-control" id="sub_ledger_id"
+                                        name="sub_ledger_id" style="width: 100%;">
                                         <?php
-                                        if ($allSales = $con->query("SELECT * FROM `purchase` WHERE client_id = $lstid AND total_due IS NOT NULL")) {
-                                            while ($rows = $allSales->fetch_array()) {
-                                                echo '<option value="' . $rows['id'] . '">' . $rows['id'] . '</option>';
+                                        if ($ledgr = $con->query('SELECT * FROM ledger')) {
+                                            echo '<option value="">Select</option>';
+                                        
+                                            while ($rowsitm = $ledgr->fetch_array()) {
+                                                $ldgritmsID = $rowsitm['id'];
+                                                $ledger_name = $rowsitm['ledger_name'];
+                                        
+                                                echo '<optgroup label="' . $ledger_name . '">';
+                                        
+                                                // Sub Ledger items list
+                                                if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+                                                    while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                        $sub_ldgrid = $rowssb['id'];
+                                                        $ldgr_items = $rowssb['item_name'];
+                                        
+                                                        echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                                    }
+                                                }
+                                        
+                                                echo '</optgroup>';
                                             }
                                         }
                                         ?>
-
                                     </select>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label>Total Due</label>
-                                    <input readonly name="total_due" placeholder="Total Due" class="form-control"
-                                        type="text">
+                                    <label>Transaction Date</label>
+                                    <input name="transaction_date" class="form-control" type="date" required>
                                 </div>
                                 <div class="form-group mb-2">
-                                    <label>Payment Now</label>
-                                    <input name="amount" placeholder="Enter Amount" class="form-control"
-                                        type="text">
-                                </div>
-                                <div class="form-group mb-2">
-                                    <label>Type</label>
-                                    <select class="form-control" type="text" name="type">
-                                        <option value="">---Select---</option>
-                                        <option value="1">Cash</option>
-                                        <option value="2">Bkash</option>
-                                        <option value="3">Nagad</option>
-                                        <option value="4">Bank</option>
-                                    </select>
+                                    <label>Transaction Notes</label>
+                                    <input name="transaction_note" class="form-control" type="text"
+                                        placeholder="Enter Transaction Notes" required>
                                 </div>
                                 <div class="modal-footer ">
                                     <button data-bs-dismiss="modal" type="button"
@@ -442,79 +465,9 @@ if (isset($_GET['clid'])) {
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
 
-            <div class="modal fade bs-example-modal-lg" id="payDueModal" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog " role="document">
-        <div class="modal-content col-md-12">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel"><span
-                    class="mdi mdi-account-check mdi-18px"></span> &nbsp;Due Payment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="include/purchase_server.php?add_due_payment=true" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="invoice_id" id="invoice_id">
-                    <div class="form-group mb-2">
-                        <label>Transaction Number</label>
-                        <input name="transaction_number" class="form-control" type="text" readonly>
-                    </div>
-                    <div class="form-group mb-2">
-                        <label>Due Amount</label>
-                        <input readonly name="due_amount" placeholder="Enter Due Amount" class="form-control" type="text" required>
-                    </div>
-                    <div class="form-group mb-2">
-                        <label>Paid Amount</label>
-                        <input name="paid_amount" placeholder="Enter Paid Amount" class="form-control" type="text" required>
-                    </div>   
-                    <div class="form-group mb-2">
-                        <label>Select Accounts</label>
-                        <select type="text" class="form-control" id="sub_ledger_id" name="sub_ledger_id"
-                            style="width: 100%;">
-                            <?php
-                            if ($ledgr = $con->query('SELECT * FROM ledger')) {
-                                echo '<option value="">Select</option>';
-                            
-                                while ($rowsitm = $ledgr->fetch_array()) {
-                                    $ldgritmsID = $rowsitm['id'];
-                                    $ledger_name = $rowsitm['ledger_name'];
-                            
-                                    echo '<optgroup label="' . $ledger_name . '">';
-                            
-                                    // Sub Ledger items list
-                                    if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
-                                        while ($rowssb = $ledgrsubitm->fetch_array()) {
-                                            $sub_ldgrid = $rowssb['id'];
-                                            $ldgr_items = $rowssb['item_name'];
-                            
-                                            echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
-                                        }
-                                    }
-                            
-                                    echo '</optgroup>';
-                                }
-                            }
-                            ?>
-                        </select>
-                    </div>                 
-                    <div class="form-group mb-2">
-                        <label>Transaction Date</label>
-                        <input name="transaction_date" class="form-control" type="date" required>
-                    </div>                
-                    <div class="form-group mb-2">
-                        <label>Transaction Notes</label>
-                        <input name="transaction_note" class="form-control" type="text" placeholder="Enter Transaction Notes" required>
-                    </div>                
-                    <div class="modal-footer ">
-                        <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
-                        <button type="submit" class="btn btn-success">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        </div>
-    </div>
+            
 
             <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -731,69 +684,46 @@ if (isset($_GET['clid'])) {
             });
 
             /*Paid Due Amount Script*/
-            $(document).on('click',"button[name='due_paid_button']",function(){
-                var id=$(this).data('id');
-                $.ajax({
-                    type: 'GET', 
-                    url: 'include/purchase_server.php?get_invoice=true',
-                    data: { invoice_id: id }, 
-                    dataType:'json',
-                    success: function(response) {
-                        if (response) {
-                            $("#payDueModal").modal('show');
-                            $("#payDueModal #invoice_id").val(response.id); 
-                            $("#payDueModal input[name='transaction_number']").val(response.transaction_number);
-                            $("#payDueModal input[name='due_amount']").val(response.total_due);
-                        } else {
-                            toastr.error("No data found for this invoice!");
-                        }
-
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                        toastr.error("Error deleting item! " + error);
-                    }
-                });
-            });
-            $('#payDueModal').on('shown.bs.modal', function () {
+            
+            $('#paymentModal').on('shown.bs.modal', function() {
                 if (!$('#sub_ledger_id').hasClass("select2-hidden-accessible")) {
                     $('#sub_ledger_id').select2({
-                        dropdownParent: $('#payDueModal')
+                        dropdownParent: $('#paymentModal')
                     });
                 }
             });
-            $('#payDueModal form').submit(function(e){
+            $('#paymentModal form').submit(function(e) {
                 e.preventDefault();
                 var form = $(this);
                 var url = form.attr('action');
                 var formData = form.serialize();
                 $.ajax({
-                type:'POST',
-                'url':url,
-                data: formData,
-                dataType: 'json',
-                success: function (response) {
-                    if(response.success){
-                        toastr.success(response.message);
-                        $("#payDueModal").modal('hide');
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    }else{
-                        toastr.error(response.message);
-                    }
-                },
+                    type: 'POST',
+                    'url': url,
+                    data: formData,
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success(response.message);
+                            $("#payDueModal").modal('hide');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
 
 
-                error: function (xhr, status, error) {
-                    /** Handle  errors **/
-                    if (xhr.status === 422) {
-                        var errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            toastr.error(value[0]); 
-                        });
+                    error: function(xhr, status, error) {
+                        /** Handle  errors **/
+                        if (xhr.status === 422) {
+                            var errors = xhr.responseJSON.errors;
+                            $.each(errors, function(key, value) {
+                                toastr.error(value[0]);
+                            });
+                        }
                     }
-                }
                 });
             });
 
