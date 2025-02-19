@@ -39,19 +39,20 @@ if(isset($_GET['get_locations_for_google_map']) && $_SERVER['REQUEST_METHOD'] ==
 }
 
 if(isset($_GET['add_area_house'])) {
-  $area_id= $_POST['area_id'];
-  $house_no= $_POST['house_no'];
-  $lat= $_POST['lat']??'';
-  $lng= $_POST['lng']??'';
-  $note= $_POST['note']?? '';
-  $pop_id='';
+  $area_id = $_POST['area_id'];
+  $house_no = $_POST['house_no'];
+  $lat = isset($_POST['lat']) && $_POST['lat'] !== '' ? floatval($_POST['lat']) : 0.00;
+  $lng = isset($_POST['lng']) && $_POST['lng'] !== '' ? floatval($_POST['lng']) : 0.00;
+  $note = isset($_POST['note']) ? $_POST['note'] : NULL;
+  $pop_id = '';
+  
   /*Fetch pop_id from area_list table*/ 
   $result = $con->query("SELECT pop_id FROM area_list WHERE id='$area_id'");
-    if ($result->num_rows > 0) {
-      $row = $result->fetch_assoc();
-      $pop_id = $row['pop_id'];
-    }
-   $con->query("INSERT INTO area_house(`pop_id`, `area_id`, `house_no`, `lat`, `lng`, `Note`) VALUES('$pop_id','$area_id','$house_no','$lat','$lng','$note')");
+  if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $pop_id = $row['pop_id'];
+  }
+  $con->query("INSERT INTO area_house(`pop_id`, `area_id`, `house_no`, `lat`, `lng`, `Note`) VALUES('$pop_id','$area_id','$house_no','$lat','$lng','$note')");
   echo 1; 
   exit; 
 }
