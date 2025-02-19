@@ -31,6 +31,7 @@ if (isset($_GET['clid'])) {
             $mobile = $rows["mobile"];
             $pop = $rows["pop"];
             $area = $rows["area"];
+            $area_house_id = $rows["area_house_id"];
             $address = $rows["address"];
             $expiredDate = $rows["expiredate"];
             $createdate = $rows["createdate"];
@@ -257,83 +258,38 @@ echo $createdate;
                                        </div>
                                     </div>
                                  </div>
-                                 <div class="card">
-                                    <div class="card-body">
-                                       <div class="col-12 bg-white p-0 px-2 pb-3 mb-3">
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class="mdi mdi-marker-check"></i> Fullname:</p>
-                                             <a href="#"><?php echo $fullname; ?></a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class="mdi mdi-account-circle"></i> Username:</p>
-                                             <a href="#"><?php echo $username; ?></a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class=" fas fa-dollar-sign"></i> Package:</p>
-                                             <a href="#">
-                                             <?php echo $packagename; ?>
-                                             </a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class=" fas fa-dollar-sign"></i> Bill Amount:</p>
-                                             <a href="#">
-                                             <?php echo $price; ?>
-                                             </a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class="fas fa-file-contract"></i> Liabilities:</p>
-                                             <a href="#">
+                                 <div class="card  border-0 rounded-4">
+                                    <div class="card-body p-4">
+                                       <div class="col-12 bg-white p-0">
                                              <?php 
-                                             if($liablities==1){
-                                                echo '<span class="badge bg-success">Yes</span>';
-                                             }else{
-                                                echo '<span class="badge bg-danger">No</span>';
-                                             }
-                                             
+                                                $info = [
+                                                   ["mdi mdi-marker-check", "Fullname", $fullname],
+                                                   ["mdi mdi-account-circle", "Username", $username],
+                                                   ["fas fa-box", "Package", $packagename],
+                                                   ["fas fa-dollar-sign", "Bill Amount", "<span class='fw-bold text-success'>৳$price</span>"],
+                                                   ["fas fa-location-arrow", "Area", $con->query("SELECT name FROM area_list WHERE id='$area'")->fetch_array()['name']],
+                                                   ["fas fa-home", "Address", $address],
+                                                   ["fas fa-map-marker-alt", "Area Location", isset($area_house_id) && $area_house_id > 0 ? $con->query("SELECT house_no FROM area_house WHERE id=$area_house_id")->fetch_array()['house_no'] : 'N/A'],
+                                                   ["fas fa-file-contract", "Liabilities", $liablities == 1 ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-danger">No</span>'],
+                                                   ["mdi mdi-phone", "Mobile", $mobile],
+                                                   ["mdi mdi-crosshairs-gps", "POP/Branch", '<a href="view_pop.php?id='.$pop.'" class="text-decoration-none text-dark fw-bold">'.$con->query("SELECT pop FROM add_pop WHERE id='$pop'")->fetch_array()['pop'].'</a>'],
+                                                   ["fas fa-id-card", "Nid No", $nid],
+                                                   ["fas fa-comment-alt", "Remarks", $remarks]
+                                                ];
                                              ?>
-                                             </a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class="mdi mdi-phone"></i> Mobile:</p>
-                                             <a href="#"><?php echo $mobile; ?></a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class="mdi mdi-crosshairs-gps"></i>POP/Branch:</p>
-                                             <a href="view_pop.php?id=<?=$pop;?>">
-                                             <?php
-                                                $getPopId = $pop;
-                                                if ($getData = $con->query("SELECT * FROM add_pop WHERE id='$getPopId' ")) {
-                                                   while ($popName = $getData->fetch_array()) {
-                                                      echo $popName['pop'];
-                                                   }
-                                                }
 
-                                                ?>
-                                             </a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class="fas fa-location-arrow"></i> Area:</p>
-                                             <a href="#">
-                                             <?php $id = $area;
-$allArea = $con->query("SELECT * FROM area_list WHERE id='$id' ");
-while ($popRow = $allArea->fetch_array()) {
-    echo $popRow['name'];
-}
-
-?>
-                                             </a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class="fas fa-id-card"></i> Nid No:</p>
-                                             <a href="#"><?php echo $nid; ?></a>
-                                          </div>
-                                          <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                             <p><i class="fas fa-id-card"></i>Remarks:</p>
-                                             <a href="#"><?php echo $remarks; ?></a>
-                                          </div>
+                                             <?php foreach ($info as $item): ?>
+                                             <div class="d-flex justify-content-between align-items-center py-3 px-3 border-bottom border-dotted">
+                                                <p class="mb-0 text-muted"><i class="<?= $item[0]; ?> me-2 text-primary fs-5"></i> <span class="fw-bold"><?= $item[1]; ?>:</span></p>
+                                                <span class="fw-semibold text-dark"><?= $item[2]; ?></span>
+                                             </div>
+                                             <?php endforeach; ?>
                                        </div>
                                     </div>
                                  </div>
+
+
+
                               </div>
                               <div class="col-md-8">
                                  <div class="row d-flex">
@@ -643,7 +599,7 @@ if ($duepmt = $con->query("SELECT SUM(discount) AS discount_amount FROM customer
                                           <div class="card-body">
                                              <!-- Nav tabs -->
                                              <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
-                                                <li class="nav-item">
+                                             <li class="nav-item">
                                                    <a class="nav-link active" data-bs-toggle="tab" href="#tickets" role="tab">
                                                    <span class="d-none d-md-block">Tickets
                                                    </span><span class="d-block d-md-none"><i class="mdi mdi-home-variant h5"></i></span>
@@ -664,8 +620,7 @@ if ($duepmt = $con->query("SELECT SUM(discount) AS discount_amount FROM customer
                                                    <span class="d-none d-md-block">User Activity</span><span class="d-block d-md-none"><i class="mdi mdi-email h5"></i></span>
                                                    </a>
                                                 </li>
-                                               
-                                               
+                                                
                                              </ul>
                                              <!-- Tab panes -->
                                              <div class="tab-content">
@@ -777,47 +732,48 @@ if ($usrs_activity = $con->query("SELECT * FROM radpostauth WHERE username='$use
                                                                </thead>
                                                                <tbody id="ticket-list">
                                                                   <?php
-                                                               $sql = "SELECT * FROM ticket WHERE customer_id=$lstid  ";
-                                                               $result = mysqli_query($con, $sql);
+$sql = "SELECT * FROM ticket WHERE customer_id=$lstid  ";
+$result = mysqli_query($con, $sql);
 
-                                                               while ($rows = mysqli_fetch_assoc($result)) {
+while ($rows = mysqli_fetch_assoc($result)) {
 
-                                                                  ?>
+    ?>
                                                                   <tr>
                                                                      <td>
                                                                         <?php
-                                                                           $complain_typeId = $rows["complain_type"];
-                                                                              $ticketsId = $rows["id"];
-                                                                              if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                                 while ($rowss = $allCom->fetch_array()) {
-                                                                                       $topicName = $rowss['topic_name'];
-                                                                                       echo '<a href="tickets_edit.php?id=' . $ticketsId . '">' . $topicName . '</a>';
-                                                                                 }
-                                                                              }
-                                                                              ?>
+$complain_typeId = $rows["complain_type"];
+    $ticketsId = $rows["id"];
+    if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
+        while ($rowss = $allCom->fetch_array()) {
+            $topicName = $rowss['topic_name'];
+            echo '<a href="tickets_profile.php?id=' . $ticketsId . '">' . $topicName . '</a>';
+        }
+    }
+    ?>
                                                                      </td>
                                                                      <td>
                                                                         <?php
-                                                                           $ticketType = $rows['ticket_type'];
-                                                                              if ($ticketType == "Active") {
-                                                                                 echo "<span class='badge bg-success'>Active</span>";
-                                                                              } else if ($ticketType == "Open") {
-                                                                                 echo "<span class='badge bg-info'>Open</span>";
-                                                                              } else if ($ticketType == "New") {
-                                                                                 echo "<span class='badge bg-danger'>New</span>";
-                                                                              } else if ($ticketType == "Complete") {
-                                                                                 echo "<span class='badge bg-success'>Complete</span>";
-                                                                              }
+$ticketType = $rows['ticket_type'];
+    if ($ticketType == "Active") {
+        echo "<span class='badge bg-success'>Active</span>";
+    } else if ($ticketType == "Open") {
+        echo "<span class='badge bg-info'>Open</span>";
+    } else if ($ticketType == "New") {
+        echo "<span class='badge bg-danger'>New</span>";
+    } else if ($ticketType == "Complete") {
+        echo "<span class='badge bg-success'>Complete</span>";
+    }
 
-                                                                           ?>
+    ?>
                                                                      </td>
                                                                      <td>
                                                                         <?php 
-                                                                           echo  date('d M Y', strtotime($rows["startdate"]));
+                                                                        echo  date("d F Y", strtotime($rows["startdate"]));
                                                                         ?>
                                                                      </td>
                                                                   </tr>
-                                                                  <?php } ?>
+                                                                  <?php
+}?>
                                                                </tbody>
                                                             </table>
                                                          </div>
@@ -842,7 +798,7 @@ if ($usrs_activity = $con->query("SELECT * FROM radpostauth WHERE username='$use
                                                                </thead>
                                                                <tbody>
                                                                   <?php
-if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE customer_id='$lstid' ")) {
+if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE customer_id='$lstid' ORDER BY id DESC ")) {
     while ($r_cus_rows = $recharge_customer->fetch_array()) {
         $r_id = $r_cus_rows["id"];
         //$r_cus_name = $r_cus_rows["customer_name"];
@@ -999,6 +955,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                  <option value="0">On Credit</option>
                                  <option value="2">Bkash</option>
                                  <option value="3">Nagad</option>
+                                 <option value="4">Due Payment</option>
                               </select>
                            </div>
                         </form>
@@ -1173,8 +1130,9 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                             <style>
                                 @media print {
                                     body {
-                                        width: 58mm; /* Perfect for small thermal printers */
-                                        font-size: 12px;
+                                        width: 60mm; /* Perfect for small thermal printers */
+										height: 50mm;
+                                        font-size: 14px;
                                         margin: 0;
                                         padding: 0;
                                         text-align: center;
@@ -1182,19 +1140,20 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                     }
                                     .content-wrapper {
                                         display: flex;
-                                        flex-direction: row;
-                                        justify-content: space-between;
+                                        margin-top:20px;
                                         align-items: center;
                                         padding: 5px;
                                     }
                                     .qr-section {
-                                        width: 40%;
+                                        width: 60%;
+										
+										padding-left: 10px;
                                         text-align: center;
                                     }
                                     .info-section {
-                                        width: 55%;
+                                        width: 100%;
                                         text-align: left;
-                                        padding-left: 5px;
+                                        padding-left: 20px;
                                     }
                                     .info-section p {
                                         margin: 2px 0;
@@ -1207,7 +1166,8 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                     }
                                     .footer {
                                         text-align: center;
-                                        margin-top: 0px;
+										font-size: 14px;
+                                        margin-top: 5px;
                                         font-size: 10px;
                                         border-top: 1px dashed #000;
                                         padding-top: 2px;
@@ -1218,16 +1178,20 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                         </head>
                         <body>
                             <div class="content-wrapper">
+							
                                 <div class="qr-section">
                                     <img src="${url}" alt="QR Code">
                                 </div>
-
-                                <div class="info-section">
-                                    <p><strong>ID: #</strong> ${customer_id}</p>
-                                    <p><strong>Name:</strong> ${customer_name}</p>
-                                </div>
+								<p><strong>Please Scan...</strong> 
+								<br/>
+								<br/>
+								For Self Payment & Management.</p>
                             </div>
-
+							
+							<div class="info-section">
+								<p><strong>ID: #</strong> ${customer_id}</p>
+								<p><strong>Name:</strong> ${customer_name}</p>
+							</div>
                             <div class="footer">
                                 <strong>Support: 01821 600 600</strong>
                             </div>
