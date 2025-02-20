@@ -103,6 +103,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
     
     echo file_get_contents($url);
+    //include '../style.php';
     
     ?>
 
