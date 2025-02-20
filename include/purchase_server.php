@@ -52,9 +52,9 @@ if (isset($_GET['fetch_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             echo '<a class="btn-sm btn btn-success" style="margin-right: 5px;" href="invoice/purchase_inv_view.php?clid=' . $rows['id'] . '"><i class="fas fa-eye"></i></a>';
             echo '<button type="button" name="delete_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-danger" style="margin-right: 5px;"><i class="fas fa-trash"></i></button>';
             
-            if ($rows['total_due'] > 0 && $rows['status'] == '1') {
-                echo '<button type="button" name="due_paid_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-info" style="margin-right: 5px;">  <i class="fas fa-money-bill-wave"></i> Pay Due</button>';
-            }
+            // if ($rows['total_due'] > 0 && $rows['status'] == '1') {
+            //     echo '<button type="button" name="due_paid_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-info" style="margin-right: 5px;">  <i class="fas fa-money-bill-wave"></i> Pay Due</button>';
+            // }
             echo "</td>";
             echo "</tr>";
         }
@@ -126,61 +126,10 @@ if (isset($_GET['getSingleProductData'])) {
     }
     exit();
 }
-/* Check if the process_payment request is made and it is a POST request*/
-if (isset($_GET['process_payment']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-  
-    $invoice_id = $_POST['invoice_id'];
-    $client_id = $_POST['client_id'];
-    $amount = $_POST['amount'];
-    $payment_type = $_POST['type']??'1';
-    /* Check if the payment amount is valid*/
-     if ($_POST['amount'] > $_POST['total_due']) {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Over Payment Not Allowed'
-        ]);
-        exit();
-    }
 
- 
-    /* Update the `purchase` table*/
-    $stmt = $con->prepare("UPDATE `purchase` SET `total_paid`=`total_due`+?, `total_due` = `total_due` - ? WHERE `id` = ? AND `client_id` = ?");
-    $stmt->bind_param("iiii", $amount,$amount, $invoice_id, $client_id);
-   
-    if ($stmt->execute()) {
-
-        /*Insert payment details into `purchase_dues` table*/            
-        $stmt2 = $con->prepare("INSERT INTO `purchase_dues`(`invoice_id`, `supplier_id`, `due_amount`, `payment_type`, `date`) VALUES (?, ?, ?, ?, NOW())");
-        $stmt2->bind_param("iiii", $invoice_id, $client_id, $amount, $payment_type);
-
-        if ($stmt2->execute()) {
-            echo json_encode([
-                'status' => 'success',
-                'message' => 'Payment processed successfully and record saved.'
-            ]);
-        } else {
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Payment processed but failed to save payment record.'
-            ]);
-        }
-    } else {
-        echo json_encode([
-            'status' => 'error',
-            'message' => 'Failed to update payment. Please try again.'
-        ]);
-    }
-
-    $stmt->close();
-    $stmt2->close();
-    $con->close();
-    exit;
-}
-   
 /* Add Purchase Invoice*/
 
 if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-
     
     $purchase_invoice=new Purchase_invoice($con); 
     
@@ -207,7 +156,7 @@ if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
 
     $client_id = isset($_POST["client_id"]) ? trim($_POST["client_id"]) : '';
     $paid_amount = isset($_POST["paid_amount"]) ? trim($_POST["paid_amount"]) : '';
-    //$transaction_number = isset($_POST["transaction_number"]) ? trim($_POST["transaction_number"]) : '';
+    $transaction_type = isset($_POST["transaction_type"]) ? trim($_POST["transaction_type"]) : '';
     $transaction_date = isset($_POST["transaction_date"]) ? trim($_POST["transaction_date"]) : '';
     $transaction_note = isset($_POST["transaction_note"]) ? trim($_POST["transaction_note"]) : '';
 
@@ -227,6 +176,13 @@ if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
 		exit;
     }
 	
+	if (empty($transaction_type)) {
+		echo json_encode([
+			'success' => false,
+			'message' => 'Transactioin Type is required!',
+		]);
+		exit;
+    }
 	if (empty($transaction_date)) {
 		echo json_encode([
 			'success' => false,
@@ -243,7 +199,7 @@ if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
     }
     $total_amount = $con->query("SELECT SUM(grand_total) AS amount FROM purchase WHERE client_id='$client_id' ")->fetch_array()['amount'] ?? 0;
 
-    $total_paid_amount = $con->query("SELECT SUM(amount) AS total_paid FROM inventory_transaction WHERE client_id='$client_id' AND transaction_type  !='4' AND inventory_type='Supplier'")->fetch_array()['total_paid'] ?? 0;
+    $total_paid_amount = $con->query("SELECT SUM(amount) AS total_paid FROM inventory_transaction WHERE client_id='$client_id' AND transaction_type  !='0' AND inventory_type='Supplier'")->fetch_array()['total_paid'] ?? 0;
 
     $total_due_amount=$total_amount-$total_paid_amount;
 
@@ -268,17 +224,13 @@ if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
     $con->query("INSERT INTO ledger_transactions (transaction_number,user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) VALUES ('$transaction_number','$user_id', '$mstr_ledger_id', '$ledger_id', '$sub_ledger_id', '1', '$paid_amount', '$paid_amount', '1', '$transaction_note', '$transaction_date')");
 
      /*Insert Inventory Transaction data*/
-    $con->query("INSERT INTO `inventory_transaction`(`inventory_type`,`invoice_id`, `client_id`, `user_id`, `amount`, `transaction_type`, `transaction_date`, `create_date`, `note`) VALUES ('Supplier','0','$client_id','$user_id','$paid_amount','4','$transaction_date',NOW(),'$transaction_note')");
+    $con->query("INSERT INTO `inventory_transaction`(`inventory_type`,`invoice_id`, `client_id`, `user_id`, `amount`, `transaction_type`, `transaction_date`, `create_date`, `note`) VALUES ('Supplier','0','$client_id','$user_id','$paid_amount','$transaction_type','$transaction_date',NOW(),'$transaction_note')");
 
     echo json_encode([
         'success' => true,
         'message' => 'Payment processed successfully!',
         'remaining_due' => $new_due_amount
     ]);
-    
-
-   
-
     exit;
 }
 

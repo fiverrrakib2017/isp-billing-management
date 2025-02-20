@@ -263,6 +263,8 @@ if (isset($_GET['clid'])) {
                                                                                                     echo "<span class='badge bg-primary'>Due Paid</span>";
                                                                                                 } elseif ($rows['transaction_type'] == '0') {
                                                                                                     echo "<span class='badge bg-danger'>Crdit</span>";
+                                                                                                }elseif ($rows['transaction_type'] == '5') {
+                                                                                                    echo "<span class='badge bg-info'>Bank</span>";
                                                                                                 }
                                                                                                 ?>
                                                                                             <td>
@@ -359,11 +361,7 @@ if (isset($_GET['clid'])) {
                                                                                                     href="purchase_inv_delete.php?clid=<?php echo htmlspecialchars($rows['id']); ?>"><i
                                                                                                         class="fas fa-trash"></i></a>
 
-                                                                                                <?php
-                                                                                                if ($rows['total_due'] > 0) {
-                                                                                                    echo '<button type="button" name="due_paid_button" data-id="' . $rows['id'] . '" class="btn-sm btn btn-info" style="margin-right: 5px;">  <i class="fas fa-money-bill-wave"></i> Pay Due</button>';
-                                                                                                }
-                                                                                                ?>
+                                                                                                
                                                                                             </td>
                                                                                         </tr>
                                                                                         <?php  }  ?>
@@ -445,6 +443,16 @@ if (isset($_GET['clid'])) {
                                             }
                                         }
                                         ?>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-2">
+                                    <label>Transaction Type</label>
+                                    <select name="transaction_type" id="transaction_type" class="form-select" type="text" required>
+                                        <option value="">---Select---</option>
+                                        <option value="2">Bkash</option>
+                                        <option value="3">Nagad</option>
+                                        <option value="4">Due Payment</option>
+                                        <option value="5">Bank</option>
                                     </select>
                                 </div>
                                 <div class="form-group mb-2">
@@ -683,11 +691,16 @@ if (isset($_GET['clid'])) {
                 });
             });
 
-            /*Paid Due Amount Script*/
+            /**********************Paid Due Amount Script****************************/
             
             $('#paymentModal').on('shown.bs.modal', function() {
                 if (!$('#sub_ledger_id').hasClass("select2-hidden-accessible")) {
                     $('#sub_ledger_id').select2({
+                        dropdownParent: $('#paymentModal')
+                    });
+                }
+                if (!$('#transaction_type').hasClass("select2-hidden-accessible")) {
+                    $('#transaction_type').select2({
                         dropdownParent: $('#paymentModal')
                     });
                 }
@@ -704,11 +717,11 @@ if (isset($_GET['clid'])) {
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
+                            $("#paymentModal").modal('hide');
                             toastr.success(response.message);
-                            $("#payDueModal").modal('hide');
                             setTimeout(() => {
                                 location.reload();
-                            }, 1000);
+                            }, 500);
                         } else {
                             toastr.error(response.message);
                         }
