@@ -576,30 +576,6 @@ if (isset($_GET['clid'])) {
                     $('input[name="total_due"]').val('');
                 }
             });
-            $('#paymentForm').submit(function(e) {
-                e.preventDefault();
-
-                var formData = $(this).serialize();
-
-                $.ajax({
-                    url: 'include/purchase_server.php?process_payment',
-                    method: 'POST',
-                    data: formData,
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            toastr.success(response.message);
-                            $('#paymentForm')[0].reset();
-                            $("#paymentModal").modal('hide');
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log(error);
-                    }
-                });
-            });
 
             /** Handle edit button click**/
             $(document).on('click', '.edit-btn', function() {

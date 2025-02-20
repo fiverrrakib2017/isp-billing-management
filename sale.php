@@ -205,6 +205,36 @@ include("include/pop_security.php");
                               <input type="text" readonly class="form-control table_due_amount" name="table_due_amount" value="0">
                            </div>
                            <div class="form-group mb-2">
+                            <label>Select Accounts</label>
+                            <select type="text" class="form-control" id="sub_ledger_id" name="sub_ledger_id"
+                                 style="width: 100%;">
+                                <?php
+                                if ($ledgr = $con->query('SELECT * FROM ledger WHERE mstr_ledger_id=1')) {
+                                    echo '<option value="">Select</option>';
+                                
+                                    while ($rowsitm = $ledgr->fetch_array()) {
+                                        $ldgritmsID = $rowsitm['id'];
+                                        $ledger_name = $rowsitm['ledger_name'];
+                                
+                                        echo '<optgroup label="' . $ledger_name . '">';
+                                
+                                        // Sub Ledger items list
+                                        if ($ledgrsubitm = $con->query("SELECT * FROM legder_sub WHERE ledger_id='$ldgritmsID'")) {
+                                            while ($rowssb = $ledgrsubitm->fetch_array()) {
+                                                $sub_ldgrid = $rowssb['id'];
+                                                $ldgr_items = $rowssb['item_name'];
+                                
+                                                echo '<option value="' . $sub_ldgrid . '">' . $ldgr_items . '</option>';
+                                            }
+                                        }
+                                
+                                        echo '</optgroup>';
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                           <div class="form-group mb-2">
                               <label>Type</label>
                               <select type="text" class="form-select table_status" name="table_status">
                                 <option value="">---Select---</option>
@@ -411,6 +441,10 @@ include("include/pop_security.php");
                         toastr.error("Type is required!");
                         isValid = false; 
                         return false;
+                    }else if(field.name === 'sub_ledger_id' && field.value === ''){
+                        toastr.error("Select Accounts is required!");
+                        isValid = false;
+                        return false;
                     }
                 });
 
@@ -462,7 +496,14 @@ include("include/pop_security.php");
             // });
         });
 
-    
+        $('#invoiceModal').on('shown.bs.modal', function () {
+            if (!$('#sub_ledger_id').hasClass("select2-hidden-accessible")) {
+                $('#sub_ledger_id').select2({
+                    dropdownParent: $('#invoiceModal')
+                });
+            }
+            
+        });
     
 
        

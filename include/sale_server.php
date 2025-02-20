@@ -86,52 +86,88 @@ if (isset($_GET['get_invoice_data'])) {
     }
     exit();
 }
-/* Check if the process_payment request is made and it is a POST request*/
-if (isset($_GET['process_payment']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
 
-    $invoice_id = $_POST['invoice_id'];
-    $client_id = $_POST['client_id'];
-    $amount = $_POST['amount'];
-    $payment_type = $_POST['type'] ?? 'Cash';
-    /* Check if the payment amount is valid*/
-    if ($_POST['amount'] > $_POST['total_due']) {
+    
+
+    $client_id = isset($_POST["client_id"]) ? trim($_POST["client_id"]) : '';
+    $paid_amount = isset($_POST["paid_amount"]) ? trim($_POST["paid_amount"]) : '';
+    $transaction_type = isset($_POST["transaction_type"]) ? trim($_POST["transaction_type"]) : '';
+    $transaction_date = isset($_POST["transaction_date"]) ? trim($_POST["transaction_date"]) : '';
+    $transaction_note = isset($_POST["transaction_note"]) ? trim($_POST["transaction_note"]) : '';
+
+	if (empty($client_id)) {
+		echo json_encode([
+			'success' => false,
+			'message' => 'Client is required!',
+		]);
+		exit;
+    }
+
+	if (empty($paid_amount)) {
+		echo json_encode([
+			'success' => false,
+			'message' => 'Paid Amount is required!',
+		]);
+		exit;
+    }
+	
+	if (empty($transaction_type)) {
+		echo json_encode([
+			'success' => false,
+			'message' => 'Transactioin Type is required!',
+		]);
+		exit;
+    }
+	if (empty($transaction_date)) {
+		echo json_encode([
+			'success' => false,
+			'message' => 'Transactioin Date is required!',
+		]);
+		exit;
+    }
+	if (empty($transaction_note)) {
+		echo json_encode([
+			'success' => false,
+			'message' => 'Transaction Note is required!',
+		]);
+		exit;
+    }
+    $total_amount = $con->query("SELECT SUM(grand_total) AS amount FROM sales WHERE client_id='$client_id' ")->fetch_array()['amount'] ?? 0;
+
+    $total_paid_amount = $con->query("SELECT SUM(amount) AS total_paid FROM inventory_transaction WHERE client_id='$client_id' AND transaction_type  !='0' AND inventory_type='Customer'")->fetch_array()['total_paid'] ?? 0;
+
+    $total_due_amount=$total_amount-$total_paid_amount;
+
+    if ($_POST['paid_amount'] > $total_due_amount) {
         echo json_encode([
-            'status' => 'error',
-            'message' => 'Over Payment Not Allowed',
+            'success' => false,
+            'message' => 'Over Payment Not Allowed'
         ]);
         exit();
     }
-    /* Update the `sales` table*/
-    $stmt = $con->prepare("UPDATE `sales` SET `total_paid`= `total_due` + ?, `total_due` = `total_due` - ? WHERE `id` = ? AND `client_id` = ?");
-    $stmt->bind_param("iiii", $amount, $amount, $invoice_id, $client_id);
-
-    if ($stmt->execute()) {
-
-        /*Insert payment details into `sales_dues` table*/
-        $stmt2 = $con->prepare("INSERT INTO `sales_dues`(`invoice_id`, `client_id`, `due_amount`, `payment_type`, `date`) VALUES (?, ?, ?, ?, NOW())");
-        $stmt2->bind_param("iiii", $invoice_id, $client_id, $amount, $payment_type);
-
-        if ($stmt2->execute()) {
-            echo json_encode([
-                'success' =>true,
-                'message' => 'Payment processed successfully and record saved.',
-            ]);
-        } else {
-            echo json_encode([
-                'success' =>false,
-                'message' => 'Payment processed but failed to save payment record.',
-            ]);
-        }
-    } else {
-        echo json_encode([
-            'success' =>false,
-            'message' => 'Failed to update payment. Please try again.',
-        ]);
+    
+    /*Get Master Ledger And Ledger id*/
+    $sub_ledger_id=$_POST['sub_ledger_id'];
+    $get_all_sub_ledger= $con->query("SELECT * FROM legder_sub WHERE id =$sub_ledger_id ");
+    while($rows=$get_all_sub_ledger->fetch_array()){
+        $ledger_id=$rows['ledger_id'];
+        $mstr_ledger_id=$rows['mstr_ledger_id'];
     }
+    $user_id=$_SESSION['uid']?? 1;
+    $date=date('Y-m-d');
 
-    $stmt->close();
-    $stmt2->close();
-    $con->close();
+    $con->query("INSERT INTO ledger_transactions (transaction_number,user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) VALUES ('$transaction_number','$user_id', '$mstr_ledger_id', '$ledger_id', '$sub_ledger_id', '1', '$paid_amount', '$paid_amount', '1', '$transaction_note', '$transaction_date')");
+
+     /*Insert Inventory Transaction data*/
+    $con->query("INSERT INTO `inventory_transaction`(`inventory_type`,`invoice_id`, `client_id`, `user_id`, `amount`, `transaction_type`, `transaction_date`, `create_date`, `note`) VALUES ('Customer','0','$client_id','$user_id','$paid_amount','$transaction_type','$transaction_date',NOW(),'$transaction_note')");
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Payment processed successfully!',
+        'remaining_due' => $new_due_amount
+    ]);
+    exit;
 }
 
 if (isset($_GET['add_invoice']) && $_SERVER['REQUEST_METHOD']=='POST') {
