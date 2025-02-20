@@ -159,7 +159,7 @@ if (isset($_GET['clid'])) {
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                                     <?php
                                                                     
-                                                                    $total_paid_amount = $con->query("SELECT SUM(amount) AS total_paid FROM inventory_transaction WHERE client_id='$clid' AND transaction_type  !='4' AND inventory_type='Supplier'")->fetch_array()['total_paid'] ?? 0;
+                                                                    $total_paid_amount = $con->query("SELECT SUM(amount) AS total_paid FROM inventory_transaction WHERE client_id='$clid' AND transaction_type  !='0' AND inventory_type='Supplier'")->fetch_array()['total_paid'] ?? 0;
                                                                     echo floatval( $total_paid_amount);
                                                                     ?>
                                                                 </div>
@@ -403,7 +403,7 @@ if (isset($_GET['clid'])) {
                         <div class="modal-body">
                             <form action="include/purchase_server.php?add_due_payment=true" method="POST"
                                 enctype="multipart/form-data">
-                                <input type="hidden" name="supplier_id" id="supplier_id" value="<?php echo $clid;  ?>">
+                                <input type="hidden" name="client_id" id="client_id" value="<?php echo $clid;  ?>">
                                
                                 <div class="form-group mb-2">
                                     <label>Due Amount</label>

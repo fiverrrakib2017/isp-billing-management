@@ -162,6 +162,10 @@ class Base_invoivce{
              $validator['status'], 
              $invoice_id,
          );
+          /*Insert Inventory Transaction data*/
+           $inventory_type=$table === "purchase" ? "Supplier" : "Customer";
+          
+          self::$con->query("UPDATE `inventory_transaction` SET `inventory_type`='$inventory_type',`client_id`='$validator[client_id]',`user_id`='$validator[usr_id]',`amount`='$validator[total_paid]',`transaction_type`='1',`transaction_date`=$validator[date],`create_date`='NOW()', WHERE invoice_id='$invoice_id'");
          if (!$stmt->execute()) {
             throw new Exception('Error updating  data.');
          }

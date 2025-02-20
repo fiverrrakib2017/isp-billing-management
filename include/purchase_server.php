@@ -203,9 +203,11 @@ if (isset($_GET['get_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
 
+    
+
     $client_id = isset($_POST["client_id"]) ? trim($_POST["client_id"]) : '';
     $paid_amount = isset($_POST["paid_amount"]) ? trim($_POST["paid_amount"]) : '';
-    $transaction_number = isset($_POST["transaction_number"]) ? trim($_POST["transaction_number"]) : '';
+    //$transaction_number = isset($_POST["transaction_number"]) ? trim($_POST["transaction_number"]) : '';
     $transaction_date = isset($_POST["transaction_date"]) ? trim($_POST["transaction_date"]) : '';
     $transaction_note = isset($_POST["transaction_note"]) ? trim($_POST["transaction_note"]) : '';
 
@@ -224,13 +226,7 @@ if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
 		]);
 		exit;
     }
-	if (empty($transaction_number)) {
-		echo json_encode([
-			'success' => false,
-			'message' => 'Transaction Number is required!',
-		]);
-		exit;
-    }
+	
 	if (empty($transaction_date)) {
 		echo json_encode([
 			'success' => false,
@@ -245,16 +241,12 @@ if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
 		]);
 		exit;
     }
-    /* Check if the payment amount is valid*/
-    // $supplier_id=$con->query("SELECT client_id FROM purchase WHERE id=$invoice_id")->fetch_assoc()['client_id'];
-    // $total_due_amount=$con->query("SELECT total_due FROM purchase WHERE id=$invoice_id")->fetch_assoc()['total_due'];
-    // if ($total_due_amount === null) {
-    //     echo json_encode([
-    //         'success' => false,
-    //         'message' => 'No Due Amount Found'
-    //     ]);
-    //     exit();
-    // }
+    $total_amount = $con->query("SELECT SUM(grand_total) AS amount FROM purchase WHERE client_id='$client_id' ")->fetch_array()['amount'] ?? 0;
+
+    $total_paid_amount = $con->query("SELECT SUM(amount) AS total_paid FROM inventory_transaction WHERE client_id='$client_id' AND transaction_type  !='4' AND inventory_type='Supplier'")->fetch_array()['total_paid'] ?? 0;
+
+    $total_due_amount=$total_amount-$total_paid_amount;
+
     if ($_POST['paid_amount'] > $total_due_amount) {
         echo json_encode([
             'success' => false,
@@ -263,42 +255,29 @@ if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
         exit();
     }
     
-    /* Calculation New Due Amount*/
-    $new_due_amount=$total_due_amount-$paid_amount;
-    
-    /* Update the `purchase` table*/
-    $stmt = $con->prepare("UPDATE purchase  SET total_due = GREATEST(0, ?), total_paid = total_paid + ? 
-    WHERE id = ?");
-    $stmt->bind_param("iii", $new_due_amount, $paid_amount, $invoice_id);
-    
-    if ($stmt->execute()) {
-        /*Get Master Ledger And Ledger id*/
-        $sub_ledger_id=$_POST['sub_ledger_id'];
-        $get_all_sub_ledger= $con->query("SELECT * FROM legder_sub WHERE id =$sub_ledger_id ");
-        while($rows=$get_all_sub_ledger->fetch_array()){
-            $ledger_id=$rows['ledger_id'];
-            $mstr_ledger_id=$rows['mstr_ledger_id'];
-        }
-        $user_id=$_SESSION['uid']?? 1;
-        $date=date('Y-m-d');
-        $con->query("INSERT INTO ledger_transactions (transaction_number,user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) VALUES ('$transaction_number','$user_id', '$mstr_ledger_id', '$ledger_id', '$sub_ledger_id', '1', '$paid_amount', '$paid_amount', '1', '$transaction_note', '$transaction_date')");
-
-        // $con->query("INSERT INTO `purchase_dues`( `invoice_id`, `supplier_id`, `due_amount`, `payment_type`,`transaction_date`, `date`) VALUES ('$invoice_id','$supplier_id','$paid_amount','1','$transaction_date','$date')");
-         /*Insert Inventory Transaction data*/
-        $con->query("INSERT INTO `inventory_transaction`(`inventory_type`,`invoice_id`, `client_id`, `user_id`, `amount`, `transaction_type`, `transaction_date`, `create_date`, `note`) VALUES ('Supplier','$supplier_id','$user_id','$paid_amount','4','$create_date',NOW(),'$transaction_note')");
-        echo json_encode([
-            'success' => true,
-            'message' => 'Payment processed successfully!',
-            'remaining_due' => $new_due_amount
-        ]);
-    } else {
-        echo json_encode([
-        'success' => false,
-        'message' => 'Update Failed'
-        ]);
+    /*Get Master Ledger And Ledger id*/
+    $sub_ledger_id=$_POST['sub_ledger_id'];
+    $get_all_sub_ledger= $con->query("SELECT * FROM legder_sub WHERE id =$sub_ledger_id ");
+    while($rows=$get_all_sub_ledger->fetch_array()){
+        $ledger_id=$rows['ledger_id'];
+        $mstr_ledger_id=$rows['mstr_ledger_id'];
     }
+    $user_id=$_SESSION['uid']?? 1;
+    $date=date('Y-m-d');
 
-$stmt->close();
+    $con->query("INSERT INTO ledger_transactions (transaction_number,user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) VALUES ('$transaction_number','$user_id', '$mstr_ledger_id', '$ledger_id', '$sub_ledger_id', '1', '$paid_amount', '$paid_amount', '1', '$transaction_note', '$transaction_date')");
+
+     /*Insert Inventory Transaction data*/
+    $con->query("INSERT INTO `inventory_transaction`(`inventory_type`,`invoice_id`, `client_id`, `user_id`, `amount`, `transaction_type`, `transaction_date`, `create_date`, `note`) VALUES ('Supplier','0','$client_id','$user_id','$paid_amount','4','$transaction_date',NOW(),'$transaction_note')");
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Payment processed successfully!',
+        'remaining_due' => $new_due_amount
+    ]);
+    
+
+   
 
     exit;
 }
