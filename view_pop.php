@@ -601,14 +601,14 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
-                                                            <th>No.</th>
-                                                            <th>Status</th>
+                                                            <th>No.</th> 
+                                                            <th>Status</th> 
                                                             <th>Created</th>
                                                             <th>Priority</th>
                                                             <th>Customer Name</th>
                                                             <th>Phone Number</th>
                                                             <th>Issues</th>
-                                                            <th>Pop/Area</th>
+                                                            <th>Pop/Area</th>                                                   
                                                             <th>Assigned Team</th>
                                                             <th>Ticket For</th>
                                                             <th>Acctual Work</th>
@@ -632,54 +632,15 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
-                                                            <th>ID</th>
-                                                            <th>Recharged date</th>
-                                                            <th>Customer Name</th>
-                                                            <th>Months</th>
-                                                            <th>Paid until</th>
-                                                            <th>Amount</th>
+                                                        <th>ID</th>
+                                                        <th>Recharged date</th>
+                                                        <th>Customer Username</th>
+                                                        <th>Months</th>
+                                                        <th>Type</th>
+                                                        <th>Paid until</th>
+                                                        <th>Amount</th>
                                                         </tr>
                                                     </thead>
-                                                    <!-- <tbody>
-                                                        <?php
-                                                        $sql = "SELECT * FROM customer_rechrg WHERE pop_id='$popid'  ";
-                                                        $result = mysqli_query($con, $sql);
-
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
-
-                                                        ?>
-
-                                                            <tr>
-                                                                <td>
-                                                                    <?php
-                                                                    $recharge_date_time = $rows['datetm'];
-                                                                    $dateTm = new DateTime($recharge_date_time);
-                                                                    //echo $dateTm->format("H:i A, d-M-Y");
-                                                                    echo $dateTm->format('d-M-Y');
-                                                                    ?>
-                                                                </td>
-
-                                                                <td>
-                                                                    <?php
-                                                                    $getCstmrId = $rows['customer_id'];
-                                                                    if ($allCom = $con->query("SELECT * FROM customers WHERE id='$getCstmrId' ")) {
-                                                                        while ($rowss = $allCom->fetch_array()) {
-                                                                            $customerName = $rowss['fullname'];
-                                                                            echo '<a href="profile.php?clid=' . $getCstmrId . '">' . $customerName . '</a>';
-                                                                        }
-                                                                    }
-                                                                    ?>
-
-                                                                </td>
-
-
-                                                                <td><?php echo $rows['months']; ?></td>
-                                                                <td><?php echo $rows['rchrg_until']; ?></td>
-                                                                <td><?php echo $rows['purchase_price']; ?></td>
-
-                                                            </tr>
-                                                        <?php } ?>
-                                                    </tbody> -->
                                                 </table>
                                             </div>
                                         </div>
@@ -1493,36 +1454,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                 var allChecked = $('.customer-checkbox:checked').length === $('.customer-checkbox').length;
                 $('#checkedAll').prop('checked', allChecked);
             });
-            $('#recharge_history_datatable').DataTable({
-                "searching": true,
-                "paging": true,
-                "info": true,
-                "order": [
-                    [0, "desc"]
-                ],
-                "lengthChange": true,
-                "processing": true,
-                "serverSide": true,
-
-                lengthMenu: [
-                    [10, 25, 50, -1],
-                    [10, 25, 50, 'All']
-                ],
-                "zeroRecords": "No matching records found",
-                "ajax": {
-                    url: "include/customer_recharge_server.php?get_recharge_data=true",
-                    type: 'GET',
-                    data: function(d) {
-                        //d.status = $('.status_filter').val();
-                        // d.pop_id = $('.pop_filter').val();
-                        d.pop_id = <?php echo $popid; ?>;
-                    },
-                },
-                "drawCallback": function() {
-                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
-                },
-
-            });
+           
             /************************** Customer Recharage Section **************************/
         $(document).on('click', 'button[name="recharge_btn"]', function(e) {
             event.preventDefault();
@@ -1596,10 +1528,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                     url: "include/tickets_server.php?get_tickets_data=1",
                     type: 'GET',
                     data: function(d) {
-                        d.area_id = $('.area_filter').val();
-                        <?php if (isset($popid)) {
-                            echo 'd.pop_id = ' . $popid;
-                        } ?>
+                        d.pop_id = <?php echo $popid; ?>;
+                        
+                        d.status = 'Active';
                     },
                     beforeSend: function() {
                         $(".dataTables_empty").html(
@@ -1623,12 +1554,40 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                 ]
             });
 
+            $('#recharge_history_datatable').DataTable({
+                "searching": true,
+                "paging": true,
+                "info": true,
+                "order": [
+                    [0, "desc"]
+                ],
+                "lengthChange": true,
+                "processing": true,
+                "serverSide": true,
 
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All']
+                ],
+                "zeroRecords": "No matching records found",
+                "ajax": {
+                    url: "include/customer_recharge_server.php?get_recharge_data=true",
+                    type: 'GET',
+                    data: function(d) {
+                        //d.status = $('.status_filter').val();
+                        // d.pop_id = $('.pop_filter').val();
+                        d.pop_id = <?php echo $popid; ?>;
+                    },
+                },
+                "drawCallback": function() {
+                    $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
+                },
+
+            });
             //$("#package-list-table").DataTable();
 
             $("#transaction_datatable").DataTable();
             $("#package_datatable").DataTable();
-            $("#recharge_history_datatable").DataTable();
 
 
             $("#packageAddBtn").click(function() {

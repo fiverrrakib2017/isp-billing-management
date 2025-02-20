@@ -425,9 +425,14 @@ include 'include/functions.php';
 
                         <div class="col-md-6 grid-margin stretch-card">
                             <div class="card">
-                                <div class="card-header bg-white text-black">
+                                <div class="card-header bg-white text-black d-flex justify-content-between align-items-center">
                                     <h4 class="card-title">POP/Branch</h4>
+                                    <a href="pop_branch.php" class="btn btn-light border-0 p-0">
+                                    <i class="fas fa-arrows-alt"></i>
+
+                                    </a>
                                 </div>
+
                                 <div class="card-body">
                                     <table class="table table-bordered dt-responsive nowrap"
                                         style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -946,9 +951,9 @@ include 'include/functions.php';
                                             </thead>
                                             <tbody>
                                                 <?php
-        for($i=1; $i<=12; $i++)
-        {
-            ?>
+                                                for($i=1; $i<=12; $i++)
+                                                {
+                                                    ?>
                                                 <tr>
                                                     <td><?php echo $i; ?></td>
                                                     <td>
@@ -975,9 +980,7 @@ include 'include/functions.php';
                                                         ?>
                                                     </td>
                                                 </tr>
-                                                <?php 
-        }	
-        ?>
+                                                <?php }	 ?>
                                             </tbody>
                                         </table>
 
