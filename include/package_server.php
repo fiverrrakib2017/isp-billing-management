@@ -39,27 +39,32 @@ if(isset($_GET['add'])){
   }
 }
 
-if(isset($_GET['list'])){
-    
-  // if ($package_list = $con -> query("SELECT * FROM radgroupcheck")) {
-  //   while($rows= $package_list->fetch_array())
-  //   {
-  //     $lstid=$rows["id"];
-  //     $package_name=$rows["groupname"];
-  //     echo '
-  //     <tr>
-  //       <td>'.$lstid.'</td>
-  //       <td>'.$package_name.'</td>
-  //       <td class="text-right">
-  //       <a class="btn btn-info" href="package_edit.php?id='.$lstid.'"><i class="mdi mdi-border-color"></i></a>
-  //       <a class="btn btn-success" href=""><i class="mdi mdi-eye"></i>
-  //       </a>
+if(isset($_GET['get_package_data'])){
+    $id = intval($_GET['id']); 
+    $result = $con->query("SELECT * FROM branch_package WHERE id = $id");
 
-  //       </td>
-  //       </tr>
-  //    '; 
-  //   }
-  // }
+    $data = [];
+    while ($row = $result->fetch_assoc()) { 
+        $data[] = $row;
+    }
+
+    echo json_encode($data);
+    exit;
+}
+
+if(isset($_POST['update_package_data'])){
+    $id = intval($_POST['id']);
+    $p_price = $con->real_escape_string($_POST['p_price']);
+    $s_price = $con->real_escape_string($_POST['s_price']);
+    $pop_id = $con->real_escape_string($_POST['pop_id']);
+   
+    $con->query("UPDATE branch_package SET 
+        p_price = '$p_price', 
+        s_price = '$s_price', 
+        pop_id = '$pop_id' 
+        WHERE id = $id"); 
+    echo json_encode(['success'=>true,'message'=>'Successfully Updated']);
+    exit; 
 }
 
 if (isset($_POST['pop_id'])) {

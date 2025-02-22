@@ -659,6 +659,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                             <th>Package List</th>
                                                             <th>Purchase Price</th>
                                                             <th>Sale's Price</th>
+                                                            <th></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="package-list">
@@ -677,6 +678,9 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                                                             <td><?php echo $rows['package_name']; ?></td>
                                                             <td><?php echo $rows['p_price']; ?></td>
                                                             <td><?php echo $rows['s_price']; ?></td>
+                                                            <td>
+                                                                <button class="btn-sm btn btn-primary edit_btn" data-id="<?php echo $rows['id']; ?>">Edit</button>
+                                                            </td>
 
 
                                                         </tr>
@@ -1139,6 +1143,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                     </form>
                 </div>
             </div>
+           
             <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel"
                 aria-hidden="true" id="addPackageModal">
                 <div class="modal-dialog" role="document">
@@ -1187,65 +1192,102 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                         </div>
                     </div>
                 </div>
-            </div>
-<!------------------ Modal for Recharge ------------------>
-<div class="modal fade " id="rechargeModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        Recharge
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-info" id="selectedCustomerCount"></div>
-                    <form id="recharge-form" method="POST">
-                        <div id="holders">
-                            <div class="form-group mb-1">
-                                <label>Month</label>
-                                <select id="month" class="form-select" name='month'>
-                                    <option value="">Select</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
-                                    <option value="10">10</option>
-                                    <option value="11">11</option>
-                                    <option value="12">12</option>
-                                </select>
+            </div> 
+            <!----------------- Modal for Package update ------------------> 
+            <div class="modal fade bs-example-modal-lg" tabindex="-1"
+                aria-hidden="true" id="editPackageModal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form id="updatePackageForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Update Package</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
-                        </div>
-                        <div class="form-group mb-1 ">
-                            <label>Ref No.:</label>
-                            <input id="RefNo" type="text" class="form-control" name="RefNo"
-                                placeholder="Enter Ref No" />
-                        </div>
-                        <div class="form-group mb-1">
-                            <label>Transaction Type:</label>
-                            <select id="tra_type" name="tra_type" class="form-select">
-                                <option>---Select---</option>
-                                <option value="1">Cash</option>
-                                <option value="0">On Credit</option>
-                                <option value="2">Bkash</option>
-                                <option value="3">Nagad</option>
-                                <option value="4">Due Payment</option>
-                            </select>
-                        </div>
-                    </form>
+                            <div class="card">
+                                <div class="card-body">
+                                    <input class="d-none" type="text" name="id" id="id" value="">
+                                    <input class="d-none" type="text" name="pop_id" id="pop_id" value="<?php echo $popid; ?>">
+                                    
+                                    <div class="form-group mb-2">
+                                        <label>Purchase Price</label>
+                                        <input type="text" id="p_price" name="p_price"
+                                            placeholder="Enter Your Amount" class="form-control">
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label>Sale's Price</label>
+                                        <input type="text" id="s_price" name="s_price"
+                                            placeholder="Enter Your Amount" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" data-bs-dismiss="modal" aria-label="Close"
+                                    class="btn btn-danger">Cancle</button>
+                                <button  type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="button" name="recharge_submit_btn" class="btn btn-success">Recharge Now</button>
+            </div> 
+            <!------------------ Modal for Recharge ------------------>
+            <div class="modal fade " id="rechargeModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                Recharge
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info" id="selectedCustomerCount"></div>
+                            <form id="recharge-form" method="POST">
+                                <div id="holders">
+                                    <div class="form-group mb-1">
+                                        <label>Month</label>
+                                        <select id="month" class="form-select" name='month'>
+                                            <option value="">Select</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group mb-1 ">
+                                    <label>Ref No.:</label>
+                                    <input id="RefNo" type="text" class="form-control" name="RefNo"
+                                        placeholder="Enter Ref No" />
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label>Transaction Type:</label>
+                                    <select id="tra_type" name="tra_type" class="form-select">
+                                        <option>---Select---</option>
+                                        <option value="1">Cash</option>
+                                        <option value="0">On Credit</option>
+                                        <option value="2">Bkash</option>
+                                        <option value="3">Nagad</option>
+                                        <option value="4">Due Payment</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            <button type="button" name="recharge_submit_btn" class="btn btn-success">Recharge Now</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
             <!----------------Customer MODAL---------------->
             <?php include 'modal/customer_modal.php'; ?>
@@ -1730,8 +1772,63 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
             });
         }
+        // **UPDATE Package**
+        $(document).on('click', '.edit_btn', function() {
+            var id=$(this).data('id');
+            $("#editPackageModal").modal('show');
+            $.ajax({
+                type: 'GET',
+                data: {
+                    id: id,
+                    'get_package_data': true
+                },
+                url: 'include/package_server.php',
+                success: function(response) {
+                    var data = JSON.parse(response);
+                     if (data.length > 0) { 
+                        $('#editPackageModal #id').val(data[0].id);
+                        $('#editPackageModal #p_price').val(data[0].p_price);
+                        $('#editPackageModal #s_price').val(data[0].s_price);
+                        $('#editPackageModal #pop_id').val(data[0].pop_id);
+                    } else {
+                        alert('No data found for the selected package.');
+                    }
+                }
+            });
+        });
 
+        // **UPDATE Package**
+        $(document).on('submit', '#updatePackageForm', function(e) {
+            e.preventDefault();
 
+               var id= $('#editPackageModal #id').val();
+               var pop_id= $('#editPackageModal #pop_id').val();
+               var p_price= $('#editPackageModal #p_price').val();
+               var s_price= $('#editPackageModal #s_price').val();
+
+            $.ajax({
+                type: 'POST',
+                url: 'include/package_server.php',
+                data:
+                {
+                     id: id,
+                     pop_id: pop_id,
+                     p_price: p_price,
+                     s_price: s_price,
+                    'update_package_data': true
+                },
+                dataType:'json',
+                success: function(response) {
+                    if (response.success==true) {
+                        toastr.success(response.message);
+                        $("#editPackageModal").modal('hide');
+                        location.reload(); 
+                    } else {
+                         toastr.error("Package Not Updated!");
+                    }
+                }
+            });
+        });
 
 
         var xValues = [1, 2, 3, 4, 5, 6];
