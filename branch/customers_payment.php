@@ -42,7 +42,7 @@ if (file_exists($users_right_path)) {
         
             
             <?php 
-                $page_title="Working Group";
+                $page_title="Customer Payment";
                 include '../Header.php';
             ?>
         
