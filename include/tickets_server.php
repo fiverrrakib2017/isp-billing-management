@@ -182,13 +182,15 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             'db' => 'id',
             'dt' => 14,
             'formatter' => function ($d, $row) {
-                return '
-    <button type="button" name="settings_button" data-id=' .
-                    $row['id'] .
-                    ' class="btn-sm btn btn-danger"> <i class="fas fa-cog"></i></button>
-    <a class="btn-sm btn btn-success" href="tickets_profile.php?id=' .
-                    $row['id'] .
-                    '"><i class="fas fa-eye"></i></a>';
+    //             return '
+    // <button type="button" name="settings_button" data-id=' .
+    //                 $row['id'] .
+    //                 ' class="btn-sm btn btn-danger"> <i class="fas fa-cog"></i></button>
+    // <a class="btn-sm btn btn-success" href="tickets_profile.php?id=' .
+    //                 $row['id'] .
+    //                 '"><i class="fas fa-eye"></i></a>';
+                return ' <a class="btn-sm btn btn-success" href="tickets_profile.php?id=' .
+                    $row['id'] .'"><i class="fas fa-eye"></i></a>';
             },
         ],
     ];

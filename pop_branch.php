@@ -256,9 +256,7 @@ if (isset($_GET['inactive'])) {
                                             </thead>
                                             <tbody>
                                                 <?php
-        $sql = "SELECT * FROM add_pop WHERE user_type='$auth_usr_type'";
-        $result = mysqli_query($con, $sql);
-
+        $result =$con->query("SELECT * FROM add_pop WHERE user_type='$auth_usr_type'");
         while ($rows = mysqli_fetch_assoc($result)) {
             $popId = $rows['id']; 
             $customer_changes = [];
@@ -285,7 +283,7 @@ if (isset($_GET['inactive'])) {
                                                         </a>
                                                     </td>
                                                     <td>
-    <canvas id="chart-<?php echo $popId; ?>" ></canvas>
+    <canvas id="chart-<?php echo $popId; ?>" width="300 !important" height="100 !important"></canvas>
     <script>
         let ctx<?php echo $popId; ?> = document.getElementById("chart-<?php echo $popId; ?>").getContext("2d");
 
@@ -421,10 +419,11 @@ if (isset($_GET['inactive'])) {
     <!-- JavaScript -->
 
     <!-- Peity chart-->
-    <script src="assets/libs/peity/jquery.peity.min.js"></script>
+
+    <!-- <script src="assets/libs/peity/jquery.peity.min.js"></script>
     <script src="assets/js/pages/chartjs.init.js"></script>
-    <!-- Init js-->
-    <script src="assets/js/pages/peity.init.js"></script>
+    <script src="assets/js/pages/peity.init.js"></script> -->
+    
     <script type="text/javascript">
         $(document).ready(function() {
            /** Bar chart**/

@@ -21,6 +21,15 @@ if (isset($_GET['id'])) {
         $onlineusr = $con->query("SELECT * FROM radacct WHERE acctterminatecause='' AND username='$username'");
         $onlineusr->num_rows;
     }
+
+    // $ticketId = $rows['id'];
+
+    // if ($ticketDetails = $con->query("SELECT * FROM ticket_details WHERE tcktid='$ticketId' ORDER BY id DESC LIMIT 1")) {
+    //     while ($rowss = $ticketDetails->fetch_array()) {
+    //         $comment = $rowss['comments'];
+    //         echo $comment;
+    //     }
+    // }
 }
 ?>
 
@@ -79,33 +88,40 @@ if (isset($_GET['id'])) {
                     <div class="row">
                         <div class="row gutters-sm">
                             <div class="col-md-4 mb-3">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="col-12 bg-white p-0 px-2 pb-3 mb-3">
-                                            <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                                <p><i class="mdi mdi-account-circle"></i> Customer Name:</p> <a
-                                                    href="#">
+                                <div class="card rounded-3 border-0">
+                                    <div class="card-header bg-primary text-white">
+                                        <h5 class="mb-0"><i class="mdi mdi-ticket-confirmation"></i> Ticket Profile
+                                        </h5>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <div class="list-group list-group-flush">
+                                            <div class="list-group-item d-flex justify-content-between">
+                                                <p class="mb-0"><i class="mdi mdi-account-circle text-primary"></i>
+                                                    Customer Name:</p>
+                                                <a href="#" class="text-dark fw-bold">
                                                     <?php
-                                                    $customer = $con->query("SELECT * FROM customers WHERE id='$customer_id'");
-                                                    $customer->num_rows;
-                                                    
-                                                    echo $username = $customer->fetch_array()['fullname'];
+                                                    echo $con->query("SELECT * FROM customers WHERE id='$customer_id'")->fetch_array()['fullname'];
                                                     ?>
                                                 </a>
                                             </div>
-                                            <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                                <p><i class="mdi mdi-marker-check"></i> Ticket Type:</p> <a
-                                                    href="#"><?php echo $ticket_type; ?></a>
+
+                                            <div class="list-group-item d-flex justify-content-between">
+                                                <p class="mb-0"><i class="mdi mdi-marker-check text-success"></i>
+                                                    Ticket Type:</p>
+                                                <a href="#" class="text-dark fw-bold"><?php echo $ticket_type; ?></a>
                                             </div>
-                                            <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                                <p><i class="mdi mdi-account-circle"></i> Ticket Id:</p> <a
-                                                    href="#"><?php echo $ticket_id; ?></a>
+
+                                            <div class="list-group-item d-flex justify-content-between">
+                                                <p class="mb-0"><i class="mdi mdi-tag text-warning"></i> Ticket ID:
+                                                </p>
+                                                <a href="#" class="text-dark fw-bold"><?php echo $ticket_id; ?></a>
                                             </div>
-                                            <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                                <p><i class=" fas fa-dollar-sign"></i> Assigned To:</p> <a
-                                                    href="#">
+
+                                            <div class="list-group-item d-flex justify-content-between">
+                                                <p class="mb-0"><i class="fas fa-user-cog text-danger"></i> Assigned
+                                                    To:</p>
+                                                <a href="#" class="text-dark fw-bold">
                                                     <?php
-                                                    // echo $asignto;
                                                     if ($group = $con->query("SELECT * FROM `working_group` WHERE id=$asignto")) {
                                                         while ($rows = $group->fetch_array()) {
                                                             echo $rows['group_name'];
@@ -114,13 +130,17 @@ if (isset($_GET['id'])) {
                                                     ?>
                                                 </a>
                                             </div>
-                                            <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                                <p><i class="ion ion-md-paper"></i> Ticket For:</p> <a
-                                                    href="#"><?php echo $ticketfor; ?></a>
+
+                                            <div class="list-group-item d-flex justify-content-between">
+                                                <p class="mb-0"><i class="ion ion-md-paper text-info"></i> Ticket For:
+                                                </p>
+                                                <a href="#" class="text-dark fw-bold"><?php echo $ticketfor; ?></a>
                                             </div>
-                                            <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                                <p><i class=" fas fa-envelope"></i> Complain Type:</p> <a
-                                                    href="#">
+
+                                            <div class="list-group-item d-flex justify-content-between">
+                                                <p class="mb-0"><i class="fas fa-envelope text-secondary"></i>
+                                                    Complain Type:</p>
+                                                <a href="#" class="text-dark fw-bold">
                                                     <?php
                                                     $complainId = $complain_type;
                                                     if ($allComplain = $con->query("SELECT * FROM ticket_topic WHERE id='$complainId' ")) {
@@ -128,28 +148,25 @@ if (isset($_GET['id'])) {
                                                             echo $singleComplain['topic_name'];
                                                         }
                                                     }
-                                                    
                                                     ?>
-
                                                 </a>
                                             </div>
-                                            <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                                <p><i class="fas fa-calendar"></i> From Date</p>
-                                                <a href="#">
-                                                    <td><?php echo date('d F Y', strtotime($startdate)); ?></td>
 
-                                                </a>
+                                            <div class="list-group-item d-flex justify-content-between">
+                                                <p class="mb-0"><i class="fas fa-calendar-alt text-primary"></i> From
+                                                    Date:</p>
+                                                <a href="#" class="text-dark fw-bold"><?php echo date('d M Y', strtotime($startdate)); ?></a>
                                             </div>
-                                            <div class="d-flex justify-content-between border-bottom py-2 px-3">
-                                                <p><i class="fas fa-calendar-alt"></i> To Date</p>
-                                                <a href="#">
-                                                    <td><?php echo date('d F Y', strtotime($enddate)); ?></td>
 
-                                                </a>
+                                            <div class="list-group-item d-flex justify-content-between">
+                                                <p class="mb-0"><i class="fas fa-calendar-check text-success"></i> To
+                                                    Date:</p>
+                                                <a href="#" class="text-dark fw-bold"><?php echo date('d M Y', strtotime($enddate)); ?></a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                             <div class="col-md-8 ">
                                 <div class="card mb-3">
@@ -176,20 +193,20 @@ if (isset($_GET['id'])) {
                                                             $progress = $rows['parcent'];
                                                     
                                                             echo '
-                                                                                                                                                     <tr>
-                                                                                                                                                     <td>' .
+                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                <td>' .
                                                                 $lstid .
                                                                 '</td>
-                                                                                                                                                     <td>' .
+                                                                                                                    
+                                                                                                                    <td>' .
                                                                 $comment .
                                                                 '</td>
-                                                                                                                                                     <td>' .
+                                                                                                                                                                                                                                    <td>' .
                                                                 $progress .
                                                                 '</td>
-                                                                                                                                                     <td>' .
+                                                                                                                                                                                                                                <td>' .
                                                                 date('d F Y', strtotime($date)) .
-                                                                '</td>
-                                                                                                                                                     ';
+                                                                '</td>';
                                                         }
                                                     }
                                                     
@@ -274,64 +291,96 @@ if (isset($_GET['id'])) {
                                     </div>
                                 </div>
 
-                                <div class="card">
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table id="tickets_table"
-                                                class="table table-bordered dt-responsive nowrap"
-                                                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Complain Type</th>
-                                                        <th>Ticket Type</th>
-                                                        <th>Form Date</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="ticket-list">
-                                                    <?php
-                                                        $sql = "SELECT * FROM ticket WHERE customer_id=$customer_id ORDER BY id DESC";
-                                                        $result = mysqli_query($con, $sql);
 
-                                                        while ($rows = mysqli_fetch_assoc($result)) {
 
-                                                            ?>
-                                                    <tr>
-                                                        <td>
-                                                            <?php
-                                                            $complain_typeId = $rows['complain_type'];
-                                                            $ticketsId = $rows['id'];
-                                                            if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                while ($rowss = $allCom->fetch_array()) {
-                                                                    $topicName = $rowss['topic_name'];
-                                                                    echo '<a href="tickets_edit.php?id=' . $ticketsId . '">' . $topicName . '</a>';
-                                                                }
-                                                            }
-                                                            ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php
-                                                            $ticketType = $rows['ticket_type'];
-                                                            if ($ticketType == 'Active') {
-                                                                echo "<span class='badge bg-danger'>Active</span>";
-                                                            } elseif ($ticketType == 'Open') {
-                                                                echo "<span class='badge bg-info'>Open</span>";
-                                                            } elseif ($ticketType == 'New') {
-                                                                echo "<span class='badge bg-danger'>New</span>";
-                                                            } elseif ($ticketType == 'Complete') {
-                                                                echo "<span class='badge bg-success'>Complete</span>";
-                                                            }
-                                                            
-                                                            ?>
-                                                        </td>
-                                                        <td><?php echo $rows['startdate']; ?></td>
-                                                    </tr>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Latest Tickets</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="tickets_table" class="table table-bordered dt-responsive nowrap"
+                                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th>Complain Type</th>
+                                            <th>Ticket Type</th>
+                                            <th>Comments</th>
+                                            <th> Assigned To</th>
+                                            <th>Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ticket-list">
+                                        <?php
+                                            $result = $con->query("SELECT * FROM ticket WHERE customer_id=$customer_id ORDER BY id DESC");
 
+                                            while ($rows = mysqli_fetch_assoc($result)) {
+
+                                            ?>
+                                        <tr>
+                                            <td>
+                                                <?php
+                                                $complain_typeId = $rows['complain_type'];
+                                                $ticketsId = $rows['id'];
+                                                if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
+                                                    while ($rowss = $allCom->fetch_array()) {
+                                                        $topicName = $rowss['topic_name'];
+                                                        echo '<a href="#">' . $topicName . '</a>';
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $ticketType = $rows['ticket_type'];
+                                                if ($ticketType == 'Active') {
+                                                    echo "<span class='badge bg-danger'>Active</span>";
+                                                } elseif ($ticketType == 'Open') {
+                                                    echo "<span class='badge bg-info'>Open</span>";
+                                                } elseif ($ticketType == 'New') {
+                                                    echo "<span class='badge bg-danger'>New</span>";
+                                                } elseif ($ticketType == 'Complete') {
+                                                    echo "<span class='badge bg-success'>Complete</span>";
+                                                }
+                                                
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $ticketId = $rows['id'];
+                                                
+                                                if ($ticketDetails = $con->query("SELECT * FROM ticket_details WHERE tcktid='$ticketId' ORDER BY id DESC ")) {
+                                                    while ($rowss = $ticketDetails->fetch_array()) {
+                                                        $comment = $rowss['comments'];
+                                                        echo $comment . '--' . $rowss['parcent'];
+                                                        if (count($rowss) > 1) {
+                                                            echo '<br>';
+                                                        }
+                                                    }
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $assign_id = $rows['asignto'];
+                                                echo $con->query("SELECT * FROM `working_group` WHERE id=$assign_id")->fetch_array()['group_name'];
+                                                ?>
+                                            </td>
+
+                                            <td>
+                                                <?php
+                                                
+                                                echo date('d M Y', strtotime($rows['startdate']));
+                                                
+                                                ?>
+                                            </td>
+                                        </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -368,7 +417,6 @@ if (isset($_GET['id'])) {
             });
 
             function addTicketData(ticket_id, ticket_type, progress, commentBox, assigned) {
-                // Validate input fields
                 if (ticket_type.length == 0) {
                     toastr.error("Ticket Type is required");
                 } else if (progress.length == 0) {
@@ -378,7 +426,6 @@ if (isset($_GET['id'])) {
                 } else if (assigned.length == 0) {
                     toastr.error("Assigned To is required");
                 } else {
-                    // AJAX call to the server-side script
                     $.ajax({
                         type: "POST",
                         url: "include/tickets_server.php",

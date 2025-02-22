@@ -240,7 +240,7 @@ if (isset($_GET["id"])) {
                                                     </div>
                                                     <div class="form-group mb-2">
                                                         <label for="">Ticket Type</label>
-                                                        <select name="ticket_type" id="ticket_type" class="form-select">
+                                                        <select  disabled="true" name="ticket_type" id="ticket_type" class="form-select">
                                                             <option value='<?php echo $ticket_type; ?>'><?php echo $ticket_type; ?></option>
                                                             <option value="Active">Active</option>
                                                             <option value="New">New</option>
