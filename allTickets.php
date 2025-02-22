@@ -32,6 +32,11 @@ include("include/users_right.php");
             }
             
         } */
+
+        .animate__custom {
+            animation-duration: 0.5s !important; /* 2 সেকেন্ডের জন্য */
+            animation-delay: 1s !important; /* 1 সেকেন্ড দেরি করে শুরু হবে */
+        }
     </style>
 
 
@@ -433,7 +438,7 @@ include("include/users_right.php");
                             if (tickets.length > 0) {
                                 tickets.forEach((ticket, index) => {
                                     let row = `
-                                        <tr class="wow animate__animated animate__fadeInUp animate__delay-${index}s">
+                                        <tr class="wow animate__animated animate__fadeInUp animate__delay-${index  * 0.1}s ">
                                             <td>${ticket.id}</td>
                                             <td>${ticket.complain_type}</td>
                                             <td>${ticket.priority}</td>

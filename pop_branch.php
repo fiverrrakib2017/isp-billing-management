@@ -55,18 +55,13 @@ if (isset($_GET['inactive'])) {
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include 'style.php'; ?>
+    <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+
     <style>
-        /* #view_pop .card-body {
-        padding: 10px;
-        max-width: 200px;
-    }
-
-    canvas {
-        width: 100%;
-        height: 100px;
-    } */
-
-        /* Container for pop name and chart */
+        
+      
+    
     </style>
 </head>
 
@@ -270,9 +265,7 @@ if (isset($_GET['inactive'])) {
             
             for ($i = 5; $i >= 0; $i--) {
                 $month_year = date('Y-m', strtotime("-$i month"));
-
-                $sql_customers = "SELECT * FROM customers WHERE pop='$popId' AND createdate LIKE '$month_year%'";
-                $result_customers = mysqli_query($con, $sql_customers);
+                 $result_customers = $con->query("SELECT * FROM customers WHERE pop='$popId' AND createdate LIKE '$month_year%'");
                 $countconn = mysqli_num_rows($result_customers);
 
                 $customer_changes[] = $countconn;
@@ -292,13 +285,39 @@ if (isset($_GET['inactive'])) {
                                                         </a>
                                                     </td>
                                                     <td>
-                                                        <!-- Peity Bar Chart -->
-                                                        <span class="peity-bar ms-2"
-                                                            data-peity='{ "fill": ["#8d6e63", "#67a8e4"] }'
-                                                            data-width="100%" data-height="50">
-                                                            <?php echo $chart_data; ?>
-                                                        </span>
-                                                    </td>
+    <canvas id="chart-<?php echo $popId; ?>" ></canvas>
+    <script>
+        let ctx<?php echo $popId; ?> = document.getElementById("chart-<?php echo $popId; ?>").getContext("2d");
+
+        new Chart(ctx<?php echo $popId; ?>, {
+            type: "bar", 
+            data: {
+                labels: ["6 Month", "5 Month", "4 Month", "3 Month", "2 Month", "1 Month"],
+                datasets: [{
+                    label: "New Customers",
+                    data: [<?php echo implode(',', $customer_changes); ?>], 
+                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4CAF50", "#FF9800", "#9C27B0"],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { display: false } 
+                },
+                responsive: true,
+              
+                scales: {
+                    x: { display: false }, 
+                    y: { display: false }
+                }
+            }
+        });
+    </script>
+</td>
+
+
+
+
                                                     <td>
                                                         <?php
                                                         $pop_usr = $con->query("SELECT * FROM customers WHERE pop='$popId'");
@@ -403,12 +422,19 @@ if (isset($_GET['inactive'])) {
 
     <!-- Peity chart-->
     <script src="assets/libs/peity/jquery.peity.min.js"></script>
+    <script src="assets/js/pages/chartjs.init.js"></script>
     <!-- Init js-->
     <script src="assets/js/pages/peity.init.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            /**  Add POP/Branch**/
+           /** Bar chart**/
             $(".peity-bar").peity("bar");
+            
+            $('.tooltip-data').each(function() {
+        var tooltipContent = $(this).data('title').split(',').join('<br>');
+        $(this).attr('title', tooltipContent);
+    });
+            /**  Add POP/Branch**/
             $('#addModal form').submit(function(e) {
                 e.preventDefault();
 
@@ -446,15 +472,15 @@ if (isset($_GET['inactive'])) {
                     }
                 });
             });
-            // var ctx = document.getElementById('lineChart').getContext('2d');
+            // var ctx = document.getElementById('bar').getContext('2d');
             // var chart = new Chart(ctx, {
             //     type: 'bar',
             //     data: {
-            //         labels: [<?php echo implode(',', $months); ?>], 
+            //         labels: ['6 Months', '5 Months', '4 Months', '3 Months', '2 Months', '1 Month'],
             //         datasets: [{
             //             label: '',
-            //             data: [<?php echo implode(',', $amounts); ?>], 
-            //             borderColor: 'rgba(75, 192, 192, 1)',
+            //             data: [11, 19, 13, 15, 12, 14],
+            //             backgroundColor: 'rgba(75, 192, 192, 0.2)', 
             //             borderWidth: 2,
             //             fill: false
             //         }]
