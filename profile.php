@@ -4,8 +4,8 @@ include "include/security_token.php";
 include "include/users_right.php";
 include "include/db_connect.php";
 require('routeros/routeros_api.class.php');
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
 
 $nasipaddress ="Not connected!";
 $RouterPortID ="Not Found!";
@@ -47,7 +47,7 @@ if (isset($_GET['clid'])) {
 		
 			// NAS Info
 			$rowacct = $onlineusr->fetch_assoc();
-			$nasipaddress = $rowacct["nasipaddress"];
+			$nasipaddress = $rowacct["nasipaddress"] ?? '';
 
 			$CNRT = $con->query("SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
 			while ($nas_rows = $CNRT->fetch_array()) 
@@ -396,7 +396,7 @@ if ($onlineusr->num_rows == 1) {
     echo '<b><img src="images/icon/offline.png" height="10" width="10"/> Offline </b> <br/>';
     if ($offtime = $con->query("SELECT TIMEDIFF(NOW(),acctstoptime) AS time FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
         $off_rows = $offtime->fetch_assoc();
-		$offlineHours = $off_rows["time"];
+		$offlineHours = $off_rows["time"] ?? '';
 		
         echo '<span class="far fa-clock"></span> <strong><span style="color:red;"> ' . $offlineHours . "</span></strong> Hrs <br/>";
         {
@@ -405,6 +405,8 @@ if ($onlineusr->num_rows == 1) {
                 $off_rowss = $offtimes->fetch_array();
                 //echo date("Y-m-d h:i:sa", strtotime($off_rowss["acctstoptime"]));
                 echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;"><abbr title=' . date("Y-M-d h:i:s A", strtotime($off_rowss["acctstoptime"])) . ' >  ' . date("h:i:s A", strtotime($off_rowss["acctstoptime"])) . "</abbr></span></strong>";
+            }else{
+                                 echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;">Never connected</span></strong>';
             }
 
         }
@@ -955,7 +957,6 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                                  <option value="0">On Credit</option>
                                  <option value="2">Bkash</option>
                                  <option value="3">Nagad</option>
-                                 <option value="4">Due Payment</option>
                               </select>
                            </div>
                         </form>
