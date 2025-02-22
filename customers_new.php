@@ -601,7 +601,7 @@ include 'include/users_right.php';
                         /********************Filter For expired Customer*******************************/
                         <?php if (isset($_GET['expired']) && !empty($_GET['expired'])): ?>
                         d.status = "expired";
-                        $("#customers_table_length").hide();
+                        //$("#customers_table_length").hide();
                         <?php else: ?>
                         //d.status = $('.status_filter').val();
                         <?php endif; ?>
