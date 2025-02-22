@@ -11,6 +11,11 @@ include("include/users_right.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<?php include 'style.php'; ?>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- WOW.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
 	<style>
         /* div#tickets_datatable_filter {
             display: none;
@@ -82,7 +87,7 @@ include("include/users_right.php");
                                 <div class="d-flex justify-content-between align-items-end flex-wrap">
                                    
 									<!-- <a href="create_ticket.php" class="btn btn-primary mt-2 mb-2 mt-xl-0 mdi mdi-account-plus mdi-18px" >&nbsp;&nbsp;New Ticket</a> -->
-									<button type="button" class="btn btn-primary mt-2 mb-2 mt-xl-0 mdi mdi-account-plus mdi-18px"  data-bs-toggle="modal" data-bs-target="#ticketModal">&nbsp;&nbsp;New Ticket</button>
+									<button type="button" class="btn btn-primary mt-2 mb-2 mt-xl-0 "  data-bs-toggle="modal" data-bs-target="#ticketModal"><i class="fas fa-ticket-alt"></i>&nbsp;&nbsp; New Ticket</button>
                                     <br>
                                 </div>
                             </div>
@@ -409,6 +414,43 @@ include("include/users_right.php");
          loadCustomers();
          ticket_assign();
          ticket_complain_type();
+         new WOW().init();
+        /*GET Customer Ticket*/
+        $(document).on('change','#ticket_customer_id',function(){
+            var customer_id = $(this).val();
+            if (customer_id) {
+                $.ajax({
+                    url: "include/tickets_server.php",
+                    type: "GET",
+                    data: { get_customer_tickets: true, customer_id: customer_id },
+                    dataType:'json',
+                    success: function (response) {
+                        if (response.success == true) {
+                            $("#previous_tickets").removeClass('d-none');
+                            let tickets = response.data;
+                            let tableBody = $("#customer_tickets_table tbody");
+                            tableBody.empty(); 
+                            if (tickets.length > 0) {
+                                tickets.forEach((ticket, index) => {
+                                    let row = `
+                                        <tr class="wow animate__animated animate__fadeInUp animate__delay-${index}s">
+                                            <td>${ticket.id}</td>
+                                            <td>${ticket.complain_type}</td>
+                                            <td>${ticket.priority}</td>
+                                            <td>${ticket.parcent}</td>
+                                            <td>${ticket.acctual_work}</td>
+                                            <td>${ticket.status}</td>
+                                        </tr>`;
+                                    tableBody.append(row);
+                                });
+                            } else {
+                                tableBody.append(`<tr><td colspan="6" class="text-center text-danger">No tickets found</td></tr>`);
+                            }
+                        }
+                    }
+                });
+            }
+        });
     </script>
 </body>
 

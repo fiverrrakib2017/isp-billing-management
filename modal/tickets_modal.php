@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg" role="document"> 
         <div class="modal-content">
             <div class="modal-header bg-success">
-                <h5 class="modal-title text-white" id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="mdi mdi-account-plus"></i></h5>
+                <h5 class="modal-title text-white" id="exampleModalLabel">Ticket Add&nbsp;&nbsp;<i class="fas fa-ticket-alt"></i></h5>
             </div>
             <form action="include/tickets_server.php?add_ticket_data=true" method="POST" id="ticket_modal_form">
                 <div class="modal-body">
@@ -53,19 +53,21 @@
                     </div>
 
                     <!-- Previous Tickets Table -->
-                    <div class="mt-3">
+                    <div class="mt-3 d-none" id="previous_tickets">
                         <h6>Previous Tickets</h6>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered"  id="customer_tickets_table">
                             <thead>
                                 <tr>
                                     <th>Ticket ID</th>
                                     <th>Issue</th>
                                     <th>Priority</th>
+                                    <th>Percentage</th>
+                                    <th>Acctual Work</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="customer_tickets">
-                                <tr>
+                                <tr >
                                     <td colspan="4" class="text-center">No Tickets Found</td>
                                 </tr>
                             </tbody>

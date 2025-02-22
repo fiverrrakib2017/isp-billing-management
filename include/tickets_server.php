@@ -3,6 +3,7 @@ include 'db_connect.php';
 if (!isset($_SESSION)) {
     session_start();
 }
+
 if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     require 'datatable.php';
 
@@ -216,6 +217,43 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     }
     /* Output JSON for DataTables to handle*/
     echo json_encode(SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition));
+}
+if(isset($_GET['get_customer_tickets']) && $_SERVER['REQUEST_METHOD'] == 'GET'){
+    $customer_id = intval($_GET['customer_id']); 
+    $tickets = [];
+    if($get_customer_ticket=$con->query("SELECT * FROM ticket WHERE customer_id=$customer_id")){
+        while($rows=$get_customer_ticket->fetch_array()){
+
+            $priority_map = [
+                1 => '<span class="badge bg-danger">Low</span>',
+                2 => '<span class="badge bg-warning text-dark">Normal</span>',
+                3 => '<span class="badge bg-primary">Standard</span>',
+                4 => '<span class="badge bg-info">Medium</span>',
+                5 => '<span class="badge bg-success">High</span>',
+                6 => '<span class="badge bg-dark">Very High</span>'
+            ];
+          
+            $priority = isset($priority_map[$rows['priority']]) ? $priority_map[$rows['priority']] : 'Unknown';
+            $status='';
+            if($rows['ticket_type']=='Active'){
+                $status='<span class="badge bg-danger">Active</span>';
+            }else if($rows['ticket_type']=='Closed'){
+                $status='<span class="badge bg-success">Closed</span>';
+            }else if($rows['ticket_type']=='Complete'){
+                $status='<span class="badge bg-success">Complete</span>';
+            }
+            $tickets[] = [
+                'id' => $rows['id'],
+                'complain_type' => $con->query("SELECT topic_name as name FROM ticket_topic WHERE id = $rows[complain_type]")->fetch_array()['name'],
+                'priority' => $priority,
+                'parcent' => $rows['parcent'],
+                'acctual_work' =>acctual_work($rows['startdate'], $rows['enddate']),
+                'status' => $status,
+            ];
+        }
+    }
+    echo json_encode(['success' => true, 'data' => $tickets]);
+    exit;
 }
 if (isset($_POST['get_area']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $customerId = $_POST['customer_id'];
@@ -560,29 +598,6 @@ if (isset($_POST['updateTicket'])) {
     }
 }
 
-// if (isset($_POST["addTicketData"])) {
-// 	$customerId = $_POST['customer_id'];
-
-// 	$assignedTo = $_POST['assigned_to'];
-// 	$ticketFor = $_POST['ticket_for'];
-// 	$complainType = $_POST['complain_type'];
-// 	$notes = $_POST['notes'];
-// 	$priority = $_POST['priority'];
-
-// 	if ($allCstmr=$con->query("SELECT * FROM customers WHERE id=$customerId")) {
-// 		while($rows=$allCstmr->fetch_array()){
-// 			$customerPopId = $rows['pop'];
-// 		}
-// 	}
-
-// 	$result = $con->query("INSERT INTO ticket (customer_id, asignto, ticketfor, complain_type, startdate, notes,parcent,priority)
-// 	VALUES ('$customerId', '$assignedTo', '$ticketFor', '$complainType', NOW(), '$notes','0%','$priority')");
-// 	if ($result == true) {
-// 		echo 1;
-// 	} else {
-// 		echo "Error: " . $sql . "<br>" . $con->error;
-// 	}
-// }
 if (isset($_POST['addTicketTopicData'])) {
     $ticketTopic = $_POST['ticketTopic'];
     $pop_id = $_POST['pop_id'];

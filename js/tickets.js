@@ -26,7 +26,6 @@ function ticket_modal(){
 
 
 
-
 function loadCustomers(selectedCustomerId) {
     $.ajax({
         url: 'include/tickets_server.php?get_all_customer=true',
