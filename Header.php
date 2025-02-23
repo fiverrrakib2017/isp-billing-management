@@ -11,19 +11,19 @@ $notifications = mysqli_fetch_all($result, MYSQLI_ASSOC);
                     <div class="navbar-brand-box">
                         <a href="index.php" class="logo logo-dark">
                             <span class="logo-sm">
-                                <img src="assets/images/it-fast.png" alt="" height="22">
+                                <img src="assets/images/it-fast.png" class="img-fluid" alt="" height="22">
                             </span>
                             <span class="logo-lg">
-                                <img src="assets/images/it-fast.png" alt="" height="17">
+                                <img src="assets/images/it-fast.png" class="img-fluid" alt="" height="17">
                             </span>
                         </a>
 
                         <a href="index.php" class="logo logo-light">
                             <span class="logo-sm">
-                                <img src="assets/images/it-fast.png" alt="" height="22">
+                                <img src="assets/images/it-fast.png" class="img-fluid" alt="" height="22">
                             </span>
                             <span class="logo-lg">
-                                <img src="assets/images/it-fast.png" alt="" height="36">
+                                <img src="assets/images/it-fast.png" class="img-fluid" alt="" height="36">
                             </span>
                         </a>
                     </div>
