@@ -487,12 +487,30 @@ if(isset($_POST['area_id'])){
         $user_type = $_POST['user_type'];
         $con_type = $_POST['customer_connection_type'];
 
-        if ($allPack = $con->query("SELECT * FROM branch_package WHERE id=$package AND pop_id=$pop")) {
-            while ($rowssss = $allPack->fetch_array()) {
-                $package_name = $rowssss['package_name'];
+      
+        // if ($allPack = $con->query("SELECT * FROM branch_package WHERE id=$package AND pop_id=$pop")) {
+        //     while ($rowssss = $allPack->fetch_array()) {
+        //         $package_name = $rowssss['package_name'];
+        //     }
+        // }
+        /*GET Package Name*/
+        $package_name=$con->query("SELECT package_name FROM branch_package WHERE id='$package'")->fetch_array()['package_name'];
+        /*Check Expire Date */
+        if($exp_date > 0){
+            $expire_date=$con->query("SELECT expiredate FROM customers WHERE id='$customer_id'")->fetch_array()['expiredate'];
+            $year='';
+            $month='';
+    
+            for($i=0;$i<strlen($expire_date);$i++){
+                if($i<4){
+                    $year.=$expire_date[$i];
+                }elseif($i>4 && $i<7){
+                    $month.=$expire_date[$i];
+                }
             }
+            $new_expire_date=$year.'-'.$month.'-'.$exp_date;
         }
-       $result= $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type' WHERE id=$customer_id");
+       $result= $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`expiredate`='$new_expire_date',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type' WHERE id=$customer_id");
        if($result){
             echo json_encode(['success' => true, 'message' => 'Customer updated successfully!']);
        }else{

@@ -28,7 +28,7 @@ if (file_exists($users_right_path)) {
     <?php 
        
             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-            $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+            $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
             
             echo file_get_contents($url);
         
@@ -326,7 +326,15 @@ if (file_exists($users_right_path)) {
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
-    <?php include '../script.php'; ?>
+   
+        <?php
+
+        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
+
+        echo file_get_contents($url);
+
+        ?>
 
      <script type="text/javascript">
         var table;

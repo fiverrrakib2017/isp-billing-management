@@ -55,7 +55,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
     <?php
     
     $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-    $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
     
     echo file_get_contents($url);
     
@@ -449,12 +449,13 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
                                                     style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                     <thead>
                                                         <tr>
-                                                            <th>ID</th>
-                                                            <th>Recharged date</th>
-                                                            <th>Customer Name</th>
-                                                            <th>Months</th>
-                                                            <th>Paid until</th>
-                                                            <th>Amount</th>
+                                                        <th>ID</th>
+                                                        <th>Recharged date</th>
+                                                        <th>Customer Username</th>
+                                                        <th>Months</th>
+                                                        <th>Type</th>
+                                                        <th>Paid until</th>
+                                                        <th>Amount</th>
                                                         </tr>
                                                     </thead>
                                                    
@@ -810,7 +811,14 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$auth_usr_POP_id'")
     <div class="rightbar-overlay"></div>
 
     <!-- JAVASCRIPT -->
-    <?php include '../script.php'; ?>
+    <?php
+
+    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
+
+    echo file_get_contents($url);
+
+    ?>
     <script type="text/javascript" src="js/customer.js"></script>
     <script type="text/javascript" src="../../js/google_map.js"></script>
     <script type="text/javascript">

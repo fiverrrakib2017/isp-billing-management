@@ -23,14 +23,13 @@ if (file_exists($users_right_path)) {
         <meta charset="utf-8">
         <title>FAST-ISP-BILLING-SOFTWARE</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <?php
-        
-        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
-        
-        echo file_get_contents($url);
-        
+        <?php 
+            $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+            $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
+            
+            echo file_get_contents($url);
         ?>
+
     </head>
 
     <body data-sidebar="dark">
@@ -236,14 +235,7 @@ if (file_exists($users_right_path)) {
     </div>
     <!-- End Page-content -->
 
-    <?php
-        
-        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/Footer.php';
-        
-        echo file_get_contents($url);
-        
-        ?>
+   
 
 </div>
 <!-- end main content-->
@@ -251,53 +243,7 @@ if (file_exists($users_right_path)) {
         </div>
         <!-- END layout-wrapper -->
 
-        <!-- Right Sidebar -->
-        <div class="right-bar">
-            <div data-simplebar class="h-100">
-                <div class="rightbar-title px-3 py-4">
-                    <a href="javascript:void(0);" class="right-bar-toggle float-end">
-                        <i class="mdi mdi-close noti-icon"></i>
-                    </a>
-                    <h5 class="m-0">Settings</h5>
-                </div>
-
-                <!-- Settings -->
-                <hr class="mt-0">
-                <h6 class="text-center mb-0">Choose Layouts</h6>
-
-                <div class="p-4">
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-1.jpg" class="img-fluid img-thumbnail" alt="Layouts-1">
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input theme-choice" type="checkbox" id="light-mode-switch">
-                        <label class="form-check-label" for="light-mode-switch">Light Mode</label>
-                    </div>
-
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-2.jpg" class="img-fluid img-thumbnail" alt="Layouts-2">
-                    </div>
-
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input theme-choice" type="checkbox" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css">
-                        <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
-                    </div>
-    
-                    <div class="mb-2">
-                        <img src="assets/images/layouts/layout-3.jpg" class="img-fluid img-thumbnail" alt="Layouts-3">
-                    </div>
-
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input theme-choice" type="checkbox"  id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css">
-                        <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
-                    </div>
-            
-            
-                </div>
-
-            </div> <!-- end slimscroll-menu-->
-        </div>
-        <!-- /Right-bar -->
+     <?php include '../Footer.php';?>
 
         <!-- Right bar overlay-->
         <div class="rightbar-overlay"></div>
@@ -305,13 +251,13 @@ if (file_exists($users_right_path)) {
         
     <!-- JAVASCRIPT -->
     <?php
-        
-        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
-        
-        echo file_get_contents($url);
-        
-        ?>
+
+$protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+$url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
+
+echo file_get_contents($url);
+
+?>
      <script type="text/javascript">
     $(document).ready(function() {
         loadTableData();

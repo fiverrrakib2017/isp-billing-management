@@ -25,13 +25,12 @@ if (file_exists($users_right_path)) {
         <title>FAST-ISP-BILLING-SOFTWARE</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php 
-        $page_title = "Customers";
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
         
         echo file_get_contents($url);
-        
     ?>
+
     
     </head>
 
@@ -174,12 +173,13 @@ if (file_exists($users_right_path)) {
         
         
         <!-- JAVASCRIPT -->
-        <?php 
-            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-            $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
-            
-            echo file_get_contents($url);
-            
-        ?>
+        <?php
+
+    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
+    
+    echo file_get_contents($url);
+    
+    ?>
     </body>
 </html>

@@ -100,10 +100,10 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     <?php
     
     $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-    $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
     
     echo file_get_contents($url);
-    //include '../style.php';
+
     
     ?>
 
@@ -1315,9 +1315,9 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
 
     <!-- JAVASCRIPT -->
     <?php
-    
+
     $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-    $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
     
     echo file_get_contents($url);
     

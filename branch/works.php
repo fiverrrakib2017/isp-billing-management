@@ -23,14 +23,13 @@ if (file_exists($users_right_path)) {
     
         <meta charset="utf-8">
         <title>FAST-ISP-BILLING-SOFTWARE</title>
-        <?php
-        
+        <?php 
         $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/style.php';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
         
         echo file_get_contents($url);
-        
-        ?>
+    ?>
+
     </head>
 
     <body data-sidebar="dark">
@@ -317,13 +316,13 @@ if (file_exists($users_right_path)) {
         
     <!-- JAVASCRIPT -->
     <?php
-        
-        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
-        $url = $protocol . $_SERVER['HTTP_HOST'] . '/script.php';
-        
-        echo file_get_contents($url);
-        
-        ?>
+
+    $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+    $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
+    
+    echo file_get_contents($url);
+    
+    ?>
      <script type="text/javascript">
     $(document).ready(function() {
         $("#users_table").DataTable();

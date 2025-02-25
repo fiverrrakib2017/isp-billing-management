@@ -14,27 +14,14 @@
          </li>
          <li >
             <?php
-            
-
-            // if (isset($page_title)) {
-            //     if ($page_title="Branch Dashboard") {
-            //         echo ' <select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
-            //     }else if($page_title="Customer Profile"){
-            //         echo ' <select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
-            //     }
-            // }
-            if (isset($page_title)) {
+         if (isset($page_title)) {
                 if ($page_title=="Branch Dashboard") {
                     echo ' <select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
                 } 
-                if ($page_title=="Customer Profile") {
-                    echo ' <select name="menu_select_box" id="menu_select_box" class="form-select"></select>';
-                } 
+                
 
-            }
-            ?>
-           
-            
+            }    
+            ?>   
         </li> 
 
          <li>
@@ -43,33 +30,13 @@
                  <span>Customer </span>
              </a>
              <ul class="sub-menu" aria-expanded="false">
-                                    <!-- <li><a href="customers.php">Total Customer List</a></li> -->
-                                    <li><a href="customers_new.php">Customer List</a></li>
-                                    <!-- <li><a href="bulk_payment.php">Bulk Recharge</a></li> -->
-                                    <!-- <li><a href="active_cstmr_list.php">Active Customer List</a></li>
-                                    <li><a href="customer_expire.php">Expired Customer List</a></li>
-                                    <li><a href="customer_free_con.php">Free Customer List</a></li> -->
-                                  
-                                    <!-- <li><a href="customer_dues.php">Customer Unpaid</a></li> -->
-                                    <li><a href="customer_recharge.php">Customer Recharge</a></li>
-                                    <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
-                                    <li><a href="package_add.php">Customer Packages</a></li>
-                                    <li><a href="pwdmissmatch.php">Password missmatch</a></li>
-                                    <li><a href="customer_import.php">Import</a></li>
-                                    <!-- <li><a href="area.php">Area</a></li> -->
-                                </ul>
-             <!-- <ul class="sub-menu" aria-expanded="false">
-                 <li><a href="customers.php">Total Customer List</a></li>
-                 <li><a href="customers_new.php">Total Customer <span class="badge rounded-pill bg-success">New</span></a></li>
-                 <li><a href="active_cstmr_list.php">Active Customer List</a></li>
-                 <li><a href="customer_expire.php">Expired Customer List</a></li>
-                 <li><a href="customer_recharge.php">Customer Recharge</a></li>
-                 <li><a href="customer_dues.php">Customer Dues/Unpaid</a></li>
-                 <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
-                 <li><a href="bulk_payment.php">Bulk Recharge</a></li>
-                 
-                 <li><a href="package_add.php">Package's</a></li>
-             </ul> -->
+                <li><a href="customers_new.php">Customer List</a></li>
+                <li><a href="customer_recharge.php">Customer Recharge</a></li>
+                <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
+                <li><a href="package_add.php">Customer Packages</a></li>
+                <li><a href="pwdmissmatch.php">Password missmatch</a></li>
+                <li><a href="customer_import.php">Import</a></li>
+            </ul>
          </li>
 
          <li>
@@ -102,7 +69,6 @@
              </a>
              <ul class="sub-menu" aria-expanded="false">
                  <li><a href="customers_payment.php">Customer Payment</a></li>
-                 <li><a href="recharge_filter.php">Recharge Filter</a></li>
                  <li><a href="payment_history.php">Payment History</a></li>
                  <li><a href="bill_collection.php">Bill Collection</a></li>
                  <li><a href="cash_collection.php">Cash Collection</a></li>

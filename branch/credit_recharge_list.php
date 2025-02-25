@@ -48,7 +48,12 @@ $result = $con->query($sql);
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include '../style.php';?>
+    <?php 
+        $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+        $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
+        
+        echo file_get_contents($url);
+    ?>
     <style>
 @media print {
     body {
@@ -374,7 +379,14 @@ $result = $con->query($sql);
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
-    <?php include '../script.php';?>
+    <?php
+
+$protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+$url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
+
+echo file_get_contents($url);
+
+?>
     <script>
         $("#customers_table").DataTable();
         function printTable() {

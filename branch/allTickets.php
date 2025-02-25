@@ -24,7 +24,10 @@ if (file_exists($users_right_path)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<?php
-        include '../style.php';
+       $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+       $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
+       
+       echo file_get_contents($url);
     ?>
 
 </head>
@@ -251,7 +254,12 @@ if (file_exists($users_right_path)) {
         </div>
     </div>
 
-    <?php include '../script.php'; ?>
+    <?php 
+     $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
+     $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
+     
+     echo file_get_contents($url);
+    ?>
     <script type="text/javascript">
         // Customers load function
         function ticket_modal(){
