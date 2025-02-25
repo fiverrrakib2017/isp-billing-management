@@ -104,6 +104,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     
     echo file_get_contents($url);
 
+    // include '../style.php';
     
     ?>
 

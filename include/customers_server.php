@@ -470,8 +470,8 @@ if(isset($_POST['area_id'])){
         $customer_id = $_POST['customer_id'] ?? 0;
         $fullname = $_POST['fullname'];
        $package = $_POST['package'];
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        $username =trim($_POST['username']);
+        $password =trim( $_POST['password']);
         $mobile = $_POST['mobile'];
         $exp_date = $_POST['expire_date'];
         $pop = $_POST['pop'];
@@ -512,7 +512,21 @@ if(isset($_POST['area_id'])){
         }
        $result= $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`expiredate`='$new_expire_date',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type' WHERE id=$customer_id");
        if($result){
-            echo json_encode(['success' => true, 'message' => 'Customer updated successfully!']);
+        /*Update radcheck*/
+        if ($con->query("SELECT * FROM radcheck WHERE username='$username'")->num_rows > 0) {
+            $con->query("UPDATE radcheck SET value='$password' WHERE username='$username'");
+        } else {
+            $con->query("INSERT INTO radcheck(username, attribute, op, value) VALUES('$username', 'Cleartext-Password', ':=', '$password')");
+        }
+
+        /* Update radreply */
+        if ($con->query("SELECT * FROM radreply WHERE username='$username'")->num_rows > 0) {
+            $con->query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
+        } else {
+            $con->query("INSERT INTO radreply(username, attribute, op, value) VALUES('$username', 'MikroTik-Group', ':=', '$package_name')");
+        }
+
+        echo json_encode(['success' => true, 'message' => 'Customer updated successfully!']);
        }else{
             echo json_encode(['success' => false, 'message' => 'Error: ' . $con->error]);
        }
