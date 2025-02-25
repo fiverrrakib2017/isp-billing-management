@@ -172,6 +172,13 @@ function timeAgo($startdate)
                                                                         
                                                                     </div>
                                                                 </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-2">
+                                                                        <label>Remarks</label>
+																		<input id="customer_req_remarks" type="text"
+                                                                            class="form-control" placeholder="Enter Remarks" />                                                                        
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -182,6 +189,104 @@ function timeAgo($startdate)
                                                     data-bs-dismiss="modal">Close</button>
                                                 <button type="button" class="btn btn-success"
                                                     id="customer_request_add_btn">Add Customer</button>
+                                            </div>
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div>
+                                <div class="modal fade " tabindex="-1"
+                                    aria-labelledby="myLargeModalLabel" id="customer_edit_modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel"><span
+                                                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;   Update
+                                                    Request customer</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="">
+                                                <form id="customer_edit_form">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-2">
+                                                                        <label>Full Name</label>
+                                                                        <input type="text" name="customer_request_id"
+                                                                            id="customer_request_id" hidden />
+                                                                        <input id="customer_req_fullname" type="text"
+                                                                            class="form-control "
+                                                                            placeholder="Enter Your Fullname" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-2">
+                                                                        <label>Mobile</label>
+                                                                        <input id="customer_req_mobile" type="text"
+                                                                            class="form-control "
+                                                                            placeholder="Enter Customer Mobile" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-2">
+                                                                        <label>Address</label>
+                                                                        <input id="customer_req_address" type="text"
+                                                                            class="form-control "
+                                                                            placeholder="Enter Customer Address" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-2">
+                                                                        <label>Area</label>
+                                                                        <select id="customer_req_area_id" type="text"
+                                                                            class="form-select" style="width: 100%;">
+                                                                            <option value="0">---Select---</option>
+                                                                            <?php
+                                                                            
+                                                                            $get_area = $con->query('SELECT * FROM area_list');
+                                                                            while ($orws = $get_area->fetch_array()) {
+                                                                                echo '<option value="' . $orws['id'] . '">' . $orws['name'] . '</option>';
+                                                                            }
+                                                                            ?>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-2">
+                                                                        <label>Request By</label>
+																		
+																		<select id="customer_req_request_by" type="text"
+                                                                            class="form-select" style="width: 100%;">
+                                                                            <option value="0">---Select---</option>
+                                                                            <?php
+                                                                            
+                                                                            $ename = $con->query('SELECT * FROM employees');
+                                                                            while ($orwen = $ename->fetch_array()) {
+                                                                                echo '<option value="' . $orwen['name'] . '">' . $orwen['name'] . '</option>';
+                                                                            }
+                                                                            ?>
+                                                                        </select>
+																		
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group mb-2">
+                                                                        <label>Remarks</label>
+																		<input id="customer_req_remarks" type="text"
+                                                                            class="form-control" placeholder="Enter Remarks" />                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-success"
+                                                    id="customer_request_update_btn">Update Customer</button>
                                             </div>
                                         </div><!-- /.modal-content -->
                                     </div><!-- /.modal-dialog -->
@@ -210,13 +315,13 @@ function timeAgo($startdate)
                                                     <th>Area</th>
                                                     <th>Address</th>
                                                     <th>Reference By</th>
+                                                    <th>Remarks</th>
                                                     <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody id="customer-list">
                                                 <?php
-                                                 $sql="SELECT * FROM customer_request WHERE status=0 ORDER BY id DESC";
-                                                $result = $con->query($sql);
+                                                $result = $con->query("SELECT * FROM customer_request WHERE status=0 ORDER BY id DESC");
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
 
@@ -242,12 +347,16 @@ function timeAgo($startdate)
                                                     </td>
                                                     <td><?php echo $rows['address']; ?></td>
                                                     <td><?php echo $rows['request_by']; ?></td>
+                                                    <td><?php echo $rows['remarks']; ?></td>
 
                                                     <td>
 
                                                         <button type="button" id="approve_button" 
                                                             class="btn btn-success">Approve</button>
 
+                                                        <button type="button" class="btn btn-primary edit-btn"
+                                                            data-id=<?php echo $rows['id']; ?>><i class="fas fa-edit"></i>
+                                                        </button>
                                                         <button type="button" class="btn btn-danger delete-btn"
                                                             data-id=<?php echo $rows['id']; ?>><i class="fas fa-trash"></i>
                                                         </button>
@@ -302,6 +411,7 @@ function timeAgo($startdate)
             let address = $('#customer_req_address').val().trim();
             let area_id = $('#customer_req_area_id').val();
             let request_by = $('#customer_req_request_by').val().trim();
+            let remarks = $('#customer_req_remarks').val().trim();
 
             /* Form validation*/
             if (fullname === '' || mobile === '' || address === '') {
@@ -319,7 +429,8 @@ function timeAgo($startdate)
                     mobile: mobile,
                     address: address,
                     area_id: area_id,
-                    request_by: request_by
+                    request_by: request_by,
+                    remarks:remarks
                 },
                 success: function(response) {
                     if (response.success = true) {
@@ -336,6 +447,77 @@ function timeAgo($startdate)
                 },
                 error: function() {
                     toastr.error('An error occurred while processing the request.');
+                }
+            });
+        });
+
+        $(document).on('click', '.edit-btn', function() {
+            var id = $(this).data('id');
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: 'include/customers_server.php?get_customer_request_data=true',
+                data: {
+                    id: id
+                },
+                success: function(response) {
+                    if (response.success === true) {
+                        $("#customer_edit_modal").modal('show');
+                        $("#customer_edit_modal #customer_req_fullname").val(response.data.fullname);
+                        $("#customer_edit_modal #customer_req_mobile").val(response.data.mobile);
+                        $("#customer_edit_modal #customer_req_address").val(response.data.address);
+                        $("#customer_edit_modal #customer_req_area_id").val(response.data.area_id);
+                        $("#customer_edit_modal #customer_req_request_by").val(response.data.request_by);
+                        $("#customer_edit_modal #customer_req_remarks").val(response.data.remarks);
+                        $("#customer_edit_modal #customer_request_id").val(response.data.id);
+                    }
+                    if (response.success == false) {
+                        toastr.success(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    toastr.error("Error deleting item! " + error);
+                }
+            });
+        });
+        $(document).on('click', '#customer_request_update_btn', function(e) {
+            e.preventDefault();
+               var fullname= $("#customer_edit_modal #customer_req_fullname").val();
+               var mobile= $("#customer_edit_modal #customer_req_mobile").val();
+               var address= $("#customer_edit_modal #customer_req_address").val();
+                var area_id=$("#customer_edit_modal #customer_req_area_id").val();
+                var request_by= $("#customer_edit_modal #customer_req_request_by").val();
+                var remarks=$("#customer_edit_modal #customer_req_remarks").val();
+               var id= $("#customer_edit_modal #customer_request_id").val();
+
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: 'include/customers_server.php?update_customer_request=true',
+                data: {
+                    id:id,
+                    fullname:fullname,
+                    mobile:mobile,
+                    address:address,
+                    area_id:area_id,
+                    request_by:request_by,
+                    remarks:remarks
+                },
+                success: function(response) {
+                    if (response.success === true) {
+                        toastr.success(response.message);
+                        $("#customer_edit_modal").modal('hide'); 
+                        setTimeout(() => {
+                            location.reload();
+                        }, 500);
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    toastr.error("Error updating data! " + error);
                 }
             });
         });

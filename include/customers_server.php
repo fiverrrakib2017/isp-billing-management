@@ -142,16 +142,62 @@ if(isset($_GET['create_customer_request']) && $_SERVER['REQUEST_METHOD'] == 'POS
     $address = trim($_POST['address']);
     $area_id = intval($_POST['area_id']);
     $request_by = trim($_POST['request_by']);
+    $remarks = trim($_POST['remarks']);
     if (empty($fullname) || empty($mobile) || empty($address)) {
         echo json_encode(['success' => false, 'message' => 'All fields are required.']);
         exit;
     }
     /* Insert data into the database*/
-    $stmt = $con->prepare("INSERT INTO customer_request (fullname, mobile, address, area_id,req_date, request_by,status) VALUES (?, ?, ?, ?, NOW(),?,'0')");
-    $stmt->bind_param('sssis', $fullname, $mobile, $address, $area_id, $request_by);
+    $stmt = $con->prepare("INSERT INTO customer_request (fullname, mobile, address, area_id,req_date, request_by,remarks,status) VALUES (?, ?, ?, ?, NOW(),?,?,'0')");
+    $stmt->bind_param('sssiss', $fullname, $mobile, $address, $area_id, $request_by,$remarks);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Customer request created successfully!']);
+        exit;
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error: ' . $stmt->error]);
+        exit;
+    }
+
+    $stmt->close();
+    exit; 
+}
+if(isset($_GET['get_customer_request_data']) && $_SERVER['REQUEST_METHOD'] == 'GET'){
+    $customer_request_id = $_GET['id'];
+    $stmt = $con->prepare("SELECT * FROM customer_request WHERE id=?");
+    $stmt->bind_param('i', $customer_request_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        echo json_encode(['success' => true, 'data' => $row]); 
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No data found!']);
+    }
+    
+    $stmt->close();
+    exit;
+}
+
+/* Update  Customer Request */
+if(isset($_GET['update_customer_request']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
+    $id = intval($_POST['id']);
+    $fullname = trim($_POST['fullname']);
+    $mobile = trim($_POST['mobile']);
+    $address = trim($_POST['address']);
+    $area_id = intval($_POST['area_id']);
+    $request_by = trim($_POST['request_by']);
+    $remarks = trim($_POST['remarks']);
+    if (empty($fullname) || empty($mobile) || empty($address)) {
+        echo json_encode(['success' => false, 'message' => 'All fields are required.']);
+        exit;
+    }
+    /* Update data into the database*/
+    $stmt = $con->prepare("UPDATE customer_request SET fullname = ?, mobile = ?, address = ?, area_id = ?, request_by = ?, remarks = ? WHERE id = ?");
+    $stmt->bind_param('sssissi', $fullname, $mobile, $address, $area_id, $request_by, $remarks, $id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Customer request updated successfully!']);
         exit;
     } else {
         echo json_encode(['success' => false, 'message' => 'Error: ' . $stmt->error]);
@@ -462,7 +508,7 @@ if(isset($_POST['area_id'])){
 
   
   
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_GET['update_customer']) {
+    if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         // echo '<pre>';
         // print_r($_POST);
 
@@ -487,12 +533,6 @@ if(isset($_POST['area_id'])){
         $user_type = $_POST['user_type'];
         $con_type = $_POST['customer_connection_type'];
 
-      
-        // if ($allPack = $con->query("SELECT * FROM branch_package WHERE id=$package AND pop_id=$pop")) {
-        //     while ($rowssss = $allPack->fetch_array()) {
-        //         $package_name = $rowssss['package_name'];
-        //     }
-        // }
         /*GET Package Name*/
         $package_name=$con->query("SELECT package_name FROM branch_package WHERE id='$package'")->fetch_array()['package_name'];
         /*Check Expire Date */
