@@ -587,14 +587,14 @@ include 'include/users_right.php';
                         /********************Filter For Online Customer*******************************/
                         <?php if (isset($_GET['online']) && !empty($_GET['online'])): ?>
                         d.status = "online";
-                        $("#customers_table_length").hide();
+                        //$("#customers_table_length").hide();
                         <?php else: ?>
                         //d.status = $('.status_filter').val();
                         <?php endif; ?>
                         /********************Filter For Online Customer*******************************/
                         <?php if (isset($_GET['offline']) && !empty($_GET['offline'])): ?>
                         d.status = "offline";
-                        $("#customers_table_length").hide();
+                        //$("#customers_table_length").hide();
                         <?php else: ?>
                         //d.status = $('.status_filter').val();
                         <?php endif; ?>
@@ -608,7 +608,7 @@ include 'include/users_right.php';
                         /********************Filter For Disabled Customer*******************************/
                         <?php if (isset($_GET['disabled']) && !empty($_GET['disabled'])): ?>
                         d.status = "disabled";
-                        $("#customers_table_length").hide();
+                        //$("#customers_table_length").hide();
                         <?php else: ?>
                         //d.status = $('.status_filter').val();
                         <?php endif; ?>
