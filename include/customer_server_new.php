@@ -25,12 +25,51 @@
                     $username = $row['username'];
                     $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
                     $chkc = $onlineusr->num_rows;
-                    $status = ($chkc == 1) 
-                        ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' 
-                        : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
-                    return $status . ' <a href="profile.php?clid=' . $row['id'] . '">' . $d . '</a>';
+                    $offline_text = "N/A"; 
+            
+                    if ($chkc == 0) { 
+                        $last_time = $con->query("SELECT acctstoptime FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1");
+            
+                        if ($last_time->num_rows > 0) {
+                            $last_time = $last_time->fetch_assoc();
+                            
+                            if (!empty($last_time['acctstoptime'])) {
+                                $offline_time = strtotime($last_time['acctstoptime']);
+                                if ($offline_time !== false) {
+                                    $current_time = time();
+                                    $time_diff = $current_time - $offline_time;
+            
+                                    if ($time_diff < 60) {
+                                        $offline_text = $time_diff . " sec ago";
+                                    } elseif ($time_diff < 3600) {
+                                        $offline_text = floor($time_diff / 60) . " min ago";
+                                    } elseif ($time_diff < 86400) {
+                                        $offline_text = floor($time_diff / 3600) . " hr ago";
+                                    } else {
+                                        $offline_text = floor($time_diff / 86400) . " days ago";
+                                    }
+                                } else {
+                                    $offline_text = "Invalid stop time";
+                                }
+                            }
+                        }
+                    }
+            
+                    if ($chkc == 1) {
+                        return '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr> 
+                                <a href="profile.php?clid=' . $row['id'] . '">' . $d . '</a>';
+                    } else {
+                        return '<img src="images/icon/offline.png" height="10" width="10"/> 
+                                <a href="profile.php?clid=' . $row['id'] . '">' . $d . '</a> 
+                                <small style="color:gray;">(' . $offline_text . ')</small>';
+                    }
                 }
             ),
+            
+            
+            
+            
+            
             array('db' => 'package_name', 'dt' => 3),
             array('db' => 'price', 'dt' => 4),
             array(

@@ -179,16 +179,19 @@
                                 <div class="col-lg-9">
                                     <select id="customer_expire_date" class="form-select">
                                         <option value="<?php echo date('d'); ?>">
-                                            <?php echo date('d'); ?></option>
+                                           
                                         <?php
-                                        if ($exp_cstmr = $con->query('SELECT * FROM customer_expires')) {
-                                            while ($rowsssss = $exp_cstmr->fetch_array()) {
-                                                $exp_date = $rowsssss['days'];
+                                        // if ($exp_cstmr = $con->query('SELECT * FROM customer_expires')) {
+                                        //     while ($rowsssss = $exp_cstmr->fetch_array()) {
+                                        //         $exp_date = $rowsssss['days'];
                                         
-                                                echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
-                                            }
+                                        //         echo '<option value="' . $exp_date . '">' . $exp_date . '</option>';
+                                        //     }
+                                        // }
+                                        for($i=1; $i <= 31; $i++){
+                                            $selected = ($i == date('d')) ? 'selected' : '';
+                                            echo '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
                                         }
-                                        
                                         ?>
                                     </select>
 

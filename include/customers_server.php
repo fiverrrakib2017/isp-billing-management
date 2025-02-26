@@ -43,6 +43,7 @@ if (isset($_POST['current_username'])) {
 //pop dependence area
 if (isset($_POST['current_pop_name'])) {
     $popName = $_POST['current_pop_name'];
+    echo '<option value="">---Select---</option>';
     //$result=$con->query("");
     if ($allArea = $con->query("SELECT * FROM `area_list` WHERE pop_id='$popName' ")) {
         while ($rowsssss = $allArea->fetch_array()) {
@@ -65,6 +66,9 @@ if (isset($_POST['get_billing_cycle'])) {
                 $data[] = $row['billing_date'];
             }
         }
+        for($i=1;$i<=31;$i++){
+            $data[] = $i;
+        }
     }
     
     if(empty($data)){
@@ -73,6 +77,9 @@ if (isset($_POST['get_billing_cycle'])) {
             while ($rowss = $exp_cstmr->fetch_array()) {
                 $data[] = $rowss['days'];
             }
+        }
+        for($i=1;$i<=31;$i++){
+            $data[] = $i;
         }
     }
     if(empty($data)){
