@@ -452,7 +452,7 @@ $gracetime = $con->query("SELECT DATEDIFF(grace_expired, NOW()) AS time FROM cus
 if ($gracetime->num_rows == 1) {
     echo '<br><b><span style="color:red;">Grace Time</span></b><br>';
     $grc_rows = $gracetime->fetch_array();
-    echo '<b>' . $grc_rows["time"] . '</b> Days';
+    echo '<b>' . $grc_rows["time"] . '</b> Days <br>';
 
 }
 
@@ -815,13 +815,18 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
 
         $r_unti = $r_cus_rows["rchrg_until"];
         $r_unti = new DateTime($r_unti);
-        $r_unti = $r_unti->format('d-m-Y');
+        $r_unti = $r_unti->format('d-M-Y');
 
-        $r_datetm = $r_cus_rows["datetm"];
-        $r_datetm = new DateTime($r_datetm);
-        //$r_datetm = $r_datetm->format('H:i A, d-M-Y');
-        $r_datetm = $r_datetm->format('d-m-Y');
-
+       
+      if ($r_cus_rows["datetm"] > date('Y-m-d H:i:s', strtotime('-1 day'))) {
+         $r_datetm = '<span class="badge bg-success">Today</span>';
+         $button='<button type="button" id="recharge_undo" data-id="' . $r_id . '" class="btn-sm btn btn-danger"><i class="mdi mdi-undo"></i></button>';
+      }else {
+         $r_datetm = new DateTime($r_cus_rows["datetm"]);
+         $r_datetm = $r_datetm->format('d-M-Y'); 
+         $button='';
+      }
+     
         $trnstype = $r_cus_rows['type'];
         if ($trnstype == "1") {
             $trnstype = "<span class='badge bg-success'>Cash</span>";
@@ -836,16 +841,16 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
         }
 
         echo '
-                                                                                     <tr>
-                                                                                     <td>' . $r_datetm . '</td>
-                                                                                         <td>' . $r_cus_month . '</td>
-                                                                                         <td>' . $trnstype . '</td>
-                                                                                         <td>' . $r_cus_ref . '</td>
-                                                                                         <td>' . $r_unti . '</td>
-                                                                                         <td>' . $r_cus_amount . '</td>
-                                                                                         <td><button type="button" id="recharge_undo" data-id="' . $r_id . '" class="btn-sm btn btn-danger"><i class="mdi mdi-undo"></i></button></td>
-                                                                                     </tr>
-                                                                                     ';
+            <tr>
+            <td>' . $r_datetm . '</td>
+               <td>' . $r_cus_month . '</td>
+               <td>' . $trnstype . '</td>
+               <td>' . $r_cus_ref . '</td>
+               <td>' . $r_unti . '</td>
+               <td>' . $r_cus_amount . '</td>
+               <td>' . $button . '</td>
+            </tr>
+            ';
     }
 }
 ?>
@@ -1112,7 +1117,9 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
         <script src="js/tickets.js"></script>
         <script type="text/javascript">
          $('#tickets_table').dataTable();
-         $('#recharge_data_table').dataTable();
+         $('#recharge_data_table').DataTable({
+            "order": [[0, "desc"]] 
+         });
          $('#user_activity_data_table').dataTable();
          showModal();
         function qr_function(customer_id, customer_name, phone_number) {

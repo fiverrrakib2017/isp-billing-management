@@ -121,9 +121,9 @@ if (file_exists($users_right_path)) {
                                         <i class="far fa-envelope"></i>&nbsp;Send Message
                                     </button>
 
-                                    <button type="button" class="btn btn-info mb-2" name="customer_billing_btn">
+                                    <!-- <button type="button" class="btn btn-info mb-2" name="customer_billing_btn">
                                         &nbsp;Change Billing
-                                    </button>
+                                    </button> -->
 
                                     <button type="button" class="btn btn-success mb-2" name="export_to_excel">
                                         <img src="https://img.icons8.com/?size=100&id=117561&format=png&color=000000"
