@@ -443,7 +443,9 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
         }
     }
-
+    if(($_GET['bill_collect']) > 0){
+        $condition .= (!empty($condition) ? " AND " : "") . "rchg_by = '" . $_GET['bill_collect'] . "'";
+    }
     
     /* Output JSON for DataTables to handle*/
     // echo json_encode(

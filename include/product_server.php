@@ -108,15 +108,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['check_product_qty'])) 
     $result = $stmt->get_result();
     $product_data = $result->fetch_assoc();
 
-    if ($product_data) {
-        $current_qty = $product_data['current_qty'];
-        
-        if ($current_qty >= $requested_qty) {
-            $response = array("success" => true, "message" => "Product is available");
-        } else {
-            $response = array("success" => false, "message" => "Product is not available");
-        }
-    } else {
+     if ($product_data) {
+    //      $current_qty = $product_data['current_qty'];
+    //     exit; 
+    //     if ($current_qty >= $requested_qty) {
+    //         $response = array("success" => true, "message" => "Product is available");
+    //     } else {
+    //         $response = array("success" => false, "message" => "Product is not available");
+    //     }  
+     $response = array("success" => true, "message" => "Product is available");
+     } 
+ 
+    else {
         $response = array("success" => false, "message" => "Product not found");
     }
 

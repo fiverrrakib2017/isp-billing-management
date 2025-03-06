@@ -478,90 +478,7 @@ if ($lastused = $con->query("SELECT SUM(acctinputoctets)/1000/1000/1000 AS GB_IN
                                        </div>
                                     </div>
                                  </div>
-                                 <div class="row">
-                                    <canvas id="bandwidthChart"></canvas>
-                                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                                    <script>
-        $(document).ready(function() {
-            let ctx = document.getElementById('bandwidthChart').getContext('2d');
-            let bandwidthChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Download Speed (Mbps)',
-                        borderColor: 'blue',
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        data: [],
-                        fill: false,
-                        tension: 0.4
-                    }, {
-                        label: 'Upload Speed (Mbps)',
-                        borderColor: 'red',
-                        borderWidth: 2,
-                        pointRadius: 2,
-                        data: [],
-                        fill: false,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    animation: {
-                        duration: 200,
-                        easing: 'linear'
-                    },
-                    scales: {
-                        x: { title: { display: true, text: 'Time' } },
-                        y: { title: { display: true, text: 'Speed (Mbps)' }, min: 0, max: 100 }
-                    }
-                }
-            });
-
-            function fetch_dumy_data() {
-                let time = new Date().toLocaleTimeString();
-                let downloadSpeed = (Math.random() * 50 + 10).toFixed(2);
-                let uploadSpeed = (Math.random() * 20 + 5).toFixed(2); 
-                
-                if (bandwidthChart.data.labels.length > 20) {
-                    bandwidthChart.data.labels.shift();
-                    bandwidthChart.data.datasets[0].data.shift();
-                    bandwidthChart.data.datasets[1].data.shift();
-                }
-                
-                bandwidthChart.data.labels.push(time);
-                bandwidthChart.data.datasets[0].data.push(downloadSpeed);
-                bandwidthChart.data.datasets[1].data.push(uploadSpeed);
-                bandwidthChart.update();
-            }
-            // function __fetch_data() {
-            //     $.ajax({
-            //         url: "include/customers_server.php?fetch_bandwith_data=true&username=<?php echo $username; ?>",
-            //         method: "GET",
-            //         dataType: "json",
-            //         success: function(response) {
-            //             if (!response.error) {
-            //                 if (bandwidthChart.data.labels.length > 20) {
-            //                     bandwidthChart.data.labels.shift();
-            //                     bandwidthChart.data.datasets[0].data.shift();
-            //                     bandwidthChart.data.datasets[1].data.shift();
-            //                 }
-
-            //                 bandwidthChart.data.labels.push(response.time);
-            //                 bandwidthChart.data.datasets[0].data.push(response.download);
-            //                 bandwidthChart.data.datasets[1].data.push(response.upload);
-            //                 bandwidthChart.update();
-            //             }
-            //         }
-            //     });
-            // }
-            //__fetch_data();
-           setInterval(fetch_dumy_data, 500);
-        });
-    </script>
-                                 </div>
+                                 
                                  <div class="row">
                                     <!-- Earnings (Monthly) Card Example -->
                                     <div class="col-xl-3 col-md-6 mb-4">
@@ -678,6 +595,90 @@ if ($duepmt = $con->query("SELECT SUM(discount) AS discount_amount FROM customer
                                           </div>
                                        </div>
                                     </div>
+                                 </div>
+                                 <div class="row">
+                                    <canvas id="bandwidthChart"></canvas>
+                                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                    <script>
+        $(document).ready(function() {
+            let ctx = document.getElementById('bandwidthChart').getContext('2d');
+            let bandwidthChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Download Speed (Mbps)',
+                        borderColor: 'blue',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        data: [],
+                        fill: false,
+                        tension: 0.4
+                    }, {
+                        label: 'Upload Speed (Mbps)',
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        pointRadius: 2,
+                        data: [],
+                        fill: false,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    animation: {
+                        duration: 200,
+                        easing: 'linear'
+                    },
+                    scales: {
+                        x: { title: { display: true, text: 'Time' } },
+                        y: { title: { display: true, text: 'Speed (Mbps)' }, min: 0, max: 100 }
+                    }
+                }
+            });
+
+            function fetch_dumy_data() {
+                let time = new Date().toLocaleTimeString();
+                let downloadSpeed = (Math.random() * 50 + 10).toFixed(2);
+                let uploadSpeed = (Math.random() * 20 + 5).toFixed(2); 
+                
+                if (bandwidthChart.data.labels.length > 20) {
+                    bandwidthChart.data.labels.shift();
+                    bandwidthChart.data.datasets[0].data.shift();
+                    bandwidthChart.data.datasets[1].data.shift();
+                }
+                
+                bandwidthChart.data.labels.push(time);
+                bandwidthChart.data.datasets[0].data.push(downloadSpeed);
+                bandwidthChart.data.datasets[1].data.push(uploadSpeed);
+                bandwidthChart.update();
+            }
+            // function __fetch_data() {
+            //     $.ajax({
+            //         url: "include/customers_server.php?fetch_bandwith_data=true&username=<?php echo $username; ?>",
+            //         method: "GET",
+            //         dataType: "json",
+            //         success: function(response) {
+            //             if (!response.error) {
+            //                 if (bandwidthChart.data.labels.length > 20) {
+            //                     bandwidthChart.data.labels.shift();
+            //                     bandwidthChart.data.datasets[0].data.shift();
+            //                     bandwidthChart.data.datasets[1].data.shift();
+            //                 }
+
+            //                 bandwidthChart.data.labels.push(response.time);
+            //                 bandwidthChart.data.datasets[0].data.push(response.download);
+            //                 bandwidthChart.data.datasets[1].data.push(response.upload);
+            //                 bandwidthChart.update();
+            //             }
+            //         }
+            //     });
+            // }
+            //__fetch_data();
+           setInterval(fetch_dumy_data, 500);
+        });
+    </script>
                                  </div>
                                  <div class="container">
                                     <div class="row">

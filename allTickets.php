@@ -34,8 +34,8 @@ include("include/users_right.php");
         } */
 
         .animate__custom {
-            animation-duration: 0.5s !important; /* 2 সেকেন্ডের জন্য */
-            animation-delay: 1s !important; /* 1 সেকেন্ড দেরি করে শুরু হবে */
+            animation-duration: 0.5s !important; 
+            animation-delay: 1s !important; 
         }
     </style>
 
@@ -211,7 +211,7 @@ include("include/users_right.php");
     <?php include 'script.php'; ?>
     <script src="js/tickets.js"></script>
     <script type="text/javascript">
-        var table;
+       
         $(document).ready(function(){
             var received_pop_id = "<?php echo isset($_GET['pop_id']) ? $_GET['pop_id'] : ''; ?>";
             var received_area_id = "<?php echo isset($_GET['area_id']) ? $_GET['area_id'] : ''; ?>";
@@ -273,7 +273,7 @@ include("include/users_right.php");
             }
            
             
-            table=$('#tickets_datatable').DataTable( {
+            var  table=$('#tickets_datatable').DataTable( {
                "searching": true,
                 "paging": true,
                 "info": false,
@@ -297,6 +297,10 @@ include("include/users_right.php");
                         // Hide loading spinner
                         //$('#tickets_datatable').unblock();
                     },
+                    error: function(xhr, error, thrown) {
+                        console.log("AJAX Error:", error, thrown, xhr.responseText);
+                        alert("Failed to load data! Check console for details.");
+                    }
                 },
                 "order": [[0, 'desc']],
             });

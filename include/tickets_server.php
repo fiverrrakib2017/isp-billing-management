@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include 'db_connect.php';
 if (!isset($_SESSION)) {
     session_start();
@@ -113,18 +116,19 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             'db' => 'customer_id',
             'dt' => 7,
             'formatter' => function ($d, $row) use ($con) {
-                /*Fetch customer area*/
-                $customerQuery = $con->query("SELECT * FROM customers WHERE id=$d");
-                if ($customer = $customerQuery->fetch_assoc()) {
-                    $area_id = $customer['area'];
-                    $areaQuery = $con->query("SELECT * FROM area_list WHERE id=$area_id");
-                    if ($area = $areaQuery->fetch_assoc()) {
-                        return $area['name'];
+                $get_area = 'N/A';
+                $areaQuery = $con->query("SELECT area FROM customers WHERE id=$d LIMIT 1");
+                if ($areaQuery && $areaRow = $areaQuery->fetch_array()) {
+                    $area_id = $areaRow['area'];
+                    $areaNameQuery = $con->query("SELECT name FROM area_list WHERE id=$area_id LIMIT 1");
+                    if ($areaNameQuery && $areaRow = $areaNameQuery->fetch_array()) {
+                        $get_area = $areaRow['name'];
                     }
                 }
-                return 'Unknown Area';
+                return $get_area;
             },
         ],
+        
         [
             'db' => 'asignto',
             'dt' => 8,
@@ -195,7 +199,7 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         ],
     ];
     $condition = '1=1';
-
+   
     if (!empty($_SESSION['user_pop'])) {
         if ($_SESSION['user_pop'] == 1) {
             $condition .= '';
@@ -203,11 +207,12 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
             $condition .= " AND pop_id = '" . mysqli_real_escape_string($con, $_SESSION['user_pop']) . "'";
         }
     }
-
+   
     /* Check if 'area_id' is provided in the GET request*/
     if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
         $condition .= " AND area_id = '" . mysqli_real_escape_string($con, $_GET['area_id']) . "'";
     }
+    
 
     /* Check if 'pop_id' is provided in the GET request*/
     if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
@@ -217,6 +222,7 @@ if (isset($_GET['get_tickets_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     if (!empty($_GET['status'])) {
         $condition .= " AND ticket_type = '" . mysqli_real_escape_string($con, $_GET['status']) . "'";
     }
+    
     /* Output JSON for DataTables to handle*/
     echo json_encode(SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition));
 }
