@@ -397,7 +397,15 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
                 return $status . ' <a href="profile.php?clid=' . $d . '">' . $username . '</a>';
             }
         ),
-        array('db' => 'months', 'dt' => 3),
+        array('db' => 'months', 
+            'dt' => 3,
+            'formatter'=>function($d,$row){
+                if(empty($d)){
+                    return 'N/A';
+                }
+                return $d;
+            }
+        ),
         array('db' => 'type', 
             'dt' => 4,
             'formatter' => function($d, $row) {
@@ -435,7 +443,10 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
         $condition .= (!empty($condition) ? " AND " : "") . "datetm BETWEEN '$from_date' AND '$to_date'";
     }
 
-    if (!empty($_GET['type'])) {
+    
+    
+
+    if (!empty($_GET['type']) && $_GET['type'] !=='---Select Type---') {
         $type = $_GET['type']; 
         if ($type == 'Credit') {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '0'";
@@ -443,19 +454,24 @@ if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
             $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
         }
     }
+    /*Total Amount Initial Value*/
+    $totalAmount='';
     if(($_GET['bill_collect']) > 0){
         $condition .= (!empty($condition) ? " AND " : "") . "rchg_by = '" . $_GET['bill_collect'] . "'";
-    }
-    
-    /* Output JSON for DataTables to handle*/
-    // echo json_encode(
-    //     SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
-    // );
-    $totalQuery = "SELECT SUM(purchase_price) as total FROM $table " . (!empty($condition) ? " WHERE $condition" : "");
-    $totalResult = $con->query($totalQuery);
-    $totalRow = $totalResult->fetch_assoc();
-    $totalAmount = $totalRow['total'] ?? 0;
+        
+        $totalAmount = get_total_amount($table, $condition . " AND type != '0'", $con);
 
+        if (!empty($_GET['type']) && $_GET['type'] !=='---Select Type---') {
+            $type = $_GET['type']; 
+
+            if ($type == 'Credit') {
+                $totalAmount = get_total_amount($table,$condition,$con);
+            }
+           
+        }
+    }else{
+        $totalAmount = get_total_amount($table, $condition, $con);
+    }
    
     $response = SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition);
     $response['totalAmount'] = number_format((float)$totalAmount, 2, '.', '');
@@ -574,6 +590,15 @@ HAVING
     }
 
     echo json_encode($response);
+    exit; 
+}
+
+function get_total_amount($table,$condition,$con){
+    $totalQuery = "SELECT SUM(purchase_price) as total FROM $table " . 
+    (!empty($condition) ? " WHERE $condition" : "");
+    $totalResult = $con->query($totalQuery);
+    $totalRow = $totalResult->fetch_assoc();
+    return $totalRow['total'] ?? 0;
 }
 
 ?>
