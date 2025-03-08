@@ -139,8 +139,6 @@ if (isset($_GET['update_bank']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($account_number)) {
         $errors['account_number'] = "Account Number is required.";
     }
-    // print_r($_POST); exit; 
-    // echo $_POST; exit; 
     /* Prepare an SQL statement*/
     $stmt = $con->prepare("UPDATE `banks` SET bank_name = ?, branch_name=?,account_number=? WHERE id = ?");
 
