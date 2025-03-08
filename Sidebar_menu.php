@@ -133,22 +133,42 @@
                                     <span>Inventory</span>
                                 </a>
                                 <ul class="sub-menu" aria-expanded="false">
-                                    <li><a href="sale.php">Sale</a></li>
-                                    <li><a href="sales_invoice.php">Sale's Invoice</a></li>
-                                    <li><a href="purchase.php">Purchase</a></li>
-                                    <li><a href="purchase_invoice.php">Purchase Invoice</a></li>
                                     <li><a href="product.php">Products</a></li>
                                     <li><a href="category.php">Category</a></li>
                                     <li><a href="brand.php">Brand</a></li>
                                     <li><a href="units.php">Units</a></li>
+                                    <li><a href="store.php">Store</a></li>
+                                </ul>
+                            </li>
+                            <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Accounts'): ?> 
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="fas fa-shopping-cart"></i>
+                                    <span>Sale's</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="sale.php">Sale</a></li>
+                                    <li><a href="sales_invoice.php">Sale's Invoice</a></li>
                                     <li><a href="client.php">Client </a></li>
                                     <li><a href="client_tickets.php">Client Tickets</a></li>
-                                    <li><a href="store.php">Store</a></li>
-                                    <li><a href="supplier.php">Supplier</a></li>
                                 </ul>
                             </li>
                             <?php endif; ?>
 
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Accounts'): ?> 
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="fas fa-shopping-bag"></i>
+                                    <span>Purchase</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="purchase.php">Purchase</a></li>
+                                    <li><a href="purchase_invoice.php">Purchase Invoice</a></li>
+                                    <li><a href="supplier.php">Supplier</a></li>
+                                </ul>
+                            </li>
+                            <?php endif; ?>
                             <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -160,8 +180,8 @@
                                     <!-- <li><a href="recharge_filter.php">Recharge Filter</a></li> -->
                                     <li><a href="bill_collection.php">Bill Collection</a></li>
                                     <li><a href="cash_collection.php">Cash Collection</a></li>
-                                    <li><a href="mobile_banking.php">Mobile Banking Log</a></li>
-                                    <li><a href="bkash_search.php">bKash Search</a></li>
+                                    <!-- <li><a href="mobile_banking.php">Mobile Banking Log</a></li>
+                                    <li><a href="bkash_search.php">bKash Search</a></li> -->
                                 </ul>
                             </li>
                             <?php endif; ?>
