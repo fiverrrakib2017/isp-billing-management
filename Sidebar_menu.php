@@ -170,7 +170,18 @@
                             </li>
                             <?php endif; ?>
 
-                           
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Accounts'): ?> 
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="fas fa-university"></i> 
+                                    <span>Bank</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="bank_list.php">Bank List</a></li>
+                                    <li><a href="bank_transaction.php">Bank Transaction</a></li>
+                                </ul>
+                            </li>
+                            <?php endif; ?>
 
 
                             <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?> 
