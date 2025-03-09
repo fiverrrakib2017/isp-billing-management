@@ -152,14 +152,15 @@ if (isset($_GET['get_invoice']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
 
-    
+   
 
     $client_id = isset($_POST["client_id"]) ? trim($_POST["client_id"]) : '';
     $paid_amount = isset($_POST["paid_amount"]) ? trim($_POST["paid_amount"]) : '';
     $transaction_type = isset($_POST["transaction_type"]) ? trim($_POST["transaction_type"]) : '';
     $transaction_date = isset($_POST["transaction_date"]) ? trim($_POST["transaction_date"]) : '';
     $transaction_note = isset($_POST["transaction_note"]) ? trim($_POST["transaction_note"]) : '';
-
+    $bank_id = isset($_POST["bank_id"]) ? trim($_POST["bank_id"]) : '';
+   
 	if (empty($client_id)) {
 		echo json_encode([
 			'success' => false,
@@ -220,12 +221,16 @@ if(isset($_GET['add_due_payment']) && $_SERVER['REQUEST_METHOD']=='POST'){
     }
     $user_id=$_SESSION['uid']?? 1;
     $date=date('Y-m-d');
-
-    $con->query("INSERT INTO ledger_transactions (transaction_number,user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) VALUES ('$transaction_number','$user_id', '$mstr_ledger_id', '$ledger_id', '$sub_ledger_id', '1', '$paid_amount', '$paid_amount', '1', '$transaction_note', '$transaction_date')");
+    /*Insert Ledger Transaction data*/
+    $con->query("INSERT INTO ledger_transactions (user_id, mstr_ledger_id, ledger_id, sub_ledger_id, qty, value, total, status, note, date) VALUES ('$user_id', '$mstr_ledger_id', '$ledger_id', '$sub_ledger_id', '1', '$paid_amount', '$paid_amount', '1', '$transaction_note', '$transaction_date')");
 
      /*Insert Inventory Transaction data*/
     $con->query("INSERT INTO `inventory_transaction`(`inventory_type`,`invoice_id`, `client_id`, `user_id`, `amount`, `transaction_type`, `transaction_date`, `create_date`, `note`) VALUES ('Supplier','0','$client_id','$user_id','$paid_amount','$transaction_type','$transaction_date',NOW(),'$transaction_note')");
 
+    /*Insert Data Bank Transaction*/
+    if($bank_id > 0 && isset($bank_id)){
+        $con->query("INSERT INTO `bank_transactions`(`bank_id`, `transaction_type`, `amount`, `transaction_date`, `description`) VALUES ('$bank_id','credit', '$paid_amount','$transaction_date','$transaction_note')");
+    }
     echo json_encode([
         'success' => true,
         'message' => 'Payment processed successfully!',

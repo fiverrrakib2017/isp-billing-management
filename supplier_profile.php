@@ -160,7 +160,7 @@ if (isset($_GET['clid'])) {
                                                                     <?php
                                                                     
                                                                     $total_paid_amount = $con->query("SELECT SUM(amount) AS total_paid FROM inventory_transaction WHERE client_id='$clid' AND transaction_type  !='0' AND inventory_type='Supplier'")->fetch_array()['total_paid'] ?? 0;
-                                                                    echo floatval( $total_paid_amount);
+                                                                    echo floatval($total_paid_amount);
                                                                     ?>
                                                                 </div>
                                                             </div>
@@ -263,7 +263,7 @@ if (isset($_GET['clid'])) {
                                                                                                     echo "<span class='badge bg-primary'>Due Paid</span>";
                                                                                                 } elseif ($rows['transaction_type'] == '0') {
                                                                                                     echo "<span class='badge bg-danger'>Crdit</span>";
-                                                                                                }elseif ($rows['transaction_type'] == '5') {
+                                                                                                } elseif ($rows['transaction_type'] == '5') {
                                                                                                     echo "<span class='badge bg-info'>Bank</span>";
                                                                                                 }
                                                                                                 ?>
@@ -361,7 +361,7 @@ if (isset($_GET['clid'])) {
                                                                                                     href="purchase_inv_delete.php?clid=<?php echo htmlspecialchars($rows['id']); ?>"><i
                                                                                                         class="fas fa-trash"></i></a>
 
-                                                                                                
+
                                                                                             </td>
                                                                                         </tr>
                                                                                         <?php  }  ?>
@@ -401,14 +401,14 @@ if (isset($_GET['clid'])) {
                         <div class="modal-body">
                             <form action="include/purchase_server.php?add_due_payment=true" method="POST"
                                 enctype="multipart/form-data">
-                                <input type="hidden" name="client_id" id="client_id" value="<?php echo $clid;  ?>">
-                               
+                                <input type="hidden" name="client_id" id="client_id" value="<?php echo $clid; ?>">
+
                                 <div class="form-group mb-2">
                                     <label>Due Amount</label>
                                     <input readonly name="due_amount" placeholder="Enter Due Amount"
                                         class="form-control" type="text" value="<?php
-                                          echo round($total_amount - $total_paid_amount, 2);
-                                          ?>" required>
+                                        echo round($total_amount - $total_paid_amount, 2);
+                                        ?>" required>
                                 </div>
                                 <div class="form-group mb-2">
                                     <label>Paid Amount</label>
@@ -447,12 +447,29 @@ if (isset($_GET['clid'])) {
                                 </div>
                                 <div class="form-group mb-2">
                                     <label>Transaction Type</label>
-                                    <select name="transaction_type" id="transaction_type" class="form-select" type="text" required>
+                                    <select name="transaction_type" id="transaction_type" class="form-select"
+                                        type="text" required>
                                         <option value="">---Select---</option>
+                                        <option value="1">Cash</option>
                                         <option value="2">Bkash</option>
                                         <option value="3">Nagad</option>
                                         <option value="4">Due Payment</option>
                                         <option value="5">Bank</option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-2 d-none" id="bank_area">
+                                    <label>Bank Name</label>
+                                    <select class="form-select" id="bank_id" name="bank_id" style="width: 100%;">
+                                        <option value="">Select</option>
+                                        <?php
+                                        if ($get_all_bank = $con->query('SELECT * FROM banks')) {
+                                            while ($rows = $get_all_bank->fetch_array()) {
+                                                echo '<option value="' . $rows['id'] . '">' . $rows['bank_name'] . '</option>';
+                                            }
+                                        }
+                                        
+                                        ?>
+
                                     </select>
                                 </div>
                                 <div class="form-group mb-2">
@@ -475,7 +492,7 @@ if (isset($_GET['clid'])) {
                 </div>
             </div>
 
-            
+
 
             <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
                 aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -668,7 +685,7 @@ if (isset($_GET['clid'])) {
             });
 
             /**********************Paid Due Amount Script****************************/
-            
+
             $('#paymentModal').on('shown.bs.modal', function() {
                 if (!$('#sub_ledger_id').hasClass("select2-hidden-accessible")) {
                     $('#sub_ledger_id').select2({
@@ -680,7 +697,26 @@ if (isset($_GET['clid'])) {
                         dropdownParent: $('#paymentModal')
                     });
                 }
+                if (!$('#bank_id').hasClass("select2-hidden-accessible")) {
+                    $('#bank_id').select2({
+                        dropdownParent: $('#paymentModal')
+                    });
+                }
             });
+
+            /*Show Bank Name in Payment Modal*/
+            $(document).on('change','#transaction_type',function(){
+                var transaction_type=$(this).val();
+                if ($(this).val() == '5') {
+                    $('#bank_area').removeClass('d-none'); 
+                } else {
+                    $('#bank_area').addClass('d-none'); 
+                    $('#bank_id').val(''); 
+                }
+            });
+          
+            
+
             $('#paymentModal form').submit(function(e) {
                 e.preventDefault();
                 var form = $(this);
