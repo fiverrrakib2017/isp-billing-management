@@ -1,9 +1,8 @@
 <?php
-include("include/security_token.php");
-include("include/db_connect.php");
-include("include/pop_security.php");
-include("include/users_right.php");
-
+include 'include/security_token.php';
+include 'include/db_connect.php';
+include 'include/pop_security.php';
+include 'include/users_right.php';
 
 // $bank_transaction = $con->query("SELECT  b.id, b.bank_name AS bank_name,
 //             COALESCE(SUM(CASE WHEN bt.transaction_type = 'credit' THEN bt.amount ELSE 0 END), 0) AS total_credit,
@@ -25,16 +24,17 @@ $bank_transaction = $con->query("SELECT
         FROM bank_transactions bt
         JOIN banks b ON bt.bank_id = b.id
         ORDER BY bt.transaction_date ASC");
-        $balances = [];
+$balances = [];
 ?>
 
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include 'style.php';?>
+    <?php include 'style.php'; ?>
 </head>
 
 <body data-sidebar="dark">
@@ -43,7 +43,8 @@ $bank_transaction = $con->query("SELECT
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php $page_title="Bank Transaction";  include 'Header.php';  ?>
+        <?php $page_title = 'Bank Transaction';
+        include 'Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -80,14 +81,14 @@ $bank_transaction = $con->query("SELECT
                                     <br>
                                 </div>
 
-                               
+
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12 stretch-card">
                             <div class="card">
-                                <div class="card-header">
+                                <div class="card-header bg-white">
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group mb-2">
@@ -98,70 +99,38 @@ $bank_transaction = $con->query("SELECT
                                         <div class="col-md-3">
                                             <div class="form-group mb-2">
                                                 <label for="">To Date</label>
-                                                <input type="date" class="form-control" id="endDate" value="2025-03-08">
+                                                <input type="date" class="form-control" id="endDate"
+                                                    value="<?php echo date('Y-m-d'); ?>">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group mb-2">
                                                 <label for="">Bank Account</label>
-                                                <select class="form-select" id="masterLedger">
+                                                <select class="form-select" id="bank_id">
                                                     <option value="">Select</option>
+                                                    <?php
+                                                    if ($get_all_bank = $con->query('SELECT * FROM banks')) {
+                                                        while ($rows = $get_all_bank->fetch_array()) {
+                                                            echo '<option value="' . $rows['id'] . '">' . $rows['bank_name'] . '</option>';
+                                                        }
+                                                    }
+                                                    
+                                                    ?>
+
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
-                                            <button type="button" id="searchBtn" class="btn btn-primary mt-3">Search Now</button>
+                                            <button type="button" id="searchBtn" class="btn btn-primary "
+                                                style="margin-top: 20px;">Search Now</button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="table-responsive ">
-                                        <table id="" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;" >
-                                            <thead >
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Transaction Date</th>
-                                                    <th>Bank Name</th>
-                                                    <th>Debit Amount</th>
-                                                    <th>Credit Amount</th>
-                                                    <th>Current Balance</th>
-                                                    <th>Description</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            <?php while ($row = $bank_transaction->fetch_assoc()) { 
-            $bank_id = $row['bank_name'];
-            if (!isset($balances[$bank_id])) {
-                $balances[$bank_id] = 0;
-            }
 
-            if ($row['transaction_type'] == 'debit') { 
-                $balances[$bank_id] += $row['amount']; 
-            } else {
-                $balances[$bank_id] -= $row['amount']; 
-            }
-        ?>
-            <tr>
-                <td><?= $row['id'] ?></td>
-                <td><?= date("d M, Y", strtotime($row['transaction_date'])) ?></td>
-                <td><?= $row['bank_name'] ?></td>
-                <td style="color: blue;">
-                    <?= ($row['transaction_type'] == 'debit') ? number_format($row['amount'], 2) : '-' ?>
-                </td>
-                <td style="color: red;">
-                    <?= ($row['transaction_type'] == 'credit') ? number_format($row['amount'], 2) : '-' ?>
-                </td>
-                <td style="color: green; font-weight: bold;">
-                    <?= number_format($balances[$bank_id], 2) ?>
-                </td>
-                <td><?= $row['description'] ?></td>
-            </tr>
-        <?php } ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                <div class="card-body" id="tableArea">
+                                    
                                 </div>
-                               
+
                             </div>
                         </div>
                     </div>
@@ -175,7 +144,7 @@ $bank_transaction = $con->query("SELECT
 
     </div>
     <!-- END layout-wrapper -->
-    
+
     <div id="deleteModal" class="modal fade">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
@@ -197,30 +166,33 @@ $bank_transaction = $con->query("SELECT
             </div>
         </div>
     </div>
-     <!-- Add Modal -->
-     <div class="modal fade bs-example-modal-lg" id="addModal" tabindex="-1" role="dialog"
+    <!-- Add Modal -->
+    <div class="modal fade bs-example-modal-lg" id="addModal" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog " role="document">
             <div class="modal-content col-md-12">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"><span
-                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;Create Bank</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"><span class="mdi mdi-account-check mdi-18px"></span>
+                        &nbsp;Create Bank</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form action="include/bank_server.php?add_bank=true" method="POST" enctype="multipart/form-data">
                         <div class="form-group mb-2">
                             <label>Bank Name</label>
-                            <input name="bank_name" placeholder="Enter Bank Name" class="form-control" type="text" >
-                        </div>           
+                            <input name="bank_name" placeholder="Enter Bank Name" class="form-control"
+                                type="text">
+                        </div>
                         <div class="form-group mb-2">
                             <label>Branch Name</label>
-                            <input name="branch_name" placeholder="Enter Branch Name" class="form-control" type="text" >
-                        </div>           
+                            <input name="branch_name" placeholder="Enter Branch Name" class="form-control"
+                                type="text">
+                        </div>
                         <div class="form-group mb-2">
                             <label>Account Number</label>
-                            <input name="account_number" placeholder="Enter Account Number" class="form-control" type="text" >
-                        </div>           
+                            <input name="account_number" placeholder="Enter Account Number" class="form-control"
+                                type="text">
+                        </div>
                         <div class="modal-footer ">
                             <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
                             <button type="submit" class="btn btn-success">Save Bank</button>
@@ -230,31 +202,35 @@ $bank_transaction = $con->query("SELECT
             </div>
         </div>
     </div>
-     <!-- Edit Modal -->
-     <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
+    <!-- Edit Modal -->
+    <div class="modal fade bs-example-modal-lg" id="editModal" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog " role="document">
             <div class="modal-content col-md-12">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"><span
-                        class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Bank</h5>
+                            class="mdi mdi-account-check mdi-18px"></span> &nbsp;Update Bank</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="include/bank_server.php?update_bank=true" method="POST" enctype="multipart/form-data" >          
+                    <form action="include/bank_server.php?update_bank=true" method="POST"
+                        enctype="multipart/form-data">
                         <div class="form-group mb-2">
                             <label>Bank Name</label>
-                             <input name="id" class="d-none" type="text" >
-                             <input name="bank_name" placeholder="Enter Bank Name" class="form-control" type="text" >
-                        </div>   
+                            <input name="id" class="d-none" type="text">
+                            <input name="bank_name" placeholder="Enter Bank Name" class="form-control"
+                                type="text">
+                        </div>
                         <div class="form-group mb-2">
                             <label>Branch Name</label>
-                            <input name="branch_name" placeholder="Enter Branch Name" class="form-control" type="text" >
-                        </div>           
+                            <input name="branch_name" placeholder="Enter Branch Name" class="form-control"
+                                type="text">
+                        </div>
                         <div class="form-group mb-2">
                             <label>Account Number</label>
-                            <input name="account_number" placeholder="Enter Account Number" class="form-control" type="text" >
-                        </div>           
+                            <input name="account_number" placeholder="Enter Account Number" class="form-control"
+                                type="text">
+                        </div>
                         <div class="modal-footer ">
                             <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
                             <button type="submit" class="btn btn-success">Save Changes</button>
@@ -265,203 +241,48 @@ $bank_transaction = $con->query("SELECT
         </div>
     </div>
     <div class="rightbar-overlay"></div>
-    <?php include 'script.php';?>
+    <?php include 'script.php'; ?>
     <script type="text/javascript">
-    var table;
-    $(document).ready(function(){
-            table=$('#table1').DataTable( {
-                "searching": true,
-                "paging": true,
-                "info": false,
-                "lengthChange":true ,
-                "processing"		: true,
-                "serverSide"		: true,
-                "zeroRecords":    "No matching records found",
-                "ajax"				: {
-                    url			: "include/bank_server.php?show_bank_data=true",
-                    type		: 'GET',
-                },
-                "buttons": [			
-            {
-                extend: 'copy',
-                text: '<i class="fas fa-copy"></i> Copy',
-                titleAttr: 'Copy',
-                exportOptions: { columns: ':visible' }
-            }, 
-            {
-                extend: 'excel',
-                text: '<i class="fas fa-file-excel"></i> Excel',
-                titleAttr: 'Excel',
-                exportOptions: { columns: ':visible' }
-            }, 
-            {
-                extend: 'csv',
-                text: '<i class="fas fa-file-csv"></i> CSV',
-                titleAttr: 'CSV',
-                exportOptions: { columns: ':visible' }
-            }, 
-            {
-                extend: 'pdf',
-                exportOptions: { columns: ':visible' },
-                orientation: 'landscape',
-                pageSize: "LEGAL",
-                text: '<i class="fas fa-file-pdf"></i> PDF',
-                titleAttr: 'PDF'
-            }, 
-            {
-                extend: 'print',
-                text: '<i class="fas fa-print"></i> Print',
-                titleAttr: 'Print',
-                exportOptions: { columns: ':visible' }
-            }, 
-            {
-                extend: 'colvis',
-                text: '<i class="fas fa-list"></i> Column Visibility',
-                titleAttr: 'Column Visibility'
-            }
-            ],
+        $(document).ready(function() {
+            $("#bank_id").select2();
+
         });
-        table.buttons().container().appendTo($('#export_buttonscc'));	
-    });
-    /** Department Add **/
-    $('#addModal form').submit(function(e){
-        e.preventDefault();
+        $(document).on('click', '#searchBtn', function() {
+            var bank_id = $('#bank_id').val();
+            var fromDate = $('#fromDate').val();
+            var endDate = $('#endDate').val();
 
-        var form = $(this);
-        var url = form.attr('action');
-        var formData = form.serialize();
-        $.ajax({
-            type:'POST',
-            'url':url,
-            data: formData,
-            success: function (response) {
-                const jsonResponse = JSON.parse(response);
-                if (jsonResponse.success) {
-                    $('#addModal').modal('hide'); 
-                    $('#addModal form')[0].reset();
-                    table.draw();
-                    toastr.success(jsonResponse.message); 
-                } else {
-                    toastr.error(jsonResponse.message); 
-                }
-            },
+            if (fromDate.length == 0) {
+                toastr.error("From Date is Require");
+            } else if (endDate.length == 0) {
+                toastr.error("To Date is Require");
+            } else if (bank_id.length == 0) {
+                toastr.error("Please Select Bank");
+            } else {
+                $("#searchBtn").html(
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
 
-
-            error: function (xhr, status, error) {
-                /** Handle  errors **/
-                if (xhr.status === 422) {
-                    var errors = xhr.responseJSON.errors;
-                    $.each(errors, function(key, value) {
-                        toastr.error(value[0]); 
-                    });
-                }
-            }
-        });
-    });
-    /** Department Edit **/
-    $(document).on("click", "button[name='edit_button']", function() {
-        var _id = $(this).data("id");
-        $.ajax({
-            url: "include/bank_server.php?get_bank=true", 
-            type: "GET",
-            data: { id: _id }, 
-            dataType:'json',
-            success: function(response) {
-                if (response.success) {
-                $('#editModal').modal('show');
-                $('#editModal input[name="id"]').val(response.data.id);
-                $('#editModal input[name="bank_name"]').val(response.data.bank_name);
-                $('#editModal input[name="branch_name"]').val(response.data.branch_name);
-                $('#editModal input[name="account_number"]').val(response.data.account_number);
-                } else {
-                    toastr.error("Error fetching data for edit: " + response.message);
-                }
-            },
-            error: function(xhr, status, error) {
-                toastr.error('Failed to fetch department details');
-            }
-        });
-    });
-
-    /** Update The data from the database table **/
-    $('#editModal form').submit(function(e){
-        e.preventDefault();
-
-        var form = $(this);
-        var url = form.attr('action');
-        var formData = form.serialize();
-
-        /*Get the submit button*/
-        var submitBtn = form.find('button[type="submit"]');
-
-        /*Save the original button text*/
-        var originalBtnText = submitBtn.html();
-
-        /*Change button text to loading state*/
-            
-
-        var form = $(this);
-        var url = form.attr('action');
-        var formData = form.serialize();
-        /** Use Ajax to send the delete request **/
-        $.ajax({
-            type:'POST',
-            'url':url,
-            data: formData,
-            beforeSend: function () {
-            form.find(':input').prop('disabled', true);
-            },
-            success: function (response) {
-                const jsonResponse = JSON.parse(response);
-                if (jsonResponse.success) {
-                    toastr.success(jsonResponse.message);
-                    $('#editModal').modal('hide');
-                    $('#editModal form')[0].reset();
-                    table.draw();
-                }
-            },
-
-            error: function (xhr, status, error) {
-                if (xhr.status === 422) {
-                    var errors = xhr.responseJSON.errors;
-                    $.each(errors, function(key, value) {
-                        toastr.error(value[0]);
-                    });
-                } else {
-                    toastr.error("An error occurred. Please try again.");
-                }
-            },
-            complete:function(){
-                form.find(':input').prop('disabled', false);
-            }
-        });
-    });
-
-    /*Delete Script*/
-    $(document).on('click',"button[name='delete_button']",function(){
-        var id=$(this).data('id');
-        if (confirm("Are you sure you want to delete this item?")) {
-            $.ajax({
-                type: 'POST', 
-                url: 'include/bank_server.php', 
-                data: { delete_data: true, id: id }, 
-                dataType:'json',
-                success: function(response) {
-                    if (response.success) {
-                        toastr.success("Deleted successfully!");
-                       table.draw();
-                    } else {
-                        toastr.error(response.message);
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        bank_id: bank_id,
+                        fromDate: fromDate,
+                        endDate: endDate,
+                        getReport: 1,
+                    },
+                    url: "include/bank_server.php",
+                    success: function(response) {
+                        $("#searchBtn").html('Search Now');
+                        $('#tableArea').html(response);
+                    },
+                    error: function(xhr, status, error) {
+                        // handle the error response
+                        console.log(error);
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                    toastr.error("Error deleting item! " + error);
-                }
-            });
-        }
-    });
+                });
+            }
 
+        });
     </script>
 </body>
 

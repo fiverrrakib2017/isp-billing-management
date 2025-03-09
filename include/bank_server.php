@@ -189,3 +189,76 @@ if (isset($_POST['delete_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     echo json_encode($response);
     exit;
 }
+
+if(isset($_POST['getReport']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $bank_id = $_POST['bank_id'];
+    $fromDate = $_POST['fromDate'];
+    $endDate = $_POST['endDate'];
+    $sql = "SELECT 
+                bt.id, 
+                bt.transaction_date, 
+                b.bank_name AS bank_name, 
+                bt.transaction_type, 
+                bt.amount, 
+                bt.description 
+            FROM bank_transactions bt
+            JOIN banks b ON bt.bank_id = b.id
+            WHERE bt.bank_id = '$bank_id' 
+            AND DATE(bt.transaction_date) BETWEEN '$fromDate' AND '$endDate'
+            ORDER BY bt.transaction_date ASC";
+
+    $bank_transaction = $con->query($sql);
+
+    /*Render Html Table*/ 
+    ?>
+    <div class="table-responsive">
+        <table class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Transaction Date</th>
+                    <th>Bank Name</th>
+                    <th>Debit Amount</th>
+                    <th>Credit Amount</th>
+                    <th>Current Balance</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $balances = []; 
+                while ($row = $bank_transaction->fetch_assoc()) { 
+                    $bankKey = $row['bank_name'];  
+                    if (!isset($balances[$bankKey])) {
+                        $balances[$bankKey] = 0;
+                    }
+
+                    if ($row['transaction_type'] == 'debit') { 
+                        $balances[$bankKey] += $row['amount']; 
+                    } else {
+                        $balances[$bankKey] -= $row['amount']; 
+                    }
+                ?>
+                <tr>
+                    <td><?= $row['id'] ?></td>
+                    <td><?= date('d M, Y', strtotime($row['transaction_date'])) ?></td>
+                    <td><?= $row['bank_name'] ?></td>
+                    <td style="color: blue;">
+                        <?= $row['transaction_type'] == 'debit' ? number_format($row['amount'], 2) : '-' ?>
+                    </td>
+                    <td style="color: red;">
+                        <?= $row['transaction_type'] == 'credit' ? number_format($row['amount'], 2) : '-' ?>
+                    </td>
+                    <td style="color: green; font-weight: bold;">
+                        <?= number_format($balances[$bankKey], 2) ?>
+                    </td>
+                    <td><?= $row['description'] ?></td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
+    <?php
+
+    exit; 
+}
