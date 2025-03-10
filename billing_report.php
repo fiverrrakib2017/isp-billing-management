@@ -91,6 +91,13 @@ include 'include/db_connect.php';
                                                 </tr>
                                             </thead>
                                             <tbody></tbody>
+                                            <tfoot>
+                                                <tr class="bg-info text-white">
+                                                    <th colspan="2" style="text-align:right">Total:</th>
+                                                    <th id="total_target_amount">0.00</th>
+                                                    <th id="total_collection_amount">0.00</th>
+                                                </tr>
+                                            </tfoot>
                                         </table>
                                     </div>
                                 </div>
@@ -108,14 +115,6 @@ include 'include/db_connect.php';
 
     </div>
     <!-- END layout-wrapper -->
-    <?php
-        // $options = '';
-        // $get_data = $con->query("SELECT id, fullname FROM users WHERE user_type='1'");
-
-        // while ($row = $get_data->fetch_assoc()) {
-        //     $options .= '<option value="' . $row['id'] . '">' . $row['fullname'] . '</option>';
-        // }
-    ?>
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <?php require 'script.php'; ?>
@@ -161,11 +160,6 @@ include 'include/db_connect.php';
                         </select>
                     </label>`;
 
-    var to_month = `<label style="margin-left: 10px;">
-                        <select class="to_month form-control" style="width: 120px; display: inline;">
-                            ${getMonthOptions(currentMonthStr)}
-                        </select>
-                    </label>`;
 
     var year_filter = `<label style="margin-left: 10px;">
                         <select class="year_filter form-control" style="width: 100px; display: inline;">
@@ -177,12 +171,10 @@ include 'include/db_connect.php';
         let filterContainer = $('.dataTables_filter');
 
         filterContainer.append(from_month);
-        filterContainer.append(to_month);
         filterContainer.append(year_filter);
 
-        $('.from_month').select2();
-        $('.to_month').select2();
-        $('.year_filter').select2();
+        // $('.from_month').select2();
+        // $('.year_filter').select2();
 
     }, 500);
 
@@ -194,8 +186,8 @@ include 'include/db_connect.php';
         info: true,
         order: [[0, "desc"]],
         lengthChange: true,
-        processing: false,
-        serverSide: false,
+        processing: true,
+        serverSide: true,
         lengthMenu: [
             [10, 25, 50, -1],
             [10, 25, 50, 'All']
@@ -207,30 +199,31 @@ include 'include/db_connect.php';
             url: "include/customer_recharge_server.php?get_customer_billing_report=true",
             type: 'GET',
             data: function(d) {
-                d.from_month = $('.from_date').val() || '<?php echo date('Y-m-d');?>';
-                d.to_month = $('.to_date').val() || '<?php echo date('Y-m-d');?>';
+                d.from_month = $('.from_month').val() || '<?php echo date('m');?>';
+                d.year = $('.year_filter').val() || '<?php echo date('Y');?>';
+                // d.from_month ='03';
+                // d.year = '2025';
             },
             beforeSend: function() {
                 $(".dataTables_empty").html(
                     '<img src="assets/images/loading.gif" style="background-color: transparent"/>'
                     );
             },
+            dataSrc: function (json) {
+                // $('#total_target_amount').html(json.total_target_amount);
+                // $('#total_collection_amount').html(json.total_collection_amount);
+                // return json.data;
+            }
 
         },
         drawCallback: function() {
             $('.dataTables_paginate > .pagination').addClass('pagination-rounded');
         }
     });
-    $(document).on('change','.from_date',function(){
+    $(document).on('change','.from_month',function(){
         $('#datatable').DataTable().ajax.reload();
     });
-    $(document).on('change','.to_date',function(){
-        $('#datatable').DataTable().ajax.reload();
-    });
-    $(document).on('change','.status_filter',function(){
-        $('#datatable').DataTable().ajax.reload();
-    });
-    $(document).on('change','.bill_collect',function(){
+    $(document).on('change','.year_filter',function(){
         $('#datatable').DataTable().ajax.reload();
     });
 

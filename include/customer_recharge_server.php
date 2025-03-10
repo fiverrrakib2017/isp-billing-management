@@ -608,14 +608,30 @@ if (isset($_GET['get_customer_billing_report']) && $_SERVER['REQUEST_METHOD']=='
 
     $table = 'customers';
     $primaryKey = 'id';
+    /* Get Selected Month & Year */
+    $fromMonth = isset($_GET['from_month']) ? $_GET['from_month'] : date('m');
+    $selectedYear = isset($_GET['year']) ? $_GET['year'] : date('Y');
+
+     
+     $selectedYear = intval($selectedYear);
+     $_data = $selectedYear . '-' . $fromMonth;
+ 
+     $total_target_query = $con->query("SELECT SUM(price) AS total_target FROM customers");
+     $total_target = $total_target_query->fetch_array()['total_target'] ?? 0;
+ 
+     /*Get TOTAL Collection Amount*/ 
+     $total_collection_query = $con->query("SELECT SUM(purchase_price) AS total_collection FROM customer_rechrg WHERE DATE_FORMAT(datetm, '%Y-%m') BETWEEN '$_data' AND '$_data'");
+     $total_collection = $total_collection_query->fetch_array()['total_collection'] ?? 0;
+
     $columns = array(
         array(
             'db' => 'id', 
             'dt' => 0,
         ),
        
-        array('db' => 'customer_id', 
-            'dt' => 1,
+        array(
+            'db'        => 'id',
+            'dt'        => 1,
             'formatter' => function($d, $row) use ($con) {
                 $allCustomer = $con->query("SELECT username FROM customers WHERE id = $d");
                 $row = $allCustomer->fetch_array();
@@ -628,7 +644,7 @@ if (isset($_GET['get_customer_billing_report']) && $_SERVER['REQUEST_METHOD']=='
                 return $status . ' <a href="profile.php?clid=' . $d . '">' . $username . '</a>';
             }
         ),
-        array('db' => 'amount', 
+        array('db' => 'price', 
             'dt' => 2,
             'formatter'=>function($d,$row){
                 if(empty($d)){
@@ -637,17 +653,16 @@ if (isset($_GET['get_customer_billing_report']) && $_SERVER['REQUEST_METHOD']=='
                 return $d;
             }
         ),
-        array('db' => 'amount', 
+        array(
+            'db' => 'id', 
             'dt' => 3,
-            'formatter'=>function($d,$row){
-                if(empty($d)){
-                    return 'N/A';
-                }
-                return $d;
+            'formatter' => function($d, $row) use ($con, $fromMonth, $selectedYear) {
+                $selectedYear = intval($selectedYear);
+                $data=$selectedYear.'-'.$fromMonth; 
+                $amount=$con->query("SELECT SUM(purchase_price) AS total_collection FROM customer_rechrg WHERE customer_id = '$d' AND DATE_FORMAT(datetm, '%Y-%m') BETWEEN '$data' AND '$data'")->fetch_array()['total_collection'];
+                return $amount;
             }
         ),
-      
-        
     );
 
     $condition = "";
@@ -670,8 +685,11 @@ if (isset($_GET['get_customer_billing_report']) && $_SERVER['REQUEST_METHOD']=='
         $condition .= (!empty($condition) ? " AND " : "") . "datetm BETWEEN '$from_date' AND '$to_date'";
     }
        
-    echo json_encode(SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition));
-    exit; 
+    $data = SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition);
+    $data['total_target_amount'] = number_format($total_target, 2);
+    $data['total_collection_amount'] = number_format($total_collection, 2);
+    echo json_encode($data);
+    exit;
 
 }
 
