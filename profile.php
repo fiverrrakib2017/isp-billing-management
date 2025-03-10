@@ -280,9 +280,7 @@ if (isset($_GET['clid'])) {
                     <a href="profile_edit.php?clid=<?php echo $clid;?>" class="btn btn-primary btn-sm">
                         <i class="fas fa-edit"></i> Edit Profile
                     </a>
-                    <button class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
+                 
                 </div>
             </div>
         </div>
@@ -998,7 +996,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                            </div>
                            <div class="from-group mb-2">
                               <label>Customer Remarks</label>
-                              <input type="text" id="update_customer_remarks" class="form-control " placeholder="Enter Customer Remarks" value="<?php echo $remarks; ?>">
+                              <textarea type="text" id="update_customer_remarks" class="form-control " placeholder="Enter Customer Remarks"><?php echo $remarks; ?></textarea>
                            </div>
                         </form>
                      </div>
