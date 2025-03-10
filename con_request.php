@@ -351,8 +351,7 @@ function timeAgo($startdate)
 
                                                     <td>
 
-                                                        <button type="button" id="approve_button" 
-                                                            class="btn btn-success">Approve</button>
+                                                    <button type="button" class="btn btn-success approve-btn" data-id=<?php echo $rows['id']; ?>>Approve</button>
 
                                                         <button type="button" class="btn btn-primary edit-btn"
                                                             data-id=<?php echo $rows['id']; ?>><i class="fas fa-edit"></i>
@@ -552,35 +551,44 @@ function timeAgo($startdate)
                 });
             }
         });
-        $(document).on('click', '#approve_button', function(e) {
+        $(document).on("click", ".approve-btn", function (e) {
+            var id = $(this).data('id');
             e.preventDefault();
-            if (confirm("Are you sure you want to Approve?")) {
-                var row = $(this).closest('tr');
-                var customer_requeest_id = row.find('td:nth-child(1)').text().trim();
-                var customer_requeest_fullname = row.find('td:nth-child(3)').text().trim();
-                var customer_requeest_mobile = row.find('td:nth-child(4)').text().trim();
-                var customer_requeest_area = row.find('td:nth-child(5)').text().trim();
-                var customer_requeest_address = row.find('td:nth-child(6)').text().trim();
-              
-                $("#addCustomerModal").modal('show');
 
-                if (customer_requeest_fullname.length > 0) {
-                    $("#customer_fullname").val(customer_requeest_fullname);
-                }
-                if (customer_requeest_mobile.length > 0) {
-                    $("#customer_mobile").val(customer_requeest_mobile);
-                }
-                if (customer_requeest_area.length > 0) {
-                    $("select[name='customer_area']").val(customer_requeest_area);
-                }
-                if (customer_requeest_address.length > 0) {
-                    $("#customer_address").val(customer_requeest_address);
-                }
-                if (customer_requeest_id.length > 0) {
-                    $("#customer_request_id").val(customer_requeest_id);
-                }
+            if (confirm("Are you sure you want to Approve?")) {
+
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    url: 'include/customers_server.php?get_customer_request_data=true',
+                    data: {
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response.success === true) {
+                            $("#customer_request_id").val(response.data.id || "");
+                            $("#customer_fullname").val(response.data.fullname || "");
+                            $("#customer_mobile").val(response.data.mobile || "");
+                            $("select[name='customer_area']").val(response.data.area_id || "");
+                            $("#customer_address").val(response.data.address || "");
+                            
+                            $("#addCustomerModal").modal("show");
+                        }
+                        if (response.success == false) {
+                            toastr.success(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        toastr.error("Error deleting item! " + error);
+                    }
+                });
+               
+
+               
             }
         });
+
     </script>
 </body>
 

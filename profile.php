@@ -158,13 +158,19 @@ if (isset($_GET['clid'])) {
                            <div class="col-md-6"></div>
                            <div class="col-md-6">
                               <div class="d-flex py-2" style="float:right;">
+                                 <abbr title="Note">
+                                 <button type="button" class="btn-sm btn btn-info" data-bs-target="#customerRmarksChangeModal" data-bs-toggle="modal">
+                                   <i class="fas fa-save"></i>
+                                </button>
+                                 </abbr>
+                                 &nbsp;
                                  <abbr title="Download QR ">
                                  <button type="button" class="btn-sm btn btn-success" 
                                     onclick="qr_function(<?php echo $clid; ?>, '<?php echo $fullname; ?>', '<?php echo $mobile; ?>')">
                                     <i class="mdi mdi-qrcode"></i>
                                 </button>
-
                                  </abbr>
+
                                  &nbsp;
                                  <abbr title="Password Change">
                                  <button type="button" data-bs-target="#customerPasswordChangeModal" data-bs-toggle="modal" class="btn-sm btn btn-info">
@@ -235,28 +241,54 @@ if (isset($_GET['clid'])) {
                         <div class="main-body">
                            <div class="row gutters-sm">
                               <div class="col-md-4 mb-3">
-                                 <div class="card">
-                                    <div class="card-body">
-                                       <div class="d-flex flex-column align-items-center text-center profile">
-                                          <img src="profileImages/avatar.png" class="rounded-circle" width="150" />
-                                          <div class="mt-3">
-                                             <h5>
-                                                <?php echo $fullname; ?>
-                                             </h5>
-                                             <p class="text-secondary mb-1"># <?php echo $clid; ?>
-                                                <br>
-                                                <?php echo $mobile; ?>
-                                             </p>
-                                             <abbr title="User Since">
-                                             <?php
-$createdate = new DateTime($createdate);
-$createdate = $createdate->format('d-M-Y');
-echo $createdate;
-?>
-                                             </abbr>
-                                          </div>
-                                       </div>
-                                    </div>
+                                 <div class="">
+                                 <div class="card  p-3 mb-4 bg-white rounded text-center">
+    <div class="card-body">
+        <div class="d-flex flex-column align-items-center profile">
+            <!-- Profile Image -->
+            <img src="profileImages/avatar.png" class="rounded-circle border border-3 border-primary shadow-sm" width="120" height="120" />
+            
+            <!-- Profile Details -->
+            <div class="mt-3">
+                <h4 class="text-primary fw-bold"><?php echo $fullname; ?></h4>
+                <p class="text-muted mb-1"> 
+                    <span class="badge bg-secondary"># <?php echo $clid; ?></span>
+                </p>
+                <p class="text-dark fw-semibold">
+                    <i class="fas fa-phone-alt text-success"></i> <?php echo $mobile; ?>
+                </p>
+
+                <!-- User Since -->
+                <small class="text-muted">
+                    <i class="far fa-calendar-alt"></i> 
+                    <?php
+                        $createdate = new DateTime($createdate);
+                        echo $createdate->format('d M, Y');
+                    ?>
+                </small>
+
+                <!-- Remarks Section -->
+                <?php if (!empty($remarks)) : ?>
+                    <div class="mt-2 p-2 bg-light border rounded">
+                        <i class="fas fa-comment-dots text-info"></i> 
+                        <?php echo $remarks; ?>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Action Buttons -->
+                <div class="mt-3">
+                    <a href="profile_edit.php?clid=<?php echo $clid;?>" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </a>
+                    <button class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
                                  </div>
                                  <div class="card  border-0 rounded-4">
                                     <div class="card-body p-4">
@@ -949,6 +981,34 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                <!-- container-fluid -->
             </div>
             <!-- End Page-content -->
+
+            <!-- Modal for customer Remarsk update -->
+            <div class="modal fade" id="customerRmarksChangeModal" tabindex="-1" role="dialog" aria-labelledby="Profile_pic_upload_Label" aria-hidden="true">
+               <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <h5 class="modal-title" id="Profile_pic_upload_Label">Update Customer Remarks</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                        <form>
+                           <div class="from-group d-none">
+                              <label>Customer id:</label>
+                              <input class="" type="text" id="update_customer_id" value="<?php echo $lstid; ?>">
+                           </div>
+                           <div class="from-group mb-2">
+                              <label>Customer Remarks</label>
+                              <input type="text" id="update_customer_remarks" class="form-control " placeholder="Enter Customer Remarks" value="<?php echo $remarks; ?>">
+                           </div>
+                        </form>
+                     </div>
+                     <div class="modal-footer">
+                        <button type="button" id="customer_remarks_update_btn" class="btn btn-primary">Update Now</button>
+                     </div>
+                  </div>
+               </div>
+            </div>
+
             <!-- Modal for customer username and password update -->
             <div class="modal fade" id="customerPasswordChangeModal" tabindex="-1" role="dialog" aria-labelledby="Profile_pic_upload_Label" aria-hidden="true">
                <div class="modal-dialog" role="document">
@@ -1480,6 +1540,36 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                      }
                  });
              }
+
+         });
+         //customer Remarks update script
+         $("#customer_remarks_update_btn").click(function() {
+            var customerId = $("#update_customer_id").val();
+            var customerRemarks = $("#update_customer_remarks").val();
+               $.ajax({
+                  url: "include/customers_server.php",
+                  method: "POST",
+                  data: {
+                        customer_id: customerId,
+                        customer_remarks: customerRemarks,
+                        update_customer_remarks_data: true,
+                  },
+                  dataType:'json',
+                  success: function(response) {
+                        if (response.success) {
+                           toastr.success(response.message);
+                           $("#customerRmarksChangeModal").modal('hide');
+                           setTimeout(() => {
+                              location.reload();
+                           }, 1000);
+                        }else if(response.success==false){
+                           toastr.error(response.message);
+                        }
+                  },
+                  error: function(error) {
+                        console.log(error);
+                  }
+               });
 
          });
 

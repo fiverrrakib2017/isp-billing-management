@@ -601,6 +601,80 @@ function get_total_amount($table,$condition,$con){
     return $totalRow['total'] ?? 0;
 }
 
+
+
+if (isset($_GET['get_customer_billing_report']) && $_SERVER['REQUEST_METHOD']=='GET') {
+    require 'datatable.php';
+
+    $table = 'customers';
+    $primaryKey = 'id';
+    $columns = array(
+        array(
+            'db' => 'id', 
+            'dt' => 0,
+        ),
+       
+        array('db' => 'customer_id', 
+            'dt' => 1,
+            'formatter' => function($d, $row) use ($con) {
+                $allCustomer = $con->query("SELECT username FROM customers WHERE id = $d");
+                $row = $allCustomer->fetch_array();
+                $username = $row['username'];
+                $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username = '$username'");
+                $chkc = $onlineusr->num_rows;
+                $status = ($chkc == 1) 
+                    ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' 
+                    : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                return $status . ' <a href="profile.php?clid=' . $d . '">' . $username . '</a>';
+            }
+        ),
+        array('db' => 'amount', 
+            'dt' => 2,
+            'formatter'=>function($d,$row){
+                if(empty($d)){
+                    return 'N/A';
+                }
+                return $d;
+            }
+        ),
+        array('db' => 'amount', 
+            'dt' => 3,
+            'formatter'=>function($d,$row){
+                if(empty($d)){
+                    return 'N/A';
+                }
+                return $d;
+            }
+        ),
+      
+        
+    );
+
+    $condition = "";
+
+    if (!empty($_SESSION['user_pop'])) {
+        $condition .= "pop_id = '" . $_SESSION['user_pop'] . "'";
+    }
+
+    if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
+        $condition .= (!empty($condition) ? " AND " : "") . "area = '" . $_GET['area_id'] . "'";
+    }
+
+    if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
+        $condition .= (!empty($condition) ? " AND " : "") . "pop_id = '" . $_GET['pop_id'] . "'";
+    }
+
+    if (!empty($_GET['from_date']) && !empty($_GET['to_date'])) {
+        $from_date = date('Y-m-d 00:00:00', strtotime($_GET['from_date']));
+        $to_date = date('Y-m-d 23:59:59', strtotime($_GET['to_date']));
+        $condition .= (!empty($condition) ? " AND " : "") . "datetm BETWEEN '$from_date' AND '$to_date'";
+    }
+       
+    echo json_encode(SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition));
+    exit; 
+
+}
+
 ?>
 
 

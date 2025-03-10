@@ -445,6 +445,18 @@ if (isset($_POST['updateCustomerData'])) {
     }
     exit();
 }
+/*Customer Remarks Update*/
+if (isset($_POST['update_customer_remarks_data'])) {
+    $customer_id = $_POST['customer_id'];
+    $remarks = $_POST['customer_remarks'];
+
+    $con->query("UPDATE customers SET  remarks='$remarks' WHERE id='$customer_id'");
+    echo json_encode([
+        'success'=>true,
+        'message'=>'Update Successfully',
+    ]);
+    exit();
+}
 
 if (isset($_POST['pwdmissname']) && !empty($_POST['pwdmissname'])) {
     $pwdmissname = $_POST['pwdmissname'];
