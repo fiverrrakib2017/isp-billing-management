@@ -210,9 +210,9 @@ include 'include/db_connect.php';
                     );
             },
             dataSrc: function (json) {
-                // $('#total_target_amount').html(json.total_target_amount);
-                // $('#total_collection_amount').html(json.total_collection_amount);
-                // return json.data;
+                $('#total_target_amount').html(json.total_target_amount);
+                $('#total_collection_amount').html(json.total_collection_amount);
+                return json.data;
             }
 
         },
