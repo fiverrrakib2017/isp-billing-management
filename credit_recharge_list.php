@@ -1,10 +1,8 @@
 <?php
-include("include/security_token.php");
-include("include/db_connect.php");
-include("include/pop_security.php");
-include("include/users_right.php");
-
-
+include 'include/security_token.php';
+include 'include/db_connect.php';
+include 'include/pop_security.php';
+include 'include/users_right.php';
 ?>
 
 <!doctype html>
@@ -15,58 +13,24 @@ include("include/users_right.php");
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SOFTWARE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include 'style.php';?>
-    <style>
-/* @media print {
-    body {
-        visibility: hidden;
-    }
-
-    #customers_table, #customers_table * {
-        visibility: visible;
-    }
-
-    #customers_table {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    table, th, td {
-        border: 1px solid black;
-    }
-
-    th, td {
-        padding: 10px;
-        text-align: left;
-    }
-
-    a {
-        text-decoration: none;
-        color: black;
-    }
-
-    button {
-        display: none;
-    }
-} */
-</style>
+    <?php include 'style.php'; ?>
+    </style>
 </head>
 
 <body data-sidebar="dark">
 
-
+    <!-- Loader -->
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner"></div>
+        </div>
+    </div>
 
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-       <?php $page_title="Credit Recharge List"; include 'Header.php';?>
+        <?php $page_title = 'Credit Recharge List';
+        include 'Header.php'; ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -95,18 +59,16 @@ include("include/users_right.php");
                                     <div class="mr-md-3 mr-xl-5">
                                         <div class="d-flex">
                                             <i class="mdi mdi-home text-muted hover-cursor"></i>
-                                            <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
+                                            <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;<a
+                                                    href="index.php">Dashboard</a>&nbsp;/&nbsp;
                                             </p>
                                             <p class="text-primary mb-0 hover-cursor">Credit Recharge List</p>
                                         </div>
                                     </div>
                                     <br>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-end flex-wrap">
-                                    <!-- <button data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px" id="addBtn" style="margin-bottom: 12px;">&nbsp;&nbsp;New customer</button> -->
-                                </div>
 
-                               
+
                             </div>
                         </div>
                     </div>
@@ -114,9 +76,10 @@ include("include/users_right.php");
                         <div class="col-md-12 stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    
+
                                     <div class="table-responsive ">
-                                        <table id="customers_table" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <table id="customers_table" class="table table-bordered dt-responsive nowrap"
+                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
                                                     <th>Customer Username</th>
@@ -124,63 +87,54 @@ include("include/users_right.php");
                                                     <th>Recharged</th>
                                                     <th>Total Paid</th>
                                                     <th>Total Due</th>
-                                                    <th>Month</th>
-                                                    <th>Recharge By</th>
                                                 </tr>
                                             </thead>
-                                            <?php 
-                                            
-                                            $result = $con->query("SELECT 
-    c.id AS customer_id, 
-    c.username, 
-    MAX(u.fullname) AS fullname,
-    c.mobile, 
-    MAX(cr.datetm) AS datetm,
-    GROUP_CONCAT(
-        DISTINCT DATE_FORMAT(DATE_SUB(cr.datetm, INTERVAL 1 MONTH), '%M %Y') 
-        ORDER BY cr.rchrg_until DESC SEPARATOR ', '
-    ) AS due_months,  -- ✅ যেই মাসের টাকা বাকি আছে, সেটার নাম দেখাবে
-    COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
-    COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
-    (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
-     COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due,
-    COALESCE(SUM(CASE WHEN cr.type = '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_due_paid
-FROM 
-    customers c
-LEFT JOIN 
-    customer_rechrg cr ON c.id = cr.customer_id
-LEFT JOIN 
-    users u ON cr.rchg_by = u.id
--- WHERE 
---     1=1 $whereClause
-GROUP BY 
-    c.id, c.username, c.mobile  
-HAVING 
-    total_due > 0;
-
-
-
-");
-
-while ($row = $result->fetch_assoc()) {
-    echo "<tr>";
-    echo "<td>{$row['username']}</td>";
-    echo "<td>{$row['mobile']}</td>";
-    echo "<td>{$row['total_recharge']}</td>";
-    echo "<td>{$row['total_paid']}</td>";
-    echo "<td>{$row['total_due']}</td>";
-    echo "<td>{$row['due_months']}</td>";
-    echo "<td>{$row['fullname']}</td>";
-    echo "</tr>";
-}
-                                            
-                                            
-                                            
+                                            <?php
+                                         $sql = "SELECT 
+                                        c.id AS customer_id, 
+                                        c.username, 
+                                        c.mobile, 
+                                        COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
+                                        COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
+                                        (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
+                                        COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due
+                                    FROM 
+                                        customers c
+                                    LEFT JOIN 
+                                        customer_rechrg cr ON c.id = cr.customer_id
+                                    GROUP BY 
+                                        c.id
+                                    HAVING 
+                                        total_due > 0";
+                                        
+                                        $result = $con->query($sql);
+                                        
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo "<tr>
+                                                <td>{$row['username']}</td>
+                                                <td>{$row['mobile']}</td>
+                                                <td>{$row['total_recharge']}</td>
+                                                <td>{$row['total_paid']}</td>
+                                                <td>{$row['total_due']}</td>
+                                                </tr>";
+                                                }
+                                            } else {
+                                                echo 'No results found.';
+                                            }
                                             ?>
-                                            <!-- <tbody id="customer-data"></tbody>
-                                            <tfoot id="total-footer"> </tfoot> -->
+
                                         </table>
                                     </div>
+                                </div>
+                                <div class="card-footer text-end">
+                                    <button class="btn btn-danger print-btn" onclick="printTable()"><i
+                                            class="fa fa-print"></i></button>
+
+                                    <!-- <button class="btn btn btn-success" id="export_to_excel">Export <img
+                                            src="https://img.icons8.com/?size=100&id=117561&format=png&color=000000"
+                                            class="img-fluid icon-img" style="height: 20px !important;"></button> -->
+
                                 </div>
                             </div>
                         </div>
@@ -189,7 +143,7 @@ while ($row = $result->fetch_assoc()) {
             </div>
             <!-- End Page-content -->
 
-            <?php include 'Footer.php';?>
+            <?php include 'Footer.php'; ?>
 
         </div>
         <!-- end main content-->
@@ -199,129 +153,61 @@ while ($row = $result->fetch_assoc()) {
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
     <!-- JAVASCRIPT -->
-    <?php include 'script.php';?>
+    <?php include 'script.php'; ?>
     <script type="text/javascript">
-        var from_date_filter = '<label style="margin-left: 10px;">';
-        from_date_filter += '<input type="date" id="from_date" class="form-control from_date_filter">';
-        from_date_filter += '</input></label>';
+        $("#customers_table").DataTable();
 
-        var to_date_filter = '<label style="margin-left: 10px;">';
-        to_date_filter += '<input type="date" id="to_date" class="form-control to_date_filter">';
-        to_date_filter += '</input></label>';
 
-        var _filter_button = '<button style="margin-left: 10px;" class="btn btn-success" id="search_btn">Search</button>';
 
-        var export_button = '<button style="margin-left: 10px;" class="btn btn-info" id="export_to_excel">Export</button>';
-
-        setTimeout(() => {
-            $('.dataTables_length').append(from_date_filter);
-            $('.dataTables_length').append(to_date_filter);
-            $('.dataTables_length').append(_filter_button);
-            $('.dataTables_length').append(export_button);
-        }, 500);
-        // $('#customers_table').DataTable({
-        //     initComplete: function() {
-        //         $('.dataTables_length').append(from_date_filter);
-        //         $('.dataTables_length').append(to_date_filter);
-        //         $('.dataTables_length').append(_filter_button);
-        //         $('.dataTables_length').append(export_button);
-        //     }
-        // });
-       
-        show_credit_recharge_list();
-        function show_credit_recharge_list(from_date,to_date){
-            $.ajax({
-                url: 'include/customer_recharge_server.php?get_credit_recharge_list=true', 
-                type: 'GET',
-                data:  {
-                    from_date :from_date,
-                    to_date : to_date, 
-                },
-                dataType: 'json',
-                success: function (response) {
-                    $('#customer-data').html(response.rows);
-                    $('#total-footer').html(response.footer); 
-                    if ($.fn.DataTable.isDataTable('#customers_table')) {
-                        $('#customers_table').DataTable().empty(); 
-                    }
-                    $('#customers_table').DataTable(); 
-                },
-                error: function () {
-                    alert('Failed to load customer data.');
-                },
-            });
-        }
-        $(document).on('click','#search_btn',function(){
-            var from_date=  $('.from_date_filter').val(); 
-          
-            var to_date=  $('.to_date_filter').val(); 
-            if (!from_date) {
-                toastr.error("From Date is required.");
-            } else if (!to_date) {
-                toastr.error("To Date is required.");
-            } else {
-                show_credit_recharge_list(from_date, to_date);
-            }
-        });
-        // $("#search_btn").on('change',function(){
-        //   var from_date=  $('.from_date_filter').val(); 
-        //   var to_date=  $('.to_date_filter').val(); 
-        //   if(from_date.length==''){
-        //     toastr.error("From Date is Require"); 
-        //   }else if(to_date.length==''){
-        //     toastr.error("To Date is Require"); 
-        //   }else{
-        //     show_credit_recharge_list(from_date,to_date); 
-        //   }
-        // });
-        
         function printTable() {
-            var divToPrint = document.getElementById('customers_table');
-            var newWin = window.open('', '_blank');
-            newWin.document.write('<html><head><title>Print Table</title>');
-            newWin.document.write('<style>');
-            newWin.document.write('table { width: 100%; border-collapse: collapse; }');
-            newWin.document.write('table, th, td { border: 1px solid black; padding: 10px; text-align: left; }');
-            newWin.document.write('a { text-decoration: none; color: black; }');
-            newWin.document.write('</style></head><body>');
-            newWin.document.write(divToPrint.outerHTML);
-            newWin.document.write('</body></html>');
-            newWin.document.close();
-            newWin.focus();
-            newWin.print();
-            newWin.close();
+            var printContents = document.getElementById('customers_table').outerHTML;
+            var originalContents = document.body.innerHTML;
+
+            var newWindow = window.open('', '', 'width=800, height=600');
+            newWindow.document.write('<html><head><title>Print Table</title>');
+            newWindow.document.write('<style>');
+            newWindow.document.write('table {width: 100%; border-collapse: collapse; border: 1px solid black;}');
+            newWindow.document.write('th, td {border: 2px dotted #ababab; padding: 8px; text-align: left;}');
+            newWindow.document.write('</style></head><body>');
+
+            newWindow.document.write('<div class="header">');
+            newWindow.document.write(
+                '<img src="http://103.146.16.154/assets/images/it-fast.png" class="logo" alt="Company Logo" style="display:block; margin:auto; height:50px;">'
+                );
+            newWindow.document.write('<h2 style="text-align:center; color: #000;">Star Communication</h2>');
+            newWindow.document.write('<p style="text-align:center;">Customer Recharge Report</p>');
+            newWindow.document.write('</div>');
+
+            newWindow.document.write(printContents);
+            newWindow.document.write('</body></html>');
+
+            newWindow.document.close();
+            newWindow.print();
+            newWindow.close();
         }
 
-
-
-        $(document).on('click','#export_to_excel',function(){
-                    let csvContent = "data:text/csv;charset=utf-8,";
-                
-                /* Add header row*/
-                csvContent += [
-                     'Username', 'Phone Number', 'Recharged', 'Total Paid', 'Total Due'
-                ].join(",") + "\n";
-                
-                /*Add data rows*/ 
-                $('#customers_table tbody tr').each(function() {
-                    let row = [];
-                    $(this).find('td').each(function() {
-                        row.push($(this).text().trim());
-                    });
-                    csvContent += row.join(",") + "\n";
+        $(document).on('click', '#export_to_excel', function() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += [
+                'Username', 'Phone Number', 'Recharged', 'Total Paid', 'Total Due'
+            ].join(",") + "\n";
+            $('#customers_table tbody tr').each(function() {
+                let row = [];
+                $(this).find('td').each(function() {
+                    row.push($(this).text().trim());
                 });
-
-                /* Create a link element and simulate click to download the CSV file*/
-                let encodedUri = encodeURI(csvContent);
-                let link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "customers.csv");
-                document.body.appendChild(link); 
-                link.click();
-                document.body.removeChild(link);
+                csvContent += row.join(",") + "\n";
             });
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "customers.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
     </script>
-	
+
 </body>
 
 </html>

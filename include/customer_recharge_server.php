@@ -2,9 +2,10 @@
 if (empty($_SESSION)) {
     session_start();
 }
-
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 include 'db_connect.php';
-$TotalrchgAmt=0;
+$TotalrchgAmt = 0;
 if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $selectedCustomers = json_decode($_POST['selectedCustomers'], true);
     $recharge_by = $_SESSION['uid'] ?? 0;
@@ -15,10 +16,10 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
     $tra_type = isset($_POST['tra_type']) ? trim($_POST['tra_type']) : '';
     /* Validate Filds */
     if (empty($chrg_mnths) && $chrg_mnths !== '0') {
-      $errors['chrg_mnths'] = 'Month is required.';
+        $errors['chrg_mnths'] = 'Month is required.';
     }
     if ($tra_type === '') {
-      $errors['tra_type'] = 'Transaction Type is required.';
+        $errors['tra_type'] = 'Transaction Type is required.';
     }
     /* If validation errors exist, return errors */
     if (!empty($errors)) {
@@ -28,11 +29,9 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
         ]);
         exit();
     }
-   
-   
-   
-   // Bulk Recharge
-    /* Get Customer id, pop id,package id*/ 
+
+    // Bulk Recharge
+    /* Get Customer id, pop id,package id*/
     if (count($selectedCustomers) !== 0 && !empty($selectedCustomers)) {
         foreach ($selectedCustomers as $customer_id) {
             if ($get_customer_list = $con->query('SELECT * FROM customers WHERE id=' . $customer_id . ' ')) {
@@ -42,7 +41,7 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                 }
             }
         }
-        if (isset($customer_id) && !empty($customer_id) && isset($pop_id) && !empty($pop_id) && isset($chrg_mnths) && !empty($chrg_mnths) && isset($tra_type) ) {
+        if (isset($customer_id) && !empty($customer_id) && isset($pop_id) && !empty($pop_id) && isset($chrg_mnths) && !empty($chrg_mnths) && isset($tra_type)) {
             /* Calculate pop balance AND Customer Recharge balance in this pop*/
             $_pop_balance = 0;
             $_recharge_balance = 0;
@@ -62,8 +61,8 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
             if (!empty($_pop_balance) && isset($_pop_balance) && !empty($_recharge_balance) && isset($_recharge_balance)) {
                 $_current_pop_balance = $_pop_balance - $_recharge_balance;
             }
-			
-			// Finding each selected customer
+
+            // Finding each selected customer
             foreach ($selectedCustomers as $customer_id) {
                 /*****************GET Package Price*************************/
                 $package_id = null;
@@ -80,7 +79,6 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                 }
                 /****************GET package purchase sales price******************************/
                 $package_sales_price = null;
-              
 
                 if ($get_all_customer = $con->query("SELECT s_price, p_price FROM branch_package WHERE id=$package_id AND pop_id=$pop_id")) {
                     while ($rows = $get_all_customer->fetch_assoc()) {
@@ -106,11 +104,11 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
                     } else {
                         $exp_date = date('Y-m-d', strtotime("+$chrg_mnths month", strtotime($today)));
                     }
-                   
-				   /*Insert Recharge Data*/
+
+                    /*Insert Recharge Data*/
                     $con->query("INSERT INTO customer_rechrg(customer_id, pop_id, months, sales_price, purchase_price, discount, ref, rchrg_until, type, rchg_by, datetm) VALUES('$customer_id', '$pop_id', '$chrg_mnths', '$package_sales_price', '$package_purchase_price','0.00', '$RefNo', '$exp_date', '$tra_type', '$recharge_by', NOW())");
 
-                    $con -> query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
+                    $con->query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
 
                     /*Update Customer New Balance AND Expire Date */
                     $_customer_total_paid_amount = 0;
@@ -149,10 +147,8 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
             $con->close();
         }
     }
-    exit; 
+    exit();
 }
-
-
 
 if (isset($_POST['add_recharge_data'])) {
     $customer_id = $_POST['customer_id'];
@@ -175,21 +171,21 @@ if (isset($_POST['add_recharge_data'])) {
             $pop_id = $rows['pop'];
         }
     }
-     
+
     /*Get DISCOUNT Amount*/
     if (!empty($chrg_mnths) && isset($chrg_mnths) && !empty($package_purchase_price) && isset($package_purchase_price)) {
-        $main_amount=$chrg_mnths * $_price;
-        $discount_amount=$main_amount - $package_purchase_price ?? 0;
+        $main_amount = $chrg_mnths * $_price;
+        $discount_amount = $main_amount - $package_purchase_price ?? 0;
     }
-    
+
     //get customer sale's price [Use id for package id]
     if ($allPackg = $con->query("SELECT s_price, p_price FROM branch_package WHERE id=$packageId AND pop_id=$pop_id LIMIT 1")) {
         while ($rows = $allPackg->fetch_array()) {
-             $package_sales_price = $rows['s_price'];
+            $package_sales_price = $rows['s_price'];
         }
     }
-    
-   /*Check POP Blance*/
+
+    /*Check POP Blance*/
     if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM pop_transaction WHERE pop_id='$pop_id' ")) {
         while ($rows = $pop_payment->fetch_array()) {
             $popBalance = $rows['balance'];
@@ -222,7 +218,7 @@ if (isset($_POST['add_recharge_data'])) {
             // Increase recharge monthe from current expired date
             $exp_date = date('Y-m-d', strtotime('+' . $chrg_mnths . ' month', strtotime($expiredDate)));
         }
-        
+
         $con->query("INSERT INTO customer_rechrg(customer_id,pop_id,months,sales_price,purchase_price,discount,ref,rchrg_until,type,rchg_by,datetm) VALUES('$customer_id','$pop_id','$chrg_mnths','$package_sales_price','$main_amount','$discount_amount','$RefNo','$exp_date','$tra_type','$recharge_by',NOW())");
 
         //$con->query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
@@ -246,10 +242,10 @@ if (isset($_POST['add_recharge_data'])) {
             }
         }
         $balanceamount = $TotalrchgAmt - $TotalPaidAmt;
-				
+
         $con->query("UPDATE customers SET expiredate='$exp_date', status='1', rchg_amount='$TotalrchgAmt', paid_amount='$TotalPaidAmt', balance_amount='$balanceamount' WHERE id='$customer_id'");
 
-        $con -> query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
+        $con->query("UPDATE radreply SET value='$package_name' WHERE username='$username'");
         echo 1;
         $con->close();
     }
@@ -294,7 +290,7 @@ if (isset($_POST['addCustomerDuePayment'])) {
     }
 
     $con->close();
-    exit; 
+    exit();
 }
 
 // Temporary recharge ######
@@ -327,7 +323,7 @@ if (isset($_POST['customer_temp_recharge'])) {
         echo 0;
     }
     $con->close();
-    exit; 
+    exit();
 }
 
 if (isset($_POST['undo_customer_recharge'])) {
@@ -362,166 +358,191 @@ if (isset($_POST['undo_customer_recharge'])) {
         echo 0;
     }
     $con->close();
-    exit; 
+    exit();
 }
 
-
-if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
+if (isset($_GET['get_recharge_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     require 'datatable.php';
 
     $table = 'customer_rechrg';
     $primaryKey = 'id';
-    $columns = array(
-        array(
-            'db' => 'id', 
+    $columns = [
+        [
+            'db' => 'id',
             'dt' => 0,
-        ),
-        array(
+        ],
+        [
             'db' => 'datetm',
             'dt' => 1,
-            'formatter' => function($d, $row) {
+            'formatter' => function ($d, $row) {
                 return date('d-m-Y', strtotime($d));
-            }
-        ),
-        array('db' => 'customer_id', 
+            },
+        ],
+        [
+            'db' => 'customer_id',
             'dt' => 2,
-            'formatter' => function($d, $row) use ($con) {
+            'formatter' => function ($d, $row) use ($con) {
                 $allCustomer = $con->query("SELECT username FROM customers WHERE id = $d");
                 $row = $allCustomer->fetch_array();
                 $username = $row['username'];
                 $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username = '$username'");
                 $chkc = $onlineusr->num_rows;
-                $status = ($chkc == 1) 
-                    ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' 
-                    : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                $status = $chkc == 1 ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
                 return $status . ' <a href="profile.php?clid=' . $d . '">' . $username . '</a>';
-            }
-        ),
-        array('db' => 'months', 
+            },
+        ],
+        [
+            'db' => 'months',
             'dt' => 3,
-            'formatter'=>function($d,$row){
-                if(empty($d)){
+            'formatter' => function ($d, $row) {
+                if (empty($d)) {
                     return 'N/A';
                 }
                 return $d;
-            }
-        ),
-        array('db' => 'type', 
+            },
+        ],
+        [
+            'db' => 'type',
             'dt' => 4,
-            'formatter' => function($d, $row) {
-                switch($d) {
-                    case '0': return '<span class="badge bg-danger">Credit</span>';
-                    case '1': return '<span class="badge bg-success">Cash</span>';
-                    case '2': return '<span class="badge bg-info">Bkash</span>';
-                    case '3': return '<span class="badge bg-info">Nagad</span>';
-                    case '4': return '<span class="badge bg-warning">Due Paid</span>';
-                    default: return '';
+            'formatter' => function ($d, $row) {
+                switch ($d) {
+                    case '0':
+                        return '<span class="badge bg-danger">Credit</span>';
+                    case '1':
+                        return '<span class="badge bg-success">Cash</span>';
+                    case '2':
+                        return '<span class="badge bg-info">Bkash</span>';
+                    case '3':
+                        return '<span class="badge bg-info">Nagad</span>';
+                    case '4':
+                        return '<span class="badge bg-warning">Due Paid</span>';
+                    default:
+                        return '';
                 }
-            }
-        ),
-        array('db' => 'rchrg_until', 'dt' => 5),
-        array('db' => 'purchase_price', 'dt' => 6),
-    );
+            },
+        ],
+        ['db' => 'rchrg_until', 'dt' => 5],
+        ['db' => 'purchase_price', 'dt' => 6],
+    ];
 
-    $condition = "";
+    $condition = '';
 
     if (!empty($_SESSION['user_pop'])) {
         $condition .= "pop_id = '" . $_SESSION['user_pop'] . "'";
     }
 
     if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
-        $condition .= (!empty($condition) ? " AND " : "") . "area = '" . $_GET['area_id'] . "'";
+        $condition .= (!empty($condition) ? ' AND ' : '') . "area = '" . $_GET['area_id'] . "'";
     }
 
     if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
-        $condition .= (!empty($condition) ? " AND " : "") . "pop_id = '" . $_GET['pop_id'] . "'";
+        $condition .= (!empty($condition) ? ' AND ' : '') . "pop_id = '" . $_GET['pop_id'] . "'";
     }
 
     if (!empty($_GET['from_date']) && !empty($_GET['to_date'])) {
         $from_date = date('Y-m-d 00:00:00', strtotime($_GET['from_date']));
         $to_date = date('Y-m-d 23:59:59', strtotime($_GET['to_date']));
-        $condition .= (!empty($condition) ? " AND " : "") . "datetm BETWEEN '$from_date' AND '$to_date'";
+        $condition .= (!empty($condition) ? ' AND ' : '') . "datetm BETWEEN '$from_date' AND '$to_date'";
     }
 
-    
-    
-
-    if (!empty($_GET['type']) && $_GET['type'] !=='---Select Type---') {
-        $type = $_GET['type']; 
+    if (!empty($_GET['type']) && $_GET['type'] !== '---Select Type---') {
+        $type = $_GET['type'];
         if ($type == 'Credit') {
-            $condition .= (!empty($condition) ? " AND " : "") . "type = '0'";
-        } else if (in_array($type, ['1', '2', '3', '4'])) {
-            $condition .= (!empty($condition) ? " AND " : "") . "type = '$type'";
+            $condition .= (!empty($condition) ? ' AND ' : '') . "type = '0'";
+        } elseif (in_array($type, ['1', '2', '3', '4'])) {
+            $condition .= (!empty($condition) ? ' AND ' : '') . "type = '$type'";
         }
     }
     /*Total Amount Initial Value*/
-    $totalAmount='';
-    if(($_GET['bill_collect']) > 0){
-        $condition .= (!empty($condition) ? " AND " : "") . "rchg_by = '" . $_GET['bill_collect'] . "'";
-        
+    $totalAmount = '';
+    if (isset($_GET['bill_collect']) && $_GET['bill_collect'] > 0) {
+        $condition .= (!empty($condition) ? ' AND ' : '') . "rchg_by = '" . $_GET['bill_collect'] . "'";
+
         $totalAmount = get_total_amount($table, $condition . " AND type != '0'", $con);
 
-        if (!empty($_GET['type']) && $_GET['type'] !=='---Select Type---') {
-            $type = $_GET['type']; 
+        if (!empty($_GET['type']) && $_GET['type'] !== '---Select Type---') {
+            $type = $_GET['type'];
 
             if ($type == 'Credit') {
-                $totalAmount = get_total_amount($table,$condition,$con);
+                $totalAmount = get_total_amount($table, $condition, $con);
             }
-           
         }
-    }else{
+    } else {
         $totalAmount = get_total_amount($table, $condition, $con);
     }
-   
+
     $response = SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition);
-    $response['totalAmount'] = number_format((float)$totalAmount, 2, '.', '');
+    $response['totalAmount'] = number_format((float) $totalAmount, 2, '.', '');
 
     echo json_encode($response);
-    exit; 
-
+    exit();
 }
 
+/************** Customer Recharge With Bkash Payment Method ***************/
 
+if (isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['customer_recharge_with_payment_getway'])) {
+    $customer_id = $_GET['customer_id'];
+    $customer_amount = $con->query("SELECT price From `customers` WHERE id=$customer_id")->fetch_assoc()['price'];
+    $pop_id = $con->query("SELECT pop From `customers` WHERE id=$customer_id")->fetch_assoc()['pop'];
 
-
- /************** Customer Recharge With Bkash Payment Method ***************/
-
-if(isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['customer_recharge_with_payment_getway'])){
-   $customer_id= $_GET['customer_id'];
-    $customer_amount=$con->query("SELECT price From `customers` WHERE id=$customer_id")->fetch_assoc()['price']; 
-    $pop_id=$con->query("SELECT pop From `customers` WHERE id=$customer_id")->fetch_assoc()['pop']; 
-     
     include 'Service/Bkash_payment_service.php';
     include 'Config.php';
-     
+
     $callback_url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
-    $callback_url .= $_SERVER['HTTP_HOST'] . '/self.php?clid='.$customer_id.'';
-    
-    $bk=new BkashPaymentService($config);
+    $callback_url .= $_SERVER['HTTP_HOST'] . '/self.php?clid=' . $customer_id . '';
+
+    $bk = new BkashPaymentService($config);
     $idToken = $bk->getGrantToken();
-    $bk->createPayment( $idToken,$callback_url, $customer_amount, '12345');
-    
-    if(!empty($idToken) && isset($idToken)){
+    $bk->createPayment($idToken, $callback_url, $customer_amount, '12345');
+
+    if (!empty($idToken) && isset($idToken)) {
         /* Create Payment*/
-        $_payment_response = $bk->createPayment( $idToken,$callback_url, $customer_amount, '12345');
+        $_payment_response = $bk->createPayment($idToken, $callback_url, $customer_amount, '12345');
         if (!empty($_payment_response['paymentID']) && !empty($_payment_response['statusMessage']) && $_payment_response['statusMessage'] === 'Successful') {
-            if (isset($_payment_response['bkashURL'])) {      
-                 header("Location: " . $_payment_response['bkashURL']);
-                exit;
+            if (isset($_payment_response['bkashURL'])) {
+                header('Location: ' . $_payment_response['bkashURL']);
+                exit();
             } else {
-                echo "Error creating payment.";
+                echo 'Error creating payment.';
             }
-        } 
-    }else{
+        }
+    } else {
         echo json_encode([
-            'success'=>false,
-            'message'=>'Error Generate Token',
+            'success' => false,
+            'message' => 'Error Generate Token',
         ]);
     }
-    exit; 
+    exit();
 }
- /************** Show Credit Recharge List ***************/
- if (isset($_GET['get_credit_recharge_list']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
+/************** Customer Recharge With SSL Commerce Payment Method ***************/
+
+if (isset($_GET['customer_recharge_with_ssl_payment_getway']) && !empty($_GET['customer_recharge_with_ssl_payment_getway'])) {
+    $customer_id = $_GET['customer_id'];
+    $customer_amount = $con->query("SELECT price From `customers` WHERE id=$customer_id")->fetch_assoc()['price'];
+    $pop_id = $con->query("SELECT pop From `customers` WHERE id=$customer_id")->fetch_assoc()['pop'];
+
+    include 'Service/ssl_payment_service.php';
+    include 'Config.php';
+
+    $callback_url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $callback_url .= $_SERVER['HTTP_HOST'] . '/self.php?clid=' . $customer_id . '';
+
+    $object = new SSLCommercePaymentService($ssl_commerce_config);
+
+    $result = $object->create_payment($customer_amount);
+
+    if (!empty($result) && isset($result)) {
+        if (isset($result['GatewayPageURL'])) {
+            header('Location: ' . $result['GatewayPageURL']);
+            exit();
+        } else {
+            echo 'Error creating payment.';
+        }
+    }
+    exit();
+}
+/************** Show Credit Recharge List ***************/
+if (isset($_GET['get_credit_recharge_list']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     $from_date = isset($_GET['from_date']) ? $_GET['from_date'] : null;
     $to_date = isset($_GET['to_date']) ? $_GET['to_date'] : null;
 
@@ -533,9 +554,6 @@ if(isset($_GET['customer_recharge_with_payment_getway']) && !empty($_GET['custom
     } elseif ($to_date) {
         $whereClause = " AND cr.datetm <= '$to_date'";
     }
-
-    
-
 
     $result = $con->query("SELECT 
     c.id AS customer_id, 
@@ -590,20 +608,18 @@ HAVING
     }
 
     echo json_encode($response);
-    exit; 
+    exit();
 }
 
-function get_total_amount($table,$condition,$con){
-    $totalQuery = "SELECT SUM(purchase_price) as total FROM $table " . 
-    (!empty($condition) ? " WHERE $condition" : "");
+function get_total_amount($table, $condition, $con)
+{
+    $totalQuery = "SELECT SUM(purchase_price) as total FROM $table " . (!empty($condition) ? " WHERE $condition" : '');
     $totalResult = $con->query($totalQuery);
     $totalRow = $totalResult->fetch_assoc();
     return $totalRow['total'] ?? 0;
 }
 
-
-
-if (isset($_GET['get_customer_billing_report']) && $_SERVER['REQUEST_METHOD']=='GET') {
+if (isset($_GET['get_customer_billing_report']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     require 'datatable.php';
 
     $table = 'customers';
@@ -612,88 +628,82 @@ if (isset($_GET['get_customer_billing_report']) && $_SERVER['REQUEST_METHOD']=='
     $fromMonth = isset($_GET['from_month']) ? $_GET['from_month'] : date('m');
     $selectedYear = isset($_GET['year']) ? $_GET['year'] : date('Y');
 
-     
-     $selectedYear = intval($selectedYear);
-     $_data = $selectedYear . '-' . $fromMonth;
- 
-     $total_target_query = $con->query("SELECT SUM(price) AS total_target FROM customers");
-     $total_target = $total_target_query->fetch_array()['total_target'] ?? 0;
- 
-     /*Get TOTAL Collection Amount*/ 
-     $total_collection_query = $con->query("SELECT SUM(purchase_price) AS total_collection FROM customer_rechrg WHERE DATE_FORMAT(datetm, '%Y-%m') BETWEEN '$_data' AND '$_data'");
-     $total_collection = $total_collection_query->fetch_array()['total_collection'] ?? 0;
+    $selectedYear = intval($selectedYear);
+    $_data = $selectedYear . '-' . $fromMonth;
 
-    $columns = array(
-        array(
-            'db' => 'id', 
+    $total_target_query = $con->query('SELECT SUM(price) AS total_target FROM customers');
+    $total_target = $total_target_query->fetch_array()['total_target'] ?? 0;
+
+    /*Get TOTAL Collection Amount*/
+    $total_collection_query = $con->query("SELECT SUM(purchase_price) AS total_collection FROM customer_rechrg WHERE DATE_FORMAT(datetm, '%Y-%m') BETWEEN '$_data' AND '$_data'");
+    $total_collection = $total_collection_query->fetch_array()['total_collection'] ?? 0;
+
+    $columns = [
+        [
+            'db' => 'id',
             'dt' => 0,
-        ),
-       
-        array(
-            'db'        => 'id',
-            'dt'        => 1,
-            'formatter' => function($d, $row) use ($con) {
+        ],
+
+        [
+            'db' => 'id',
+            'dt' => 1,
+            'formatter' => function ($d, $row) use ($con) {
                 $allCustomer = $con->query("SELECT username FROM customers WHERE id = $d");
                 $row = $allCustomer->fetch_array();
                 $username = $row['username'];
                 $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username = '$username'");
                 $chkc = $onlineusr->num_rows;
-                $status = ($chkc == 1) 
-                    ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' 
-                    : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
+                $status = $chkc == 1 ? '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr>' : '<abbr title="Offline"><img src="images/icon/offline.png" height="10" width="10"/></abbr>';
                 return $status . ' <a href="profile.php?clid=' . $d . '">' . $username . '</a>';
-            }
-        ),
-        array('db' => 'price', 
+            },
+        ],
+        [
+            'db' => 'price',
             'dt' => 2,
-            'formatter'=>function($d,$row){
-                if(empty($d)){
+            'formatter' => function ($d, $row) {
+                if (empty($d)) {
                     return 'N/A';
                 }
                 return $d;
-            }
-        ),
-        array(
-            'db' => 'id', 
+            },
+        ],
+        [
+            'db' => 'id',
             'dt' => 3,
-            'formatter' => function($d, $row) use ($con, $fromMonth, $selectedYear) {
+            'formatter' => function ($d, $row) use ($con, $fromMonth, $selectedYear) {
                 $selectedYear = intval($selectedYear);
-                $data=$selectedYear.'-'.$fromMonth; 
-                $amount=$con->query("SELECT SUM(purchase_price) AS total_collection FROM customer_rechrg WHERE customer_id = '$d' AND DATE_FORMAT(datetm, '%Y-%m') BETWEEN '$data' AND '$data'")->fetch_array()['total_collection'];
+                $data = $selectedYear . '-' . $fromMonth;
+                $amount = $con->query("SELECT SUM(purchase_price) AS total_collection FROM customer_rechrg WHERE customer_id = '$d' AND DATE_FORMAT(datetm, '%Y-%m') BETWEEN '$data' AND '$data'")->fetch_array()['total_collection'];
                 return $amount;
-            }
-        ),
-    );
+            },
+        ],
+    ];
 
-    $condition = "";
+    $condition = '';
 
     if (!empty($_SESSION['user_pop'])) {
         $condition .= "pop_id = '" . $_SESSION['user_pop'] . "'";
     }
 
     if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
-        $condition .= (!empty($condition) ? " AND " : "") . "area = '" . $_GET['area_id'] . "'";
+        $condition .= (!empty($condition) ? ' AND ' : '') . "area = '" . $_GET['area_id'] . "'";
     }
 
     if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
-        $condition .= (!empty($condition) ? " AND " : "") . "pop_id = '" . $_GET['pop_id'] . "'";
+        $condition .= (!empty($condition) ? ' AND ' : '') . "pop_id = '" . $_GET['pop_id'] . "'";
     }
 
     if (!empty($_GET['from_date']) && !empty($_GET['to_date'])) {
         $from_date = date('Y-m-d 00:00:00', strtotime($_GET['from_date']));
         $to_date = date('Y-m-d 23:59:59', strtotime($_GET['to_date']));
-        $condition .= (!empty($condition) ? " AND " : "") . "datetm BETWEEN '$from_date' AND '$to_date'";
+        $condition .= (!empty($condition) ? ' AND ' : '') . "datetm BETWEEN '$from_date' AND '$to_date'";
     }
-       
+
     $data = SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition);
     $data['total_target_amount'] = number_format($total_target, 2);
     $data['total_collection_amount'] = number_format($total_collection, 2);
     echo json_encode($data);
-    exit;
-
+    exit();
 }
 
 ?>
-
-
-

@@ -111,6 +111,21 @@ if (isset($_GET['clid']) && isset($_GET['paymentID']) && $_GET['status'] == 'suc
     }
 }
 
+
+if (isset($_GET['status']) && isset($_GET['tran_id'])) {
+    $status = $_GET['status']; 
+    $tran_id = $_GET['tran_id']; 
+    $customer_id = $_GET['clid'];
+    if ($status == 'VALID') {
+        include 'Service/ssl_payment_service.php';
+        include 'Config.php';
+
+        $object = new SSLCommercePaymentService($ssl_commerce_config);
+
+        $result = $object->verifyPayment($tran_id);
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -194,10 +209,9 @@ if (isset($_GET['clid']) && isset($_GET['paymentID']) && $_GET['status'] == 'suc
                 <div class="social-auth-links text-center">
 
 
-                    <a type="button" id="bkash_payment_btn" class="btn btn-block btn-danger">
-                        <img src="images/Bkash-Logo.jpg" alt="Bkash" style="width: 20px; margin-right: 8px;">
-                        Pay With Bkash
-                    </a>
+                    <button type="button" id="_payment_btn" class="btn btn-block btn-success">
+                        SSL Commerce
+                    </button>
                 </div>
             </div>
             <!-- /.form-box -->
@@ -212,12 +226,12 @@ if (isset($_GET['clid']) && isset($_GET['paymentID']) && $_GET['status'] == 'suc
     <!-- AdminLTE App -->
     <script src="https://adminlte.io/themes/v3/dist/js/adminlte.min.js?v=3.2.0"></script>
     <script type="text/javascript">
-        $("#bkash_payment_btn").on('click', function() {
+        $("#_payment_btn").on('click', function() {
             console.log(window.location.href);
             var pop_id = <?php echo $pop; ?>;
             var customer_id = <?php echo $clid; ?>;
             window.location.href =
-                `http://<?php echo $_SERVER['HTTP_HOST']; ?>/include/customer_recharge_server.php?customer_recharge_with_payment_getway=true&pop_id=${pop_id}&landing_page=1&customer_id=${customer_id}`;
+                `http://<?php echo $_SERVER['HTTP_HOST']; ?>/include/customer_recharge_server.php?customer_recharge_with_ssl_payment_getway=true&customer_id=${customer_id}`;
         });
     </script>
 </body>

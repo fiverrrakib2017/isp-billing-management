@@ -42,6 +42,7 @@
                                     </li>
                                     <!-- <li><a href="customer_dues.php">Customer Unpaid</a></li> -->
                                     <li><a href="customer_recharge.php">Customer Recharge</a></li>
+                                    <!-- <li><a href="customers_payment.php">Customer Payment</a></li> -->
                                     <li><a href="credit_recharge_list.php">Credit Recharge List</a></li>
                                     <li><a href="package_add.php">Customer Packages</a></li>
                                     <li><a href="pwdmissmatch.php">Password missmatch</a></li>

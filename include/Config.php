@@ -15,6 +15,19 @@ $config = [
 //     'password' => 'Q4gp%tVJ-#%'
 // ];
 
+$callback_url = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+$callback_url .= $_SERVER['HTTP_HOST'] . '/self.php?clid=' . $customer_id . '';
+
+
+$ssl_commerce_config = [
+    'merchant_key' => 'srwif67d29730edb1a@ssl',
+    'store_id' => 'srwif67d29730edb1a',
+    'return_url' => 'https://sr-wifi.net', 
+    'cancel_url' => $callback_url,
+    'base_url' => "https://sandbox.sslcommerz.com/gwprocess/v3/api.php"
+];
+
+
 
 
 

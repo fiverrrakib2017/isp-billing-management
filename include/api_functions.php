@@ -116,8 +116,7 @@ function all_customer($con){
 
             /*Insert Recharge Data*/
             $con->query("INSERT INTO customer_rechrg(customer_id, pop_id, months, sales_price, purchase_price,discount, ref, rchrg_until, type, rchg_by, datetm) VALUES('$customer_id', '$pop_id', '$chrg_mnths', '$sale_price', '$customer_amount','0.00', 'Bkash Payment', '$exp_date', '2', '$recharge_by', NOW())");
-            $con->query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
-            $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package')");
+            $con -> query("UPDATE radreply SET value='$package' WHERE username='$username'");
 
             /*Update Customer New Balance AND Expire Date */
             $_customer_total_paid_amount = 0;
