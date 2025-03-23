@@ -396,54 +396,44 @@ if ($DeviceMC = $con->query("SELECT nasipaddress, nasportid, callingstationid, f
                                                    
                                                       <?php
 if ($onlineusr->num_rows == 1) {
-    echo '<b><abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr> Online </b> <br/>';
-    if ($lastuptime = $con->query("SELECT TIMEDIFF(NOW(), acctstarttime) AS time FROM radacct WHERE username='$username' AND acctstoptime IS NULL ORDER BY radacctid DESC LIMIT 1")) {
-        $upt_rows = $lastuptime->fetch_array();
-        $onlineHrs = $upt_rows["time"];
+   echo '<b><abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr> Online </b> <br/>';
 
-        echo '<span class="far fa-clock"></span> <strong><span style="color:green;"> ' . $onlineHrs . "</span></strong> Hrs <br/>";
-        {
+   if ($lastuptime = $con->query("SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstarttime, NOW()))) AS time FROM radacct WHERE username='$username' AND acctstoptime IS NULL ORDER BY radacctid DESC LIMIT 1")) {
+       $upt_rows = $lastuptime->fetch_array();
+       $onlineHrs = $upt_rows["time"];
 
-            if ($ontimes = $con->query("SELECT acctstarttime, acctinputoctets/1000/1000/1000 AS GB_IN, acctoutputoctets/1000/1000/1000 AS GB_OUT FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
-                $on_rowss = $ontimes->fetch_array();
-                $Download = $on_rowss["GB_OUT"];
-                $Download = number_format($Download, 3);
-                $Upload = $on_rowss["GB_IN"];
-                $Upload = number_format($Upload, 3);
+       echo '<span class="far fa-clock"></span> <strong><span style="color:green;"> ' . $onlineHrs . "</span></strong> Hrs <br/>";
 
-                //echo date("Y-m-d h:i:sa", strtotime($on_rowss["acctstarttime"]));
-                echo '<span class="fas fa-arrow-alt-circle-down" style="color:red;"> ' . $Download . ' GB</span><br/><span class="fas fa-arrow-alt-circle-up" style="color:purple;"> ' . $Upload . ' GB</span><br/>';
-                echo '<span class="fas fa-link text-green"></span><strong><span style="color:blue;"> ' . date("h:i:s A", strtotime($on_rowss["acctstarttime"])) . "</span></strong>";
+       if ($ontimes = $con->query("SELECT acctstarttime, acctinputoctets/1000/1000/1000 AS GB_IN, acctoutputoctets/1000/1000/1000 AS GB_OUT FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
+           $on_rowss = $ontimes->fetch_array();
+           $Download = number_format($on_rowss["GB_OUT"], 3);
+           $Upload = number_format($on_rowss["GB_IN"], 3);
 
-            }
-            /* */
-
-        }
-
-    }
-
+           echo '<span class="fas fa-arrow-alt-circle-down" style="color:red;"> ' . $Download . ' GB</span><br/>';
+           echo '<span class="fas fa-arrow-alt-circle-up" style="color:purple;"> ' . $Upload . ' GB</span><br/>';
+           echo '<span class="fas fa-link text-green"></span><strong><span style="color:blue;"> ' . date("h:i:s A", strtotime($on_rowss["acctstarttime"])) . "</span></strong>";
+       }
+   }
 } else {
-    echo '<b><img src="images/icon/offline.png" height="10" width="10"/> Offline </b> <br/>';
-    if ($offtime = $con->query("SELECT TIMEDIFF(NOW(),acctstoptime) AS time FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
-        $off_rows = $offtime->fetch_assoc();
-		$offlineHours = $off_rows["time"] ?? '';
-		
-        echo '<span class="far fa-clock"></span> <strong><span style="color:red;"> ' . $offlineHours . "</span></strong> Hrs <br/>";
-        {
+   echo '<b><img src="images/icon/offline.png" height="10" width="10"/> Offline </b> <br/>';
 
-            if ($offtimes = $con->query("SELECT acctstoptime FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
-                $off_rowss = $offtimes->fetch_array();
-                //echo date("Y-m-d h:i:sa", strtotime($off_rowss["acctstoptime"]));
-                echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;"><abbr title=' . date("Y-M-d h:i:s A", strtotime($off_rowss["acctstoptime"])) . ' >  ' . date("h:i:s A", strtotime($off_rowss["acctstoptime"])) . "</abbr></span></strong>";
-            }else{
-                                 echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;">Never connected</span></strong>';
-            }
+   if ($offtime = $con->query("SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstoptime, NOW()))) AS time FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
+       $off_rows = $offtime->fetch_assoc();
+       $offlineHours = $off_rows["time"] ?? '';
 
-        }
+       echo '<span class="far fa-clock"></span> <strong><span style="color:red;"> ' . $offlineHours . "</span></strong> Hrs <br/>";
 
-    }
-
+       if ($offtimes = $con->query("SELECT acctstoptime FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
+           $off_rowss = $offtimes->fetch_array();
+           if ($off_rowss["acctstoptime"]) {
+               echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;"><abbr title="' . date("Y-M-d h:i:s A", strtotime($off_rowss["acctstoptime"])) . '">  ' . date("h:i:s A", strtotime($off_rowss["acctstoptime"])) . "</abbr></span></strong>";
+           } else {
+               echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;">Never connected</span></strong>';
+           }
+       }
+   }
 }
+
 
 ?>
                                                   
@@ -996,7 +986,7 @@ if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE custom
                            </div>
                            <div class="from-group mb-2">
                               <label>Customer Remarks</label>
-                              <textarea type="text" id="update_customer_remarks" class="form-control " placeholder="Enter Customer Remarks"><?php echo $remarks; ?></textarea>
+                              <textarea type="text" id="update_customer_remarks" class="form-control " placeholder="Enter Customer Remarks" value="<?php echo $remarks; ?>"><?php echo $remarks; ?></textarea>
                            </div>
                         </form>
                      </div>
