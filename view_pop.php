@@ -7,6 +7,26 @@ include 'include/functions.php';
 if (isset($_GET['id'])) {
     $popid = $_GET['id'];
 }
+$map_data=[];
+/*GET Customer in this pop/branch*/
+if($get_customers=$con->query("SELECT * FROM customers WHERE pop=$popid")){
+    while($rows=$get_customers->fetch_array()){
+        $area_house_id=$rows['area_house_id'];
+        if($area_house_id !== ''){
+            $get_area_house=$con->query("SELECT * FROM area_house WHERE id='$area_house_id'");
+            while($rows_area=$get_area_house->fetch_array()){
+                $map_data[]=[
+                    'lat'=>$rows_area['lat'],
+                    'lng'=>$rows_area['lng'],
+                    'house_no'=>$rows_area['house_no'],
+                   
+                    'customer_username'=>$rows['username'],
+                    'customer_phone_number'=>$rows['mobile'],
+                ];
+            }
+        }
+    }
+}
 if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
     while ($rows = $pop_list->fetch_array()) {
         $lstid = $rows['id'];
@@ -1306,7 +1326,7 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
 
     <?php include 'script.php'; ?>
     <script type="text/javascript" src="js/customer.js"></script>
-    <script type="text/javascript" src="js/google_map.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuBbBNNwQbS81QdDrQOMq2WlSFiU1QdIs"></script>
     <script type="text/javascript">
         $("#customer_table_area").DataTable();
         /*************************simple-line-chart Start**************************************************/
@@ -1856,8 +1876,39 @@ if ($pop_list = $con->query("SELECT * FROM add_pop WHERE id='$popid'")) {
                 }
             }
         });
+      
     /*************************Google Map Load**********************************************************/
-    loadMaps(<?= $popid; ?>);
+    const locations = <?php echo json_encode($map_data); ?>;
+    for(let i=0; i < locations.length; i++){
+        const mapOptions = {
+                center: { lat: 23.526844, lng: 90.775391 },
+                zoom: 15,
+            };
+
+            const map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+            // Static marker data
+            const marker = new google.maps.Marker({
+                position: { lat: 23.526844, lng: 90.775391 },
+                map: map,
+                title: locations[i].house_no,
+            });
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: `
+                    <strong>House No:</strong>${locations[i].house_no}<br>
+                    <strong>Customer:</strong> ${locations[i].customer_username}<br>
+                    <strong>Phone:</strong> ${locations[i].customer_phone_number}<br>
+                `
+            });
+
+            marker.addListener("click", function () {
+                infoWindow.open(map, marker);
+            });
+    }
+   
+
+
     </script>
 
 </body>

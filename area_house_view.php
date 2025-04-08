@@ -109,7 +109,7 @@
         const map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
         $.ajax({
-            url: 'include/add_area.php?get_locations_for_google_map=true',
+            url: 'include/add_area.php?get_locations_for_google_map=true &&id=<?php echo $_GET['id'];?>',
             type: 'GET',
             dataType: "json",
             success: function (locations) {
@@ -121,7 +121,7 @@
                     });
 
                     const infoWindow = new google.maps.InfoWindow({
-                        content: `<h3>${location.name}</h3><p>Coordinates: (${location.lat}, ${location.lng})</p>`,
+                        content: `<h3>${location.house_no}</h3><p>Coordinates: (${location.lat}, ${location.lng})</p>`,
                     });
 
                     marker.addListener("click", () => {

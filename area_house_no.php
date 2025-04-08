@@ -88,34 +88,23 @@
                                         </tr>
                                     </thead>
                                     <tbody id="area_table">
-    <?php 
-    if ($area_list = $con->query("SELECT al.id AS area_id, al.name AS area_name, GROUP_CONCAT(ah.house_no SEPARATOR ', ') AS house_numbers FROM area_list al LEFT JOIN area_house ah ON al.id = ah.area_id GROUP BY al.id, al.name")) {
-        while ($rows = $area_list->fetch_assoc()) {
-            $house_id=$rows['id'];
-            echo '<tr>';
-            echo '<td>' . $rows['area_id'] . '</td>';
-            echo '<td>' . $rows['area_name'] . '</td>';
-            
-            if (!empty($rows['house_numbers'])) {
-                $house_numbers = explode(', ', $rows['house_numbers']); 
-                
-                echo '<td><ul>';
-                foreach ($house_numbers as $house_no) {
-                    echo '<li><a href="area_house_view.php?house_id=' . $house_id . '&area_id=' . $rows['area_id'] . '&house_no=' . $house_no . '">' . $house_no . '</a></li>';
-                }
-                echo '</ul></td>';
-            } else {
-                echo '<td></td>';
-            }
-            
-            echo '<td>
-                    <a href="new_page.php?area_id=' . $rows['area_id'] . '" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
-                  </td>';
-            echo '</tr>';
-        }
-    }
-    ?>
-</tbody>
+                                        <?php 
+
+                                        if ($get_all_area_house=$con->query("SELECT * FROM area_house")) {
+                                            while($rows=$get_all_area_house->fetch_array()){
+                                                echo '<tr>';
+                                                echo '<td>'.$rows['id'].'</td>';
+                                                $area_id=$rows['area_id'];
+                                                $get_area_name=$con->query("SELECT * FROM area_list WHERE id='$area_id'");
+                                                $area_name=$get_area_name->fetch_array();
+                                                echo '<td>'.$area_name['name'].'</td>';
+                                                echo '<td>'.$rows['house_no'].'</td>';
+                                                echo '<td>';
+                                                echo '<a href="area_house_view.php?id='.$rows['id'].'" class="btn btn-success btn-sm "  data-id="'.$rows['id'].'"><i class="fas fa-eye"></i></a>';
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
 
                                 </table>
 

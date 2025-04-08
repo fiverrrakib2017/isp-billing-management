@@ -22,6 +22,10 @@ if(isset($_GET['get_locations_for_google_map']) && $_SERVER['REQUEST_METHOD'] ==
     $area_id = $_GET['area_id'];
     $condition = "WHERE area_id='$area_id'";  
   }
+  if(isset($_GET['id']) && $_GET['id'] > 0){
+    $id = $_GET['id'];
+    $condition = "WHERE id='$id'";  
+  }
   if($condition==''){
     $condition = "WHERE 1";
   }

@@ -1,269 +1,235 @@
-<?php
-   include "include/security_token.php";
-   include "include/db_connect.php";
-   include "include/pop_security.php";
-   include "include/users_right.php";
-   
-   ?>
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <title>Find Location</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="stylesheet" href="https://admin.futureictbd.com/Backend/dist/css/adminlte.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+    </script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
 
-    <meta charset="utf-8">
-    <title>FAST-ISP-BILLING-SOFTWARE</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php
-    
-        include 'style.php';
-        
-        ?>
+        .container {
+            margin-top: 30px;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #info-box {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
-<body data-sidebar="dark">
+<body>
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header ">
+                        <h4>Find Route</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Location selection method -->
+                        <div class="form-group">
+                            <label for="">Select Route Type</label>
+                            <select id="routeOption" class="form-control">
+                                <option value="input" selected>Enter Locations Manually</option>
+                                <option value="click">Click to Select on Map</option>
+                            </select>
+                        </div>
 
-
-    <!-- Begin page -->
-    <div id="layout-wrapper">
-
-
-        <?php $page_title="Google Map "; include 'Header.php';?>
-
-        <!-- ========== Left Sidebar Start ========== -->
-        <div class="vertical-menu">
-
-            <div data-simplebar class="h-100">
-
-                <!--- Sidemenu -->
-                <?php include 'Sidebar_menu.php'; ?>
-
-                <!-- Sidebar -->
-            </div>
-        </div>
-        <!-- Left Sidebar End -->
-
-        <!-- ============================================================== -->
-        <!-- Start right Content here -->
-        <!-- ============================================================== -->
-        <div class="main-content">
-
-            <div class="page-content">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12 grid-margin">
-                            <div class="d-flex justify-content-between flex-wrap">
-                                <div class="d-flex align-items-end flex-wrap">
-                                    <div class="mr-md-3 mr-xl-5">
-                                        <div class="d-flex">
-                                            <i class="mdi mdi-home text-muted hover-cursor"></i>
-                                            <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
-                                            </p>
-                                            <p class="text-primary mb-0 hover-cursor">Google Map</p>
-                                        </div>
-                                    </div>
-                                    <br>
-                                </div>
-
-                             
+                        <div id="manual-input" class="route-options">
+                            <div class="form-group">
+                                <label for="">Current Location</label>
+                                <input type="text" class="form-control mb-2" id="origin" placeholder="Enter current location">
+                            </div>
+                            <div class="form-group">
+                                <label for="">Destination Location</label>
+                                <input type="text" class="form-control mb-2" id="destination" placeholder="Enter destination">
+                            </div>
+                            <div class="form-group">
+                                <button id="findRoute" class="btn btn-primary">Find Route</button>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 stretch-card">
-                            <div class="card">
-                                <div class="card-header">
-                                    <button type="button" class="btn btn-primary mt-2 mt-xl-0 mdi mdi-account-plus mdi-18px"  data-bs-toggle="modal" data-bs-target="#addModal"> Add Area</button>
-                                </div>
-                                <div class="card-body">
-                                    <div id="map" style="width: 100%; height: 500px;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> <!-- container-fluid -->
-            </div>
-            <!-- End Page-content -->
-            <?php include 'footer.php';?>
 
-        </div>
-        <!-- end main content-->
-
-    </div>
-    <!-- END layout-wrapper -->
-    <div class="modal fade" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="addModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Area</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <form id="form-area">
-                                <div class="form-group mb-1">
-                                    <label>POP</label>
-                                    <select class="form-select" name="pop_id" id="pop_id">
-                                        <option value="">Select</option>
-                                        <?php
-                                        if ($pop = $con->query("SELECT * FROM add_pop WHERE user_type='1'  ")) {
-                                            while ($rows = $pop->fetch_array()) {
-                                                $id = $rows['id'];
-                                                $name = $rows['pop'];
-                                                echo '<option value="' . $id . '">' . $name . '</option>';
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="form-group mb-1">
-                                    <label>Area</label>
-                                    <input class="form-control" type="text" name="area" id="area" placeholder="Type Your Area" />
-                                    <input type="hidden" id="lat" name="lat">
-                                    <input type="hidden" id="lng" name="lng">
-                                </div>
-                                <div class="form-group">
-                                    <label>Map Location</label>
-                                    <div id="show_map" style="width: 100%; height: 400px;"></div>
-                                </div>
-                            </form>
+                        <div id="click-select" class="route-options" style="display:none;">
+                            <p>Click on the map to select your locations.</p>
                         </div>
+
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="add_area" class="btn btn-primary">Save Location</button>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div id="map"></div>
+                <div id="info-box"></div>
             </div>
         </div>
     </div>
-</div>
-    <!-- Right bar overlay-->
-    <div class="rightbar-overlay"></div>
-    <!-- JAVASCRIPT -->
-    <?php include 'script.php';?>
-    <script>
-    function loadMaps() {
-        initMap();  
-        initMap2();
-    }
 
-   /*Multiple Markers Location*/
-    function initMap() {
-        const mapOptions = {
-            center: { lat: 23.5330279, lng: 90.8000572 },
-            zoom: 12,
-        };
+    <!-- Google Maps JavaScript API -->
+    <script defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuBbBNNwQbS81QdDrQOMq2WlSFiU1QdIs&libraries=places"></script>
 
-        const map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    <script type="text/javascript">
+        /*Initialize Google Maps*/ 
+        let map, directionsService, directionsRenderer;
+        let clickCount = 0;
+        let originMarker = null;
+        let destinationMarker = null;
+        let originLatLng, destinationLatLng;
 
-        //$con->query("SELECT * FROM google_map")
-        // const locations = [
-        //     { name: "Store 1", lat: 23.8103, lng: 90.4125 },
-        //     { name: "Store 2", lat: 23.8150, lng: 90.4250 },
-        //     { name: "Store 3", lat: 23.8200, lng: 90.4050 },
-        //     { name: "Store 4", lat: 23.8050, lng: 90.4300 },
-        // ];
+        function initialize() {
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
 
-        // locations.forEach(location => {
-        //     const marker = new google.maps.Marker({
-        //         position: { lat: location.lat, lng: location.lng },
-        //         map: map,
-        //         title: location.name,
-        //     });
-
-        //     const infoWindow = new google.maps.InfoWindow({
-        //         content: `<h3>${location.name}</h3><p>Coordinates: (${location.lat}, ${location.lng})</p>`,
-        //     });
-
-        //     marker.addListener("click", () => {
-        //         infoWindow.open(map, marker);
-        //     });
-        // });
-
-        $.ajax({
-            url: 'include/add_area.php?get_locations_for_google_map=true',
-            type: 'GET',
-            dataType: "json",
-            success: function (locations) {
-                locations.forEach(location => {
-                    const marker = new google.maps.Marker({
-                        position: { lat: parseFloat(location.lat), lng: parseFloat(location.lng) },
-                        map: map,
-                        title: location.name,
-                    });
-
-                    const infoWindow = new google.maps.InfoWindow({
-                        content: `<h3>${location.name}</h3><p>Coordinates: (${location.lat}, ${location.lng})</p>`,
-                    });
-
-                    marker.addListener("click", () => {
-                        infoWindow.open(map, marker);
-                    });
-                });
-            },
-            error:function(xhr,status,error){
-                console.error("AJAX Error:", error);
-            }
-        });
-    }
-
-    function initMap2() {
-        const initialLocation = { lat: 23.8103, lng: 90.4125 }; 
-        const map = new google.maps.Map(document.getElementById("show_map"), {
-            center: initialLocation,
-            zoom: 12,
-        });
-
-        let marker;
-
-        map.addListener("click", (event) => {
-            const clickedLocation = event.latLng;
-            if (!marker) {
-                marker = new google.maps.Marker({
-                    position: clickedLocation,
-                    map: map,
-                });
-            } else {
-                marker.setPosition(clickedLocation);
-            }
-
-            document.getElementById("lat").value = clickedLocation.lat();
-            document.getElementById("lng").value = clickedLocation.lng();
-        });
-    }
-    $(document).on('click','#add_area',function(){
-        // var formData=$("#form-area").serialize();
-        var pop_id=$("select[name='pop_id']").val();
-        var area=$("input[name='area']").val();
-        var lat=$("input[name='lat']").val();
-        var lng=$("input[name='lng']").val();
-        var formData="pop_id="+pop_id+"&area="+area+"&lat="+lat+"&lng="+lng;
-        $.ajax({
-            type:'POST',
-            url:'include/add_area.php?add_area_for_google_map',
-            data:formData,
-            cache:false,
-            success:function(response){
-                if(response==1){
-                    toastr.success("Area Added Success");
-                    setTimeout(() => {
-                        location.reload();     
-                    }, 1000);
-                   
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: {
+                    lat: 23.8103,
+                    lng: 90.4125
                 }
-              
+            });
+
+            directionsRenderer.setMap(map);
+
+            // Auto-location suggestion
+            const originInput = document.getElementById("origin");
+            const destinationInput = document.getElementById("destination");
+
+            const autocompleteOrigin = new google.maps.places.Autocomplete(originInput);
+            const autocompleteDestination = new google.maps.places.Autocomplete(destinationInput);
+
+            map.addListener("click", function(e) {
+                if (document.getElementById("routeOption").value === "click") {
+                    clickCount++;
+                    if (clickCount === 1) {
+                        if (originMarker) originMarker.setMap(null);
+                        originLatLng = e.latLng;
+                        originMarker = new google.maps.Marker({
+                            position: originLatLng,
+                            map: map,
+                            label: "A"
+                        });
+                    } else if (clickCount === 2) {
+                        if (destinationMarker) destinationMarker.setMap(null);
+                        destinationLatLng = e.latLng;
+                        destinationMarker = new google.maps.Marker({
+                            position: destinationLatLng,
+                            map: map,
+                            label: "B"
+                        });
+
+                        calculateAndDisplayRoute();
+                        clickCount = 0; // reset click
+                    }
+                }
+            });
+        }
+
+        // Function to calculate and display route
+        function calculateAndDisplayRoute() {
+            directionsService.route({
+                origin: originLatLng,
+                destination: destinationLatLng,
+                travelMode: google.maps.TravelMode.DRIVING
+            }, (response, status) => {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(response);
+
+                    const route = response.routes[0].legs[0];
+                    const distance = route.distance.text;
+                    const duration = route.duration.text;
+
+                    document.getElementById("info-box").innerHTML = `
+                        <div>Distance: ${distance}</div>
+                        <div>Estimated Time: ${duration}</div>
+                    `;
+                } else {
+                    alert("Directions request failed due to " + status);
+                }
+            });
+        }
+
+        // Handle route option change
+        document.getElementById("routeOption").addEventListener("change", function() {
+            if (this.value === "input") {
+                document.getElementById("manual-input").style.display = "block";
+                document.getElementById("click-select").style.display = "none";
+                originMarker?.setMap(null);
+                destinationMarker?.setMap(null);
+            } else {
+                document.getElementById("manual-input").style.display = "none";
+                document.getElementById("click-select").style.display = "block";
             }
         });
-    });
-</script>
 
-   <!-- Load Google Maps API --> 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuBbBNNwQbS81QdDrQOMq2WlSFiU1QdIs&callback=loadMaps" async defer></script>
- 
+        window.onload = initialize;
 
+
+
+
+        document.getElementById("findRoute").addEventListener("click", function() {
+    const routeOption = document.getElementById("routeOption").value;
+
+    if (routeOption === "input") {
+        const origin = document.getElementById("origin").value;
+        const destination = document.getElementById("destination").value;
+
+        if (origin && destination) {
+            const geocoder = new google.maps.Geocoder();
+
+            /* Geocode the origin*/
+            geocoder.geocode({ address: origin }, function(results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    originLatLng = results[0].geometry.location;
+
+                    /*Geocode the destination*/ 
+                    geocoder.geocode({ address: destination }, function(results, status) {
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            destinationLatLng = results[0].geometry.location;
+
+                            calculateAndDisplayRoute();
+                        } else {
+                            alert("Destination not found");
+                        }
+                    });
+                } else {
+                    alert("Origin not found");
+                }
+            });
+        } else {
+            alert("Error!!");
+        }
+    }
+});
+
+    </script>
 </body>
 
 </html>
