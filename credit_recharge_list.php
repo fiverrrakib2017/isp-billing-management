@@ -131,9 +131,9 @@ include 'include/users_right.php';
                                     <button class="btn btn-danger print-btn" onclick="printTable()"><i
                                             class="fa fa-print"></i></button>
 
-                                    <!-- <button class="btn btn btn-success" id="export_to_excel">Export <img
+                                    <button class="btn btn btn-success" id="export_to_excel">Export <img
                                             src="https://img.icons8.com/?size=100&id=117561&format=png&color=000000"
-                                            class="img-fluid icon-img" style="height: 20px !important;"></button> -->
+                                            class="img-fluid icon-img" style="height: 20px !important;"></button>
 
                                 </div>
                             </div>
