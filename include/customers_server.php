@@ -524,7 +524,7 @@ if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
     $mobile = $_POST['mobile'];
-    $exp_date = $_POST['expire_date'];
+    $billing_date = $_POST['billing_date'];
     $pop = $_POST['pop'];
     $area = $_POST['area'];
     $area_house_id = is_numeric($_POST['customer_houseno']) ? intval($_POST['customer_houseno']) : '0';
@@ -541,19 +541,19 @@ if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     /*GET Package Name*/
     $package_name = $con->query("SELECT package_name FROM branch_package WHERE id='$package'")->fetch_array()['package_name'];
     /*Check Expire Date */
-    if ($exp_date > 0) {
-        $expire_date = $con->query("SELECT expiredate FROM customers WHERE id='$customer_id'")->fetch_array()['expiredate'];
+    if ($billing_date > 0) {
+        $get_customer_expire_date = $con->query("SELECT expiredate FROM customers WHERE id='$customer_id'")->fetch_array()['expiredate'];
         $year = '';
         $month = '';
 
-        for ($i = 0; $i < strlen($expire_date); $i++) {
+        for ($i = 0; $i < strlen($get_customer_expire_date); $i++) {
             if ($i < 4) {
-                $year .= $expire_date[$i];
+                $year .= $get_customer_expire_date[$i];
             } elseif ($i > 4 && $i < 7) {
-                $month .= $expire_date[$i];
+                $month .= $get_customer_expire_date[$i];
             }
         }
-        $new_expire_date = $year . '-' . $month . '-' . $exp_date;
+        $new_expire_date = $year . '-' . $month . '-' . $billing_date;
     }
     $result = $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`expiredate`='$new_expire_date',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type' WHERE id=$customer_id");
     if ($result) {

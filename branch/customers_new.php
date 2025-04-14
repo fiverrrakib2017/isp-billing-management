@@ -694,11 +694,12 @@ if (file_exists($users_right_path)) {
 
 
                             $.each(response.data, function(key, data) {
-                                if (String(data.id) === String(get_area)) {
-                                    popOptions += '<option value="' + data.id + '" selected>' + data.name + '</option>';
-                                } else {
-                                    popOptions += '<option value="' + data.id + '">' + data.name + '</option>';
-                                }
+                                // if (String(data.id) === String(get_area)) {
+                                //     popOptions += '<option value="' + data.id + '" selected>' + data.name + '</option>';
+                                // } else {
+                                //     popOptions += '<option value="' + data.id + '">' + data.name + '</option>';
+                                // }
+                                popOptions += '<option value="' + data.id + '">' + data.name + '</option>';
                             });
 
                             popOptions += '</select></label>';

@@ -1,3 +1,4 @@
+<!------------
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,7 +53,7 @@
                         <h4>Find Route</h4>
                     </div>
                     <div class="card-body">
-                        <!-- Location selection method -->
+                     
                         <div class="form-group">
                             <label for="">Select Route Type</label>
                             <select id="routeOption" class="form-control">
@@ -92,7 +93,6 @@
         </div>
     </div>
 
-    <!-- Google Maps JavaScript API -->
     <script defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuBbBNNwQbS81QdDrQOMq2WlSFiU1QdIs&libraries=places"></script>
 
@@ -232,4 +232,87 @@
     </script>
 </body>
 
+</html>-------->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Route - PHP and Google Maps</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuBbBNNwQbS81QdDrQOMq2WlSFiU1QdIs&libraries=places"></script> 
+</head>
+<body>
+    <div class="container">
+        <h2>Find Route</h2>
+
+        <!-- Input fields for origin and destination -->
+        <div>
+            <label for="origin">Current Location (Latitude, Longitude):</label>
+            <input type="text" id="origin" readonly>
+        </div>
+        <div>
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" placeholder="Enter destination">
+        </div>
+        <button id="findRoute">Find Route</button>
+    </div>
+
+    <script>
+        // Initialize the map and geolocation
+        let map, directionsService, directionsRenderer;
+
+        function initialize() {
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 7,
+                center: {lat: 23.8103, lng: 90.4125} // Default center: Dhaka
+            });
+            directionsRenderer.setMap(map);
+
+            // Get current location using geolocation API
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+                    document.getElementById("origin").value = `${position.coords.latitude}, ${position.coords.longitude}`;
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        // Find the route from current location to destination
+        document.getElementById('findRoute').addEventListener('click', function() {
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+
+            if (origin && destination) {
+                fetchRoute(origin, destination);
+            } else {
+                alert("Please fill both fields.");
+            }
+        });
+
+        function fetchRoute(origin, destination) {
+            const directionsRequest = {
+                origin: origin,
+                destination: destination,
+                travelMode: 'DRIVING',
+            };
+
+            directionsService.route(directionsRequest, function(response, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(response);
+                } else {
+                    alert("Couldn't get the route: " + status);
+                }
+            });
+        }
+
+        window.onload = initialize;
+    </script>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+</body>
 </html>
