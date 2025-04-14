@@ -16,7 +16,7 @@ if (isset($_GET['clid'])) {
             $password = $rows['password'];
             $mobile = $rows['mobile'];
             $area = $rows['area'];
-            $area_house_id = $rows['area_house_id'];
+            $area_house = $rows['area_house_id'];
             $pop_id = $rows['pop'];
             $address = $rows['address'];
             $nid = $rows['nid'];
@@ -236,17 +236,17 @@ if (isset($_GET['clid'])) {
                                                             class="col-lg-3 col-form-label">House No.</label>
                                                         <div class="col-lg-9">
                                                             <div class="d-flex">
-                                                                <select id="customer_houseno" class="form-select"
-                                                                    name="customer_houseno" style="width: 100%;">
+                                                                <select id="customer_house_id" class="form-select"
+                                                                    name="customer_house_id" style="width: 100%;">
                                                                     <option value="0">---Select---</option>
                                                                     <?php
                                                                     
                                                                     if ($get_all_house = $con->query("SELECT * FROM area_house WHERE pop_id=$pop_id")) {
                                                                         while ($rows = $get_all_house->fetch_assoc()) {
-                                                                            $_area_house_id = $rows['id'];
-                                                                            $area_house_name = $rows['house_no'];
-                                                                            $selected_area_house = $_area_house_id == $area_house_id ? 'selected' : '';
-                                                                            echo '<option value="' . $_area_house_id . '" ' . $selected_area_house . '>' . $area_house_name . '</option>';
+                                                                            $_id = $rows['id'];
+                                                                            $house_name = $rows['house_no'];
+                                                                            $selected = ($_id == $area_house) ? 'selected' : '';
+                                                                            echo '<option value="' . $_id . '" '.$selected.'>' . $house_name . '</option>';
                                                                         }
                                                                     }
                                                                     
@@ -346,9 +346,9 @@ if (isset($_GET['clid'])) {
                                                 <div class="col-md-6">
                                                     <div class="row mb-3">
                                                         <label for="txtExpirationDate"
-                                                            class="col-lg-3 col-form-label">Expired Date</label>
+                                                            class="col-lg-3 col-form-label">Billing Date</label>
                                                         <div class="col-lg-9">
-                                                            <select id="customer_expire_date" class="form-select"
+                                                            <select id="customer_billing_date" class="form-select"
                                                                 style="width: 100%;">
                                                                 <?php
                                                                 if ($get_all_area_billing_days = $con->query("SELECT `billing_date` FROM area_list WHERE id=$area")) {
@@ -580,7 +580,7 @@ if (isset($_GET['clid'])) {
             var password = $("#customer_password").val();
             var mobile = $("#customer_mobile").val();
             var address = $("#customer_address").val();
-            var expire_date = $("#customer_expire_date").val();
+            var billing_date = $("#customer_billing_date").val();
             var area = $("#customer_area").val();
             var pop = $("#customer_pop").val();
             var nid = $("#customer_nid").val();
@@ -589,7 +589,7 @@ if (isset($_GET['clid'])) {
             var remarks = $("#customer_remarks").val();
             var status = $("#customer_status").val();
             var liablities = $("#customer_liablities").val();
-            var customer_houseno = $("#customer_houseno").val();
+            var customer_houseno = $("#customer_house_id").val();
             var customer_connection_type = $("#customer_connection_type").val();
             var user_type = 1;
 
@@ -603,8 +603,8 @@ if (isset($_GET['clid'])) {
                 toastr.error("Password is require");
             } else if (mobile.length == 0) {
                 toastr.error("Mobile number is require");
-            } else if (expire_date.length == 0) {
-                toastr.error("Expire Date is require");
+            } else if (billing_date.length == 0) {
+                toastr.error("Billing Date is require");
             } else if (pop.length == 0) {
                 toastr.error("POP/Branch is require");
             } else if (area.length == 0) {
@@ -640,7 +640,7 @@ if (isset($_GET['clid'])) {
                     password: password,
                     mobile: mobile,
                     address: address,
-                    expire_date: expire_date,
+                    billing_date: billing_date,
                     area: area,
                     customer_houseno: customer_houseno,
                     pop: pop,
