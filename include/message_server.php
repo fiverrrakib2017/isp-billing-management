@@ -300,7 +300,7 @@ if (isset($_GET['send_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     /* SMS API details */
     $url = "http://bulksmsbd.net/api/smsapi";
     $api_key = "WC1N6AFA4gVRZLtyf8z9";
-    $senderid = "8809617620311";
+    $senderid = "SR WiFi";
     
     /* Prepare data */
     $data = [
@@ -363,7 +363,7 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     /* SMS API details */
     $url = "http://bulksmsbd.net/api/smsapimany";
     $api_key = "WC1N6AFA4gVRZLtyf8z9";
-    $senderid = "8809617620311";
+    $senderid = "SR WiFi";
 
     /* Prepare data */  
     $messages = [];
