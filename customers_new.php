@@ -708,28 +708,29 @@ include 'include/users_right.php';
             var status_filter_result = $('.status_filter').val() == null ? '' : $('.status_filter').val();
             table.ajax.reload(null, false);
         });
-        $(document).on('click', 'button[name="export_to_excel"]', function() {
+        $(document).on('click', 'button[name="export_to_excel"]', function () {
             let csvContent = "data:text/csv;charset=utf-8,";
 
-            /* Add header row */
+            /*Header Row (Remove first and last column)*/ 
             csvContent += [
-                '', 'ID', 'Name', 'Package', 'Amount', 'Expired Date', 'Expired Date', 'Username', 'Mobile no.',
-                'POP/Branch', 'Area/Location'
+                'ID', 'Name', 'Package', 'Amount', 'Create Date', 'Expired Date',
+                'Username', 'Mobile no.', 'POP/Branch', 'Area/Location', 'Liabilities'
             ].join(",") + "\n";
-
-
-
-            /* Add selected data rows */
-            $('#customers_table tbody tr').each(function() {
+            $('#customers_table tbody tr').each(function () {
                 let row = [];
-                $(this).find('td').each(function() {
-                    row.push($(this).text().trim());
-                });
+                let $tds = $(this).find('td');
+
+                /*Remove 1st and 2nd Column*/ 
+                for (let i = 1; i < $tds.length - 1; i++) {
+                    let cell = $tds.eq(i).text().trim();
+                    row.push('"' + cell.replace(/"/g, '""') + '"');
+                }
+
                 csvContent += row.join(",") + "\n";
             });
+            
 
-
-            /* Create a link element and simulate click to download the CSV file */
+            /* Trigger download*/
             let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
             link.setAttribute("href", encodedUri);
@@ -738,6 +739,8 @@ include 'include/users_right.php';
             link.click();
             document.body.removeChild(link);
         });
+
+
 
 
         function printTable() {
