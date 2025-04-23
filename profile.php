@@ -1,64 +1,67 @@
 <?php
-date_default_timezone_set('Asia/Dhaka');
-include 'include/security_token.php';
-include 'include/users_right.php';
-include 'include/db_connect.php';
-require 'routeros/routeros_api.class.php';
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-
-$nasipaddress = 'Not connected!';
-$RouterPortID = 'Not Found!';
-$DeviceMAC = 'Not Found!';
-$framedipaddress = 'Not connected!';
-$offlineHours = 'Never connected!';
-
+date_default_timezone_set("Asia/Dhaka");
+include "include/security_token.php";
+include "include/users_right.php";
+include "include/db_connect.php";
+require "routeros/routeros_api.class.php";
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-if (isset($_GET['clid'])) {
-    $clid = $_GET['clid'];
+$nasipaddress = "Not connected!";
+$RouterPortID = "Not Found!";
+$DeviceMAC = "Not Found!";
+$framedipaddress = "Not connected!";
+$offlineHours = "Never connected!";
+
+if (isset($_GET["clid"])) {
+    $clid = $_GET["clid"];
 
     if ($cstmr = $con->query("SELECT * FROM customers WHERE id='$clid'")) {
         while ($rows = $cstmr->fetch_array()) {
-            $lstid = $rows['id'];
-            $fullname = $rows['fullname'];
-            $package = $rows['package'];
-            $packagename = $rows['package_name'];
-            $username = $rows['username'];
-            $password = $rows['password'];
-            $mobile = $rows['mobile'];
-            $pop = $rows['pop'];
-            $area = $rows['area'];
-            $area_house_id = $rows['area_house_id'];
-            $address = $rows['address'];
-            $expiredDate = $rows['expiredate'];
-            $createdate = $rows['createdate'];
-            $profile_pic = $rows['profile_pic'];
-            $nid = $rows['nid'];
-            $price = $rows['price'];
-            $remarks = $rows['remarks'];
-            $liablities = $rows['liablities'];
+            $lstid = $rows["id"];
+            $fullname = $rows["fullname"];
+            $package = $rows["package"];
+            $packagename = $rows["package_name"];
+            $username = $rows["username"];
+            $password = $rows["password"];
+            $mobile = $rows["mobile"];
+            $pop = $rows["pop"];
+            $area = $rows["area"];
+            $area_house_id = $rows["area_house_id"];
+            $address = $rows["address"];
+            $expiredDate = $rows["expiredate"];
+            $createdate = $rows["createdate"];
+            $profile_pic = $rows["profile_pic"];
+            $nid = $rows["nid"];
+            $price = $rows["price"];
+            $remarks = $rows["remarks"];
+            $liablities = $rows["liablities"];
         }
 
-        $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+        $onlineusr = $con->query(
+            "SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'"
+        );
         $onlineusr->num_rows;
 
         // NAS Info
         $rowacct = $onlineusr->fetch_assoc();
-        $nasipaddress = $rowacct['nasipaddress'] ?? '';
+        $nasipaddress = $rowacct["nasipaddress"] ?? "";
 
-        $CNRT = $con->query("SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
+        $CNRT = $con->query(
+            "SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1"
+        );
         while ($nas_rows = $CNRT->fetch_array()) {
-            $NASname = $nas_rows['shortname'];
-            $nasname = $nas_rows['nasname'];
-            $api_usr = $nas_rows['api_user'];
-            $api_pswd = $nas_rows['api_password'];
-            $api_server = $nas_rows['api_ip'];
-            $api_port = $nas_rows['ports'];
+            $NASname = $nas_rows["shortname"];
+            $nasname = $nas_rows["nasname"];
+            $api_usr = $nas_rows["api_user"];
+            $api_pswd = $nas_rows["api_password"];
+            $api_server = $nas_rows["api_ip"];
+            $api_port = $nas_rows["ports"];
         }
 
         // Disable Enable
-        if (isset($_GET['disable'])) {
-            if ($_GET['disable'] == 'true') {
+        if (isset($_GET["disable"])) {
+            if ($_GET["disable"] == "true") {
                 $con->query("UPDATE customers SET status='0' WHERE id='$clid'");
                 $con->query("DELETE FROM radcheck WHERE username='$username'");
                 $con->query("DELETE FROM radreply WHERE username='$username'");
@@ -67,29 +70,35 @@ if (isset($_GET['clid'])) {
                 $API = new RouterosAPI();
                 //$API->debug = true;
 
-                if ($API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
-                    $API->write('/ppp/active/print', false);
-                    $API->write('?name=' . $username, false);
-                    $API->write('=.proplist=.id');
+                if (
+                    $API->connect($api_server, $api_usr, $api_pswd, $api_port)
+                ) {
+                    $API->write("/ppp/active/print", false);
+                    $API->write("?name=" . $username, false);
+                    $API->write("=.proplist=.id");
                     $ARRAYS = $API->read();
-                    $API->write('/ppp/active/remove', false);
-                    $API->write('=.id=' . $ARRAYS[0]['.id']);
+                    $API->write("/ppp/active/remove", false);
+                    $API->write("=.id=" . $ARRAYS[0][".id"]);
                     $READ = $API->read();
                     $API->disconnect();
                     //header("location:?clid=$clid");
                 }
 
                 header("location:?clid=$clid");
-            } elseif ($_GET['disable'] == 'false') {
+            } elseif ($_GET["disable"] == "false") {
                 $con->query("UPDATE customers SET status='1' WHERE id='$clid'");
-                $con->query("INSERT INTO radcheck(username,value,attribute,op) VALUES('$username','$password','Cleartext-Password',':=')");
-                $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$packagename')");
+                $con->query(
+                    "INSERT INTO radcheck(username,value,attribute,op) VALUES('$username','$password','Cleartext-Password',':=')"
+                );
+                $con->query(
+                    "INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$packagename')"
+                );
                 header("location:?clid=$clid");
             }
         }
     }
 
-    if (isset($_GET['reconnect'])) {
+    if (isset($_GET["reconnect"])) {
         // Reconnect PPP User
 
         $API = new RouterosAPI();
@@ -97,12 +106,12 @@ if (isset($_GET['clid'])) {
 
         if ($API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
             //$API->write('/interface/pppoe-server/remove <pppoe-ml_ataur>',true);
-            $API->write('/ppp/active/print', false);
-            $API->write('?name=' . $username, false);
-            $API->write('=.proplist=.id');
+            $API->write("/ppp/active/print", false);
+            $API->write("?name=" . $username, false);
+            $API->write("=.proplist=.id");
             $ARRAYS = $API->read();
-            $API->write('/ppp/active/remove', false);
-            $API->write('=.id=' . $ARRAYS[0]['.id']);
+            $API->write("/ppp/active/remove", false);
+            $API->write("=.id=" . $ARRAYS[0][".id"]);
             $READ = $API->read();
             $API->disconnect();
             header("location:?clid=$clid");
@@ -114,17 +123,19 @@ $map_data = [];
 /*GET Customer in this Area */
 if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
     while ($rows = $get_customers->fetch_array()) {
-        $area_house_id = $rows['area_house_id'];
-        if ($area_house_id !== '') {
-            $get_area_house = $con->query("SELECT * FROM area_house WHERE id='$area_house_id'");
+        $area_house_id = $rows["area_house_id"];
+        if ($area_house_id !== "") {
+            $get_area_house = $con->query(
+                "SELECT * FROM area_house WHERE id='$area_house_id'"
+            );
             while ($rows_area = $get_area_house->fetch_array()) {
                 $map_data[] = [
-                    'lat' => $rows_area['lat'],
-                    'lng' => $rows_area['lng'],
-                    'house_no' => $rows_area['house_no'],
+                    "lat" => $rows_area["lat"],
+                    "lng" => $rows_area["lng"],
+                    "house_no" => $rows_area["house_no"],
 
-                    'customer_username' => $rows['username'],
-                    'customer_phone_number' => $rows['mobile'],
+                    "customer_username" => $rows["username"],
+                    "customer_phone_number" => $rows["mobile"],
                 ];
             }
         }
@@ -138,21 +149,21 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
     <meta charset="utf-8">
     <title>FAST-ISP-BILLING-SYSTEM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php include 'style.php'; ?>
+    <?php include "style.php"; ?>
 </head>
 
 <body data-sidebar="dark">
     <!-- Begin page -->
     <div id="layout-wrapper">
         <?php
-        $page_title = 'Profile';
-        include 'Header.php';
+        $page_title = "Profile";
+        include "Header.php";
         ?>
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
             <div data-simplebar class="h-100">
                 <!--- Sidemenu -->
-                <?php include 'Sidebar_menu.php'; ?>
+                <?php include "Sidebar_menu.php"; ?>
                 <!-- Sidebar -->
             </div>
         </div>
@@ -214,7 +225,11 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                             </button></abbr>
                                         &nbsp;
                                         <?php
-                                        if ($usrstatus = $con->query("SELECT * FROM radcheck WHERE username='$username' LIMIT 1")) {
+                                        if (
+                                            $usrstatus = $con->query(
+                                                "SELECT * FROM radcheck WHERE username='$username' LIMIT 1"
+                                            )
+                                        ) {
                                             $radusrname = $usrstatus->num_rows;
                                         }
                                         if ($radusrname == 1) {
@@ -283,13 +298,19 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                             <small class="text-muted">
                                                                 <i class="far fa-calendar-alt"></i>
                                                                 <?php
-                                                                $createdate = new DateTime($createdate);
-                                                                echo $createdate->format('d M, Y');
+                                                                $createdate = new DateTime(
+                                                                    $createdate
+                                                                );
+                                                                echo $createdate->format(
+                                                                    "d M, Y"
+                                                                );
                                                                 ?>
                                                             </small>
 
                                                             <!-- Remarks Section -->
-                                                            <?php if (!empty($remarks)) : ?>
+                                                            <?php if (
+                                                                !empty($remarks)
+                                                            ): ?>
                                                             <div class="mt-2 p-2 bg-light border rounded">
                                                                 <i class="fas fa-comment-dots text-info"></i>
                                                                 <?php echo $remarks; ?>
@@ -313,24 +334,102 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                         <div class="card  border-0 rounded-4">
                                             <div class="card-body p-4">
                                                 <div class="col-12 bg-white p-0">
-                                                    <?php
-                                                    $info = [
-                                                        ['mdi mdi-marker-check', 'Fullname', $fullname],
-                                                        ['mdi mdi-account-circle', 'Username', $username],
-                                                        ['fas fa-box', 'Package', $packagename],
-                                                        ['fas fa-dollar-sign', 'Bill Amount', "<span class='fw-bold text-success'>৳$price</span>"],
-                                                        ['fas fa-location-arrow', 'Area', $con->query("SELECT name FROM area_list WHERE id='$area'")->fetch_array()['name']],
-                                                        ['fas fa-home', 'Address', $address],
-                                                        ['fas fa-map-marker-alt', 'Area Location', isset($area_house_id) && $area_house_id > 0 ? $con->query("SELECT house_no FROM area_house WHERE id=$area_house_id")->fetch_array()['house_no'] : 'N/A'],
-                                                        ['fas fa-file-contract', 'Liabilities', $liablities == 1 ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-danger">No</span>'],
-                                                        ['mdi mdi-phone', 'Mobile', $mobile],
-                                                        ['mdi mdi-crosshairs-gps', 'POP/Branch', '<a href="view_pop.php?id=' . $pop . '" class="text-decoration-none text-dark fw-bold">' . $con->query("SELECT pop FROM add_pop WHERE id='$pop'")->fetch_array()['pop'] . '</a>'],
-                                                        ['fas fa-id-card', 'Nid No', $nid],
-                                                        ['fas fa-comment-alt', 'Remarks', $remarks],
-                                                    ];
-                                                    ?>
+                                                    <?php $info = [
+                                                        [
+                                                            "mdi mdi-marker-check",
+                                                            "Fullname",
+                                                            $fullname,
+                                                        ],
+                                                        [
+                                                            "mdi mdi-account-circle",
+                                                            "Username",
+                                                            $username,
+                                                        ],
+                                                        [
+                                                            "fas fa-box",
+                                                            "Package",
+                                                            $packagename,
+                                                        ],
+                                                        [
+                                                            "fas fa-dollar-sign",
+                                                            "Bill Amount",
+                                                            "<span class='fw-bold text-success'>৳$price</span>",
+                                                        ],
+                                                        [
+                                                            "fas fa-location-arrow",
+                                                            "Area",
+                                                            $con
+                                                                ->query(
+                                                                    "SELECT name FROM area_list WHERE id='$area'"
+                                                                )
+                                                                ->fetch_array()[
+                                                                "name"
+                                                            ],
+                                                        ],
+                                                        [
+                                                            "fas fa-home",
+                                                            "Address",
+                                                            $address,
+                                                        ],
+                                                        [
+                                                            "fas fa-map-marker-alt",
+                                                            "Area Location",
+                                                            isset(
+                                                                $area_house_id
+                                                            ) &&
+                                                            $area_house_id > 0
+                                                                ? $con
+                                                                    ->query(
+                                                                        "SELECT house_no FROM area_house WHERE id=$area_house_id"
+                                                                    )
+                                                                    ->fetch_array()[
+                                                                    "house_no"
+                                                                ]
+                                                                : "N/A",
+                                                        ],
+                                                        [
+                                                            "fas fa-file-contract",
+                                                            "Liabilities",
+                                                            $liablities == 1
+                                                                ? '<span class="badge bg-success">Yes</span>'
+                                                                : '<span class="badge bg-danger">No</span>',
+                                                        ],
+                                                        [
+                                                            "mdi mdi-phone",
+                                                            "Mobile",
+                                                            $mobile,
+                                                        ],
+                                                        [
+                                                            "mdi mdi-crosshairs-gps",
+                                                            "POP/Branch",
+                                                            '<a href="view_pop.php?id=' .
+                                                            $pop .
+                                                            '" class="text-decoration-none text-dark fw-bold">' .
+                                                            $con
+                                                                ->query(
+                                                                    "SELECT pop FROM add_pop WHERE id='$pop'"
+                                                                )
+                                                                ->fetch_array()[
+                                                                "pop"
+                                                            ] .
+                                                            "</a>",
+                                                        ],
+                                                        [
+                                                            "fas fa-id-card",
+                                                            "Nid No",
+                                                            $nid,
+                                                        ],
+                                                        [
+                                                            "fas fa-comment-alt",
+                                                            "Remarks",
+                                                            $remarks,
+                                                        ],
+                                                    ]; ?>
 
-                                                    <?php foreach ($info as $item): ?>
+                                                    <?php foreach (
+                                                        $info
+                                                        as $item
+                                                    ): ?>
                                                     <div
                                                         class="d-flex justify-content-between align-items-center py-3 px-3 border-bottom border-dotted">
                                                         <p class="mb-0 text-muted"><i
@@ -354,152 +453,336 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                         <div class="row no-gutters align-items-center">
                                                             <div class="col">
                                                                 <?php
-                                                                if ($onlineusr->num_rows == 1) {
+                                                                if (
+                                                                    $onlineusr->num_rows ==
+                                                                    1
+                                                                ) {
                                                                     echo '<span class="badge bg-success">Online</span>';
                                                                 } else {
                                                                     echo '<span class="badge bg-danger">Offline</span>';
                                                                 }
-                                                                
-                                                                if ($DeviceMC = $con->query("SELECT nasipaddress, nasportid, callingstationid, framedipaddress FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
-                                                                    while ($mac_rows = $DeviceMC->fetch_array()) {
-                                                                        $nasipaddress = $mac_rows['nasipaddress'];
-                                                                        $RouterPortID = $mac_rows['nasportid'];
-                                                                        $DeviceMAC = $mac_rows['callingstationid'];
-                                                                        $framedipaddress = $mac_rows['framedipaddress'];
+
+                                                                if (
+                                                                    $DeviceMC = $con->query(
+                                                                        "SELECT nasipaddress, nasportid, callingstationid, framedipaddress FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1"
+                                                                    )
+                                                                ) {
+                                                                    while (
+                                                                        $mac_rows = $DeviceMC->fetch_array()
+                                                                    ) {
+                                                                        $nasipaddress =
+                                                                            $mac_rows[
+                                                                                "nasipaddress"
+                                                                            ];
+                                                                        $RouterPortID =
+                                                                            $mac_rows[
+                                                                                "nasportid"
+                                                                            ];
+                                                                        $DeviceMAC =
+                                                                            $mac_rows[
+                                                                                "callingstationid"
+                                                                            ];
+                                                                        $framedipaddress =
+                                                                            $mac_rows[
+                                                                                "framedipaddress"
+                                                                            ];
                                                                     }
-                                                                
+
                                                                     // Router name
-                                                                    if ($nasipaddress != '') {
-                                                                        $NASFND = $con->query("SELECT shortname FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
-                                                                        while ($nas_rows = $NASFND->fetch_array()) {
-                                                                            $NASname = $nas_rows['shortname'];
+                                                                    if (
+                                                                        $nasipaddress !=
+                                                                        ""
+                                                                    ) {
+                                                                        $NASFND = $con->query(
+                                                                            "SELECT shortname FROM nas WHERE nasname='$nasipaddress' LIMIT 1"
+                                                                        );
+                                                                        while (
+                                                                            $nas_rows = $NASFND->fetch_array()
+                                                                        ) {
+                                                                            $NASname =
+                                                                                $nas_rows[
+                                                                                    "shortname"
+                                                                                ];
                                                                         }
                                                                     } else {
-                                                                        $NASname = 'Not Found!';
+                                                                        $NASname =
+                                                                            "Not Found!";
                                                                     }
                                                                     /**/
-                                                                    echo '</br>';
-                                                                    echo '<b>Router:</b> ' . $NASname . ' ~ ' . $nasipaddress;
-                                                                    echo '</br>';
-                                                                    echo '<b>Interface:</b> ' . $RouterPortID;
-                                                                    echo '</br>';
-                                                                    echo '<b>MAC:</b> ' . $DeviceMAC;
-                                                                    echo '</br>';
-                                                                    echo '<b>Remote IP:</b> ' . $framedipaddress;
-                                                                    echo '</br>';
-                                                                
+                                                                    echo "</br>";
+                                                                    echo "<b>Router:</b> " .
+                                                                        $NASname .
+                                                                        " ~ " .
+                                                                        $nasipaddress;
+                                                                    echo "</br>";
+                                                                    echo "<b>Interface:</b> " .
+                                                                        $RouterPortID;
+                                                                    echo "</br>";
+                                                                    echo "<b>MAC:</b> " .
+                                                                        $DeviceMAC;
+                                                                    echo "</br>";
+                                                                    echo "<b>Remote IP:</b> " .
+                                                                        $framedipaddress;
+                                                                    echo "</br>";
+
                                                                     ////////////// Mikrotik package detected
-                                                                    $cstpckg = $con->query("SELECT value FROM radreply WHERE username='$username' LIMIT 1");
-                                                                    if ($cstpckg->num_rows == 1) {
+                                                                    $cstpckg = $con->query(
+                                                                        "SELECT value FROM radreply WHERE username='$username' LIMIT 1"
+                                                                    );
+                                                                    if (
+                                                                        $cstpckg->num_rows ==
+                                                                        1
+                                                                    ) {
                                                                         //echo '<br><b><span style="color:red;">Grace Time</span></b><br>';
                                                                         $cpkg_rows = $cstpckg->fetch_array();
-                                                                        echo '<b>Detected pkg. </b>' . $cpkg_rows['value'] . '</br>';
+                                                                        echo "<b>Detected pkg. </b>" .
+                                                                            $cpkg_rows[
+                                                                                "value"
+                                                                            ] .
+                                                                            "</br>";
                                                                     }
-                                                                
-                                                                    if (strlen($DeviceMAC) > 6) {
-                                                                        $MACaddr = substr($DeviceMAC, 0, 8);
+
+                                                                    if (
+                                                                        strlen(
+                                                                            $DeviceMAC
+                                                                        ) > 6
+                                                                    ) {
+                                                                        $MACaddr = substr(
+                                                                            $DeviceMAC,
+                                                                            0,
+                                                                            8
+                                                                        );
                                                                         // Retrive MAC Data from database
-                                                                        if ($MC_vend = $con->query("SELECT vendor FROM mac_vendor WHERE mac='$MACaddr' LIMIT 1")) {
-                                                                            while ($vend_rows = $MC_vend->fetch_array()) {
-                                                                                $MAC_vendor = $vend_rows['vendor'];
+                                                                        if (
+                                                                            $MC_vend = $con->query(
+                                                                                "SELECT vendor FROM mac_vendor WHERE mac='$MACaddr' LIMIT 1"
+                                                                            )
+                                                                        ) {
+                                                                            while (
+                                                                                $vend_rows = $MC_vend->fetch_array()
+                                                                            ) {
+                                                                                $MAC_vendor =
+                                                                                    $vend_rows[
+                                                                                        "vendor"
+                                                                                    ];
                                                                                 echo "<b>$MAC_vendor</b>";
                                                                             }
                                                                         }
                                                                     }
                                                                 }
-                                                                
                                                                 ?>
                                                             </div>
                                                             <div class="col">
 
-                                                                <?php
-                                                                if ($onlineusr->num_rows == 1) {
+                                                                <?php if (
+                                                                    $onlineusr->num_rows ==
+                                                                    1
+                                                                ) {
                                                                     echo '<b><abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr> Online </b> <br/>';
-                                                                
-                                                                    if ($lastuptime = $con->query("SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstarttime, NOW()))) AS time FROM radacct WHERE username='$username' AND acctstoptime IS NULL ORDER BY radacctid DESC LIMIT 1")) {
+
+                                                                    if (
+                                                                        $lastuptime = $con->query(
+                                                                            "SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstarttime, NOW()))) AS time FROM radacct WHERE username='$username' AND acctstoptime IS NULL ORDER BY radacctid DESC LIMIT 1"
+                                                                        )
+                                                                    ) {
                                                                         $upt_rows = $lastuptime->fetch_array();
-                                                                        $onlineHrs = $upt_rows['time'];
-                                                                
-                                                                        echo '<span class="far fa-clock"></span> <strong><span style="color:green;"> ' . $onlineHrs . '</span></strong> Hrs <br/>';
-                                                                
-                                                                        if ($ontimes = $con->query("SELECT acctstarttime, acctinputoctets/1000/1000/1000 AS GB_IN, acctoutputoctets/1000/1000/1000 AS GB_OUT FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
+                                                                        $onlineHrs =
+                                                                            $upt_rows[
+                                                                                "time"
+                                                                            ];
+
+                                                                        echo '<span class="far fa-clock"></span> <strong><span style="color:green;"> ' .
+                                                                            $onlineHrs .
+                                                                            "</span></strong> Hrs <br/>";
+
+                                                                        if (
+                                                                            $ontimes = $con->query(
+                                                                                "SELECT acctstarttime, acctinputoctets/1000/1000/1000 AS GB_IN, acctoutputoctets/1000/1000/1000 AS GB_OUT FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1"
+                                                                            )
+                                                                        ) {
                                                                             $on_rowss = $ontimes->fetch_array();
-                                                                            $Download = number_format($on_rowss['GB_OUT'], 3);
-                                                                            $Upload = number_format($on_rowss['GB_IN'], 3);
-                                                                
-                                                                            echo '<span class="fas fa-arrow-alt-circle-down" style="color:red;"> ' . $Download . ' GB</span><br/>';
-                                                                            echo '<span class="fas fa-arrow-alt-circle-up" style="color:purple;"> ' . $Upload . ' GB</span><br/>';
-                                                                            echo '<span class="fas fa-link text-green"></span><strong><span style="color:blue;"> ' . date('h:i:s A', strtotime($on_rowss['acctstarttime'])) . '</span></strong>';
+                                                                            $Download = number_format(
+                                                                                $on_rowss[
+                                                                                    "GB_OUT"
+                                                                                ],
+                                                                                3
+                                                                            );
+                                                                            $Upload = number_format(
+                                                                                $on_rowss[
+                                                                                    "GB_IN"
+                                                                                ],
+                                                                                3
+                                                                            );
+
+                                                                            echo '<span class="fas fa-arrow-alt-circle-down" style="color:red;"> ' .
+                                                                                $Download .
+                                                                                " GB</span><br/>";
+                                                                            echo '<span class="fas fa-arrow-alt-circle-up" style="color:purple;"> ' .
+                                                                                $Upload .
+                                                                                " GB</span><br/>";
+                                                                            echo '<span class="fas fa-link text-green"></span><strong><span style="color:blue;"> ' .
+                                                                                date(
+                                                                                    "h:i:s A",
+                                                                                    strtotime(
+                                                                                        $on_rowss[
+                                                                                            "acctstarttime"
+                                                                                        ]
+                                                                                    )
+                                                                                ) .
+                                                                                "</span></strong>";
                                                                         }
                                                                     }
                                                                 } else {
                                                                     echo '<b><img src="images/icon/offline.png" height="10" width="10"/> Offline </b> <br/>';
-                                                                
-                                                                    if ($offtime = $con->query("SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstoptime, NOW()))) AS time FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
+
+                                                                    if (
+                                                                        $offtime = $con->query(
+                                                                            "SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstoptime, NOW()))) AS time FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1"
+                                                                        )
+                                                                    ) {
                                                                         $off_rows = $offtime->fetch_assoc();
-                                                                        $offlineHours = $off_rows['time'] ?? '';
-                                                                
-                                                                        echo '<span class="far fa-clock"></span> <strong><span style="color:red;"> ' . $offlineHours . '</span></strong> Hrs <br/>';
-                                                                
-                                                                        if ($offtimes = $con->query("SELECT acctstoptime FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1")) {
+                                                                        $offlineHours =
+                                                                            $off_rows[
+                                                                                "time"
+                                                                            ] ??
+                                                                            "";
+
+                                                                        echo '<span class="far fa-clock"></span> <strong><span style="color:red;"> ' .
+                                                                            $offlineHours .
+                                                                            "</span></strong> Hrs <br/>";
+
+                                                                        if (
+                                                                            $offtimes = $con->query(
+                                                                                "SELECT acctstoptime FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1"
+                                                                            )
+                                                                        ) {
                                                                             $off_rowss = $offtimes->fetch_array();
-                                                                            if ($off_rowss['acctstoptime']) {
-                                                                                echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;"><abbr title="' . date('Y-M-d h:i:s A', strtotime($off_rowss['acctstoptime'])) . '">  ' . date('h:i:s A', strtotime($off_rowss['acctstoptime'])) . '</abbr></span></strong>';
+                                                                            if (
+                                                                                $off_rowss[
+                                                                                    "acctstoptime"
+                                                                                ]
+                                                                            ) {
+                                                                                echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;"><abbr title="' .
+                                                                                    date(
+                                                                                        "Y-M-d h:i:s A",
+                                                                                        strtotime(
+                                                                                            $off_rowss[
+                                                                                                "acctstoptime"
+                                                                                            ]
+                                                                                        )
+                                                                                    ) .
+                                                                                    '">  ' .
+                                                                                    date(
+                                                                                        "h:i:s A",
+                                                                                        strtotime(
+                                                                                            $off_rowss[
+                                                                                                "acctstoptime"
+                                                                                            ]
+                                                                                        )
+                                                                                    ) .
+                                                                                    "</abbr></span></strong>";
                                                                             } else {
                                                                                 echo '<span class="fas fa-unlink text-green"></span><strong><span style="color:grey;">Never connected</span></strong>';
                                                                             }
                                                                         }
                                                                     }
-                                                                }
-                                                                
-                                                                ?>
+                                                                } ?>
 
                                                             </div>
                                                             <div class="col">
                                                                 <b>Expired Date</b><br>
                                                                 <?php
-                                                                if ($usrstatus = $con->query("SELECT * FROM radcheck WHERE username='$username' LIMIT 1")) {
-                                                                    $radusrname = $usrstatus->num_rows;
+                                                                if (
+                                                                    $usrstatus = $con->query(
+                                                                        "SELECT * FROM radcheck WHERE username='$username' LIMIT 1"
+                                                                    )
+                                                                ) {
+                                                                    $radusrname =
+                                                                        $usrstatus->num_rows;
                                                                 }
-                                                                
-                                                                if ($radusrname == 1) {
-                                                                    if (!empty($expiredDate) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $expiredDate)) {
-                                                                        $expiredDate = new DateTime($expiredDate);
-                                                                        $expiredDate = $expiredDate->format('d-M-Y');
+
+                                                                if (
+                                                                    $radusrname ==
+                                                                    1
+                                                                ) {
+                                                                    if (
+                                                                        !empty(
+                                                                            $expiredDate
+                                                                        ) &&
+                                                                        preg_match(
+                                                                            '/^\d{4}-\d{2}-\d{2}$/',
+                                                                            $expiredDate
+                                                                        )
+                                                                    ) {
+                                                                        $expiredDate = new DateTime(
+                                                                            $expiredDate
+                                                                        );
+                                                                        $expiredDate = $expiredDate->format(
+                                                                            "d-M-Y"
+                                                                        );
                                                                         echo "<span style='color:green;'><b>Active</b></span>";
-                                                                        echo '<br>' . $expiredDate;
+                                                                        echo "<br>" .
+                                                                            $expiredDate;
                                                                     } else {
                                                                         echo "<span style='color:orange;'><b>Invalid Date</b></span>";
                                                                     }
                                                                 } else {
-                                                                    echo '<a href="?clid=' . $clid . '&disable=false"><span style="color:red;"><b>Disabled</b></span></a>';
+                                                                    echo '<a href="?clid=' .
+                                                                        $clid .
+                                                                        '&disable=false"><span style="color:red;"><b>Disabled</b></span></a>';
                                                                 }
-                                                                
-                                                                echo '<br>';
-                                                                $gracetime = $con->query("SELECT DATEDIFF(grace_expired, NOW()) AS time FROM customers WHERE grace_expired>=NOW() AND username='$username'");
-                                                                if ($gracetime->num_rows == 1) {
+
+                                                                echo "<br>";
+                                                                $gracetime = $con->query(
+                                                                    "SELECT DATEDIFF(grace_expired, NOW()) AS time FROM customers WHERE grace_expired>=NOW() AND username='$username'"
+                                                                );
+                                                                if (
+                                                                    $gracetime->num_rows ==
+                                                                    1
+                                                                ) {
                                                                     echo '<br><b><span style="color:red;">Grace Time</span></b><br>';
                                                                     $grc_rows = $gracetime->fetch_array();
-                                                                    echo '<b>' . $grc_rows['time'] . '</b> Days';
+                                                                    echo "<b>" .
+                                                                        $grc_rows[
+                                                                            "time"
+                                                                        ] .
+                                                                        "</b> Days";
                                                                 }
-                                                                
                                                                 ?>
                                                                 <b>Monthly Uses</b>
                                                                 </br>
 
                                                                 <?php
-                                                                $currentMonth = date('m');
+                                                                $currentMonth = date(
+                                                                    "m"
+                                                                );
                                                                 if (
                                                                     $lastused = $con->query("SELECT SUM(acctinputoctets)/1000/1000/1000 AS GB_IN, SUM(acctoutputoctets)/1000/1000/1000 AS GB_OUT FROM
                                                                                                                          radacct WHERE username='$username' AND  MONTH(acctstarttime)='$currentMonth'")
                                                                 ) {
                                                                     $r_usd_rows = $lastused->fetch_array();
-                                                                    $Download = $r_usd_rows['GB_OUT'];
-                                                                    $Download = number_format($Download, 3);
-                                                                    $Upload = $r_usd_rows['GB_IN'];
-                                                                    $Upload = number_format($Upload, 3);
-                                                                
-                                                                    echo '<span class=" fas fa-arrow-alt-circle-down" style="color:red;"> ' . $Download . ' GB</span><br/><span class=" fas fa-arrow-alt-circle-up" style="color:purple;"> ' . $Upload . ' GB</span><br/>';
+                                                                    $Download =
+                                                                        $r_usd_rows[
+                                                                            "GB_OUT"
+                                                                        ];
+                                                                    $Download = number_format(
+                                                                        $Download,
+                                                                        3
+                                                                    );
+                                                                    $Upload =
+                                                                        $r_usd_rows[
+                                                                            "GB_IN"
+                                                                        ];
+                                                                    $Upload = number_format(
+                                                                        $Upload,
+                                                                        3
+                                                                    );
+
+                                                                    echo '<span class=" fas fa-arrow-alt-circle-down" style="color:red;"> ' .
+                                                                        $Download .
+                                                                        ' GB</span><br/><span class=" fas fa-arrow-alt-circle-up" style="color:purple;"> ' .
+                                                                        $Upload .
+                                                                        " GB</span><br/>";
                                                                 }
                                                                 ?>
 
@@ -523,14 +806,21 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                     class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     Recharged</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <?php
-                                                                    if ($rchdamt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type !='4'")) {
-                                                                        while ($r_rchd_rows = $rchdamt->fetch_array()) {
-                                                                            $totalrchd = $r_rchd_rows['Amount'];
+                                                                    <?php if (
+                                                                        $rchdamt = $con->query(
+                                                                            "SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type !='4'"
+                                                                        )
+                                                                    ) {
+                                                                        while (
+                                                                            $r_rchd_rows = $rchdamt->fetch_array()
+                                                                        ) {
+                                                                            $totalrchd =
+                                                                                $r_rchd_rows[
+                                                                                    "Amount"
+                                                                                ];
                                                                         }
                                                                         echo $totalrchd;
-                                                                    }
-                                                                    ?>
+                                                                    } ?>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -548,24 +838,45 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                     Total Paid</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
                                                                     <?php
-                                                                    
                                                                     $totalpaid = 0.0;
                                                                     $discount_amount = 0.0;
-                                                                    
-                                                                    if ($dueamt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type != '0'")) {
-                                                                        if ($r_due_rows = $dueamt->fetch_array()) {
-                                                                            $totalpaid = $r_due_rows['Amount'] ?? 0.0;
+
+                                                                    if (
+                                                                        $dueamt = $con->query(
+                                                                            "SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type != '0'"
+                                                                        )
+                                                                    ) {
+                                                                        if (
+                                                                            $r_due_rows = $dueamt->fetch_array()
+                                                                        ) {
+                                                                            $totalpaid =
+                                                                                $r_due_rows[
+                                                                                    "Amount"
+                                                                                ] ??
+                                                                                0.0;
                                                                         }
                                                                     }
-                                                                    
-                                                                    if ($discount_query = $con->query("SELECT SUM(discount) AS discount_amount FROM customer_rechrg WHERE customer_id='$clid'")) {
-                                                                        if ($discount_row = $discount_query->fetch_array()) {
-                                                                            $discount_amount = $discount_row['discount_amount'] ?? 0.0;
+
+                                                                    if (
+                                                                        $discount_query = $con->query(
+                                                                            "SELECT SUM(discount) AS discount_amount FROM customer_rechrg WHERE customer_id='$clid'"
+                                                                        )
+                                                                    ) {
+                                                                        if (
+                                                                            $discount_row = $discount_query->fetch_array()
+                                                                        ) {
+                                                                            $discount_amount =
+                                                                                $discount_row[
+                                                                                    "discount_amount"
+                                                                                ] ??
+                                                                                0.0;
                                                                         }
                                                                     }
-                                                                    
+
                                                                     // Calculate and output the net value
-                                                                    echo $totalpaid - $discount_amount ?? 0.0;
+                                                                    echo $totalpaid -
+                                                                        $discount_amount ??
+                                                                        0.0;
                                                                     ?>
                                                                 </div>
                                                             </div>
@@ -584,7 +895,9 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                     class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                                                     Total Due</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <?php echo $totalDue = $totalrchd - $totalpaid; ?>
+                                                                    <?php echo $totalDue =
+                                                                        $totalrchd -
+                                                                        $totalpaid; ?>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -601,14 +914,22 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                     class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     Due paid</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <?php
-                                                                    if ($duepmt = $con->query("SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type='4'")) {
-                                                                        while ($pmt_rows = $duepmt->fetch_array()) {
-                                                                            $totalpmtpaid = $pmt_rows['Amount'] ?? 0;
+                                                                    <?php if (
+                                                                        $duepmt = $con->query(
+                                                                            "SELECT SUM(purchase_price) AS Amount FROM customer_rechrg WHERE customer_id='$clid' AND type='4'"
+                                                                        )
+                                                                    ) {
+                                                                        while (
+                                                                            $pmt_rows = $duepmt->fetch_array()
+                                                                        ) {
+                                                                            $totalpmtpaid =
+                                                                                $pmt_rows[
+                                                                                    "Amount"
+                                                                                ] ??
+                                                                                0;
                                                                         }
                                                                         echo $totalpmtpaid;
-                                                                    }
-                                                                    ?>
+                                                                    } ?>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -625,14 +946,22 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                     class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                                     Discount</div>
                                                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                    <?php
-                                                                    if ($duepmt = $con->query("SELECT SUM(discount) AS discount_amount FROM customer_rechrg WHERE customer_id='$clid'")) {
-                                                                        while ($discount_amount_rows = $duepmt->fetch_array()) {
-                                                                            $_discount_amount = $discount_amount_rows['discount_amount'] ?? 0;
+                                                                    <?php if (
+                                                                        $duepmt = $con->query(
+                                                                            "SELECT SUM(discount) AS discount_amount FROM customer_rechrg WHERE customer_id='$clid'"
+                                                                        )
+                                                                    ) {
+                                                                        while (
+                                                                            $discount_amount_rows = $duepmt->fetch_array()
+                                                                        ) {
+                                                                            $_discount_amount =
+                                                                                $discount_amount_rows[
+                                                                                    "discount_amount"
+                                                                                ] ??
+                                                                                0;
                                                                         }
                                                                         echo $_discount_amount;
-                                                                    }
-                                                                    ?>
+                                                                    } ?>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -800,23 +1129,50 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    <?php
-                                                                                    if (
+                                                                                    <?php if (
                                                                                         $csusage = $con->query("SELECT acctinputoctets/1000/1000/1000 AS GB_IN, acctoutputoctets/1000/1000/1000 AS GB_OUT, TIMEDIFF(acctstoptime,acctstarttime) AS time, acctstoptime, acctterminatecause FROM
                                                                                                                                                          radacct WHERE username='$username' AND acctstoptime IS NOT NULL ORDER BY acctstoptime DESC, radacctid ASC LIMIT 5")
                                                                                     ) {
-                                                                                        while ($r_ussg_rows = $csusage->fetch_array()) {
-                                                                                            $usgDownload = $r_ussg_rows['GB_OUT'];
-                                                                                            $usgDownload = number_format($usgDownload, 3);
-                                                                                            $usgUpload = $r_ussg_rows['GB_IN'];
-                                                                                            $usgUpload = number_format($usgUpload, 3);
-                                                                                            $Usagetime = $r_ussg_rows['time'];
-                                                                                            $Usagestoptime = $r_ussg_rows['acctstoptime'];
-                                                                                            $Usagestoptime = date('h:i:s A ~ d-M-Y', strtotime($Usagestoptime));
-                                                                                            $Usageacctterminatecause = $r_ussg_rows['acctterminatecause'];
-                                                                                    
+                                                                                        while (
+                                                                                            $r_ussg_rows = $csusage->fetch_array()
+                                                                                        ) {
+                                                                                            $usgDownload =
+                                                                                                $r_ussg_rows[
+                                                                                                    "GB_OUT"
+                                                                                                ];
+                                                                                            $usgDownload = number_format(
+                                                                                                $usgDownload,
+                                                                                                3
+                                                                                            );
+                                                                                            $usgUpload =
+                                                                                                $r_ussg_rows[
+                                                                                                    "GB_IN"
+                                                                                                ];
+                                                                                            $usgUpload = number_format(
+                                                                                                $usgUpload,
+                                                                                                3
+                                                                                            );
+                                                                                            $Usagetime =
+                                                                                                $r_ussg_rows[
+                                                                                                    "time"
+                                                                                                ];
+                                                                                            $Usagestoptime =
+                                                                                                $r_ussg_rows[
+                                                                                                    "acctstoptime"
+                                                                                                ];
+                                                                                            $Usagestoptime = date(
+                                                                                                "h:i:s A ~ d-M-Y",
+                                                                                                strtotime(
+                                                                                                    $Usagestoptime
+                                                                                                )
+                                                                                            );
+                                                                                            $Usageacctterminatecause =
+                                                                                                $r_ussg_rows[
+                                                                                                    "acctterminatecause"
+                                                                                                ];
+
                                                                                             //echo '<span class="fas fa-caret-down" style="color:red;"> '.$Download.' GB</span><br/><span class="fas fa-caret-up" style="color:purple;"> '.$Upload.' GB</span><br/>';
-                                                                                    
+
                                                                                             echo '
                                                                                                                                                                  <tr>
                                                                                                                                                                  <td><span class="fas fa-caret-down"></span> ' .
@@ -836,9 +1192,7 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                                                                                                                  </tr>
                                                                                                                                                                  ';
                                                                                         }
-                                                                                    }
-                                                                                    
-                                                                                    ?>
+                                                                                    } ?>
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
@@ -862,21 +1216,51 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    <?php
-                                                                                    if ($usrs_activity = $con->query("SELECT * FROM radpostauth WHERE username='$username' ORDER BY authdate DESC LIMIT 5")) {
-                                                                                        while ($rowsppp = $usrs_activity->fetch_array()) {
-                                                                                            $usr_act_name = $rowsppp['username'];
-                                                                                            $usr_act_pass = $rowsppp['pass'];
-                                                                                            $usr_act_reply = $rowsppp['reply'];
-                                                                                            $usr_act_auth = $rowsppp['authdate'];
-                                                                                            $usr_act_auth = date('h:i:s A ~ d-M-Y', strtotime($usr_act_auth));
-                                                                                    
-                                                                                            if ($usr_act_reply == 'Access-Accept') {
-                                                                                                $userReplay = "<span class='badge bg-success'>Password Matched</span>";
-                                                                                            } elseif ($usr_act_reply == 'Access-Reject') {
-                                                                                                $userReplay = "<span class='badge bg-danger'>Password Missmatched</span>";
+                                                                                    <?php if (
+                                                                                        $usrs_activity = $con->query(
+                                                                                            "SELECT * FROM radpostauth WHERE username='$username' ORDER BY authdate DESC LIMIT 5"
+                                                                                        )
+                                                                                    ) {
+                                                                                        while (
+                                                                                            $rowsppp = $usrs_activity->fetch_array()
+                                                                                        ) {
+                                                                                            $usr_act_name =
+                                                                                                $rowsppp[
+                                                                                                    "username"
+                                                                                                ];
+                                                                                            $usr_act_pass =
+                                                                                                $rowsppp[
+                                                                                                    "pass"
+                                                                                                ];
+                                                                                            $usr_act_reply =
+                                                                                                $rowsppp[
+                                                                                                    "reply"
+                                                                                                ];
+                                                                                            $usr_act_auth =
+                                                                                                $rowsppp[
+                                                                                                    "authdate"
+                                                                                                ];
+                                                                                            $usr_act_auth = date(
+                                                                                                "h:i:s A ~ d-M-Y",
+                                                                                                strtotime(
+                                                                                                    $usr_act_auth
+                                                                                                )
+                                                                                            );
+
+                                                                                            if (
+                                                                                                $usr_act_reply ==
+                                                                                                "Access-Accept"
+                                                                                            ) {
+                                                                                                $userReplay =
+                                                                                                    "<span class='badge bg-success'>Password Matched</span>";
+                                                                                            } elseif (
+                                                                                                $usr_act_reply ==
+                                                                                                "Access-Reject"
+                                                                                            ) {
+                                                                                                $userReplay =
+                                                                                                    "<span class='badge bg-danger'>Password Missmatched</span>";
                                                                                             }
-                                                                                    
+
                                                                                             echo '
                                                                                                                                                                  <tr>
                                                                                                                                                                  <td>' .
@@ -894,8 +1278,7 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                                                                                                                  </tr>
                                                                                                                                                                  ';
                                                                                         }
-                                                                                    }
-                                                                                    ?>
+                                                                                    } ?>
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
@@ -919,48 +1302,91 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                                 </thead>
                                                                                 <tbody id="ticket-list">
                                                                                     <?php
-$sql = "SELECT * FROM ticket WHERE customer_id=$lstid  ";
-$result = mysqli_query($con, $sql);
+                                                                                    $sql = "SELECT * FROM ticket WHERE customer_id=$lstid  ";
+                                                                                    $result = mysqli_query(
+                                                                                        $con,
+                                                                                        $sql
+                                                                                    );
 
-while ($rows = mysqli_fetch_assoc($result)) {
-
-    ?>
+                                                                                    while (
+                                                                                        $rows = mysqli_fetch_assoc(
+                                                                                            $result
+                                                                                        )
+                                                                                    ) { ?>
                                                                                     <tr>
                                                                                         <td>
                                                                                             <?php
-                                                                                            $complain_typeId = $rows['complain_type'];
-                                                                                            $ticketsId = $rows['id'];
-                                                                                            if ($allCom = $con->query("SELECT * FROM ticket_topic WHERE id='$complain_typeId' ")) {
-                                                                                                while ($rowss = $allCom->fetch_array()) {
-                                                                                                    $topicName = $rowss['topic_name'];
-                                                                                                    echo '<a href="tickets_profile.php?id=' . $ticketsId . '">' . $topicName . '</a>';
+                                                                                            $complain_typeId =
+                                                                                                $rows[
+                                                                                                    "complain_type"
+                                                                                                ];
+                                                                                            $ticketsId =
+                                                                                                $rows[
+                                                                                                    "id"
+                                                                                                ];
+                                                                                            if (
+                                                                                                $allCom = $con->query(
+                                                                                                    "SELECT * FROM ticket_topic WHERE id='$complain_typeId' "
+                                                                                                )
+                                                                                            ) {
+                                                                                                while (
+                                                                                                    $rowss = $allCom->fetch_array()
+                                                                                                ) {
+                                                                                                    $topicName =
+                                                                                                        $rowss[
+                                                                                                            "topic_name"
+                                                                                                        ];
+                                                                                                    echo '<a href="tickets_profile.php?id=' .
+                                                                                                        $ticketsId .
+                                                                                                        '">' .
+                                                                                                        $topicName .
+                                                                                                        "</a>";
                                                                                                 }
                                                                                             }
                                                                                             ?>
                                                                                         </td>
                                                                                         <td>
                                                                                             <?php
-                                                                                            $ticketType = $rows['ticket_type'];
-                                                                                            if ($ticketType == 'Active') {
+                                                                                            $ticketType =
+                                                                                                $rows[
+                                                                                                    "ticket_type"
+                                                                                                ];
+                                                                                            if (
+                                                                                                $ticketType ==
+                                                                                                "Active"
+                                                                                            ) {
                                                                                                 echo "<span class='badge bg-success'>Active</span>";
-                                                                                            } elseif ($ticketType == 'Open') {
+                                                                                            } elseif (
+                                                                                                $ticketType ==
+                                                                                                "Open"
+                                                                                            ) {
                                                                                                 echo "<span class='badge bg-info'>Open</span>";
-                                                                                            } elseif ($ticketType == 'New') {
+                                                                                            } elseif (
+                                                                                                $ticketType ==
+                                                                                                "New"
+                                                                                            ) {
                                                                                                 echo "<span class='badge bg-danger'>New</span>";
-                                                                                            } elseif ($ticketType == 'Complete') {
+                                                                                            } elseif (
+                                                                                                $ticketType ==
+                                                                                                "Complete"
+                                                                                            ) {
                                                                                                 echo "<span class='badge bg-success'>Complete</span>";
                                                                                             }
-                                                                                            
                                                                                             ?>
                                                                                         </td>
                                                                                         <td>
-                                                                                            <?php
-                                                                                            echo date('d F Y', strtotime($rows['startdate']));
-                                                                                            ?>
+                                                                                            <?php echo date(
+                                                                                                "d F Y",
+                                                                                                strtotime(
+                                                                                                    $rows[
+                                                                                                        "startdate"
+                                                                                                    ]
+                                                                                                )
+                                                                                            ); ?>
                                                                                         </td>
                                                                                     </tr>
-                                                                                    <?php
-}?>
+                                                                                    <?php }
+                                                                                    ?>
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>
@@ -987,62 +1413,52 @@ while ($rows = mysqli_fetch_assoc($result)) {
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    <?php
-                                                                                    if ($recharge_customer = $con->query("SELECT * FROM customer_rechrg WHERE customer_id='$lstid' ORDER BY id DESC ")) {
-                                                                                        while ($r_cus_rows = $recharge_customer->fetch_array()) {
-                                                                                            $r_id = $r_cus_rows['id'];
-                                                                                            //$r_cus_name = $r_cus_rows["customer_name"];
-                                                                                            $r_cus_month = $r_cus_rows['months'];
-                                                                                            $r_cus_ref = $r_cus_rows['ref'];
-                                                                                            $r_cus_amount = $r_cus_rows['purchase_price'];
+                                                                                    <?php 
+                                                                                    $all_rows = [];
+                                                                                    if ($get_all_recharge_data = $con->query("SELECT * FROM customer_rechrg WHERE customer_id='$lstid'")) {
+                                                                                        while ($row = $get_all_recharge_data->fetch_assoc()) {
+                                                                                            $all_rows[] = $row;
+                                                                                        }
+                                                                                        $count = count($all_rows);
+                                                                                        for ($i = 0; $i < $count - 1; $i++) {
+                                                                                            for ($j = 0; $j < $count - $i - 1; $j++) {
+                                                                                                $date1 = strtotime($all_rows[$j]['datetm']);
+                                                                                                $date2 = strtotime($all_rows[$j + 1]['datetm']);
+                                                                                                if ($date1 < $date2) {
+                                                                                                    $temp = $all_rows[$j];
+                                                                                                    $all_rows[$j] = $all_rows[$j + 1];
+                                                                                                    $all_rows[$j + 1] = $temp;
+                                                                                                }
+                                                                                            }
+                                                                                        }
                                                                                     
-                                                                                            $r_unti = $r_cus_rows['rchrg_until'];
-                                                                                            $r_unti = new DateTime($r_unti);
-                                                                                            $r_unti = $r_unti->format('d-m-Y');
+                                                                                        foreach ($all_rows as $row) {
+                                                                                            $r_id        = $row['id'];
+                                                                                            $months      = $row['months'];
+                                                                                            $ref         = $row['ref'];
+                                                                                            $amount      = $row['purchase_price'];
+                                                                                            $rchrg_until = (new DateTime($row['rchrg_until']))->format('d-M-Y');
+                                                                                            $datetm      = (new DateTime($row['datetm']))->format('d-M-Y');
                                                                                     
-                                                                                            $r_datetm = $r_cus_rows['datetm'];
-                                                                                            $r_datetm = new DateTime($r_datetm);
-                                                                                            //$r_datetm = $r_datetm->format('H:i A, d-M-Y');
-                                                                                            $r_datetm = $r_datetm->format('d-m-Y');
-                                                                                    
-                                                                                            $trnstype = $r_cus_rows['type'];
-                                                                                            if ($trnstype == '1') {
-                                                                                                $trnstype = "<span class='badge bg-success'>Cash</span>";
-                                                                                            } elseif ($trnstype == '2') {
-                                                                                                $trnstype = "<span class='badge bg-info'>Bkash</span>";
-                                                                                            } elseif ($trnstype == '3') {
-                                                                                                $trnstype = "<span class='badge bg-success'>Nagad</span>";
-                                                                                            } elseif ($trnstype == '4') {
-                                                                                                $trnstype = "<span class='badge bg-primary'>Due Paid</span>";
-                                                                                            } elseif ($trnstype == '0') {
-                                                                                                $trnstype = "<span class='badge bg-danger'>Crdit</span>";
+                                                                                            $type = $row['type'];
+                                                                                            switch ($type) {
+                                                                                                case "1": $typeBadge = "<span class='badge bg-success'>Cash</span>"; break;
+                                                                                                case "2": $typeBadge = "<span class='badge bg-info'>Bkash</span>"; break;
+                                                                                                case "3": $typeBadge = "<span class='badge bg-success'>Nagad</span>"; break;
+                                                                                                case "4": $typeBadge = "<span class='badge bg-primary'>Due Paid</span>"; break;
+                                                                                                case "0": $typeBadge = "<span class='badge bg-danger'>Credit</span>"; break;
+                                                                                                default: $typeBadge = "<span class='badge bg-secondary'>Unknown</span>"; break;
                                                                                             }
                                                                                     
-                                                                                            echo '
-                                                                                                                                                                         <tr>
-                                                                                                                                                                         <td>' .
-                                                                                                $r_datetm .
-                                                                                                '</td>
-                                                                                                                                                                             <td>' .
-                                                                                                $r_cus_month .
-                                                                                                '</td>
-                                                                                                                                                                             <td>' .
-                                                                                                $trnstype .
-                                                                                                '</td>
-                                                                                                                                                                             <td>' .
-                                                                                                $r_cus_ref .
-                                                                                                '</td>
-                                                                                                                                                                             <td>' .
-                                                                                                $r_unti .
-                                                                                                '</td>
-                                                                                                                                                                             <td>' .
-                                                                                                $r_cus_amount .
-                                                                                                '</td>
-                                                                                                                                                                             <td><button type="button" id="recharge_undo" data-id="' .
-                                                                                                $r_id .
-                                                                                                '" class="btn-sm btn btn-danger"><i class="mdi mdi-undo"></i></button></td>
-                                                                                                                                                                         </tr>
-                                                                                                                                                                         ';
+                                                                                            echo "<tr>
+                                                                                                    <td>{$datetm}</td>
+                                                                                                    <td>{$months}</td>
+                                                                                                    <td>{$typeBadge}</td>
+                                                                                                    <td>{$ref}</td>
+                                                                                                    <td>{$rchrg_until}</td>
+                                                                                                    <td>{$amount}</td>
+                                                                                                    <td><button type='button' id='recharge_undo' data-id='{$r_id}' class='btn-sm btn btn-danger'><i class='mdi mdi-undo'></i></button></td>
+                                                                                                  </tr>";
                                                                                         }
                                                                                     }
                                                                                     ?>
@@ -1136,7 +1552,7 @@ while ($rows = mysqli_fetch_assoc($result)) {
                 </div>
             </div>
             <!-- Modal for Ticket -->
-            <?php require 'modal/tickets_modal.php'; ?>
+            <?php require "modal/tickets_modal.php"; ?>
             <!-- Modal for Recharge -->
             <div class="modal fade" id="rechargeModal" tabindex="-1" role="dialog"
                 aria-labelledby="ComplainModalCenterTitle" aria-hidden="true">
@@ -1316,7 +1732,9 @@ while ($rows = mysqli_fetch_assoc($result)) {
                                     <div class="form-group d-none">
                                         <label>Recharge By:</label>
                                         <input type="text" id="recharge_by" class="form-control"
-                                            value="<?php echo $_SESSION['uid']; ?>" />
+                                            value="<?php echo $_SESSION[
+                                                "uid"
+                                            ]; ?>" />
                                     </div>
                                 </div>
                             </div>
@@ -1352,20 +1770,23 @@ while ($rows = mysqli_fetch_assoc($result)) {
                     </div>
                 </div>
             </div>
-            <?php include 'Footer.php'; ?>
+            <?php include "Footer.php"; ?>
         </div>
         <!-- end main content-->
     </div>
     <!-- END layout-wrapper -->
     <!-- Right bar overlay-->
     <div class="rightbar-overlay"></div>
-    <?php include 'script.php'; ?>
+    <?php include "script.php"; ?>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <!-- Include Tickets js File -->
     <script src="js/tickets.js"></script>
     <script type="text/javascript">
         $('#tickets_table').dataTable();
-        $('#recharge_data_table').dataTable();
+        $('#recharge_data_table').dataTable({
+            "ordering": false 
+        });
+
         $('#user_activity_data_table').dataTable();
         showModal();
 
