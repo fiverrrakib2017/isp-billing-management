@@ -340,7 +340,14 @@ if (isset($_POST['addCustomerData'])) {
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
     $con_type = $_POST['customer_connection_type'] ?? 'ONU';
-
+    $send_message = $_POST['send_message'] ?? 0;
+    if($send_message == 1) {
+        $message = 'Hello {fullname}, Your connection has been activated. Username: {username}, Password: {password}. Thank you.';
+        $message = str_replace('{username}', $username, $message);
+        $message = str_replace('{password}', $password, $message);
+        $message = str_replace('{fullname}', $fullname, $message);
+        send_message($mobile, $message);
+    } 
     // One month from a specific date
     $exp_date = date('Y-m-d', strtotime('+1 month', strtotime(date('Y-m-' . $exp_date))));
 

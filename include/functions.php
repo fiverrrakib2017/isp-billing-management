@@ -377,5 +377,59 @@ function send_notification($message='', $url='', $icon='',$status='unread', $cre
 
 
 
+function send_message ($phone, $message) {
+    $errors = [];
+    /* Return errors if validation fails */
+    if (!empty($errors)) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $errors
+        ]);
+        exit;
+    }
+
+    /* SMS API details */
+    $url = "http://bulksmsbd.net/api/smsapi";
+    $api_key = "WC1N6AFA4gVRZLtyf8z9";
+    $senderid = "SR WiFi";
+    
+    /* Prepare data */
+    $data = [
+        "api_key" => $api_key,
+        "senderid" => $senderid,
+        "number" => $phone,
+        "message" => $message
+    ];
+
+    /* Initialize cURL */
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data)); 
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+    /* Execute request */
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $responseData = json_decode($response, true);
+
+    if ($responseData['response_code'] == 202) {
+        return   json_encode([
+            'success' => true,
+            'message' => $responseData['success_message']
+        ]);
+    } else {
+        return json_encode([
+            'success' => false,
+            'error' => $responseData['error_message'] ?: 'An error occurred.'
+        ]);
+    }
+    exit;
+
+}
+
+
 
 ?>

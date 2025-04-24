@@ -248,6 +248,21 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row mb-3">
+                                <label for="sendMessageCheckbox" class="col-lg-3 col-form-label">
+                                <input type="checkbox" id="sendMessageCheckbox" name="send_message" value="1" class="form-check-input">
+                                  </label>
+                                </label>
+                                <div class="col-lg-9 d-flex align-items-center">
+                                 Send this message to the Customer
+                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </fieldset>
             </form>
             </div>
@@ -362,37 +377,38 @@
     </div>
 </div>
 <style>
-        #details-section {
-    max-width: 600px;
-    margin: 0 auto;
-    background: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+    #details-section {
+        max-width: 600px;
+        margin: 0 auto;
+        background: #f8f9fa;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-#details-section .card-body {
-    position: relative;
-}
+    #details-section .card-body {
+        position: relative;
+    }
 
-#customer-details p {
-    font-size: 14px;
-    color: #333;
-    border-bottom: 2px dotted #ccc;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-}
+    #customer-details p {
+        font-size: 14px;
+        color: #333;
+        border-bottom: 2px dotted #ccc;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
 
-#customer-details p span {
-    font-weight: bold;
-    color: #007bff;
-}
-.wizard>.content{
-    padding: 12px !important;
-}
+    #customer-details p span {
+        font-weight: bold;
+        color: #007bff;
+    }
+    .wizard>.content{
+        padding: 12px !important;
+    }
 
-.content.clearfix {
-    border: 2px dotted #a6a6a9 !important;
-    margin-top: 12px !important;
-    margin-bottom: 15px !important;
-}
+    .content.clearfix {
+        border: 2px dotted #a6a6a9 !important;
+        margin-top: 12px !important;
+        margin-bottom: 15px !important;
+    }
+
 
     </style>

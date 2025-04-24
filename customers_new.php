@@ -127,7 +127,7 @@ include 'include/users_right.php';
                                 </div>
                                 <div class="card-footer flex-wrap justify-content-between align-items-center">
                                     <button class="btn btn-primary mb-2" id="send_message_btn">
-                                        <i class="fa fa-envelope"></i>&nbsp;Send Message
+                                        <i class="fa fa-envelope"></i>&nbsp;
                                     </button>
                                    <button type="button" class="btn btn-info mb-2" name="customer_billing_btn">
                                         <i class="fa fa-exchange-alt"></i>&nbsp;Change Billing
@@ -145,7 +145,7 @@ include 'include/users_right.php';
                                     </button>
 
                                     <button type="button" class="btn btn-info mb-2" name="recharge_btn">
-                                        <i class="mdi mdi-battery-charging-20"></i>&nbsp;Recharge
+                                        <i class="mdi mdi-battery-charging-20"></i>&nbsp;
                                     </button>
 
                                     <!-- <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal"
