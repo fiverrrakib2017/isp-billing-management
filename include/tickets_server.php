@@ -3,6 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include 'db_connect.php';
+include 'functions.php';
 if (!isset($_SESSION)) {
     session_start();
 }
@@ -500,42 +501,22 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $ticket_for = isset($_POST['ticket_for']) ? trim($_POST['ticket_for']) : '';
     $complain_type = isset($_POST['ticket_complain_type']) ? trim($_POST['ticket_complain_type']) : '';
     $assigned = isset($_POST['assigned']) ? trim($_POST['assigned']) : '';
-    /* Use trim to remove unwanted spaces*/
+    $send_message = isset($_POST['send_message']) ? trim($_POST['send_message']) : '0';
     $note = isset($_POST['notes']) ? trim($_POST['notes']) : '';
     $priority = isset($_POST['ticket_priority']) ? trim($_POST['ticket_priority']) : '';
 
-    /* Validate customer_id */
-    if (empty($customer_id)) {
-        $errors['customer_id'] = 'Customer ID is required.';
-    }
+    if (empty($customer_id)) $errors['customer_id'] = 'Customer ID is required.';
+    if (empty($ticket_for)) $errors['ticket_for'] = 'Ticket For is required.';
+    if (empty($complain_type)) $errors['ticket_complain_type'] = 'Complain Type is required.';
+    if (empty($assigned)) $errors['assigned'] = 'Assigned field is required.';
+    if (empty($priority)) $errors['ticket_priority'] = 'Priority is required.';
 
-    /* Validate ticket_for */
-    if (empty($ticket_for)) {
-        $errors['ticket_for'] = 'Ticket For is required.';
-    }
-
-    /* Validate complain_type */
-    if (empty($complain_type)) {
-        $errors['ticket_complain_type'] = 'Complain Type is required.';
-    }
-
-    /* Validate assigned */
-    if (empty($assigned)) {
-        $errors['assigned'] = 'Assigned field is required.';
-    }
-
-    /* Validate priority */
-    if (empty($priority)) {
-        $errors['ticket_priority'] = 'Priority is required.';
-    }
-    /* Validate if customer has a completed ticket */
     $stmt = $con->prepare('SELECT ticket_type FROM ticket WHERE customer_id = ?');
     $stmt->bind_param('i', $customer_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     $allComplete = true;
-
     if ($result) {
         while ($row = $result->fetch_assoc()) {
             if ($row['ticket_type'] !== 'Complete') {
@@ -549,7 +530,6 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $errors['customer_ticket'] = 'You already have a ticket.';
     }
 
-    /* If validation errors exist, return errors */
     if (!empty($errors)) {
         echo json_encode([
             'success' => false,
@@ -557,16 +537,22 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         ]);
         exit();
     }
-    /* If no errors, continue with processing*/
+
     $customerPopId = null;
     $customerAreaId = null;
-    if ($allCstmr = $con->query("SELECT pop,area FROM customers WHERE id=$customer_id")) {
+    $mobile_number = null;
+
+    if ($allCstmr = $con->query("SELECT pop, area, mobile FROM customers WHERE id=$customer_id")) {
         $customerData = $allCstmr->fetch_assoc();
         $customerPopId = $customerData['pop'];
         $customerAreaId = $customerData['area'];
+        $mobile_number = $customerData['mobile'];
+    }
+    if ($send_message == 1 && !empty($mobile_number)) {
+        $message = 'Your Complain is added. Sorry for inconvenience, as soon as possible connection will be recovered.';
+        send_message($mobile_number, $message);
     }
 
-    /*Insert query*/
     $stmt = $con->prepare("INSERT INTO ticket (`customer_id`, `ticket_type`, `asignto`, `ticketfor`, `pop_id`,`area_id`, `complain_type`, `startdate`, `enddate`, `user_type`, `notes`, `parcent`, `priority`) VALUES (?, 'Active', ?, ?, ?, ?, ?, NOW(), NULL, 1, ?, '0%', ?)");
     $stmt->bind_param('iisssssi', $customer_id, $assigned, $ticket_for, $customerPopId, $customerAreaId, $complain_type, $note, $priority);
 
@@ -585,7 +571,9 @@ if (isset($_GET['add_ticket_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $stmt->close();
+    exit; 
 }
+
 
 if (isset($_POST['updateTicket'])) {
     $id = $_POST['id'];
@@ -649,36 +637,36 @@ if (isset($_POST['updateTicketTopic'])) {
     }
 }
 
-function timeAgo($startdate)
-{
-    /*Convert startdate to a timestamp*/
-    $startTimestamp = strtotime($startdate);
-    $currentTimestamp = time();
+// function timeAgo($startdate)
+// {
+//     /*Convert startdate to a timestamp*/
+//     $startTimestamp = strtotime($startdate);
+//     $currentTimestamp = time();
 
-    /* Calculate the difference in seconds*/
-    $difference = $currentTimestamp - $startTimestamp;
+//     /* Calculate the difference in seconds*/
+//     $difference = $currentTimestamp - $startTimestamp;
 
-    /*Define time intervals*/
-    $units = [
-        'year' => 31536000,
-        'month' => 2592000,
-        'week' => 604800,
-        'day' => 86400,
-        'hour' => 3600,
-        'minute' => 60,
-        'second' => 1,
-    ];
+//     /*Define time intervals*/
+//     $units = [
+//         'year' => 31536000,
+//         'month' => 2592000,
+//         'week' => 604800,
+//         'day' => 86400,
+//         'hour' => 3600,
+//         'minute' => 60,
+//         'second' => 1,
+//     ];
 
-    /*Check for each time unit*/
-    foreach ($units as $unit => $value) {
-        if ($difference >= $value) {
-            $time = floor($difference / $value);
-            return '<img src="images/icon/online.png" height="10" width="10"/>' . ' ' . $time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
-        }
-    }
-    /*If the difference is less than a second*/
-    return '<img src="images/icon/online.png" height="10" width="10"/> just now';
-}
+//     /*Check for each time unit*/
+//     foreach ($units as $unit => $value) {
+//         if ($difference >= $value) {
+//             $time = floor($difference / $value);
+//             return '<img src="images/icon/online.png" height="10" width="10"/>' . ' ' . $time . ' ' . $unit . ($time > 1 ? 's' : '') . ' ago';
+//         }
+//     }
+//     /*If the difference is less than a second*/
+//     return '<img src="images/icon/online.png" height="10" width="10"/> just now';
+// }
 
 function acctual_work($startdate, $enddate)
 {

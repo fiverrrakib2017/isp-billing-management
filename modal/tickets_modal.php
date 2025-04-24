@@ -49,6 +49,11 @@
                                 <label>Note</label>
                                 <input id="notes" type="text" name="notes" class="form-control" placeholder="Enter Your Note">
                             </div>
+                            <div class="form-group mb-2">
+                            <input type="checkbox" id="sendMessageCheckbox" name="send_message" value="1" class="form-check-input">
+                                <label> Send this message to the Customer</label>
+                               
+                            </div>
                         </div>
                     </div>
 
