@@ -341,13 +341,7 @@ if (isset($_POST['addCustomerData'])) {
     $user_type = $_POST['user_type'];
     $con_type = $_POST['customer_connection_type'] ?? 'ONU';
     $send_message = $_POST['send_message'] ?? 0;
-    if($send_message == 1) {
-        $message = 'Hello {fullname}, Your connection has been activated. Username: {username}, Password: {password}. Thank you.';
-        $message = str_replace('{username}', $username, $message);
-        $message = str_replace('{password}', $password, $message);
-        $message = str_replace('{fullname}', $fullname, $message);
-        send_message($mobile, $message);
-    } 
+    
     // One month from a specific date
     $exp_date = date('Y-m-d', strtotime('+1 month', strtotime(date('Y-m-' . $exp_date))));
 
@@ -386,6 +380,25 @@ if (isset($_POST['addCustomerData'])) {
         }
         $con->query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
         $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package_name')");
+        /*Send Message To the Customer */
+        /*Send Message To the Customer */
+        if($send_message == 1) {
+            $bill_payment_link = "https://sr-wifi.net?clid={$custID}";
+
+            $message = 'Thank you for joining SR Wi-Fi.
+                        Your Customer ID : {customer_id}
+                        username : {username}
+                        password : {password}
+                        HelpLine : 01821600600
+                        Bill payment link: {bill_payment_link}';
+
+            $message = str_replace('{customer_id}', $custID, $message);
+            $message = str_replace('{username}', $username, $message);
+            $message = str_replace('{password}', $password, $message);
+            $message = str_replace('{bill_payment_link}', $bill_payment_link, $message);
+
+            send_message($mobile, $message);
+        }
     }
     /*send Notification*/
     // try {
