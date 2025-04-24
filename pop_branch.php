@@ -243,7 +243,7 @@ if (isset($_GET['inactive'])) {
                                                 <tr>
                                                     <th>ID</th>
                                                     <th>POP/Branch</th>
-                                                    <th></th>
+                                                    <!-- <th></th> -->
                                                     <th>Total Users</th>
                                                     <th>Online Users</th>
                                                     <th>Expired Users</th>
@@ -282,7 +282,7 @@ if (isset($_GET['inactive'])) {
                                                             <?php echo substr($rows['pop'], 0, 15); ?>
                                                         </a>
                                                     </td>
-                                                    <td>
+                                                    <!-- <td>
     <canvas id="chart-<?php echo $popId; ?>" width="300 !important" height="100 !important"></canvas>
     <script>
         let ctx<?php echo $popId; ?> = document.getElementById("chart-<?php echo $popId; ?>").getContext("2d");
@@ -311,7 +311,7 @@ if (isset($_GET['inactive'])) {
             }
         });
     </script>
-</td>
+</td> -->
 
 
 
