@@ -1764,7 +1764,8 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                         <div class="modal-footer">
                             <button type="button" class="btn btn-success" id="downloadButton">Download QR
                                 Code</button>
-                            <button type="button" class="btn btn-info" id="print_qr_code_btn">Print QR Code</button>
+                            <button type="button" onclick="copyDetails();" class="btn btn-info" id="copy_qr_code_btn">Copy Url</button>
+                            <button type="button" class="btn btn-success" id="print_qr_code_btn">Print QR Code</button>
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
@@ -1902,7 +1903,40 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                 $('#qrCodeModal').modal('show');
             });
         }
+        
 
+        function copyDetails() {
+    let customer_payment_url = "https://sr-wifi.net?clid=" + <?php echo $lstid; ?>;
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(customer_payment_url)
+            .then(() => {
+                toastr.success("Copied the details:\n" + customer_payment_url); 
+            })
+            .catch(err => {
+                console.error("Failed to copy details: ", err);
+                toastr.error("Failed to copy details!"); 
+            });
+    } else {
+        let tempInput = $("<textarea>");
+        $("body").append(tempInput);
+        tempInput.val(customer_payment_url).select();
+
+        /*Focus before copying for older browsers*/ 
+        tempInput[0].focus();
+        
+        /* Use execCommand to copy text*/
+        if (document.execCommand("copy")) {
+            toastr.success("Copied the details"); 
+        } else {
+            toastr.error("Failed to copy details!"); 
+        }
+
+        tempInput.remove();
+    }
+
+    return false; 
+}
 
         function showModal() {
             $("#rechargeBtn").click(function() {
