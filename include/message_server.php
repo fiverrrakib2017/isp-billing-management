@@ -345,7 +345,10 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
     /* Input sanitize */
     $message = isset($_POST["message"]) ? trim($_POST["message"]) : ''; 
-    
+    preg_match_all('/\{([^\}]+)\}/', $message, $matches);
+
+  
+    //echo $message;exit; 
     /* Validate data */
     if (empty($message)) {
         $errors['message'] = "Message is required.";
@@ -360,6 +363,7 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
     
+    
     /* SMS API details */
     $url = "http://bulksmsbd.net/api/smsapimany";
     $api_key = "WC1N6AFA4gVRZLtyf8z9";
@@ -370,9 +374,18 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     foreach ($customer_ids as $customer_id) {
         $customer_id = trim($customer_id);
         
-
+        
+       
         $all_customer = $con->query("SELECT * FROM customers WHERE id = $customer_id");
         $customer = $all_customer->fetch_assoc();
+    
+        /*GET back slace*/
+        if (!empty($matches[1])) {
+            foreach ($matches[1] as $item) {
+                $field=$item; 
+                $message = str_replace("{" . $field . "}", $customer[$field], $message);
+            }
+        }
 
         if ($customer) {
             $phone = $customer['mobile'];
@@ -387,7 +400,6 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     $messagesJson = json_encode($messages);
-    
     
 
     /* Prepare data for SMS API */

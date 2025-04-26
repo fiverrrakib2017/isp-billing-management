@@ -109,7 +109,7 @@
 
                         <div class="row">
                             <div class="col-md-12 text-right">
-                                <button type="button" id="send_message_button" class="btn btn-danger mb-2"><i class="far fa-envelope"></i>
+                                <button type="button" id="send_message_btn" class="btn btn-danger mb-2"><i class="far fa-envelope"></i>
                                     Process </button>
                             </div>
                         </div>
@@ -122,7 +122,7 @@
                                     <tr>
 
                                         <th class=""><input type="checkbox" id="selectAll"
-                                                class="form-check-input customer-checkbox checkSingle"></th>
+                                                class="form-check-input customer-checkbox"></th>
                                         <th class="">ID.</th>
                                         <th class="">Username</th>
                                         <th class="">Package </th>
@@ -157,7 +157,48 @@
      </div>
      <!-- END layout-wrapper -->
 
+ <!-- Modal for Send Message -->
+    <div class="modal fade bs-example-modal-lg" id="sendMessageModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+            <div class="modal-content col-md-12">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><span class="mdi mdi-account-check mdi-18px"></span>
+                        &nbsp;Send Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" id="selectedCustomerCount"></div>
+                    <form id="paymentForm" method="POST">
 
+                        <div class="form-group mb-2">
+                            <label>Message Template</label>
+                            <select class="form-select" name="message_template">
+                                <option>---Select---</option>
+                                <?php
+                                if ($allCstmr = $con->query('SELECT * FROM message_template WHERE user_type=1')) {
+                                    while ($rows = $allCstmr->fetch_array()) {
+                                        echo '<option value=' . $rows['id'] . '>' . $rows['template_name'] . '</option>';
+                                    }
+                                }
+                                
+                                ?>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Message</label>
+                            <textarea id="message" rows="5" placeholder="Enter Your Message" class="form-control"></textarea>
+                        </div>
+                        <div class="modal-footer ">
+                            <button data-bs-dismiss="modal" type="button" class="btn btn-danger">Cancel</button>
+                            <button type="button" name="send_message_btn" class="btn btn-success">Send
+                                Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
      <!-- Right bar overlay-->
      <div class="rightbar-overlay"></div>
@@ -250,6 +291,60 @@
                     }
                 });
             });
+            $(document).on('click', '#send_message_btn', function(event) {
+            event.preventDefault();
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+            var countText = "You have selected " + selectedCustomers.length + " customers.";
+            $("#selectedCustomerCount").text(countText);
+            $('#sendMessageModal').modal('show');
+
+        });
+        $(document).on('click', 'button[name="send_message_btn"]', function(e) {
+            var selectedCustomers = [];
+            $(".checkSingle:checked").each(function() {
+                selectedCustomers.push($(this).val());
+            });
+
+            e.preventDefault();
+            $.ajax({
+                url: 'include/message_server.php?bulk_message=true',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    /*sending the array of customer IDs*/
+                    customer_ids: selectedCustomers,
+                    message: $("#message").val(),
+                },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#sendMessageModal').modal('hide');
+                        //$('#customers_table').DataTable().ajax.reload();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    toastr.error("An error occurred: " + error);
+                }
+            });
+        });
+        $('select[name="message_template"]').on('change', function() {
+            var name = $(this).val();
+            var currentMsgTemp = "0";
+            $.ajax({
+                type: 'POST',
+                data: {
+                    name: name,
+                    currentMsgTemp: currentMsgTemp
+                },
+                url: 'include/message.php',
+                success: function(response) {
+                    $("#message").val(response);
+                }
+            });
+        });
         });
 
 
