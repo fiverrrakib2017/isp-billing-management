@@ -1,270 +1,260 @@
- <?php 
-include("include/security_token.php");
-include "include/db_connect.php";
-include("include/users_right.php");
-?>
+ <?php
+ include 'include/security_token.php';
+ include 'include/db_connect.php';
+ include 'include/users_right.php';
+ ?>
 
-<!doctype html>
-<html lang="en">
-    <head>
-    
-          <meta charset="utf-8">
-        <title>FAST-ISP-BILLING-SOFTWARE</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <?php include 'style.php'; ?>
-    </head>
+ <!doctype html>
+ <html lang="en">
 
-    <body data-sidebar="dark">
+ <head>
 
+     <meta charset="utf-8">
+     <title>FAST-ISP-BILLING-SOFTWARE</title>
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <?php include 'style.php'; ?>
+ </head>
 
-      
-
-        <!-- Begin page -->
-        <div id="layout-wrapper">
-        
-          <?php $page_title="Send Message";  include 'Header.php';?>
+ <body data-sidebar="dark">
 
 
-        
-            <!-- ========== Left Sidebar Start ========== -->
-            <div class="vertical-menu">
 
-                <div data-simplebar class="h-100">
 
-                    <!--- Sidemenu -->
-                     <?php include 'Sidebar_menu.php'; ?>
+     <!-- Begin page -->
+     <div id="layout-wrapper">
 
-                    <!-- Sidebar -->
-                </div>
-            </div>
-            <!-- Left Sidebar End -->
-        
-            <!-- ============================================================== -->
-            <!-- Start right Content here -->
-            <!-- ============================================================== -->
-<div class="main-content">
+         <?php $page_title = 'Send Message';
+         include 'Header.php'; ?>
 
-    <div class="page-content">
-        <div class="container-fluid">
-          <div class="row">
-              <div class="col-md-6 m-auto">
-                  <form action="include/message_server.php?send_message=true" method="POST" id="send_message">
-                        <div class="card shadow-lg ">
-                        
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <div class="form-group mb-2">
-                                            <label>POP</label>
-                                            <select  name="pop" id="pop" class="form-control " style="height:55px;">
-                                                <option>Select</option>
-                                                <?php 
 
-                                                if ($allPOPuSR=$con->query("SELECT * FROM add_pop WHERE user_type=1")) {
-                                                    while ($rows=$allPOPuSR->fetch_array()) {
-                                                        echo '<option value='.$rows['id'].'>'.$rows['pop'].'</option>';
-                                                    }
-                                                }
 
-                                                 ?>                                               
+         <!-- ========== Left Sidebar Start ========== -->
+         <div class="vertical-menu">
 
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm">
-                                        <div class="form-group mb-2">
-                                            <label>Area</label>
-                                            <select  name="area" id="area" class="form-control" style="height:55px;">
-                                                <option>---Select---</option> 
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <div class="form-group mb-2">
-                                            <label>Customer Account</label>
-                                            <select  name="cstmr_ac" id="cstmr_ac" class="form-control " style="height:55px;">
-                                            <option>Select</option>                                           
+             <div data-simplebar class="h-100">
 
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm">
-                                        <div class="form-group mb-2">
-                                            <label>Customer Phone No.</label>
-                                            <input id="phone" type="text" name="phone" class="form-control">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <div class="form-group mb-2">
-                                            <label>Message Template</label>
-                                            <select class="form-select" id="currentMessageTemp" onchange="currentMsgTemp()">
-                                                <option>Select</option>
-                                                <?php 
-                                                  if ($allCstmr=$con->query("SELECT * FROM message_template WHERE user_type=1")) {
-                                                    while ($rows=$allCstmr->fetch_array()) {
-                                                        echo '<option value='.$rows['id'].'>'.$rows['template_name'].'</option>';
-                                                    }
-                                                }
+                 <!--- Sidemenu -->
+                 <?php include 'Sidebar_menu.php'; ?>
 
-                                                 ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div><div class="row">
-                                    <div class="col-sm">
-                                        <div class="form-group">
-                                            <label>Message</label>
-                                            <textarea id="message" name="message" rows="5" placeholder="Enter Your Message" class="form-control"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-sm">
-                                        <div class="form-group">
-                                            <button type="submit" class="btn btn-primary">Send Message</button>
-                                        </div>
-                                    </div>
-                                </div>
+                 <!-- Sidebar -->
+             </div>
+         </div>
+         <!-- Left Sidebar End -->
+
+         <!-- ============================================================== -->
+         <!-- Start right Content here -->
+         <!-- ============================================================== -->
+         <div class="main-content">
+
+             <div class="page-content">
+                 <div class="container-fluid">
+                     <div class="row">
+                     <div class="col-md-12 ">
+                <div class="card">
+                <div class="card-body  shadow">
+                    <form class="row g-3 align-items-end" id="search_box">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="pop_id" class="form-label">POP/Branch Name <span class="text-danger">*</span></label>
+                                <select name="pop_id" id="pop_id" class="form-select" style="width: 100%;">
+                                    <option>---Select---</option>
+                                    <?php 
+                                    if ($allPOPuSR = $con->query("SELECT * FROM add_pop WHERE user_type=1")) {
+                                        while ($rows = $allPOPuSR->fetch_array()) {
+                                            echo '<option value="'.$rows['id'].'">'.$rows['pop'].'</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="area" class="form-label">Area <span class="text-danger">*</span></label>
+                                <select name="area" id="area" class="form-select" style="width: 100%;">
+                                    <option>---Select---</option> 
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="customer_status" class="form-label">Status <span class="text-danger">*</span></label>
+                                <select name="customer_status" id="customer_status" class="form-select" style="width: 100%;" required>
+                                    <option value="">---Select---</option>
+                                    <option value="online">Online</option>
+                                    <option value="offline">Offline</option>
+                                    <option value="expired">Expired</option>
+                                    <option value="unpaid">Unpaid</option>
+                                    <option value="due">Due</option>
+                                    <option value="free">Free</option>
+                                    <option value="active">Active</option>
+                                    <option value="disabled">Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 d-grid">
+                            <div class="form-group">
+                                <button type="button" name="search_btn" class="btn btn-success">
+                                    <i class="fas fa-search me-1"></i> Search Now
+                                </button>
                             </div>
                         </div>
                     </form>
-              </div>
-          </div>
-        </div> <!-- container-fluid -->
-    </div>
-    <!-- End Page-content -->
+                </div>
 
-    <?php include 'Footer.php'; ?>
+                    <div class="card-body d-none" id="print_area">
 
-</div>
-<!-- end main content-->
-        
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <button type="button" id="send_message_button" class="btn btn-danger mb-2"><i class="far fa-envelope"></i>
+                                    Process </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive responsive-table">
+
+                            <table id="datatable1" class="table table-bordered dt-responsive nowrap"
+                                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead>
+                                    <tr>
+
+                                        <th class=""><input type="checkbox" id="selectAll"
+                                                class="form-check-input customer-checkbox checkSingle"></th>
+                                        <th class="">ID.</th>
+                                        <th class="">Username</th>
+                                        <th class="">Package </th>
+                                        <th class="">Expire Date </th>
+                                        <th class="">POP/Branch</th>
+                                        <th class="">Area</th>
+                                        <th class="">Phone Number</th>
+                                        <th class="">Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="_data">
+                                    <tr id="no-data">
+                                        <td colspan="10" class="text-center">No data available</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
         </div>
-        <!-- END layout-wrapper -->
+                     </div>
+                 </div> <!-- container-fluid -->
+             </div>
+             <!-- End Page-content -->
 
-       
+             <?php include 'Footer.php'; ?>
 
-        <!-- Right bar overlay-->
-        <div class="rightbar-overlay"></div>
-        
-        
-        <!-- JAVASCRIPT -->
-        <?php include 'script.php'; ?>
-      <script type="text/javascript">
-          $(document).ready(function(){
-                 $('#cstmr_ac').select2();
-                 $('#Select3').select2();
-                 $('#pop').select2();
-                 $('#area').select2();
-           });
-           $(document).on('change','#pop',function(){
-                var popID = $(this).val();
-                if(popID){
-                $.ajax({
-                    type: 'POST',
-                    url: 'include/add_pop.php', 
-                    data: {pop_id: popID},
-                    success: function(response){
-                        $('#area').html(response);
-                    }
-                });
-                }else{
-                    $('#area').html('<option>---Select---</option>');
-                }
+         </div>
+         <!-- end main content-->
+
+     </div>
+     <!-- END layout-wrapper -->
+
+
+
+     <!-- Right bar overlay-->
+     <div class="rightbar-overlay"></div>
+
+
+     <!-- JAVASCRIPT -->
+     <?php include 'script.php'; ?>
+     <script type="text/javascript">
+        $(document).ready(function(){
+         
+            $('#pop_id').select2({
+                placeholder: 'Select POP/Branch',
+                allowClear: false
             });
-           $(document).on('change','#area',function(){
-                var areaID = $(this).val();
-                if(areaID){
-                $.ajax({
-                    type: 'POST',
-                    url: 'include/customers_server.php', 
-                    data: {area_id: areaID},
-                    success: function(response){
-                        $('#cstmr_ac').html(response);
-                    }
-                });
-                }else{
-                    $('#cstmr_ac').html('<option>---Select---</option>');
-                }
+            $('#area').select2({
+                placeholder: 'Select Area',
+                allowClear: false
             });
-           $(document).on('change','#cstmr_ac',function(){
-                var customerID = $(this).val();
-                if(customerID){
-                $.ajax({
-                    type: 'POST',
-                    url: 'include/customers_server.php', 
-                    data: {get_customer_phone_number: customerID},
-                    success: function(response){
-                        $("#phone").val(response);
-                    }
-                });
-                }else{
-                    $("#phone").val('Phone Number');
-                }
+            $('#customer_status').select2({
+                placeholder: 'Select Status',
+                allowClear: false
             });
-           function currentMsgTemp(){
-            var name=$("#currentMessageTemp").val();
-            var currentMsgTemp="0";
+           
+            $("select[name='pop_id']").on('change', function() {
+                var pop_id = $(this).val();
                 $.ajax({
-                    type:'POST',
-                    data:{name:name,currentMsgTemp:currentMsgTemp},
-                    url:'include/message.php',
-                    success:function(response){
-                        console.log(response);
-                        $("#message").val(response);
-                    }
-                });
-           }
-
-           $('#send_message').submit(function(e) {
-            e.preventDefault();
-
-            /* Get the submit button */
-            var submitBtn = $(this).find('button[type="submit"]');
-            var originalBtnText = submitBtn.html();
-
-            submitBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden">Loading...</span>');
-            submitBtn.prop('disabled', true);
-
-            var form = $(this);
-            var url = form.attr('action');
-            /*Change to FormData to handle file uploads*/
-            var formData = new FormData(this);
-
-            /* Use Ajax to send the request */
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: formData,
-                contentType: false,
-                processData: false,
-                dataType:'json',
-                success: function(response) {
-                    if (response.success) {
-                       toastr.success(response.message);
-
-                    }else if (!response.success && response.errors) {
-                        $.each(response.errors, function(field, message) {
-                            toastr.error(message);
+                    url: 'include/add_pop.php',
+                    type: 'POST',
+                    data: {pop_id: pop_id},
+                    success: function(data) {
+                        console.log(data);
+                        $('#area').html(data).select2({
+                            placeholder: 'Select Area',
+                            allowClear: false
                         });
                     }
-                },
-                error: function(xhr, status, error) {
-                    /* Handle errors */
-                },
-                complete: function() {
-                    /* Reset button text and enable the button */
-                    submitBtn.html(originalBtnText);
-                    submitBtn.prop('disabled', false);
+                });
+            });
+
+            /***Load Customer **/
+            $("button[name='search_btn']").click(function() {
+                var button = $(this); 
+
+                button.html(`<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Loading...`);
+                button.attr('disabled', true);
+                var pop_id = $("#pop_id").val();
+                var area_id = $("#area").val();
+                var customer_status = $("#customer_status").val();
+                if ( $.fn.DataTable.isDataTable("#datatable1") ) {
+                    $("#datatable1").DataTable().destroy();
                 }
+                $.ajax({
+                    url: 'include/customers_server.php?get_customer_data=true',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {pop_id: pop_id, area_id: area_id, customer_status: customer_status},
+                    success: function(response) {
+                        if(response.success==true){
+                            
+                            $("#print_area").removeClass('d-none');
+                            $("#_data").html(response.data);
+                            $("#datatable1").DataTable({
+                                "paging": true,
+                                "searching": true,
+                                "ordering": true,
+                                "info": true
+                            });
+                            
+                            $('#selectAll').on('click', function() {
+                                $('.customer-checkbox').prop('checked', this.checked);
+                            });
+                            
+                            $('.customer-checkbox').on('click', function() {
+                                if ($('.customer-checkbox:checked').length == $('.customer-checkbox').length) {
+                                    $('#selectAll').prop('checked', true);
+                                } else {
+                                    $('#selectAll').prop('checked', false);
+                                }
+                            }); 
+                        }
+                        
+                        if(response.success==false) {
+                            toastr.error(response.message);
+                            $("#_data").html('<tr id="no-data"><td colspan="10" class="text-center">No data available</td></tr>');
+                        }
+                    },
+                    complete: function() {
+                        button.html('<i class="fas fa-search me-1"></i> Search Now');
+                        button.attr('disabled', false);
+                    }
+                });
             });
         });
-           
-      </script>
 
-    </body>
-</html>
+
+     </script>
+
+ </body>
+
+ </html>

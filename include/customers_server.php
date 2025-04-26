@@ -656,4 +656,54 @@ if (isset($_GET['fetch_bandwith_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') 
     }
     exit;
 }
+/* Get Customer */
+if (isset($_GET['get_customer_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+     $data=[];
+    /*POP ID Check*/ 
+     if (!isset($_GET['pop_id']) || !is_numeric($_GET['pop_id']) || (int)$_GET['pop_id'] <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid POP ID']);
+        exit;
+    }
+
+     /* Area ID Check*/
+     if (!isset($_GET['area_id']) || !is_numeric($_GET['area_id']) || (int)$_GET['area_id'] <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid area ID']);
+        exit;
+    }
+
+   
+    /* Customer Status Check*/
+    if (!isset($_GET['customer_status']) || empty($_GET['customer_status']) || (int)$_GET['customer_status'] < 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid customer status']);
+        exit;
+    }
+
+    $response=get_filtered_customers($_GET['customer_status'], $_GET['area_id'], $_GET['pop_id'],  $con);
+    if (count($response) > 0) {
+        $html = '';
+        foreach ($response as $row) {
+            $get_pop_name=$con->query("SELECT * FROM add_pop WHERE id='" . $row['pop'] . "'")->fetch_array()['pop'];
+            $get_area_name=$con->query("SELECT * FROM area_list WHERE id='" . $row['area'] . "'")->fetch_array()['name'];
+            $package_name=$con->query("SELECT * FROM branch_package WHERE id='" . $row['package'] . "'")->fetch_array()['package_name'];
+
+
+            $html .= '<tr>';
+            $html .= '<td><input type="checkbox" class="form-check-input customer-checkbox checkSingle" value="'.$row['id'].'"></td>';
+            $html .= '<td>'.$row['id'].'</td>';
+            $html .= '<td>'.$row['username'].'</td>';
+            $html .= '<td>'.$package_name.'</td>';
+            $html .= '<td>'.$row['expiredate'].'</td>';
+            $html .= '<td>'.$get_pop_name.'</td>';
+            $html .= '<td>'.$get_area_name.'</td>';
+            $html .= '<td>'.$row['mobile'].'</td>';
+            $html .= '<td>'.$row['address'].'</td>';
+            $html .= '</tr>';
+        }
+        echo json_encode(['success' => true, 'data' => $html]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No data found']);
+    }
+    exit;
+}
+
 ?>
