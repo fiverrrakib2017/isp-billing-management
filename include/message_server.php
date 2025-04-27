@@ -686,6 +686,96 @@ if (isset($_POST['sms_package_delete_data']) && $_SERVER['REQUEST_METHOD'] == 'P
 	$stmt->close();
 	/* Close connection */
 	$con->close();
+    exit; 
 }
+/***************************  SMS logs Get Data *********************************************/
+if (isset($_GET['get_sms_logs_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    include 'db_connect.php'; // ডাটাবেস কানেকশন ইনক্লুড করতে ভুলবেনা
+
+    $data = [];
+
+    /* Start Date Check */ 
+    if (!isset($_GET['start_date']) || empty($_GET['start_date'])) {
+        echo json_encode(['success' => false, 'message' => 'Invalid Start Date']);
+        exit;
+    }
+
+    /* End Date Check */
+    if (!isset($_GET['end_date']) || empty($_GET['end_date'])) {
+        echo json_encode(['success' => false, 'message' => 'Invalid End Date']);
+        exit;
+    }
+
+    /* POP ID Check */ 
+    if (!isset($_GET['pop_id']) || !is_numeric($_GET['pop_id']) || (int)$_GET['pop_id'] <= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid POP ID']);
+        exit;
+    }
+
+    /* Get SMS Logs */
+    $start_date = trim($_GET['start_date']);
+    $end_date = trim($_GET['end_date']);
+    $pop_id = (int) $_GET['pop_id'];
+    $area_id = isset($_GET['area_id']) ? (int) $_GET['area_id'] : null;
+
+    $condition = " WHERE sms_logs.pop_id = '$pop_id'";
+
+    if ($area_id) {
+        $condition .= " AND sms_logs.area_id = '$area_id'";
+    }
+
+    $condition .= " AND sms_logs.created_at BETWEEN '$start_date 00:00:00' AND '$end_date 23:59:59'";
+
+    $query = "
+        SELECT 
+            sms_logs.*, 
+            add_pop.pop AS pop_name, 
+            area_list.name AS area_name , 
+            customers.username AS username
+        FROM sms_logs
+        LEFT JOIN add_pop ON sms_logs.pop_id = add_pop.id
+        LEFT JOIN area_list ON sms_logs.area_id = area_list.id
+        LEFT JOIN customers ON sms_logs.customer_id = customers.id
+        $condition
+        ORDER BY sms_logs.created_at DESC
+    ";
+
+    $result = $con->query($query);
+
+    if ($result && $result->num_rows > 0) {
+        $html = '';
+
+        while ($row = $result->fetch_assoc()) {
+            /** Status */
+            $logs_status = $row['status'] == 1 
+                ? '<span class="badge bg-success">Success</span>' 
+                : '<span class="badge bg-danger">Failed</span>';
+
+            /* Message */
+            $message = $row['message'];
+            if (strlen($message) > 40) {
+                $message = substr($message, 0, 40) . '...';
+            }
+
+            $html .= '<tr>';
+            $html .= '<td>' . htmlspecialchars($row['id']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['username']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['pop_name'] ?? '-') . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['area_name'] ?? '-') . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['phone_number']) . '</td>';
+            $html .= '<td>' . $logs_status . '</td>';
+            $html .= '<td>' . htmlspecialchars($message) . '</td>';
+            $html .= '<td>' . htmlspecialchars($row['sent_at']) . '</td>';
+            $html .= '</tr>';
+        }
+
+        echo json_encode(['success' => true, 'data' => $html]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No data found']);
+    }
+    exit;
+}
+
+
 
 ?>
