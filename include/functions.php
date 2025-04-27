@@ -420,16 +420,54 @@ function send_message ($phone, $message) {
             'success' => true,
             'message' => $responseData['success_message']
         ]);
+        /*Insert SMS Logs*/
+        sms_logs($phone,$message,'1');
     } else {
         return json_encode([
             'success' => false,
             'error' => $responseData['error_message'] ?: 'An error occurred.'
         ]);
+        /*Insert SMS Logs*/
+        sms_logs($phone,$message,'0');
     }
     exit;
 
 }
 
+
+/* SMS Logs Function */
+function sms_logs($mobile_number, $message, $status, $created_at = '', $updated_at = '') {
+    include 'db_connect.php';
+    if (empty($created_at)) {
+        $created_at = date('Y-m-d H:i:s');
+    }
+    if (empty($updated_at)) {
+        $updated_at = date('Y-m-d H:i:s');
+    }
+
+    /* Get Customer Data */
+    $mobile_number = $con->real_escape_string($mobile_number);
+    $customers = $con->query("SELECT * FROM `customers` WHERE `mobile` LIKE '%" . $mobile_number . "%' LIMIT 1")->fetch_array();
+
+    if ($customers) {
+        /* Insert Data into sms_logs */
+        $stmt = $con->prepare("INSERT INTO sms_logs (pop_id, area_id, customer_id, phone_number, message, sent_at, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param(
+            "iiissssss",
+            $customers['pop'],
+            $customers['area'],
+            $customers['id'],
+            $mobile_number,
+            $message,
+            $created_at,
+            $status,
+            $created_at,
+            $updated_at
+        );
+        $stmt->execute();
+        $stmt->close();
+    }
+}
 
 
 ?>

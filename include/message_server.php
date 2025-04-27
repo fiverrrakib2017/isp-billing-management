@@ -1,6 +1,7 @@
 <?php 
 include "db_connect.php";
 
+
 if (isset($_GET['add_message_shchedule_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $errors = [];
 
@@ -271,8 +272,7 @@ if (isset($_GET['update_message_shchedule_data']) && $_SERVER['REQUEST_METHOD'] 
 }
 
 if (isset($_GET['send_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    // $rakib=`http://bulksmsbd.net/api/smsapi?api_key=WC1N6AFA4gVRZLtyf8z9&type=text&number=01757967432&senderid=8809617620311&message=TestSMS`; 
-    // echo $rakib; 
+    include "functions.php";
     $errors = [];
 
     /* Input sanitize */
@@ -329,29 +329,37 @@ if (isset($_GET['send_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
             'success' => true,
             'message' => $responseData['success_message']
         ]);
+         /*Insert SMS Logs*/
+         sms_logs($phone,$message,'1');
     } else {
         echo json_encode([
             'success' => false,
             'error' => $responseData['error_message'] ?: 'An error occurred.'
         ]);
+         /*Insert SMS Logs*/
+         sms_logs($phone,$message,'0');
     }
     exit;
 
 }
+//*************************** Bulk Message **********************************************/
 if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    /*Load required files*/
+    include "functions.php";
+    include "db_connect.php";
     $errors = [];
 
     $customer_ids = isset($_POST['customer_ids']) ? $_POST['customer_ids'] : []; 
+    $original_message = isset($_POST["message"]) ? trim($_POST["message"]) : ''; 
 
-    /* Input sanitize */
-    $message = isset($_POST["message"]) ? trim($_POST["message"]) : ''; 
-    preg_match_all('/\{([^\}]+)\}/', $message, $matches);
+    preg_match_all('/\{([^\}]+)\}/', $original_message, $matches);
 
-  
-    //echo $message;exit; 
     /* Validate data */
-    if (empty($message)) {
+    if (empty($original_message)) {
         $errors['message'] = "Message is required.";
+    }
+    if (empty($customer_ids)) {
+        $errors['customer_ids'] = "At least one customer must be selected.";
     }
 
     /* Return errors if validation fails */
@@ -362,45 +370,50 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         ]);
         exit;
     }
-    
-    
+
     /* SMS API details */
     $url = "http://bulksmsbd.net/api/smsapimany";
     $api_key = "WC1N6AFA4gVRZLtyf8z9";
     $senderid = "SR WiFi";
 
-    /* Prepare data */  
+    /* Prepare data */
     $messages = [];
     foreach ($customer_ids as $customer_id) {
-        $customer_id = trim($customer_id);
-        
-        
-       
+        $customer_id = (int) $customer_id; 
         $all_customer = $con->query("SELECT * FROM customers WHERE id = $customer_id");
-        $customer = $all_customer->fetch_assoc();
-    
-        /*GET back slace*/
-        if (!empty($matches[1])) {
-            foreach ($matches[1] as $item) {
-                $field=$item; 
-                $message = str_replace("{" . $field . "}", $customer[$field], $message);
-            }
-        }
 
-        if ($customer) {
+        if ($all_customer && $all_customer->num_rows > 0) {
+            $customer = $all_customer->fetch_assoc();
+
+            $personalized_message = $original_message;
+
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $item) {
+                    $field = $item;
+                    $personalized_message = str_replace("{" . $field . "}", $customer[$field] ?? '', $personalized_message);
+                }
+            }
+
             $phone = $customer['mobile'];
 
             $messages[] = [
                 "to" => $phone,
-                "message" => $message
+                "message" => $personalized_message
             ];
         } else {
             $errors[] = "Customer with ID $customer_id not found.";
         }
     }
 
+    if (empty($messages)) {
+        echo json_encode([
+            'success' => false,
+            'error' => "No valid customers found."
+        ]);
+        exit;
+    }
+
     $messagesJson = json_encode($messages);
-    
 
     /* Prepare data for SMS API */
     $data = [
@@ -408,7 +421,7 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
         "senderid" => $senderid,
         "messages" => $messagesJson
     ];
-    
+
     /* Initialize cURL */
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -419,19 +432,30 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     /* Execute request */
     $response = curl_exec($ch);
     curl_close($ch);
-   
+
     $responseData = json_decode($response, true);
-    /*Check response*/ 
+
+    /* Check response */
     if (isset($responseData['response_code']) && $responseData['response_code'] == 202) {
         echo json_encode([
             'success' => true,
             'message' => "Messages sent successfully!"
         ]);
+
+        // Log all successful messages
+        foreach ($messages as $msg) {
+            sms_logs($msg['to'], $msg['message'], 1);
+        }
     } else {
         echo json_encode([
             'success' => false,
-            'error' => $responseData['error_message'] ?: 'An error occurred.'
+            'error' => $responseData['error_message'] ?? 'An error occurred.'
         ]);
+
+        // Log failed attempts
+        foreach ($messages as $msg) {
+            sms_logs($msg['to'], $msg['message'], 2);
+        }
     }
     exit;
 }
