@@ -437,5 +437,231 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 
+/*************************** SMS Package Add **********************************************/
+
+if (isset($_GET['add_sms_package']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $errors = [];
+
+    /* Sanitize input values */
+    $name = isset($_POST["name"]) ? trim($_POST["name"]) : '';
+    $quantity = isset($_POST["quantity"]) ? trim($_POST["quantity"]) : '';
+    $price = isset($_POST["price"]) ? trim($_POST["price"]) : '';
+    
+    /* Validate pop_id */
+    if (empty($name)) {
+        $errors['name'] = "Name is required.";
+    }
+    
+    /* Validate area_id */
+    if (empty($quantity)) {
+        $errors['quantity'] = "Quantity is required.";
+    }
+    
+    /* Validate message */
+    if (empty($price)) {
+        $errors['price'] = "Price is required.";
+    }
+    
+  
+    
+    /* If validation errors exist, return errors */
+    if (!empty($errors)) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $errors
+        ]);
+        exit;
+    }
+
+    /* Insert query */ 
+    $stmt = $con->prepare("INSERT INTO sms_packages (name, sms_quantity, price, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())");
+
+    /* Bind parameters correctly */
+    $stmt->bind_param('sid', $name, $quantity, $price);
+
+    $result = $stmt->execute();
+
+    /* Check if insertion was successful */
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Added Successfully!'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error: ' . $stmt->error
+        ]);
+    }
+
+    /* Close statement */
+    $stmt->close();
+    exit; 
+}
+
+
+if (isset($_GET['show_sms_package_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+	require 'datatable.php';
+
+	$table = 'sms_packages';
+	$primaryKey = 'id';
+	$columns = array(
+		array('db' => 'id', 'dt' => 0),
+        array('db'=>'name','dt'=>1,'formatter'=>function($d, $row)use ($con){
+            return $d; 
+
+        }),
+        array('db'=>'sms_quantity','dt'=>2,'formatter'=>function($d, $row)use ($con){
+            return $d; 
+
+        }),
+        array('db'=>'price','dt'=>3,'formatter'=>function($d, $row)use ($con){
+            return $d; 
+
+        }),
+        array(
+			'db'=>'id',
+			'dt'=>4,
+			'formatter'=>function($d, $row){
+				return '
+				<button type="button" name="edit_button" data-id='.$row['id'].' class="btn-sm btn btn-success edit-btn"> <i class="fas fa-edit"></i></button>
+
+				<button type="button" name="delete_button" data-id='.$row['id'].' class="btn-sm btn btn-danger delete-btn"> <i class="fas fa-trash"></i></button>
+
+				'; 
+			}
+		),
+		
+		
+	);
+
+	$condition = ""; 
+	/* Output JSON for DataTables to handle*/
+	echo json_encode(
+		SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns,null, $searchCondition)
+	);
+}
+
+
+if (isset($_GET['get_message_package']) && isset($_GET['id'])) { 
+	$id = intval($_GET['id']); 
+
+	// Prepare the SQL statement
+	$stmt = $con->prepare("SELECT * FROM sms_packages WHERE id = ?");
+	$stmt->bind_param("i", $id);
+
+	// Execute the statement
+	if ($stmt->execute()) {
+		$result = $stmt->get_result();
+
+		if ($result->num_rows > 0) {
+			$data = $result->fetch_assoc();
+			$response = array("success" => true, "data" => $data);
+		} else {
+			$response = array("success" => false, "message" => "No record found!");
+		}
+	} else {
+		$response = array("success" => false, "message" => "Error executing query: " . $stmt->error);
+	}
+
+	// Close the statement
+	$stmt->close();
+	$con->close();
+
+	// Return the response as JSON
+	echo json_encode($response);
+	exit; 
+}
+
+
+if (isset($_GET['update_sms_package']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $errors = [];
+
+    /* Sanitize input values */
+    $id = isset($_POST["id"]) ? trim($_POST["id"]) : '';
+    $name = isset($_POST["name"]) ? trim($_POST["name"]) : '';
+    $quantity = isset($_POST["quantity"]) ? trim($_POST["quantity"]) : '';
+    $price = isset($_POST["price"]) ? trim($_POST["price"]) : '';
+    
+    /* Validate pop_id */
+    if (empty($name)) {
+        $errors['name'] = "Name is required.";
+    }
+    
+    /* Validate area_id */
+    if (empty($quantity)) {
+        $errors['quantity'] = "Quantity is required.";
+    }
+    
+    /* Validate message */
+    if (empty($price)) {
+        $errors['price'] = "Price is required.";
+    }
+    
+  
+    
+    /* If validation errors exist, return errors */
+    if (!empty($errors)) {
+        echo json_encode([
+            'success' => false,
+            'errors' => $errors
+        ]);
+        exit;
+    }
+
+    /* Update query */ 
+    $stmt = $con->prepare("UPDATE sms_packages SET name = ?, sms_quantity = ?, price = ? WHERE id = ?");
+
+    /* Bind parameters correctly */
+    $stmt->bind_param('sidi', $name, $quantity, $price,  $id); 
+
+    $result = $stmt->execute();
+
+    /* Check if update was successful */
+    if ($result) {
+        echo json_encode([
+            'success' => true,
+            'message' => 'Updated Successfully!'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Error: ' . $stmt->error
+        ]);
+    }
+
+    /* Close statement */
+    $stmt->close();
+    exit; 
+}
+
+
+
+if (isset($_POST['sms_package_delete_data']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+	$id=$_POST['id'];
+
+	/* Delete query */
+	$stmt = $con->prepare("DELETE FROM sms_packages WHERE id = ?");
+	/* Bind parameters correctly */
+	$stmt->bind_param('i', $id);
+	/* Execute the statement */
+	$result = $stmt->execute();
+	/* Check if deletion was successful */
+	if ($result) {
+		echo json_encode([
+			'success' => true,
+			'message' => 'Deleted successfully!'
+		]);
+	} else {
+		echo json_encode([
+			'success' => false,
+			'error' => 'Error: ' . $stmt->error
+		]);
+	}
+	/* Close statement */
+	$stmt->close();
+	/* Close connection */
+	$con->close();
+}
 
 ?>

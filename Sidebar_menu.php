@@ -212,6 +212,7 @@
                                     <li><a href="send_message.php">Send SMS </a></li>
                                     <li><a href="sms_schedule.php">Schedule</a></li>
                                     <li><a href="sms_settings.php">Settings</a></li>
+                                    <li><a href="sms_package.php">SMS Package</a></li>
                                     <li><a href="sms_report.php">Report</a></li>
                                 </ul>
                             </li>
