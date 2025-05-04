@@ -329,7 +329,9 @@ function timeAgo($startdate)
 
                                                 <tr>
                                                     <td><?php echo $rows['id']; ?></td>
-                                                    <td><?php echo timeAgo($rows['req_date'])." ~ ".$rows['req_date']; ?></td>
+                                                    <!-- <td><?php echo timeAgo($rows['req_date'])." ~ ".$rows['req_date']; ?></td> -->
+                                                    <td><?php echo timeAgo($rows['req_date']) . " ~ " . date('d M Y', strtotime($rows['req_date'])); ?></td>
+
                                                     <td><?php echo $rows['fullname']; ?></td>
 
 
