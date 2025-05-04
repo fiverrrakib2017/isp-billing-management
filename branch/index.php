@@ -26,48 +26,86 @@ if (file_exists($custom_func_path)) {
 }
 
 if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
-    $paymentID = $_GET['paymentID'];
-    $id_token = $_SESSION['id_token'];
-    $app_key = $_SESSION['app_key'];
-    $amount = $_SESSION['final_amount'];
-    $pop_id = $_SESSION['pop_id'];
+    /*For POP/Branch Transaction*/
+    if (isset($_SESSION['id_token']) && isset($_SESSION['app_key']) && isset($_SESSION['final_amount']) && isset($_SESSION['pop_id'])) {
+        $paymentID = $_GET['paymentID'];
+        $id_token = $_SESSION['id_token'];
+        $app_key = $_SESSION['app_key'];
+        $amount = $_SESSION['final_amount'];
+        $pop_id = $_SESSION['pop_id'];
 
-    $post_paymentID = [
-        'paymentID' => $paymentID,
-    ];
+        $post_paymentID = [
+            'paymentID' => $paymentID,
+        ];
 
-    $posttoken = json_encode($post_paymentID);
-    $base_url = 'https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout';
-    $url = curl_init("$base_url/execute");
-    $header = ['Content-Type:application/json', "authorization:$id_token", "x-app-key:$app_key"];
+        $posttoken = json_encode($post_paymentID);
+        $base_url = 'https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout';
+        $url = curl_init("$base_url/execute");
+        $header = ['Content-Type:application/json', "authorization:$id_token", "x-app-key:$app_key"];
 
-    curl_setopt($url, CURLOPT_HTTPHEADER, $header);
-    curl_setopt($url, CURLOPT_CUSTOMREQUEST, 'POST');
-    curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($url, CURLOPT_POSTFIELDS, $posttoken);
-    curl_setopt($url, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-    curl_exec($url);
-    curl_close($url);
+        curl_setopt($url, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($url, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($url, CURLOPT_POSTFIELDS, $posttoken);
+        curl_setopt($url, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_exec($url);
+        curl_close($url);
 
-    $result = $con->query("SELECT `fullname` FROM add_pop WHERE id='$pop_id'");
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $recharge_by = $row['fullname'];
+        $result = $con->query("SELECT `fullname` FROM add_pop WHERE id='$pop_id'");
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $recharge_by = $row['fullname'];
+        }
+
+        date_default_timezone_set('Asia/Dhaka');
+        $todayDate = date('H:i A, d-M-Y');
+        $percent_amount = $amount - $amount * 0.02;
+        $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$percent_amount','$percent_amount','Recharge','2','$recharge_by','$todayDate')");
+
+        // Clear session data
+        unset($_SESSION['id_token'], $_SESSION['app_key'], $_SESSION['final_amount'], $_SESSION['pop_id']);
+
+        header("Location: $CurPageURL");
+        exit();
     }
+    /*For SMS Purchase Transaction*/
+    if (isset($_SESSION['id_token']) && isset($_SESSION['app_key']) && isset($_SESSION['final_amount']) && isset($_SESSION['package_id'])) {
+        $paymentID = $_GET['paymentID'];
+        $id_token = $_SESSION['id_token'];
+        $app_key = $_SESSION['app_key'];
+        $amount = $_SESSION['final_amount'];
+        $package_id = $_SESSION['package_id'];
 
-    date_default_timezone_set('Asia/Dhaka');
-    $todayDate = date('H:i A, d-M-Y');
-    $percent_amount = $amount - $amount * 0.02;
-    $con->query("INSERT INTO pop_transaction(pop_id,amount,paid_amount,action,transaction_type,recharge_by,date)VALUES('$pop_id','$percent_amount','$percent_amount','Recharge','2','$recharge_by','$todayDate')");
+        $post_paymentID = [
+            'paymentID' => $paymentID,
+        ];
 
-    // Clear session data
-    unset($_SESSION['id_token'], $_SESSION['app_key'], $_SESSION['final_amount'], $_SESSION['pop_id']);
+        $posttoken = json_encode($post_paymentID);
+        $base_url = 'https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout';
+        $url = curl_init("$base_url/execute");
+        $header = ['Content-Type:application/json', "authorization:$id_token", "x-app-key:$app_key"];
 
-    header("Location: $CurPageURL");
-    exit();
+        curl_setopt($url, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($url, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($url, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($url, CURLOPT_POSTFIELDS, $posttoken);
+        curl_setopt($url, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($url, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        curl_exec($url);
+        curl_close($url);
+        $_get_sms_quantity=$con->query("SELECT sms_quantity FROM sms_packages WHERE id='$package_id'")->fetch_assoc()['sms_quantity'];
+    
+        $con->query("INSERT INTO `sms_transaction` (`pop_id`, `package_id`, `sms_quantity`, `amount`, `status`, `transaction_id`, `create_date`) VALUES ('$auth_usr_POP_id', '$package_id', '$_get_sms_quantity, '$amount', '1', '$paymentID', 'NOW()');");
+
+        // Clear session data
+        unset($_SESSION['id_token'], $_SESSION['app_key'], $_SESSION['final_amount'], $_SESSION['package_id']);
+
+        header("Location: $CurPageURL");
+        exit();
+    }
+      
 }
-
 
 // if (isset($_SESSION["uid"])) {
 //     $stmt = $con->prepare("SELECT csrf_token FROM users WHERE id=?");
@@ -85,8 +123,6 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
 //     }
 // }
 
-
-
 ?>
 
 <!doctype html>
@@ -103,10 +139,26 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/style.php';
     
     echo file_get_contents($url);
-
+    
     // include '../style.php';
     
     ?>
+
+    <style>
+        .package-card {
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .package-card:hover,
+        .package-card.selected {
+            border-color: #0d6efd;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+        }
+    </style>
+
 
 </head>
 
@@ -139,7 +191,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
             <div class="page-content">
                 <div class="container-fluid">
                     <div class="row mb-2">
-                        <div class="col-md-12 col-sm-6">
+                        <div class="col-md-8 col-sm-12">
                             <button type="button" data-bs-toggle="modal" data-bs-target="#addRechargeModal"
                                 class="btn-sm btn btn-primary mb-1"><i class="mdi mdi-battery-charging-90"></i> Recharge
                                 Now</button>
@@ -163,11 +215,42 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
                                 <img src="images/bkash_payment_logo.svg" class="img-fluid" height="50px"
                                     width="80px">
                             </button>
-
                         </div>
+                        <div class="col-md-4 col-sm-12">
+                            <div
+                                class="d-flex flex-wrap justify-content-md-end justify-content-center align-items-center gap-3 p-2 bg-light">
+
+                                <!-- SMS Count -->
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-sms text-primary me-1"></i>
+                                    <span class="text-danger ms-1">
+
+                                    <strong>Available SMS:</strong><?php 
+                                            
+                                        $total_sms =  $con->query("SELECT SUM(sms_quantity)as total_message FROM sms_transaction WHERE pop_id='$auth_usr_POP_id'")->fetch_assoc()['total_message']??0;
+
+                                        $get_send_message_count=$con->query("SELECT SUM(pop_id) as toal_message FROM `sms_logs` WHERE pop_id='$auth_usr_POP_id'")->fetch_assoc()['toal_message']??0;
+
+                                        $grand_sms =  $total_sms - $get_send_message_count;
+                                        echo '<strong>'.$grand_sms.'</strong>';
+                                        ?> 
+                                    </span>
+                                </div>
+
+                                <!-- Top Up Button -->
+                                <div>
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#smsTopUpModal"
+                                        class="btn  btn-success">
+                                        <i class="fas fa-plus-circle me-1"></i> Top Up
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
                     </div>
 
-                  <?php require 'Component/Customer_statics.php'; ?>
+                    <?php require 'Component/Customer_statics.php'; ?>
                     <div class="row">
                         <?php require 'Component/Transaction_history.php'; ?>
                         <div class="col-md-6 col-xl-3">
@@ -477,10 +560,10 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
                                                         <?php
                                                         
                                                         $sql = "SELECT radacct.username FROM radacct
-                                                                                                                        INNER JOIN customers
-                                                                                                                        ON customers.username=radacct.username
-                                                                                                                        
-                                                                                                                        WHERE customers.area='$areaid' AND radacct.acctstoptime IS NULL";
+                                                                                                                                                                                INNER JOIN customers
+                                                                                                                                                                                ON customers.username=radacct.username
+                                                                                                                                                                                
+                                                                                                                                                                                WHERE customers.area='$areaid' AND radacct.acctstoptime IS NULL";
                                                         $countareaonlnusr = mysqli_query($con, $sql);
                                                         
                                                         echo $countareaonlnusr->num_rows;
@@ -1264,6 +1347,60 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
         </div><!-- /.modal-dialog -->
     </div>
 
+    <!-- TOP UP SMS Modal -->
+    <div class="modal fade" id="smsTopUpModal" tabindex="-1" aria-labelledby="smsTopUpModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="smsTopUpModalLabel">Buy SMS Package</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Package List -->
+                    <div class="row" id="smsPackages">
+                        <?php
+                        $packages = [];
+                        if ($get_message_packages = $con->query('SELECT * FROM sms_packages')) {
+                            while ($rf = $get_message_packages->fetch_array()) {
+                                $packages[] = $rf;
+                            }
+                        }
+                        
+                        foreach ($packages as $pkg) {
+                            echo '
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="card package-card" data-id="' .
+                                $pkg['id'] .
+                                '" data-price="' .
+                                $pkg['price'] .
+                                '">
+                                                        <div class="card-body text-center">
+                                                            <h6>' .
+                                $pkg['name'] .
+                                '</h6>
+                                                            <p>' .
+                                $pkg['sms_quantity'] .
+                                ' SMS</p>
+                                                            <p><strong>৳ ' .
+                                $pkg['price'] .
+                                '</strong></p>
+                                                        </div>
+                                                    </div>
+                                                </div>';
+                        }
+                        ?>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" name="sms_pay_button" class="btn btn-success">Pay With bKash</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <!-- Customer Modal -->
     <?php include 'modal/customer_modal.php'; ?>
@@ -1316,7 +1453,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
 
     <!-- JAVASCRIPT -->
     <?php
-
+    
     $protocol = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://';
     $url = $protocol . $_SERVER['HTTP_HOST'] . '/branch/script.php';
     
@@ -1327,6 +1464,24 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
     <script type="text/javascript" src="../../js/google_map.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
+            let get_buy_sms_package_id = null;
+            let get_buy_sms_package_amount = null;
+            $('.package-card').on('click', function() {
+                $('.package-card').removeClass('selected');
+
+                $(this).addClass('selected');
+                get_buy_sms_package_id = $(this).data('id');
+                get_buy_sms_package_amount = $(this).data('price');
+
+            });
+            $('button[name="sms_pay_button"]').on('click', function() {
+                if (!get_buy_sms_package_id) {
+                    toastr.error("Please select a package!");
+                    return;
+                }
+                window.location.href =
+                    `http://<?php echo $_SERVER['HTTP_HOST']; ?>/branch/sms_payment.php?amount=${get_buy_sms_package_amount}&package_id=${get_buy_sms_package_id}&submit_payment=1`;
+            });
             $("input[name='received_amount']").keyup(function() {
                 var received_amount = parseFloat($(this).val());
                 if (isNaN(received_amount) || received_amount <= 0) {
@@ -1460,7 +1615,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
         $(document).ready(function() {
             var protocol = location.protocol;
             var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' +
-            '/include/tickets_server.php?get_all_customer=true';
+                '/include/tickets_server.php?get_all_customer=true';
 
             async function loadCustomerOptions() {
                 try {
@@ -1641,10 +1796,10 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
                 } else {
                     $("#add_recharge_btn").html(
                         '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
-                        );
+                    );
                     var protocol = location.protocol;
                     var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' +
-                    '/include/customer_recharge_server.php';
+                        '/include/customer_recharge_server.php';
                     $.ajax({
                         type: 'POST',
                         url: url,
@@ -1846,7 +2001,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
 
                 submitBtn.html(
                     '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span><span class="visually-hidden"></span>'
-                    );
+                );
                 submitBtn.prop('disabled', true);
 
                 var form = $(this);

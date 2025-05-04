@@ -68,9 +68,9 @@ if (file_exists($users_right_path)) {
 
             <div class="page-content">
                 <div class="container-fluid">
-                   <?php 
-                   require 'Component/Transaction_history.php';
-                   ?>
+                   <div class="row">
+                   <?php  require 'Component/Transaction_history.php';  ?>
+                   </div>
                     <div class="row">
                         <div class="col-md-12 grid-margin">
                             <div class="d-flex justify-content-between flex-wrap">
