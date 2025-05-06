@@ -207,7 +207,7 @@ if (file_exists($users_right_path)) {
                             <select class="form-select" name="message_template">
                                 <option>---Select---</option>
                                 <?php
-                                if ($allCstmr = $con->query('SELECT * FROM message_template WHERE pop_id=$auth_usr_POP_id')) {
+                                if ($allCstmr = $con->query("SELECT * FROM message_template WHERE pop_id=".$auth_usr_POP_id." ")) {
                                     while ($rows = $allCstmr->fetch_array()) {
                                         echo '<option value=' . $rows['id'] . '>' . $rows['template_name'] . '</option>';
                                     }
