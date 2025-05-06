@@ -81,9 +81,10 @@
                  <span>SMS</span>
              </a>
              <ul class="sub-menu" aria-expanded="false">
+             
                  <li><a href="message_template.php">Message Templates</a></li>
                  <li><a href="send_message.php">Send SMS </a></li>
-                 <li><a href="summery_reports.php">Summary Report</a></li>
+                 <li><a href="sms_report.php">Report</a></li>
              </ul>
          </li>
          <li>

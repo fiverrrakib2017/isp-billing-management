@@ -95,6 +95,20 @@ include 'include/users_right.php';
                                 </div>
                                 <div class="modal-body">
                                     <form>
+                                        <div class="form-group">
+                                        <label>POP/Branch</label>
+                                        <select name="pop_id" id="pop_id" class="form-select" style="width: 100%;">
+                                            <option>---Select---</option>
+                                            <?php 
+                                            if ($allPOPuSR = $con->query("SELECT * FROM add_pop ")) {
+                                                while ($rows = $allPOPuSR->fetch_array()) {
+                                                    echo '<option value="'.$rows['id'].'" >'.$rows['pop'].'</option>';
+                                                }
+                                            }
+                                            ?>
+                                        </select>
+
+                                        </div>
                                         <div class="form-group mb-2">
                                             <label>Template Name</label>
                                             <input class="form-control" type="text" id="templateName"
@@ -140,11 +154,12 @@ include 'include/users_right.php';
 
 
                                     <div class="table-responsive">
-                                        <table id="datatable" class="table table-bordered dt-responsive nowrap"
+                                        <table id="datatable1" class="table table-bordered dt-responsive nowrap"
                                             style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>
+                                                    <th>POP/Branch</th>
                                                     <th>Template Name</th>
                                                     <th>Message Template</th>
                                                     <th></th>
@@ -152,45 +167,44 @@ include 'include/users_right.php';
                                             </thead>
                                             <tbody>
 
-                                                <?php 
+                                            <?php 
+    $sql = "SELECT * FROM message_template ORDER BY id DESC";
+    $result = mysqli_query($con, $sql);
 
-                          $sql="SELECT * FROM message_template WHERE user_type=$auth_usr_type  ";
-                          $result=mysqli_query($con,$sql);
+    while ($rows = mysqli_fetch_assoc($result)) {
+        $pop_id = $rows['pop_id'];
+        $pop_name = '';
 
-                          while ($rows=mysqli_fetch_assoc($result)) {
+        // Fetch POP name
+        $get_pop_result = $con->query("SELECT pop FROM add_pop WHERE id = $pop_id LIMIT 1");
+        if ($get_pop_result && $pop_row = $get_pop_result->fetch_assoc()) {
+            $pop_name = $pop_row['pop'];
+        }
+    ?>
+    <tr>
+        <td><?php echo htmlspecialchars($rows['id']); ?></td>
+        <td><?php echo htmlspecialchars($pop_name); ?></td>
+        <td><?php echo htmlspecialchars($rows['template_name']); ?></td>
+        <td>
+            <?php
+            $textFile = $rows['text'];
+            echo substr($textFile, 0, 50) . '......';
+            
+            ?>
 
-                           ?>
-
-                                                <tr>
-                                                    <td><?php echo $rows['id']; ?></td>
-                                                    <td>
-                                                        <?php
-                                                        echo $rows['template_name'];
-                                                        
-                                                        ?>
-
-                                                    </td>
-                                                    <td>
-                                                        <?php
-                                                        $textFile = $rows['text'];
-                                                        echo substr($textFile, 0, 50) . '......';
-                                                        
-                                                        ?>
-
-                                                    </td>
-                                                    <td style="text-align:right">
-                                                        <a href="message_template_edit.php?id=<?php echo $rows['id']; ?>"
-                                                            class="btn-sm btn btn-info"><i
-                                                                class="fas fa-edit"></i></a>
-
-                                                        <a href="message_template_delete.php?id=<?php echo $rows['id']; ?>"class="btn-sm btn btn-danger"
-                                                            onclick="return confirm('Are you sure');"><i
-                                                                class="fas fa-trash"></i>
-                                                        </a>
-
-                                                    </td>
-                                                </tr>
-                                                <?php } ?>
+        </td>
+        <td style="text-align: right">
+            <a href="message_template_edit.php?id=<?php echo $rows['id']; ?>" class="btn-sm btn btn-info">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="message_template_delete.php?id=<?php echo $rows['id']; ?>" 
+               class="btn-sm btn btn-danger"
+               onclick="return confirm('Are you sure?');">
+                <i class="fas fa-trash"></i>
+            </a>
+        </td>
+    </tr>
+    <?php } ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -219,41 +233,58 @@ include 'include/users_right.php';
 
 
     <script type="text/javascript">
+        $("#datatable1").DataTable({
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+           
+            "order": [
+                [0, "desc"]
+            ]
+
+        });
          $("#add_template").click(function() {
+                var pop_id = $("#pop_id").val();
                 var templateName = $("#templateName").val();
                 var message = $("#textMessage").val();
                 var user_type = $("#user_type").val();
+
+               if(pop_id.lenght == 0){
+                   toastr.error("Please Select POP/Branch");
+                   return false;
+               }
+
                 if (message.length == 0) {
                     toastr.error("Please Type Your Message");
-                } else if (templateName.length == 0) {
+                    return false;
+                } 
+                
+                if (templateName.length == 0) {
                     toastr.error("Template Name Require");
-                } else {
-                    //var formData= $("#form-category").serialize();
-                    var messageDataInsert = "0";
-                    $.ajax({
-                        type: 'POST',
-                        data: {
-                            message: message,
-                            messageDataInsert: messageDataInsert,
-                            user_type: user_type,
-                            templateName: templateName
-                        },
-                        url: 'include/message.php',
-                        cache: false,
-                        success: function(response) {
-                            if (response == 1) {
-                                toastr.success("Add Successfully");
-                                $("#addModal").modal('hide');
-                                setTimeout(() => {
-                                    location.reload();
-                                }, 1000);
-                            } else {
-                                toastr.warning("Please Try Again");
-                            }
-
-                        }
-                    });
+                    return false;
                 }
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        pop_id: pop_id,
+                        message: message,
+                        user_type: user_type,
+                        templateName: templateName, 
+                        messageDataInsert: "1"
+                    },
+                    url: 'include/message.php',
+                    cache: false,
+                    success: function(response) {
+                        if (response == 1) {
+                            toastr.success("Add Successfully");
+                            $("#addModal").modal('hide');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            toastr.warning("Please Try Again");
+                        }
+
+                    }
+                });
             });
     </script>
 
