@@ -229,7 +229,7 @@ if (isset($_GET['paymentID']) && $_GET['status'] == 'success') {
                                             
                                         $total_sms =  $con->query("SELECT SUM(sms_quantity)as total_message FROM sms_transaction WHERE pop_id='$auth_usr_POP_id'")->fetch_assoc()['total_message']??0;
 
-                                        $get_send_message_count=$con->query("SELECT SUM(pop_id) as toal_message FROM `sms_logs` WHERE pop_id='$auth_usr_POP_id'")->fetch_assoc()['toal_message']??0;
+                                        $get_send_message_count=$con->query("SELECT COUNT(*) as total FROM `sms_logs` WHERE pop_id='$auth_usr_POP_id'")->fetch_assoc()['total'];
 
                                         $grand_sms =  $total_sms - $get_send_message_count;
                                         echo '<strong>'.$grand_sms.'</strong>';

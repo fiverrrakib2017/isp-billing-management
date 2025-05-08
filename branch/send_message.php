@@ -42,7 +42,7 @@ if (file_exists($users_right_path)) {
         
             <?php 
            
-                $page_title = "Message Template";
+                $page_title = "Send Message";
                 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
                 $url = $protocol . $_SERVER['HTTP_HOST'] . '/Header.php';
                 include '../Header.php';
