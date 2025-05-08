@@ -339,9 +339,9 @@ if (isset($_GET['clid'])) {
                                                 <div class="col-md-6">
                                                     <div class="row mb-3">
                                                         <label for="txtExpirationDate"
-                                                            class="col-lg-3 col-form-label">Billing Date</label>
+                                                            class="col-lg-3 col-form-label">Expire Date</label>
                                                         <div class="col-lg-9">
-                                                            <select id="customer_billing_date" class="form-select"
+                                                            <!-- <select id="customer_billing_date" class="form-select"
                                                                 style="width: 100%;">
                                                                 <?php
                                                                 if ($get_all_area_billing_days = $con->query("SELECT `billing_date` FROM area_list WHERE id=$area")) {
@@ -376,8 +376,10 @@ if (isset($_GET['clid'])) {
                                                                 }
                                                                 ?>
 
-                                                            </select>
-
+                                                            </select> -->
+                                                            <input id="customer_expire_date" type="date"
+                                                                class="form-control" name="customer_expire_date"
+                                                                value="<?php echo $expiredate; ?>" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -391,8 +393,7 @@ if (isset($_GET['clid'])) {
                                                         <label for="txtNameCard"
                                                             class="col-lg-3 col-form-label">Remarks</label>
                                                         <div class="col-lg-9">
-                                                            <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"
-                                                                value="  <?php echo htmlspecialchars($remarks); ?>"></textarea>
+                                                            <textarea id="customer_remarks" type="text" class="form-control" placeholder="Enter Remarks"><?php echo htmlspecialchars($remarks); ?></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -557,7 +558,7 @@ if (isset($_GET['clid'])) {
             var password = $("#customer_password").val();
             var mobile = $("#customer_mobile").val();
             var address = $("#customer_address").val();
-            var billing_date = $("#customer_billing_date").val();
+            var expire_date = $("#customer_expire_date").val();
             var area = $("#customer_area").val();
             var pop = $("#customer_pop").val();
             var nid = $("#customer_nid").val();
@@ -580,8 +581,8 @@ if (isset($_GET['clid'])) {
                 toastr.error("Password is require");
             } else if (mobile.length == 0) {
                 toastr.error("Mobile number is require");
-            } else if (billing_date.length == 0) {
-                toastr.error("Billing Date is require");
+            } else if (expire_date.length == 0) {
+                toastr.error("Expire Date is require");
             } else if (pop.length == 0) {
                 toastr.error("POP/Branch is require");
             } else if (area.length == 0) {
@@ -617,7 +618,7 @@ if (isset($_GET['clid'])) {
                     password: password,
                     mobile: mobile,
                     address: address,
-                    billing_date: billing_date,
+                    expire_date: expire_date,
                     area: area,
                     customer_houseno: customer_houseno,
                     pop: pop,
