@@ -112,7 +112,7 @@ include 'include/users_right.php';
                                         if ($result->num_rows > 0) {
                                             while ($row = $result->fetch_assoc()) {
                                                 echo "<tr>
-                                                <td>{$row['username']}</td>
+                                                <td><a href='profile.php?clid={$row['customer_id']}'>{$row['username']}</a></td>
                                                 <td>{$row['mobile']}</td>
                                                 <td>{$row['total_recharge']}</td>
                                                 <td>{$row['total_paid']}</td>

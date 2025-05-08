@@ -968,7 +968,7 @@ include 'include/functions.php';
                                                         $sql = "SELECT * FROM customers WHERE createdate LIKE '%$currentyrMnth%'";
                                                         $result = mysqli_query($con, $sql);
                                                         $countconn = mysqli_num_rows($result);
-                                                        echo '<a href="customers_new.php?new_customer_month=' . $currentyrMnth . '">' . $countconn . '</a>';
+                                                        echo '<a href="customers_new.php?new_customer_month=' . $currentyrMnth . '" class="text-success">' . $countconn . '</a>';
                                                         ?>
                                                     </td>
                                                     <td>
@@ -976,7 +976,7 @@ include 'include/functions.php';
                                                         $sql = "SELECT * FROM customers WHERE  expiredate LIKE '%$currentyrMnth%'";
                                                         $result = mysqli_query($con, $sql);
                                                         $countexpconn = mysqli_num_rows($result);
-                                                        echo '<a href="customers_new.php?expire_customer_month=' . $currentyrMnth . '">' . $countexpconn . '</a>';
+                                                        echo '<a href="customers_new.php?expire_customer_month=' . $currentyrMnth . '" class="text-danger">' . $countexpconn . '</a>';
                                                         ?>
                                                     </td>
                                                 </tr>
