@@ -299,7 +299,7 @@ if (isset($_GET['clid'])) {
                                                                 
                                                                 if ($result = $con->query("SELECT * FROM branch_package WHERE pop_id=$pop_id")) {
                                                                     while ($rows = $result->fetch_assoc()) {
-                                                                        $id = htmlspecialchars($rows['pkg_id']);
+                                                                        $id = htmlspecialchars($rows['id']);
                                                                         $package_name = htmlspecialchars($rows['package_name']);
                                                                         $selected = $id == $package ? 'selected' : '';
                                                                         echo '<option value="' . $id . '" ' . $selected . '>' . $package_name . '</option>';

@@ -84,7 +84,7 @@ include 'include/functions.php';
                             class="btn btn-success mb-1"> <i class="fas fa-ticket-alt"></i> Add Ticket</button>
                             
 
-                            <button type="button" id="addSmsBtn" class="btn btn-primary text-blue mb-1">  <i class="fas fa-envelope"></i> SMS Notification</button>
+                            <!-- <button type="button" id="addSmsBtn" class="btn btn-primary text-blue mb-1">  <i class="fas fa-envelope"></i> SMS Notification</button> -->
 
                           
                         </div>
