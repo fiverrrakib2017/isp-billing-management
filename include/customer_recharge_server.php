@@ -156,6 +156,7 @@ if (isset($_GET['add_customer_recharge']) && $_SERVER['REQUEST_METHOD'] == 'POST
 
 
 if (isset($_POST['add_recharge_data'])) {
+    
     $customer_id = $_POST['customer_id'];
     $chrg_mnths = $_POST['month'];
     $package_purchase_price = $_POST['amount'];
@@ -176,7 +177,7 @@ if (isset($_POST['add_recharge_data'])) {
             $pop_id = $rows['pop'];
         }
     }
-     
+   
     /*Get DISCOUNT Amount*/
     if (!empty($chrg_mnths) && isset($chrg_mnths) && !empty($package_purchase_price) && isset($package_purchase_price)) {
         $main_amount=$chrg_mnths * $_price;
@@ -186,10 +187,10 @@ if (isset($_POST['add_recharge_data'])) {
     //get customer sale's price [Use id for package id]
     if ($allPackg = $con->query("SELECT s_price, p_price FROM branch_package WHERE id=$packageId AND pop_id=$pop_id LIMIT 1")) {
         while ($rows = $allPackg->fetch_array()) {
-             $package_sales_price = $rows['s_price'];
+            $package_sales_price = $rows['s_price'];
         }
     }
-    
+ 
    /*Check POP Blance*/
     if ($pop_payment = $con->query("SELECT SUM(amount) AS balance FROM pop_transaction WHERE pop_id='$pop_id' ")) {
         while ($rows = $pop_payment->fetch_array()) {
@@ -205,6 +206,7 @@ if (isset($_POST['add_recharge_data'])) {
 
     if ($package_purchase_price > $totalCurrentBal) {
         echo 'Please Recharge This Pop/Branch';
+        exit; 
     } else {
         if ($cstmr = $con->query("SELECT * FROM customers WHERE id='$customer_id'")) {
             while ($rows = $cstmr->fetch_array()) {
