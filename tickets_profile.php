@@ -441,9 +441,10 @@ if (isset($_GET['id'])) {
                         success: function(response) {
                             if (response == 1) {
                                 toastr.success("Comment Successfully Added");
-                                setTimeout(function() {
-                                    location.reload();
+                               setTimeout(function() {
+                                    location.href = 'allTickets.php';
                                 }, 1000);
+
                             } else {
                                 toastr.error(response);
                             }
