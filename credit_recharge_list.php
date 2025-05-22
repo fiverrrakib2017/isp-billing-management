@@ -78,53 +78,63 @@ include 'include/users_right.php';
                                 <div class="card-body">
 
                                     <div class="table-responsive ">
-                                        <table id="customers_table" class="table table-bordered dt-responsive nowrap"
-                                            style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                            <thead>
-                                                <tr>
-                                                    <th>Customer Username</th>
-                                                    <th>Phone Number</th>
-                                                    <th>Recharged</th>
-                                                    <th>Total Paid</th>
-                                                    <th>Total Due</th>
-                                                </tr>
-                                            </thead>
-                                            <?php
-                                         $sql = "SELECT 
-                                        c.id AS customer_id, 
-                                        c.username, 
-                                        c.mobile, 
-                                        COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
-                                        COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
-                                        (COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
-                                        COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)) AS total_due
-                                    FROM 
-                                        customers c
-                                    LEFT JOIN 
-                                        customer_rechrg cr ON c.id = cr.customer_id
-                                    GROUP BY 
-                                        c.id
-                                    HAVING 
-                                        total_due > 0";
-                                        
-                                        $result = $con->query($sql);
-                                        
-                                        if ($result->num_rows > 0) {
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo "<tr>
-                                                <td><a href='profile.php?clid={$row['customer_id']}'>{$row['username']}</a></td>
-                                                <td>{$row['mobile']}</td>
-                                                <td>{$row['total_recharge']}</td>
-                                                <td>{$row['total_paid']}</td>
-                                                <td>{$row['total_due']}</td>
-                                                </tr>";
-                                                }
-                                            } else {
-                                                echo 'No results found.';
-                                            }
-                                            ?>
+                                      <table id="customers_table" class="table table-bordered dt-responsive nowrap"
+    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+    <thead>
+        <tr>
+            <th>Customer Username</th>
+            <th>Phone Number</th>
+            <th>Recharged</th>
+            <th>Total Paid</th>
+            <th>Total Due</th>
+            <th>Month</th> 
+        </tr>
+    </thead>
+    <?php
+    $sql = "SELECT 
+                c.id AS customer_id, 
+                c.username, 
+                c.mobile, 
+                COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
+                COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
+                (
+                    COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
+                    COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)
+                ) AS total_due,
+                DATE_FORMAT(DATE_SUB(MAX(cr.datetm), INTERVAL 1 MONTH), '%m') AS recharge_month
+            FROM 
+                customers c
+            LEFT JOIN 
+                customer_rechrg cr ON c.id = cr.customer_id
+            GROUP BY 
+                c.id
+            HAVING 
+                total_due > 0";
 
-                                        </table>
+    $result = $con->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $monthNum = (int)$row['recharge_month'];
+            $monthName = DateTime::createFromFormat('!m', $monthNum)->format('F'); 
+
+            echo "<tr>
+                    <td><a href='profile.php?clid={$row['customer_id']}'>{$row['username']}</a></td>
+                    <td>{$row['mobile']}</td>
+                    <td>{$row['total_recharge']}</td>
+                    <td>{$row['total_paid']}</td>
+                    <td>{$row['total_due']}</td>
+                    <td>{$monthName}</td>
+                </tr>";
+        }
+    } else {
+        echo '<tr><td colspan="6">No results found.</td></tr>';
+    }
+    ?>
+</table>
+
+
+
                                     </div>
                                 </div>
                                 <div class="card-footer text-end">
@@ -173,7 +183,7 @@ include 'include/users_right.php';
             newWindow.document.write('<div class="header">');
             newWindow.document.write(
                 '<img src="http://103.146.16.154/assets/images/it-fast.png" class="logo" alt="Company Logo" style="display:block; margin:auto; height:50px;">'
-                );
+            );
             newWindow.document.write('<h2 style="text-align:center; color: #000;">Star Communication</h2>');
             newWindow.document.write('<p style="text-align:center;">Customer Recharge Report</p>');
             newWindow.document.write('</div>');
