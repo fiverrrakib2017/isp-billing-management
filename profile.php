@@ -1,18 +1,111 @@
 <?php
-date_default_timezone_set("Asia/Dhaka");
+date_default_timezone_set('Asia/Dhaka');
 include "include/security_token.php";
 include "include/users_right.php";
 include "include/db_connect.php";
 require "routeros/routeros_api.class.php";
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 $nasipaddress = "Not connected!";
 $RouterPortID = "Not Found!";
 $DeviceMAC = "Not Found!";
 $framedipaddress = "Not connected!";
 $offlineHours = "Never connected!";
 
+/*Live Bandwith Traffic Start**/
+if (isset($_GET['fetch_bandwith_data']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
+    $username = trim($_GET['username']);
+
+    /* Check if user is online */
+    $onlineusr = $con->query("SELECT * FROM radacct WHERE acctstoptime IS NULL AND username='$username'");
+    if ($onlineusr->num_rows == 0) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'User is offline or does not exist']);
+        exit; 
+    }
+
+    $rowacct = $onlineusr->fetch_assoc();
+    $nasipaddress = $rowacct['nasipaddress'] ?? '';
+
+    $CNRT = $con->query("SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
+    $nas_rows = $CNRT->fetch_assoc();
+
+    $api_usr = $nas_rows['api_user'];
+    $api_pswd = $nas_rows['api_password'];
+    $api_server = $nas_rows['api_ip'];
+    $api_port = $nas_rows['ports'];
+
+    $interface_name = 'pppoe-' . $username;
+
+    $API = new RouterosAPI();
+    if ($API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
+
+        /* Get Rx/Tx traffic */
+        $API->write('/interface/print');
+        $interfaces = $API->read();
+
+        $found_interface = null;
+        foreach ($interfaces as $intf) {
+            if (strpos($intf['name'], $username) !== false) {
+                $found_interface = $intf['name'];
+                break;
+            }
+        }
+
+        if ($found_interface) {
+            $API->write('/interface/monitor-traffic', false);
+            $API->write('=interface=' . $found_interface, false);
+            $API->write('=once=');
+            $response = $API->read();
+
+            /*  Get Uptime from PPP active */
+            $API->write('/ppp/active/print', false);
+            $API->write('?name=' . $username);
+            $pppResponse = $API->read();
+
+            $uptime = 'N/A';
+            if (!empty($pppResponse) && isset($pppResponse[0]['uptime'])) {
+                $uptime = $pppResponse[0]['uptime']; 
+            }
+
+            $API->disconnect();
+
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'data' => $response,
+                'uptime' => custom_time_formate($uptime),
+            ]);
+            exit; 
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Interface not found']);
+            exit; 
+        }
+    }
+}
+
+/*Create Function For Formatting Time Table*/
+function custom_time_formate($uptime) {
+    $pattern = '/(?:(\d+)d)?(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/';
+    preg_match($pattern, $uptime, $matches);
+
+    $days    = isset($matches[1]) ? (int)$matches[1] : 0;
+    $hours   = isset($matches[2]) ? (int)$matches[2] : 0;
+    $minutes = isset($matches[3]) ? (int)$matches[3] : 0;
+    $seconds = isset($matches[4]) ? (int)$matches[4] : 0;
+
+    $output = '';
+    if ($days > 0)    $output .= $days . ' day' . ($days > 1 ? 's ' : ' ');
+    if ($hours > 0)   $output .= $hours . ' hr ';
+    if ($minutes > 0) $output .= $minutes . ' min ';
+    if ($seconds > 0) $output .= $seconds . ' sec';
+
+    return trim($output);
+}
+
+
+/*Live Bandwith Traffic End**/
 if (isset($_GET["clid"])) {
     $clid = $_GET["clid"];
 
@@ -37,7 +130,6 @@ if (isset($_GET["clid"])) {
             $remarks = $rows["remarks"];
             $liablities = $rows["liablities"];
         }
-
         $onlineusr = $con->query(
             "SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'"
         );
@@ -47,9 +139,7 @@ if (isset($_GET["clid"])) {
         $rowacct = $onlineusr->fetch_assoc();
         $nasipaddress = $rowacct["nasipaddress"] ?? "";
 
-        $CNRT = $con->query(
-            "SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1"
-        );
+        $CNRT = $con->query("SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
         while ($nas_rows = $CNRT->fetch_array()) {
             $NASname = $nas_rows["shortname"];
             $nasname = $nas_rows["nasname"];
@@ -147,6 +237,24 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
     <title>FAST-ISP-BILLING-SYSTEM</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php include "style.php"; ?>
+    <style>
+        #bandwidthChart {
+            position: relative;
+        }
+
+        #bandwidthChart::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px; 
+            background: white; 
+            z-index: 10;
+            pointer-events: none;
+        }
+
+    </style>
 </head>
 
 <body data-sidebar="dark">
@@ -576,27 +684,18 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                     1
                                                                 ) {
                                                                     echo '<b><abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr> Online </b> <br/>';
-
-                                                                    if (
-                                                                        $lastuptime = $con->query(
-                                                                            "SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstarttime, NOW()))) AS time FROM radacct WHERE username='$username' AND acctstoptime IS NULL ORDER BY radacctid DESC LIMIT 1"
-                                                                        )
-                                                                    ) {
+                                                                    $con->query("SET time_zone = '+06:00'");
+                                                                    if ($lastuptime = $con->query(
+                                                                            "SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstarttime, NOW()))) AS time FROM radacct WHERE username='$username' AND acctstoptime IS NULL ORDER BY radacctid DESC LIMIT 1")) {
                                                                         $upt_rows = $lastuptime->fetch_array();
-                                                                        $onlineHrs =
-                                                                            $upt_rows[
-                                                                                "time"
-                                                                            ];
+                                                                        $onlineHrs =$upt_rows["time"];
 
-                                                                        echo '<span class="far fa-clock"></span> <strong><span style="color:green;"> ' .
+                                                                        echo '<span class="far fa-clock"></span> <strong><span style="color:green;" id="uptimeInfo"> ' .
                                                                             $onlineHrs .
                                                                             "</span></strong> Hrs <br/>";
 
-                                                                        if (
-                                                                            $ontimes = $con->query(
-                                                                                "SELECT acctstarttime, acctinputoctets/1000/1000/1000 AS GB_IN, acctoutputoctets/1000/1000/1000 AS GB_OUT FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1"
-                                                                            )
-                                                                        ) {
+                                                                        if ($ontimes = $con->query(
+                                                                                "SELECT acctstarttime, acctinputoctets/1000/1000/1000 AS GB_IN, acctoutputoctets/1000/1000/1000 AS GB_OUT FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1") ) {
                                                                             $on_rowss = $ontimes->fetch_array();
                                                                             $Download = number_format(
                                                                                 $on_rowss[
@@ -967,101 +1066,110 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <canvas id="bandwidthChart"></canvas>
+                                            <div class="chart-container">
+                                                <canvas id="liveBandwidthChart"  width="600" height="300"></canvas>
+                                            </div>
+                                        </div>
                                             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                                             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
                                             <script>
                                                 $(document).ready(function() {
-                                                    let ctx = document.getElementById('bandwidthChart').getContext('2d');
-                                                    let bandwidthChart = new Chart(ctx, {
-                                                        type: 'bar',
+                                                   const ctx = document.getElementById('liveBandwidthChart').getContext('2d');
+
+                                                    const labels = Array.from({
+                                                        length: 30
+                                                    }, () => '');
+                                                    const downloadData = Array(30).fill(0);
+                                                    const uploadData = Array(30).fill(0);
+
+                                                    const bandwidthChart = new Chart(ctx, {
+                                                        type: 'line',
                                                         data: {
-                                                            labels: [],
+                                                            labels: labels,
                                                             datasets: [{
-                                                                label: 'Download Speed (Mbps)',
-                                                                borderColor: 'blue',
-                                                                borderWidth: 2,
-                                                                pointRadius: 2,
-                                                                data: [],
-                                                                fill: false,
-                                                                tension: 0.4
-                                                            }, {
-                                                                label: 'Upload Speed (Mbps)',
-                                                                borderColor: 'red',
-                                                                borderWidth: 2,
-                                                                pointRadius: 2,
-                                                                data: [],
-                                                                fill: false,
-                                                                tension: 0.4
-                                                            }]
+                                                                    label: 'Download (kbps)',
+                                                                    data: downloadData,
+                                                                    borderColor: '#36A2EB',
+                                                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                                                    fill: true,
+                                                                    tension: 0.4,
+                                                                },
+                                                                {
+                                                                    label: 'Upload (kbps)',
+                                                                    data: uploadData,
+                                                                    borderColor: '#FF6384',
+                                                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                                                    fill: true,
+                                                                    tension: 0.4,
+                                                                }
+                                                            ]
                                                         },
                                                         options: {
-                                                            responsive: true,
-                                                            animation: {
-                                                                duration: 200,
-                                                                easing: 'linear'
-                                                            },
-                                                            scales: {
-                                                                x: {
-                                                                    title: {
-                                                                        display: true,
-                                                                        text: 'Time'
-                                                                    }
+                                                        responsive: true,
+                                                        scales: {
+                                                            x: {
+                                                                ticks: {
+                                                                    display: false,
+                                                                    maxTicksLimit: 10,
+                                                                    autoSkip: true
                                                                 },
-                                                                y: {
-                                                                    title: {
-                                                                        display: true,
-                                                                        text: 'Speed (Mbps)'
-                                                                    },
-                                                                    min: 0,
-                                                                    max: 100
+                                                                grid: {
+                                                                    display: false
                                                                 }
+                                                            },
+                                                            y: {
+                                                                beginAtZero: true
                                                             }
                                                         }
+                                                    }
+
                                                     });
 
-                                                    function fetch_dumy_data() {
-                                                        let time = new Date().toLocaleTimeString();
-                                                        let downloadSpeed = (Math.random() * 50 + 10).toFixed(2);
-                                                        let uploadSpeed = (Math.random() * 20 + 5).toFixed(2);
+                                                    function fetch_live_bandwidth_data() {
+                                                    $.ajax({
+                                                        url: window.location.href,
+                                                        method: 'GET',
+                                                         data: {
+                                                            fetch_bandwith_data: true,
+                                                            username: '<?php echo $username; ?>',
+                                                        },
+                                                        dataType: 'json',
+                                                        success: function(response) {
+                                                             if (response.success) {
+                                                                const data = response.data[0];
 
-                                                        if (bandwidthChart.data.labels.length > 20) {
-                                                            bandwidthChart.data.labels.shift();
-                                                            bandwidthChart.data.datasets[0].data.shift();
-                                                            bandwidthChart.data.datasets[1].data.shift();
-                                                        }
+                                                                const rx = parseFloat(data['rx-bits-per-second']) / 1024; 
+                                                                const tx = parseFloat(data['tx-bits-per-second']) / 1024;
+                                                                const uptime = response.uptime;
 
-                                                        bandwidthChart.data.labels.push(time);
-                                                        bandwidthChart.data.datasets[0].data.push(downloadSpeed);
-                                                        bandwidthChart.data.datasets[1].data.push(uploadSpeed);
-                                                        bandwidthChart.update();
-                                                    }
-                                                    // function __fetch_data() {
-                                                    //     $.ajax({
-                                                    //         url: "include/customers_server.php?fetch_bandwith_data=true&username=<?php echo $username; ?>",
-                                                    //         method: "GET",
-                                                    //         dataType: "json",
-                                                    //         success: function(response) {
-                                                    //             if (!response.error) {
-                                                    //                 if (bandwidthChart.data.labels.length > 20) {
-                                                    //                     bandwidthChart.data.labels.shift();
-                                                    //                     bandwidthChart.data.datasets[0].data.shift();
-                                                    //                     bandwidthChart.data.datasets[1].data.shift();
-                                                    //                 }
+                                                                const now = new Date().toLocaleTimeString();
+                                                                document.getElementById("uptimeInfo").innerText = uptime;
+                                                                /* Push new data*/
+                                                                bandwidthChart.data.labels.push(now);
+                                                                bandwidthChart.data.datasets[0].data.push(rx);
+                                                                bandwidthChart.data.datasets[1].data.push(tx);
 
-                                                    //                 bandwidthChart.data.labels.push(response.time);
-                                                    //                 bandwidthChart.data.datasets[0].data.push(response.download);
-                                                    //                 bandwidthChart.data.datasets[1].data.push(response.upload);
-                                                    //                 bandwidthChart.update();
-                                                    //             }
-                                                    //         }
-                                                    //     });
-                                                    // }
-                                                    //__fetch_data();
-                                                    setInterval(fetch_dumy_data, 500);
+                                                                if (bandwidthChart.data.labels.length > 20) {
+                                                                    bandwidthChart.data.labels.shift();
+                                                                    bandwidthChart.data.datasets[0].data.shift();
+                                                                    bandwidthChart.data.datasets[1].data.shift();
+                                                                }
+
+                                                                bandwidthChart.update();
+                                                            }
+                                                        },
+                                                        // error: function(err) {
+                                                        //     console.error("AJAX error:", err);
+                                                        // }
+                                                    });
+                                                }
+
+                                                fetch_live_bandwidth_data();
+                                                setInterval(fetch_live_bandwidth_data, 500);
+                                                   
                                                 });
                                             </script>
-                                        </div>
 
                                         
                                         <div class="container">

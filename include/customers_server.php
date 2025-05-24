@@ -609,53 +609,58 @@ if (isset($_GET['get_all_expire_customer_ids'])) {
     /* Stop the script*/
     exit; 
 }
-
 if (isset($_GET['fetch_bandwith_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
-    require '../routeros/routeros_api.class.php';
-    $username = $_GET['username'];
-  
-    $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
-    $onlineusr->num_rows;
+    require "routeros_api.class.php";
 
-    // NAS Info
+    $username = trim($_GET['username']);
+
+    $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
     $rowacct = $onlineusr->fetch_assoc();
     $nasipaddress = $rowacct['nasipaddress'] ?? '';
-    
-    $CNRT = $con->query("SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
-    while ($nas_rows = $CNRT->fetch_array()) {
-        $NASname = $nas_rows['shortname'];
-        $nasname = $nas_rows['nasname'];
-        $api_usr = $nas_rows['api_user'];
-        $api_pswd = $nas_rows['api_password'];
-        $api_server = $nas_rows['api_ip'];
-        $api_port = $nas_rows['ports'];
-        
-    }
-   
-    $API = new RouterosAPI();
-    if (!$API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
-        echo json_encode(['error' => 'Unable to connect to the router']);
-        exit;
-        $API->write('/interface/monitor-traffic', false);
-        $API->write('=interface=ether1', false);
-        $API->write('=once=', true);
-        $response = $API->read();
-        $API->disconnect();
-        if (!empty($response)) {
-            $download = round($response[0]['rx-bits-per-second'] / 1024 / 1024, 2);
-            $upload = round($response[0]['tx-bits-per-second'] / 1024 / 1024, 2);
 
-            echo json_encode([
-                'time' => date('H:i:s'),
-                'download' => $download,
-                'upload' => $upload,
-            ]);
-        } else {
-            echo json_encode(['error' => 'No data received']);
+    $CNRT = $con->query("SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
+    $nas_rows = $CNRT->fetch_assoc();
+
+    $api_usr = $nas_rows['api_user'];
+    $api_pswd = $nas_rows['api_password'];
+    $api_server = $nas_rows['api_ip'];
+    $api_port = $nas_rows['ports'];
+
+    $interface_name = 'pppoe-' . $username; 
+   
+   $API = new RouterosAPI();
+   $API->debug = true; 
+    if ($API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
+        $API->write('/interface/print');
+        $interfaces = $API->read();
+        $found_interface = null;
+        foreach ($interfaces as $intf) {
+            if (strpos($intf['name'], $username) !== false) {
+                $found_interface = $intf['name'];
+                break;
+            }
         }
+
+        if ($found_interface) {
+            $API->write('/interface/monitor-traffic', false);
+            $API->write('=interface=' . $found_interface, false);
+            $API->write('=once=');
+            $response = $API->read();
+
+            echo "<pre>";
+            print_r($response);
+            echo "</pre>";
+        } else {
+            echo "Interface not found for this user: $username";
+        }
+
+        $API->disconnect();
+    } else {
+        echo "Could not connect to router.";
     }
     exit;
 }
+
 /* Get Customer */
 if (isset($_GET['get_customer_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
      $data=[];
