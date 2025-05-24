@@ -61,18 +61,19 @@ if (isset($_GET["clid"])) {
 
         // Disable Enable
         if (isset($_GET["disable"])) {
+            /*Check Expire Date */
+            $today = date("Y-m-d");
+            $expiredate = new DateTime($expiredDate);
+            $is_expired = $expiredate < new DateTime($today);
+
             if ($_GET["disable"] == "true") {
                 $con->query("UPDATE customers SET status='0' WHERE id='$clid'");
                 $con->query("DELETE FROM radcheck WHERE username='$username'");
                 $con->query("DELETE FROM radreply WHERE username='$username'");
-
                 // Disconnect from RT
                 $API = new RouterosAPI();
                 //$API->debug = true;
-
-                if (
-                    $API->connect($api_server, $api_usr, $api_pswd, $api_port)
-                ) {
+                if ($API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
                     $API->write("/ppp/active/print", false);
                     $API->write("?name=" . $username, false);
                     $API->write("=.proplist=.id");
@@ -81,18 +82,14 @@ if (isset($_GET["clid"])) {
                     $API->write("=.id=" . $ARRAYS[0][".id"]);
                     $READ = $API->read();
                     $API->disconnect();
-                    //header("location:?clid=$clid");
                 }
-
                 header("location:?clid=$clid");
             } elseif ($_GET["disable"] == "false") {
                 $con->query("UPDATE customers SET status='1' WHERE id='$clid'");
-                $con->query(
-                    "INSERT INTO radcheck(username,value,attribute,op) VALUES('$username','$password','Cleartext-Password',':=')"
-                );
-                $con->query(
-                    "INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$packagename')"
-                );
+                 $con->query("INSERT INTO radcheck(username,value,attribute,op) VALUES('$username','$password','Cleartext-Password',':=')");
+                if(!$is_expired){
+                    $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$packagename')");
+                } 
                 header("location:?clid=$clid");
             }
         }
