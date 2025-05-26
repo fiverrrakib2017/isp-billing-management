@@ -688,11 +688,9 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                     if ($lastuptime = $con->query(
                                                                             "SELECT SEC_TO_TIME(ABS(TIMESTAMPDIFF(SECOND, acctstarttime, NOW()))) AS time FROM radacct WHERE username='$username' AND acctstoptime IS NULL ORDER BY radacctid DESC LIMIT 1")) {
                                                                         $upt_rows = $lastuptime->fetch_array();
-                                                                        $onlineHrs =$upt_rows["time"];
-
-                                                                        echo '<span class="far fa-clock"></span> <strong><span style="color:green;" id="uptimeInfo"> ' .
-                                                                            $onlineHrs .
-                                                                            "</span></strong> Hrs <br/>";
+                                                                        //$onlineHrs =$upt_rows["time"];
+                                                                           $onlineHrs =  "0:00:00";     
+                                                                        echo '<span class="far fa-clock"></span> <strong><span style="color:green;" id="uptimeInfo"> ' .$onlineHrs ."</span></strong>  <br/>";
 
                                                                         if ($ontimes = $con->query(
                                                                                 "SELECT acctstarttime, acctinputoctets/1000/1000/1000 AS GB_IN, acctoutputoctets/1000/1000/1000 AS GB_OUT FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1") ) {

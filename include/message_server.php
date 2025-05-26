@@ -690,7 +690,7 @@ if (isset($_POST['sms_package_delete_data']) && $_SERVER['REQUEST_METHOD'] == 'P
 }
 /***************************  SMS logs Get Data *********************************************/
 if (isset($_GET['get_sms_logs_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
-    include 'db_connect.php'; // ডাটাবেস কানেকশন ইনক্লুড করতে ভুলবেনা
+    include 'db_connect.php'; 
 
     $data = [];
 
@@ -739,6 +739,7 @@ if (isset($_GET['get_sms_logs_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         $condition
         ORDER BY sms_logs.created_at DESC
     ";
+    /* Execute the query */
 
     $result = $con->query($query);
 
@@ -753,9 +754,10 @@ if (isset($_GET['get_sms_logs_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
 
             /* Message */
             $message = $row['message'];
-            if (strlen($message) > 40) {
-                $message = substr($message, 0, 40) . '...';
+            if (mb_strlen($message, 'UTF-8') > 40) {
+                $message = mb_substr($message, 0, 40, 'UTF-8') . '...';
             }
+
 
             $html .= '<tr>';
             $html .= '<td>' . htmlspecialchars($row['id']) . '</td>';
