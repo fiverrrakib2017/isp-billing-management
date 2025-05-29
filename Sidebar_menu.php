@@ -65,6 +65,20 @@
                                     </ul>
                                 </li>
                             <?php endif; ?>
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Supports'): ?>  
+                           
+                                <li>
+                                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                        <i class="mdi mdi-server"></i>
+                                        <span>OLT Management</span>
+                                    </a>
+                                    <ul class="sub-menu" aria-expanded="false">
+                                        <li><a href="olt_device_list.php">OLT Device List</a></li>
+                                        <li><a href="olt_device_create.php">Configure OLT Device</a></li>
+                                        <li><a href="onu_device_list.php">ONT Device List</a></li>
+                                    </ul>
+                                </li>
+                            <?php endif; ?>
                             <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Supports'): ?>     
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
