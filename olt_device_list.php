@@ -126,30 +126,28 @@ include 'include/users_right.php';
                                 ?>
                                 <?php 
                                     foreach ($devices as $device):
-                                        // Determine card class based on status
-                                        $cardClass = 'card-secondary';
+                                        $cardClass = 'bg-secondary';
                                         if ($device['status'] == 'active') {
-                                            $cardClass = 'card-success';
+                                            $cardClass = 'bg-success';
                                         } elseif ($device['status'] == 'inactive') {
-                                            $cardClass = 'card-danger';
+                                            $cardClass = 'bg-danger';
                                         } elseif ($device['status'] == 'maintenance') {
-                                            $cardClass = 'card-warning';
+                                            $cardClass = 'bg-warning';
                                         }
 
-                                        // Determine badge class
                                         $badgeClass = 'badge-secondary';
                                         if ($device['status'] == 'active') {
-                                            $badgeClass = 'badge-success';
+                                            $badgeClass = 'bg-success';
                                         } elseif ($device['status'] == 'inactive') {
-                                            $badgeClass = 'badge-danger';
+                                            $badgeClass = 'bg-danger';
                                         } elseif ($device['status'] == 'maintenance') {
-                                            $badgeClass = 'badge-warning';
+                                            $badgeClass = 'bg-warning';
                                         }
                                     ?>
 
                                 <div class="col-md-6">
-                                    <div class="card <?php echo $cardClass; ?>">
-                                        <div class="card-header">
+                                    <div class="card ">
+                                        <div class="card-header text-white <?php echo $cardClass; ?> d-flex justify-content-between align-items-center">
                                             <h5 class="card-title"><?php echo htmlspecialchars($device['name']); ?></h5>
                                         </div>
                                         <div class="card-body d-flex justify-content-between align-items-center">
@@ -193,6 +191,42 @@ include 'include/users_right.php';
 
     <div class="rightbar-overlay"></div>
     <?php include 'script.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function() {
+            <?php foreach ($devices as $device): ?>
+            var ctx = document.getElementById('usageChart-<?php echo $device['id']; ?>').getContext('2d');
+            var usageChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['CPU Usage', 'RAM Usage'],
+                    datasets: [{
+                        label: 'Usage',
+                        data: [<?php echo $device['cpu']; ?>, <?php echo $device['ram']; ?>],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 99, 132, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                    }
+                }
+            });
+            <?php endforeach; ?>
+        });
+    </script>
 
 </body>
 

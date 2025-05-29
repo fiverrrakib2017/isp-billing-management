@@ -20,7 +20,7 @@ include("include/users_right.php");
     <!-- Begin page -->
     <div id="layout-wrapper">
 
-        <?php $page_title="OLT Device List";  include 'Header.php';  ?>
+        <?php $page_title="Create OLT Device ";  include 'Header.php';  ?>
 
         <!-- ========== Left Sidebar Start ========== -->
         <div class="vertical-menu">
@@ -51,7 +51,7 @@ include("include/users_right.php");
                                             <i class="mdi mdi-home text-muted hover-cursor"></i>
                                             <p class="text-muted mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
                                             </p>
-                                            <p class="text-primary mb-0 hover-cursor">OLT Device List</p>
+                                            <p class="text-primary mb-0 hover-cursor">Create OLT Device</p>
                                         </div>
                                     </div>
                                     <br>
@@ -76,31 +76,40 @@ include("include/users_right.php");
                 </h3>
 
             </div>
-            <form action="{{ route('admin.olt.store') }}" method="POST" id="addOltForm">
-                @csrf
+            <form action="" method="POST" id="addOltForm">
+           
                 <div class="card">
                     <div class="card-body row">
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="name">OLT Name <span class="text-danger">*</span></label>
                             <input type="text" name="name" class="form-control" placeholder="e.g. OLT-Basundhara"
                                 required>
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="brand">Brand <span class="text-danger">*</span></label>
-                            <select name="brand" class="form-control" required>
+                            <select name="brand" class="form-select" required>
                                 <option value="">-- Select Brand --</option>
-                                @foreach (['Huawei', 'ZTE', 'Fiberhome', 'VSOL', 'BDCOM', 'CDATA', 'Opton', 'Tenda', 'TP-Link', 'Nokia', 'DZS', 'Zhone', 'Edgecore', 'Netlink', 'Corelink', 'ECOM', 'TBS', 'Alcatel', 'Cisco', 'Raisecom', 'Skyworth', 'Planet', 'Visiontek', 'Other'] as $brand)
-                                    <option value="{{ $brand }}">{{ $brand }}</option>
-                                @endforeach
+                                <?php
+                                    $brands = [
+                                        'Huawei', 'ZTE', 'Fiberhome', 'VSOL', 'BDCOM', 'CDATA', 'Opton', 'Tenda',
+                                        'TP-Link', 'Nokia', 'DZS', 'Zhone', 'Edgecore', 'Netlink', 'Corelink',
+                                        'ECOM', 'TBS', 'Alcatel', 'Cisco', 'Raisecom', 'Skyworth', 'Planet',
+                                        'Visiontek', 'Other'
+                                    ];
 
+                                    foreach ($brands as $brand) {
+                                        echo "<option value=\"$brand\">$brand</option>";
+                                    }
+                                ?>
                             </select>
+
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="mode">Mode</label>
-                            <select name="mode" class="form-control" required>
+                            <select name="mode" class="form-select" required>
                                 <option value="">--- Select Mode ---</option>
                                 @foreach (['GPON', 'XG-PON', 'EPON', 'XGS-PON', 'NG-PON2'] as $mode)
                                     <option value="{{ $mode }}">{{ $mode }}</option>
@@ -108,33 +117,33 @@ include("include/users_right.php");
                             </select>
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="ip_address">IP Address <span class="text-danger">*</span></label>
                             <input type="text" name="ip_address" class="form-control" placeholder="e.g. 192.168.0.1"
                                 required>
                         </div>
 
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 mb-2">
                             <label for="port">Port</label>
                             <input type="text" name="port" class="form-control" value="22">
                         </div>
 
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 mb-2">
                             <label for="protocol">Protocol</label>
-                            <select name="protocol" class="form-control">
+                            <select name="protocol" class="form-select">
                                 <option value="SSH" selected>SSH</option>
                                 <option value="Telnet">Telnet</option>
                             </select>
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="snmp_community">SNMP Community</label>
                             <input type="text" name="snmp_community" class="form-control" placeholder="e.g. public">
                         </div>
 
-                        <div class="form-group col-md-3">
+                        <div class="form-group col-md-3 mb-2">
                             <label for="snmp_version">SNMP Version</label>
-                            <select name="snmp_version" class="form-control">
+                            <select name="snmp_version" class="form-select">
                                 <option value="">-- Select Version --</option>
                                 <option value="v1">v1</option>
                                 <option value="v2c" selected>v2c</option>
@@ -142,28 +151,28 @@ include("include/users_right.php");
                             </select>
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="username">Login Username</label>
                             <input type="text" name="username" class="form-control" placeholder="e.g. username" required>
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="password">Login Password</label>
                             <input type="password" name="password" placeholder="e.g. password" class="form-control"
                                 required>
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="vendor">Vendor</label>
                             <input type="text" name="vendor" placeholder="e.g. Huawei" class="form-control">
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="model">Model</label>
                             <input type="text" name="model" placeholder="e.g. ZTE" class="form-control">
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="serial_number">Serial Number</label>
                             <input type="text" name="serial_number" placeholder="e.g. ZTE" class="form-control">
                         </div>
@@ -173,22 +182,22 @@ include("include/users_right.php");
                             <input type="text" name="firmware_version" placeholder="e.g. ZTE" class="form-control">
                         </div>
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4 mb-2">
                             <label for="location">Location</label>
                             <input type="text" name="location" placeholder="e.g. Dhanmondi" class="form-control"
                                 placeholder="e.g. Dhanmondi POP Room">
                         </div>
 
-                        <div class="form-group col-md-2">
+                        <div class="form-group col-md-2 mb-2">
                             <label for="status">Status</label>
-                            <select name="status" class="form-control">
+                            <select name="status" class="form-select">
                                 <option value="active" selected>Active</option>
                                 <option value="inactive">Inactive</option>
                                 <option value="maintenance">Maintenance</option>
                             </select>
                         </div>
 
-                        <div class="form-group col-md-12">
+                        <div class="form-group col-md-12 mb-2">
                             <label for="description">Description</label>
                             <textarea name="description" rows="3" class="form-control" placeholder="Optional remarks about this OLT"></textarea>
                         </div>
