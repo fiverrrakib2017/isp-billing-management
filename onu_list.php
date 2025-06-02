@@ -140,6 +140,11 @@ include("include/users_right.php");
                         d.onu_type = $('.status_filter').val();
 
                     },
+                    beforeSend: function() {
+                        $(".dataTables_empty").html(
+                            '<img src="assets/images/loading.gif" style="background-color: transparent"/>'
+                            );
+                    },
                 },
                 "buttons": [			
             {
