@@ -221,6 +221,142 @@
             SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
         );
     }
+    /*** Get Customers Onu Data *** */
+    if (isset($_GET['get_customers_onu_data']) && $_SERVER['REQUEST_METHOD']=='GET') {
+        require 'datatable.php';
+
+        $table = 'customers';
+        $primaryKey = 'id';
+        $columns = array(
+            
+            array('db' => 'id', 'dt' => 0),
+            array(
+                'db'        => 'username',
+                'dt'        => 1,
+                'formatter' => function($d, $row) use ($con) {
+                    $username = $row['username'];
+                    $onlineusr = $con->query("SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'");
+                    $chkc = $onlineusr->num_rows;
+                    $offline_text = "N/A"; 
+            
+                    if ($chkc == 0) { 
+                        $last_time = $con->query("SELECT acctstoptime FROM radacct WHERE username='$username' ORDER BY radacctid DESC LIMIT 1");
+            
+                        if ($last_time->num_rows > 0) {
+                            $last_time = $last_time->fetch_assoc();
+                            
+                            if (!empty($last_time['acctstoptime'])) {
+                                $offline_time = strtotime($last_time['acctstoptime']);
+                                if ($offline_time !== false) {
+                                    $current_time = time();
+                                    $time_diff = $current_time - $offline_time;
+            
+                                    if ($time_diff < 60) {
+                                        $offline_text = $time_diff . " sec ago";
+                                    } elseif ($time_diff < 3600) {
+                                        $offline_text = floor($time_diff / 60) . " min ago";
+                                    } elseif ($time_diff < 86400) {
+                                        $offline_text = floor($time_diff / 3600) . " hr ago";
+                                    } else {
+                                        $offline_text = floor($time_diff / 86400) . " days ago";
+                                    }
+                                } else {
+                                    $offline_text = "Invalid stop time";
+                                }
+                            }
+                        }
+                    }
+            
+                    if ($chkc == 1) {
+                        return '<abbr title="Online"><img src="images/icon/online.png" height="10" width="10"/></abbr> 
+                                <a href="profile.php?clid=' . $row['id'] . '">' . $d . '</a>';
+                    } else {
+                        return '<img src="images/icon/offline.png" height="10" width="10"/> 
+                                <a href="profile.php?clid=' . $row['id'] . '">' . $d . '</a> 
+                                <small style="color:gray;">(' . $offline_text . ')</small>';
+                    }
+                }
+            ),
+            
+            array('db' => 'package_name', 'dt' => 2),
+           
+            array('db' => 'mobile', 'dt' => 3),
+            array(
+                'db' => 'pop',
+                'dt' => 4,
+                'formatter' => function($d, $row) use ($con) {
+                    $popID = $d;
+                    $allPOP = $con->query("SELECT * FROM add_pop WHERE id=$popID");
+                    $popRow = $allPOP->fetch_array();
+                    return $popRow['pop'];
+                }
+            ),
+            array(
+                'db' => 'area',
+                'dt' => 5,
+                'formatter' => function($d, $row) use ($con) {
+                    $areaID = $d;
+                    $allArea = $con->query("SELECT * FROM area_list WHERE id='$areaID'");
+                    $areaRow = $allArea->fetch_array();
+                    return $areaRow['name'];
+                }
+            ),
+            array(
+                'db' => 'onu_type',
+                'dt' => 6,
+                'formatter' => function($d, $row) use ($con) {
+                   if ($d=='customer') {
+                    return '<span class="badge bg-success">Customer</span>';
+                   }else if($d=='company'){
+                        return '<span class="badge bg-danger">Company</span>';
+                   }else{
+                    return '<span class="badge bg-danger">N/A</span>';
+                   }
+                }
+            ),
+        );
+        $condition="";
+
+        if (!empty($_SESSION['user_pop'])) {
+            $condition = "pop = '" . $_SESSION['user_pop'] . "'";
+        } else {
+            //$condition = "package = 5"; 
+        }
+
+        /*Onu Type Condition*/
+        if (isset($_GET['onu_type']) && !empty($_GET['onu_type'])) {
+            $onu_type = $_GET['onu_type'];
+            if ($onu_type == 'customer') {
+                $condition .= (!empty($condition) ? " AND " : "") . "onu_type = 'customer'";
+            } elseif ($onu_type == 'company') {
+                $condition .= (!empty($condition) ? " AND " : "") . "onu_type = 'company'";
+            } else {
+                $condition .= (!empty($condition) ? " AND " : "") . "onu_type = ''";
+            }
+        }
+
+        /* If 'area_id' is provided, */
+        if (isset($_GET['area_id']) && !empty($_GET['area_id'])) {
+            $condition .= (!empty($condition) ? " AND " : ""). "area = '" . $_GET['area_id'] . "'";
+        }
+        /* If 'pop_id' is provided, */
+        if (isset($_GET['pop_id']) && !empty($_GET['pop_id'])) {
+            // $condition .= " AND pop = '" . $_GET['pop_id'] . "'";
+            $condition .= (!empty($condition) ? " AND " : ""). "pop = '" . $_GET['pop_id'] . "'";
+        }
+    
+        /* If search is provided, */
+        if (!empty($_GET['search']['value'])) {
+            $search_value = $_GET['search']['value'];
+            $condition .= (!empty($condition) ? " AND " : "") . "(customers.username LIKE '$search_value%'  OR customers.mobile LIKE '$search_value%')";
+        }
+        
+        /* Output JSON for DataTables to handle*/
+        echo json_encode(
+            SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns, $condition)
+        );
+        exit; 
+    }
 
     if (isset($_GET['change_pop_request']) && !empty($_GET['change_pop_request']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
