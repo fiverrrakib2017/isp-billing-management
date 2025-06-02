@@ -28,6 +28,7 @@ if (isset($_GET['clid'])) {
             $expiredate = $rows['expiredate'];
             $liablities = $rows['liablities'];
             $con_type = $rows['con_type'];
+            $onu_type = $rows['onu_type'];
         }
     }
 }
@@ -449,6 +450,20 @@ if (isset($_GET['clid'])) {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="row mb-3">
+                                                        <label for="txtCreditCardNumber" class="col-lg-3 col-form-label">Onu Type</label>
+                                                        <div class="col-lg-9">
+                                                            <select id="customer_onu_type" class="form-select" style="width: 100%;">
+                                                                <option value="">---Select---</option>
+                                                                 <option value="customer" <?= ($onu_type == 'customer') ? 'selected' : '' ?>>Customer</option>
+                                                                 <option value="company" <?= ($onu_type == 'company') ? 'selected' : '' ?>>Company</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </fieldset>
                                     </form>
                                 </div>
@@ -569,6 +584,7 @@ if (isset($_GET['clid'])) {
             var liablities = $("#customer_liablities").val();
             var customer_houseno = $("#customer_house_id").val();
             var customer_connection_type = $("#customer_connection_type").val();
+            var customer_onu_type = $("#customer_onu_type").val();
             var user_type = 1;
 
             if (fullname.length == 0) {
@@ -602,6 +618,9 @@ if (isset($_GET['clid'])) {
             }else if(customer_connection_type.length=='0'){
                 toastr.error("Connection Type is Require");
                 return false; 
+            } else if(customer_onu_type.length=='0'){
+                toastr.error("Onu Type is Require");
+                return false; 
             }
             $("#customer_update_btn").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
@@ -630,6 +649,7 @@ if (isset($_GET['clid'])) {
                     status: status,
                     user_type: user_type,
                     customer_connection_type:customer_connection_type,
+                    onu_type:customer_onu_type,
                 },
                 success: function(response) {
                     if (response.success == true) {

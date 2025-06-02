@@ -251,6 +251,18 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="row mb-3">
+                                <label for="txtCreditCardNumber" class="col-lg-3 col-form-label">Onu Type</label>
+                                <div class="col-lg-9">
+                                    <select id="customer_onu_type" class="form-select" style="width: 100%;">
+                                        <option value="">---Select---</option>
+                                        <option value="customer">Customer</option>
+                                        <option value="company">Company</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row mb-3">
                                 <label for="sendMessageCheckbox" class="col-lg-3 col-form-label">
                                 <input type="checkbox" id="sendMessageCheckbox" name="send_message" value="1" class="form-check-input">
                                   </label>

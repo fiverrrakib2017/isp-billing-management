@@ -340,6 +340,7 @@ if (isset($_POST['addCustomerData'])) {
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
     $con_type = $_POST['customer_connection_type'] ?? 'ONU';
+    $onu_type = $_POST['customer_onu_type'] ?? 'company';
     $send_message = $_POST['send_message'] ?? 0;
     
     // One month from a specific date
@@ -363,7 +364,7 @@ if (isset($_POST['addCustomerData'])) {
         echo "Insufficiant balance!
         Please Recharge POP/Branch ";
     } else {
-        $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,area_house_id,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount,con_type) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area','$area_house_id',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0','$con_type')");
+        $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,area_house_id,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount,con_type,onu_type) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area','$area_house_id',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0','$con_type','$onu_type')");
 
         if ($result == true) {
             $custID = $con->insert_id;
@@ -557,6 +558,7 @@ if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
     $con_type = $_POST['customer_connection_type'];
+    $onu_type = $_POST['customer_onu_type']?? 'company';
 
     /*GET Package Name*/
     $package_name = $con->query("SELECT package_name FROM branch_package WHERE id='$package'")->fetch_array()['package_name'];
@@ -575,7 +577,7 @@ if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     //     }
     //     $new_expire_date = $year . '-' . $month . '-' . $billing_date;
     // }
-    $result = $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`expiredate`='$expire_date',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type' WHERE id=$customer_id");
+    $result = $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`expiredate`='$expire_date',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type', `onu_type`='$onu_type' WHERE id=$customer_id");
     if ($result) {
         /*Update radcheck*/
         if ($con->query("SELECT * FROM radcheck WHERE username='$username'")->num_rows > 0) {

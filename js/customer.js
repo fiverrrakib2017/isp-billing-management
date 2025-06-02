@@ -106,14 +106,15 @@ $("#customer_add").click(function() {
     var liablities = $("#customer_liablities").val();
     var customer_houseno = $("#customer_houseno").val();
     var customer_connection_type = $("#customer_connection_type").val();
+    var customer_onu_type = $("#customer_onu_type").val();
     var send_message = $('#sendMessageCheckbox').is(':checked') ? $('#sendMessageCheckbox').val() : '0';
 
     var user_type = 1;
-   customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type,send_message);
+   customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type,customer_onu_type,send_message);
 
 });
 
-function customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type,send_message) {
+function customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type,customer_onu_type,send_message) {
     if (fullname.length == 0) {
         toastr.error("Customer name is require");
     } else if (package.length == 0) {
@@ -140,7 +141,9 @@ function customerAdd(customer_request_id,user_type, fullname, package, username,
         toastr.error("Liablities is require");
     }else if(customer_connection_type.length==0){
         toastr.error("Connection Type is require");
-    }else {
+    }else if(customer_onu_type.length==0){
+         toastr.error("Onu Type is require");
+    } else {
         $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
         $("#customer_add").prop("disabled", true);
         var addCustomerData = 0;
@@ -168,6 +171,7 @@ function customerAdd(customer_request_id,user_type, fullname, package, username,
                 status: status,
                 user_type: user_type,
                 customer_connection_type:customer_connection_type,
+                customer_onu_type:customer_onu_type,
                 send_message:send_message
             },
             success: function(responseData) {
