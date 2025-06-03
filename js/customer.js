@@ -141,8 +141,6 @@ function customerAdd(customer_request_id,user_type, fullname, package, username,
         toastr.error("Liablities is require");
     }else if(customer_connection_type.length==0){
         toastr.error("Connection Type is require");
-    }else if(customer_onu_type.length==0){
-         toastr.error("Onu Type is require");
     } else {
         $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
         $("#customer_add").prop("disabled", true);
@@ -171,7 +169,7 @@ function customerAdd(customer_request_id,user_type, fullname, package, username,
                 status: status,
                 user_type: user_type,
                 customer_connection_type:customer_connection_type,
-                customer_onu_type:customer_onu_type,
+                onu_type:customer_onu_type,
                 send_message:send_message
             },
             success: function(responseData) {

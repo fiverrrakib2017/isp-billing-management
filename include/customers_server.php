@@ -340,7 +340,7 @@ if (isset($_POST['addCustomerData'])) {
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
     $con_type = $_POST['customer_connection_type'] ?? 'ONU';
-    $onu_type = $_POST['customer_onu_type'] ?? 'company';
+    $onu_type = $_POST['onu_type'] ?? 'default'; 
     $send_message = $_POST['send_message'] ?? 0;
     
     // One month from a specific date
@@ -558,8 +558,8 @@ if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
     $con_type = $_POST['customer_connection_type'];
-    $onu_type = $_POST['customer_onu_type']?? 'company';
-
+    $onu_type = $_POST['onu_type'] ?? 'default'; 
+  
     /*GET Package Name*/
     $package_name = $con->query("SELECT package_name FROM branch_package WHERE id='$package'")->fetch_array()['package_name'];
     /*Check Expire Date */
@@ -721,7 +721,10 @@ if (isset($_GET['get_customer_data_for_message']) && $_SERVER['REQUEST_METHOD'] 
     $customer_status = null;
 
     if (isset($_GET['pop_id']) && is_numeric($_GET['pop_id']) && (int)$_GET['pop_id'] > 0) {
-        $pop_id = (int)$_GET['pop_id'];
+       $pop_id = (int)$_GET['pop_id'];
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid POP ID']);
+        exit;
     }
 
     if (isset($_GET['area_id']) && is_numeric($_GET['area_id']) && (int)$_GET['area_id'] > 0) {

@@ -618,9 +618,6 @@ if (isset($_GET['clid'])) {
             }else if(customer_connection_type.length=='0'){
                 toastr.error("Connection Type is Require");
                 return false; 
-            } else if(customer_onu_type.length=='0'){
-                toastr.error("Onu Type is Require");
-                return false; 
             }
             $("#customer_update_btn").html(
                 '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
