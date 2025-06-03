@@ -308,7 +308,7 @@ if (file_exists($users_right_path)) {
                 if ( $.fn.DataTable.isDataTable("#datatable1") ) {
                     $("#datatable1").DataTable().destroy();
                 }
-                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php?get_customer_data=true';
+                var url = protocol + '//' + '<?php echo $_SERVER['HTTP_HOST']; ?>' + '/include/customers_server.php?get_customer_data_for_message=true';
                 $.ajax({
                     url: url,
                     type: 'GET',
