@@ -684,6 +684,7 @@ if (isset($_GET['get_customer_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
         echo json_encode(['success' => false, 'message' => 'Invalid customer status']);
         exit;
     }
+    
 
     $response=get_filtered_customers($_GET['customer_status'], $_GET['area_id'], $_GET['pop_id'],  $con);
     if (count($response) > 0) {
@@ -712,5 +713,119 @@ if (isset($_GET['get_customer_data']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
     }
     exit;
 }
+/* Get Customer Data For Send Message */
+if (isset($_GET['get_customer_data_for_message']) && $_SERVER['REQUEST_METHOD'] == 'GET') {
+    $data = [];
+    $pop_id = null;
+    $area_id = null;
+    $customer_status = null;
+
+    if (isset($_GET['pop_id']) && is_numeric($_GET['pop_id']) && (int)$_GET['pop_id'] > 0) {
+        $pop_id = (int)$_GET['pop_id'];
+    }
+
+    if (isset($_GET['area_id']) && is_numeric($_GET['area_id']) && (int)$_GET['area_id'] > 0) {
+        $area_id = (int)$_GET['area_id'];
+    }
+
+    if (isset($_GET['customer_status']) && $_GET['customer_status'] !== '---Select---') {
+        $customer_status = $_GET['customer_status'];
+    }
+
+    function get_filtered_customerssssss($status, $area_id = null, $pop_id = null, $con) {
+        $condition = [];
+
+        if (!is_null($area_id)) {
+            $condition[] = "area = '" . (int)$area_id . "'";
+        }
+
+        if (!is_null($pop_id)) {
+            $condition[] = "pop = '" . (int)$pop_id . "'";
+        }
+
+        if (!is_null($status)) {
+            switch ($status) {
+                case 'expired':
+                    $condition[] = "customers.status = '2'";
+                    break;
+                case 'disabled':
+                    $condition[] = "customers.status = '0'";
+                    break;
+                case 'active':
+                    $condition[] = "customers.status = '1'";
+                    break;
+                case 'online':
+                    $condition[] = "customers.status = '1' AND EXISTS (
+                        SELECT 1 FROM radacct 
+                        WHERE radacct.username = customers.username 
+                        AND radacct.acctstoptime IS NULL
+                    )";
+                    break;
+                case 'offline':
+                    $condition[] = "customers.status = '1' AND customers.username NOT IN (
+                        SELECT username FROM radacct 
+                        WHERE acctstoptime IS NULL AND acctterminatecause = ''
+                    )";
+                    break;
+                case 'free':
+                    $condition[] = "package = 5";
+                    break;
+                case 'unpaid':
+                    $condition[] = "EXISTS (
+                        SELECT 1 FROM customer_rechrg 
+                        WHERE 
+                            DAY(expiredate) BETWEEN 1 AND 10 
+                            AND MONTH(expiredate) = MONTH(CURDATE()) 
+                            AND YEAR(expiredate) = YEAR(CURDATE())
+                    )";
+                    break;
+                default:
+                    if (is_numeric($status)) {
+                        $condition[] = "customers.status = '" . (int)$status . "'";
+                    }
+            }
+        }
+
+        $query = "SELECT * FROM customers";
+        if (!empty($condition)) {
+            $query .= " WHERE " . implode(" AND ", $condition);
+        }
+
+        $result = $con->query($query);
+        $customers = [];
+        while ($row = $result->fetch_assoc()) {
+            $customers[] = $row;
+        }
+
+        return $customers;
+    }
+
+    $response = get_filtered_customerssssss($customer_status, $area_id, $pop_id, $con);
+    if (count($response) > 0) {
+        $html = '';
+        foreach ($response as $row) {
+            $get_pop_name = $con->query("SELECT pop FROM add_pop WHERE id='" . $row['pop'] . "'")->fetch_array()['pop'];
+            $get_area_name = $con->query("SELECT name FROM area_list WHERE id='" . $row['area'] . "'")->fetch_array()['name'];
+            $package_name = $con->query("SELECT package_name FROM branch_package WHERE id='" . $row['package'] . "'")->fetch_array()['package_name'];
+
+            $html .= '<tr>';
+            $html .= '<td><input type="checkbox" class="form-check-input customer-checkbox checkSingle" value="'.$row['id'].'"></td>';
+            $html .= '<td>'.$row['id'].'</td>';
+            $html .= '<td>'.$row['username'].'</td>';
+            $html .= '<td>'.$package_name.'</td>';
+            $html .= '<td>'.$row['expiredate'].'</td>';
+            $html .= '<td>'.$get_pop_name.'</td>';
+            $html .= '<td>'.$get_area_name.'</td>';
+            $html .= '<td>'.$row['mobile'].'</td>';
+            $html .= '<td>'.$row['address'].'</td>';
+            $html .= '</tr>';
+        }
+        echo json_encode(['success' => true, 'data' => $html]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No data found']);
+    }
+    exit;
+}
+
 
 ?>

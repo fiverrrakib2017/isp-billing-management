@@ -73,7 +73,7 @@
                             <div class="form-group">
                                 <label for="area" class="form-label">Area <span class="text-danger">*</span></label>
                                 <select name="area" id="area" class="form-select" style="width: 100%;">
-                                    <option>---Select---</option> 
+                                 
                                 </select>
                             </div>
                         </div>
@@ -82,7 +82,7 @@
                             <div class="form-group">
                                 <label for="customer_status" class="form-label">Status <span class="text-danger">*</span></label>
                                 <select name="customer_status" id="customer_status" class="form-select" style="width: 100%;" required>
-                                    <option value="">---Select---</option>
+                                    <option >---Select---</option>
                                     <option value="online">Online</option>
                                     <option value="offline">Offline</option>
                                     <option value="expired">Expired</option>
@@ -251,7 +251,7 @@
                     $("#datatable1").DataTable().destroy();
                 }
                 $.ajax({
-                    url: 'include/customers_server.php?get_customer_data=true',
+                    url: 'include/customers_server.php?get_customer_data_for_message=true',
                     type: 'GET',
                     dataType: 'json',
                     data: {pop_id: pop_id, area_id: area_id, customer_status: customer_status},
