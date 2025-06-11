@@ -589,7 +589,7 @@ include 'include/functions.php';
                                             </thead>
                                             <tbody id="ticket-list">
                                                 <?php
-                                                $sql = "SELECT * FROM `ticket` ORDER BY id DESC limit 5";
+                                                $sql = "SELECT * FROM `ticket` WHERE pop_id='1' ORDER BY id DESC limit 6";
                                                 $result = mysqli_query($con, $sql);
 
                                                 while ($rows = mysqli_fetch_assoc($result)) {
@@ -1868,67 +1868,7 @@ echo $rowcron['date'];
     </script>
 
 
-    <script type="text/javascript">
-        //Storage
-        var fm = new FluidMeter();
-        fm.init({
-            targetContainer: document.getElementById("fluid-meter1"),
-            fillPercentage: <?php echo $mem1; ?>,
-        });
-
-        // CPU
-        var fm = new FluidMeter();
-        fm.init({
-            targetContainer: document.getElementById("fluid-meter2"),
-            fillPercentage: <?php echo $cpu1; ?>,
-
-        });
-
-        //RAM
-        var fm = new FluidMeter();
-        fm.init({
-            targetContainer: document.getElementById("fluid-meter"),
-            fillPercentage: <?php echo $mem1; ?>,
-            options: {
-                fontSize: "70px",
-                fontFamily: "Arial",
-                fontFillStyle: "white",
-                drawShadow: true,
-                drawText: true,
-                drawPercentageSign: true,
-                drawBubbles: true,
-                size: 300,
-                borderWidth: 25,
-                backgroundColor: "#e2e2e2",
-                foregroundColor: "#fafafa",
-                foregroundFluidLayer: {
-                    fillStyle: "#F1C40F",
-                    angularSpeed: 100,
-                    maxAmplitude: 12,
-                    frequency: 30,
-                    horizontalSpeed: -150
-                },
-                backgroundFluidLayer: {
-                    fillStyle: "#F1C40F",
-                    angularSpeed: 100,
-                    maxAmplitude: 9,
-                    frequency: 30,
-                    horizontalSpeed: 150
-                },
-                backgroundFluidLayer: {
-                    fillStyle: "  #CCCCFF",
-                    angularSpeed: 100,
-                    maxAmplitude: 9,
-                    frequency: 30,
-                    horizontalSpeed: 150
-                },
-            }
-        });
-        fm.setPercentage(percentage);
-
-
-        /////////////////////////Chart /////////////////////////////////////
-    </script>
+  
 
 
 </body>

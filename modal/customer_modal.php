@@ -248,8 +248,46 @@
                             </div>
                         </div>
                     </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                            <div id="liability_device_table" class="mt-3" style="display: none;">
+                                <h6>Device Information</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="device_table">
+                                        <thead>
+                                            <tr>
+                                                <th>Device Type</th>
+                                                <th>Name</th>
+                                                <th>Serial No</th>
+                                                <th>Assign Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <select class="form-select" name="device_type[]" style="width: 100%;">
+                                                        <option >---Select---</option>
+                                                        <option value="router">Router</option>
+                                                        <option value="onu">Onu</option>
+                                                        <option value="fiber">Fiber</option>
+                                                        <option value="other">Others</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="text" class="form-control" placeholder="Enter Device Name" name="device_name[]"></td>
+                                                <td><input type="text" class="form-control" placeholder="Example: K5453110" name="serial_no[]"></td>
+                                                <td><input type="date" class="form-control" name="assign_date[]"></td>
+                                                <td><button type="button" class="btn btn-danger btn-sm remove-row">Remove</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm" id="add_row">+ Add Row</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <div class="row mb-3">
                                 <label for="txtCreditCardNumber" class="col-lg-3 col-form-label">Onu Type</label>
                                 <div class="col-lg-9">
@@ -257,13 +295,14 @@
                                         <option value="">---Select---</option>
                                         <option value="customer">Customer</option>
                                         <option value="company">Company</option>
+                                        <option value="default">Default</option>
                                     </select>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-md-6">
                             <div class="row mb-3">
-                                <label for="sendMessageCheckbox" class="col-lg-3 col-form-label">
+                                <label for="sendMessageCheckbox" class="col-lg-1 col-form-label">
                                 <input type="checkbox" id="sendMessageCheckbox" name="send_message" value="1" class="form-check-input">
                                   </label>
                                 </label>

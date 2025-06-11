@@ -318,7 +318,7 @@ if (isset($_POST['getPackagePrice'])) {
     exit();
 }
 
-// ADD NEW CUSTOMER
+/* ADD NEW CUSTOMER*/
 
 if (isset($_POST['addCustomerData'])) {
     $customer_request_id = $_POST['customer_request_id'] ?? 0;
@@ -363,6 +363,7 @@ if (isset($_POST['addCustomerData'])) {
     if ($package_purchase_price > $_Pop_balance) {
         echo "Insufficiant balance!
         Please Recharge POP/Branch ";
+        exit; 
     } else {
         $result = $con->query("INSERT INTO customers(user_type,fullname,username,password,package,package_name,expiredate,status,mobile,address,pop,area,area_house_id,createdate,profile_pic,nid,con_charge,price,remarks,liablities,rchg_amount,paid_amount,balance_amount,con_type,onu_type) VALUES('$user_type','$fullname','$username','$password','$package','$package_name','$exp_date','$status','$mobile','$address','$pop','$area','$area_house_id',NOW(),'avatar.png','$nid','$con_charge','$price','$remarks','$liablities','$price','$price', '0','$con_type','$onu_type')");
 
@@ -371,7 +372,7 @@ if (isset($_POST['addCustomerData'])) {
             $recharge_by = isset($_SESSION['uid']) ? intval($_SESSION['uid']) : 0;
             $con->query("INSERT INTO customer_rechrg(customer_id, pop_id,months, sales_price, purchase_price,discount,ref,rchrg_until,type,rchg_by,datetm) 
           VALUES('$custID','$pop','1','$package_sales_price','$package_purchase_price','0.00', 'On Connection', '$exp_date','1','$recharge_by',NOW())");
-            echo 1;
+      
         } else {
             echo 'Problem Is : ' . $con->error;
         }
@@ -381,7 +382,6 @@ if (isset($_POST['addCustomerData'])) {
         }
         $con->query("INSERT INTO radcheck(username,attribute,op,value) VALUES('$username','Cleartext-Password',':=','$password')");
         $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$package_name')");
-        /*Send Message To the Customer */
         /*Send Message To the Customer */
         if($send_message == 1) {
             $bill_payment_link = "https://sr-wifi.net?clid={$custID}";
@@ -400,6 +400,17 @@ if (isset($_POST['addCustomerData'])) {
 
             send_message($mobile, $message);
         }
+        if (!empty($_POST['device_types']) && is_array($_POST['device_types'])) {
+            foreach ($_POST['device_types'] as $index => $type) {
+                $device_type = $_POST['device_types'][$index];
+                $name = $_POST['device_names'][$index];
+                $serial = $_POST['serial_nos'][$index];
+                $assign_date = $_POST['assign_dates'][$index];
+             
+                $con->query("INSERT INTO customer_devices(`customer_id`, `device_type`, `device_name`, `serial_number`, `assigned_date`, `returned_date`, `status`, `created_at`) VALUES ('$custID','$device_type','$name','$serial','$assign_date',NULL,'assigned',NOW())");
+            }
+        }
+        echo 1;
     }
     /*send Notification*/
     // try {

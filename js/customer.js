@@ -86,7 +86,39 @@ $(document).on('change', '#customer_area', function() {
     });
 });
 
+ $(document).on('change', '#customer_liablities', function() {
+            if ($(this).val() === '1') {
+                $('#liability_device_table').show();
+            } else {
+                $('#liability_device_table').hide();
+            }
+        });
+        /* Add new row For Include Device*/
+        $(document).on('click', '#add_row', function() {
+            var newRow = `
+                <tr>
+                    <td>
+                        <select class="form-select" name="device_type[]" style="width: 100%;">
+                            <option >---Select---</option>
+                            <option value="router">Router</option>
+                            <option value="onu">Onu</option>
+                            <option value="fiber">Fiber</option>
+                            <option value="other">Others</option>
+                        </select>
+                    </td>
+                    <td><input type="text" class="form-control" placeholder="Enter Device Name" name="device_name[]"></td>
+                    <td><input type="text" class="form-control" placeholder="Example: K5453110" name="serial_no[]"></td>
+                    <td><input type="date" class="form-control" name="assign_date[]"></td>
+                    <td><button type="button" class="btn btn-danger btn-sm remove-row">Remove</button></td>
+                </tr>
+            `;
+            $('#device_table tbody').append(newRow);
+        });
 
+    // Remove row
+    $(document).on('click', '.remove-row', function () {
+        $(this).closest('tr').remove();
+    });
 $("#customer_add").click(function() {
     var customer_request_id = $("#customer_request_id").val();
     var fullname = $("#customer_fullname").val();
@@ -110,93 +142,113 @@ $("#customer_add").click(function() {
     var send_message = $('#sendMessageCheckbox').is(':checked') ? $('#sendMessageCheckbox').val() : '0';
 
     var user_type = 1;
-   customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type,customer_onu_type,send_message);
+    /* Device data arrays*/
+    var device_types = $("select[name='device_type[]']").map(function() {
+        return $(this).val();
+    }).get();
+
+    var device_names = $("input[name='device_name[]']").map(function() {
+        return $(this).val();
+    }).get();
+
+    var serial_nos = $("input[name='serial_no[]']").map(function() {
+        return $(this).val();
+    }).get();
+
+    var assign_dates = $("input[name='assign_date[]']").map(function() {
+        return $(this).val();
+    }).get();
+    customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type,customer_onu_type,send_message,device_types, device_names, serial_nos, assign_dates);
 
 });
 
-function customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type,customer_onu_type,send_message) {
-    if (fullname.length == 0) {
-        toastr.error("Customer name is require");
-    } else if (package.length == 0) {
-        toastr.error("Customer Package is require");
-    } else if (username.length == 0) {
-        toastr.error("Username is require");
-    } else if (password.length == 0) {
-        toastr.error("Password is require");
-    } else if (mobile.length == 0) {
-        toastr.error("Mobile number is require");
-    } else if (expire_date.length == 0) {
-        toastr.error("Expire Date is require");
-    } else if (pop.length == 0) {
-        toastr.error("POP/Branch is require");
-    } else if (area.length == 0) {
-        toastr.error("Area is require");
-    }else if (con_charge.length == 0) {
-        toastr.error("Connection Charge is require");
-    } else if (price.length == 0) {
-        toastr.error("price is require");
-    } else if (status.length == 0) {
-        toastr.error("Status is require");
-    } else if (liablities.length == 0) {
-        toastr.error("Liablities is require");
-    }else if(customer_connection_type.length==0){
-        toastr.error("Connection Type is require");
-    } else {
-        $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
-        $("#customer_add").prop("disabled", true);
-        var addCustomerData = 0;
-        $.ajax({
-            type: 'POST',
-            url: 'include/customers_server.php',
-            data: {
-                addCustomerData: addCustomerData,
-                customer_request_id:customer_request_id,
-                fullname: fullname,
-                package: package,
-                username: username,
-                password: password,
-                mobile: mobile,
-                address: address,
-                expire_date: expire_date,
-                area: area,
-                customer_houseno: customer_houseno,
-                pop: pop,
-                con_charge: con_charge,
-                price: price,
-                remarks: remarks,
-                liablities: liablities,
-                nid: nid,
-                status: status,
-                user_type: user_type,
-                customer_connection_type:customer_connection_type,
-                onu_type:customer_onu_type,
-                send_message:send_message
-            },
-            success: function(responseData) {
-                $("#customer_add").html('Add Customer');
-                $("#customer_add").prop("disabled", false);
-                if (responseData == 1) {
-                    toastr.success("Added Successfully");
-                     /*GET Last id With callback function */
-                        get_customer_last_id(function(last_id) {
-                        //$('#customers_table').DataTable().ajax.reload();
-                        $("#addCustomerModal").modal('hide');
-                        $("#customer_details_show_modal").modal('show');
-                        $("#details-name").html(fullname);
-                        $("#details-username").html(username);
-                        $("#details-mobile").html(mobile);
-                        $("#details-address").html(address);
-                        $(".go_to_profile").attr("href", "profile.php?clid=" + last_id);
-                    });
+    function customerAdd(customer_request_id,user_type, fullname, package, username, password, mobile, address, expire_date, area, customer_houseno, pop,con_charge, price, remarks,liablities, nid, status,customer_connection_type,customer_onu_type,send_message,device_types, device_names, serial_nos, assign_dates) {
+                if (fullname.length == 0) {
+                    toastr.error("Customer name is require");
+                } else if (package.length == 0) {
+                    toastr.error("Customer Package is require");
+                } else if (username.length == 0) {
+                    toastr.error("Username is require");
+                } else if (password.length == 0) {
+                    toastr.error("Password is require");
+                } else if (mobile.length == 0) {
+                    toastr.error("Mobile number is require");
+                } else if (expire_date.length == 0) {
+                    toastr.error("Expire Date is require");
+                } else if (pop.length == 0) {
+                    toastr.error("POP/Branch is require");
+                } else if (area.length == 0) {
+                    toastr.error("Area is require");
+                }else if (con_charge.length == 0) {
+                    toastr.error("Connection Charge is require");
+                } else if (price.length == 0) {
+                    toastr.error("price is require");
+                } else if (status.length == 0) {
+                    toastr.error("Status is require");
+                } else if (liablities.length == 0) {
+                    toastr.error("Liablities is require");
+                }else if(customer_connection_type.length==0){
+                    toastr.error("Connection Type is require");
                 } else {
-                    toastr.error(responseData);
-                    $("#customer_add").html('Add Customer');
-                    $("#customer_add").prop("disabled", false);
+                    $("#customer_add").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+                    $("#customer_add").prop("disabled", true);
+                    var addCustomerData = 0;
+                    $.ajax({
+                        type: 'POST',
+                        url: 'include/customers_server.php',
+                        data: {
+                            addCustomerData: addCustomerData,
+                            customer_request_id:customer_request_id,
+                            fullname: fullname,
+                            package: package,
+                            username: username,
+                            password: password,
+                            mobile: mobile,
+                            address: address,
+                            expire_date: expire_date,
+                            area: area,
+                            customer_houseno: customer_houseno,
+                            pop: pop,
+                            con_charge: con_charge,
+                            price: price,
+                            remarks: remarks,
+                            liablities: liablities,
+                            nid: nid,
+                            status: status,
+                            user_type: user_type,
+                            customer_connection_type:customer_connection_type,
+                            onu_type:customer_onu_type,
+                            send_message:send_message,
+                            device_types: device_types,
+                            device_names: device_names,
+                            serial_nos: serial_nos,
+                            assign_dates: assign_dates
+                        },
+                        success: function(responseData) {
+                            $("#customer_add").html('Add Customer');
+                            $("#customer_add").prop("disabled", false);
+                            if (responseData == 1) {
+                                toastr.success("Added Successfully");
+                                /*GET Last id With callback function */
+                                    get_customer_last_id(function(last_id) {
+                                    //$('#customers_table').DataTable().ajax.reload();
+                                    $("#addCustomerModal").modal('hide');
+                                    $("#customer_details_show_modal").modal('show');
+                                    $("#details-name").html(fullname);
+                                    $("#details-username").html(username);
+                                    $("#details-mobile").html(mobile);
+                                    $("#details-address").html(address);
+                                    $(".go_to_profile").attr("href", "profile.php?clid=" + last_id);
+                                });
+                            } else {
+                                toastr.error(responseData);
+                                $("#customer_add").html('Add Customer');
+                                $("#customer_add").prop("disabled", false);
+                            }
+                        }
+                    });
                 }
             }
-        });
-    }
-}
 function get_customer_last_id(callback) {
     $.ajax({
         type: 'POST',
