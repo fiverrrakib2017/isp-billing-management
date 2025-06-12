@@ -47,7 +47,7 @@
                                     <li><a href="package_add.php">Customer Packages</a></li>
                                     <li><a href="pwdmissmatch.php">Password missmatch</a></li>
                                     <li><a href="customer_import.php">Import</a></li>
-                                    <li><a href="onu_list.php">Onu List</a></li>
+                                    <!-- <li><a href="onu_list.php">Onu List</a></li> -->
                                 </ul>
                             </li>
                             <?php endif; ?>
