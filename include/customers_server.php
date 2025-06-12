@@ -569,7 +569,6 @@ if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $status = $_POST['status'];
     $user_type = $_POST['user_type'];
     $con_type = $_POST['customer_connection_type'];
-    $onu_type = $_POST['onu_type'] ?? 'default'; 
   
     /*GET Package Name*/
     $package_name = $con->query("SELECT package_name FROM branch_package WHERE id='$package'")->fetch_array()['package_name'];
@@ -588,7 +587,7 @@ if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     //     }
     //     $new_expire_date = $year . '-' . $month . '-' . $billing_date;
     // }
-    $result = $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`expiredate`='$expire_date',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type', `onu_type`='$onu_type' WHERE id=$customer_id");
+    $result = $con->query("UPDATE `customers` SET `user_type`='$user_type',`fullname`='$fullname',`username`='$username',`password`='$password',`package`='$package',`package_name`='$package_name',`expiredate`='$expire_date',`status`='$status',`mobile`='$mobile',`address`='$address',`pop`='$pop',`area`='$area',`area_house_id`='$area_house_id',`nid`='$nid',`con_charge`='$con_charge',`price`='$price',`remarks`='$remarks',`liablities`='$liablities' , `con_type`='$con_type' WHERE id=$customer_id");
     if ($result) {
         /*Update radcheck*/
         if ($con->query("SELECT * FROM radcheck WHERE username='$username'")->num_rows > 0) {
@@ -840,6 +839,19 @@ if (isset($_GET['get_customer_data_for_message']) && $_SERVER['REQUEST_METHOD'] 
     }
     exit;
 }
+/*  Customer Device Return  */
+if (isset($_POST['customer_device_return']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id = $_POST['id'];
+    $stmt = $con->prepare("UPDATE customer_devices SET status = 'returned', returned_date = NOW() WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
 
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['success' => true, 'message' => 'Device returned successfully!']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to return device.']);
+    }
+    exit;
+}
 
 ?>

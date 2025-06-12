@@ -1211,6 +1211,13 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                             class="mdi mdi-email h5"></i></span>
                                                                 </a>
                                                             </li>
+                                                            <li class="nav-item">
+                                                                <a class="nav-link" data-bs-toggle="tab"
+                                                                    href="#liabilities_table" role="tab">
+                                                                    <span class="d-none d-md-block">User Liabilities</span><span class="d-block d-md-none"><i
+                                                                            class="mdi mdi-user h5"></i></span>
+                                                                </a>
+                                                            </li>
 
                                                         </ul>
                                                         <!-- Tab panes -->
@@ -1571,6 +1578,92 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <!-- Customer Liabilities Section -->
+                                                            <div class="tab-pane fade show " id="liabilities_table" role="tabpanel">
+                                                                <div class="table table-responsive">
+                                                                    <table id="customer_device_table"class="table table-bordered dt-responsive nowrap"
+                                                                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                                        <thead class="">
+                                                                            <tr>
+                                                                                <th>Date</th>
+                                                                                <th>Device Type</th>
+                                                                                <th>Name</th>
+                                                                                <th>Serial No</th>
+                                                                                <th>Assign Date</th>
+                                                                                <th>Return Date</th>
+                                                                                <th>Status</th>
+                                                                                <th>Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                       <tbody>
+                                                                        <?php 
+                                                                        $res = $con->query("SELECT * FROM customer_devices WHERE customer_id = $clid");
+
+                                                                        if($res && $res->num_rows > 0){
+                                                                            while($row = $res->fetch_assoc()){
+                                                                                echo "<tr>";
+
+                                                                                echo "<td>" . (new DateTime($row['created_at']))->format('d-M-Y') . "</td>";
+
+                                                                                echo "<td>";
+                                                                                switch($row['device_type']) {
+                                                                                    case 'router':
+                                                                                        echo "<span class='badge bg-success'>Router</span>";
+                                                                                        break;
+                                                                                    case 'onu':
+                                                                                        echo "<span class='badge bg-dark'>ONU</span>";
+                                                                                        break;
+                                                                                    case 'fiber':
+                                                                                        echo "<span class='badge bg-primary'>Fiber</span>";
+                                                                                        break;
+                                                                                    default:
+                                                                                        echo "<span class='badge bg-secondary'>N/A</span>";
+                                                                                }
+                                                                                echo "</td>";
+
+                                                                            
+                                                                                echo "<td>" . htmlspecialchars($row['device_name']) . "</td>";
+
+                                                                                echo "<td>" . htmlspecialchars($row['serial_number']) . "</td>";
+
+                                                                               
+                                                                                echo "<td>" . (!empty($row['assigned_date']) ? (new DateTime($row['assigned_date']))->format('d-M-Y') : '-') . "</td>";
+
+                                                                            
+                                                                                echo "<td>" . (!empty($row['returned_date']) ? (new DateTime($row['returned_date']))->format('d-M-Y') : '-') . "</td>";
+
+                                                                           
+                                                                                echo "<td>";
+                                                                                switch($row['status']) {
+                                                                                    case 'assigned':
+                                                                                        echo "<span class='badge bg-success'>Assigned</span>";
+                                                                                        break;
+                                                                                    case 'returned':
+                                                                                        echo "<span class='badge bg-danger'>Returned</span>";
+                                                                                        break;
+                                                                                    case 'damaged':
+                                                                                        echo "<span class='badge bg-warning'>Damaged</span>";
+                                                                                        break;
+                                                                                    default:
+                                                                                        echo "<span class='badge bg-secondary'>Unknown</span>";
+                                                                                }
+                                                                                echo "</td>";
+
+                                                                                echo "<td>" . ($row['status'] == 'assigned' 
+                                                                                            ? '<button type="button" data-id="' . $row['id'] . '" class="btn btn-sm btn-danger customer_device_change_status_btn">Return Now</button>' 
+                                                                                            : '-') . "</td>";
+
+                                                                                
+
+                                                                                echo "</tr>";
+                                                                            }    
+                                                                        } 
+                                                                        ?>
+                                                                        </tbody>
+
+                                                                    </table>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1886,6 +1979,7 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
     <!-- Include Tickets js File -->
     <script src="js/tickets.js"></script>
     <script type="text/javascript">
+        $('#customer_device_table').dataTable();
         $('#tickets_table').dataTable();
         $('#recharge_data_table').dataTable({
             "ordering": false 
@@ -2305,7 +2399,70 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
         });
 
         /*************************Google Map Load**********************************************************/
-        
+
+         /** Handle Customer Device return button click **/
+        $(document).on('click', '.customer_device_change_status_btn', function () {
+            let id = $(this).data('id');
+            __handle_custom_ajax_action({
+                id: id,
+                button: this,
+                url: 'include/customers_server.php',
+                data: {
+                    id: id,
+                    customer_device_return: true
+                },
+                method:'POST',
+                confirmMessage: 'Are you sure you want to return this customer device?',
+                loadingText: 'Returning...',
+                successMessage: 'Device returned successfully!',
+                buttonText: '<i class="fas fa-arrow-left"></i> Return Now',
+                reload: true 
+            });
+        });
+
+        /*Handle Customer Device return and Customer Recharge undo*/
+        function __handle_custom_ajax_action(options) {
+            if (confirm(options.confirmMessage)) {
+                let button = $(options.button);
+                let originalHtml = button.html();
+                let row = button.closest("tr");
+
+                button.html('<i class="fas fa-spinner fa-spin"></i> ' + options.loadingText)
+                    .prop("disabled", true);
+
+                $.ajax({
+                    url: options.url,
+                    type: options.method || "GET",
+                    data: options.data || {},
+                    dataType:'json',
+                    success: function(response) {
+                        if (response.success) {
+                            if (options.reload) {
+                                toastr.success(response.message || options.successMessage);
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 1000);
+                            } else if (options.removeRow) {
+                                row.fadeOut(300, () => {
+                                    row.remove();
+                                    toastr.success(options.successMessage);
+                                });
+                            } else {
+                                toastr.success(response.message || options.successMessage);
+                            }
+                        } else {
+                            toastr.error(response.message || 'Operation failed.');
+                        }
+                    },
+                    error: function() {
+                        toastr.error("Something went wrong!");
+                    },
+                    complete: function() {
+                        button.html(options.buttonText || originalHtml).prop("disabled", false);
+                    }
+                });
+            }
+        }
       
         /*** Add ticket Modal Script****/
         ticket_modal();
