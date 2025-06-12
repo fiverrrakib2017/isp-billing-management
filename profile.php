@@ -1188,7 +1188,7 @@ if ($get_customers = $con->query("SELECT * FROM customers WHERE id=$clid")) {
                                                             <li class="nav-item">
                                                                 <a class="nav-link" data-bs-toggle="tab"
                                                                     href="#cstmr_recharge" role="tab">
-                                                                    <span class="d-none d-md-block">Customers
+                                                                    <span class="d-none d-md-block">
                                                                         Recharge</span><span
                                                                         class="d-block d-md-none"><i
                                                                             class="mdi mdi-account h5"></i></span>

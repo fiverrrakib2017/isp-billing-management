@@ -603,6 +603,18 @@ if (isset($_GET['update_customer']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
             $con->query("INSERT INTO radreply(username, attribute, op, value) VALUES('$username', 'MikroTik-Group', ':=', '$package_name')");
         }
 
+        if (!empty($_POST['device_types']) && is_array($_POST['device_types'])) {
+            $con->query("DELETE FROM customer_devices WHERE customer_id='$customer_id'");
+            foreach ($_POST['device_types'] as $index => $type) {
+                $device_type = $_POST['device_types'][$index];
+                $name = $_POST['device_names'][$index];
+                $serial = $_POST['serial_nos'][$index];
+                $assign_date = $_POST['assign_dates'][$index];
+             
+                $con->query("INSERT INTO customer_devices(`customer_id`, `device_type`, `device_name`, `serial_number`, `assigned_date`, `returned_date`, `status`, `created_at`) VALUES ('$customer_id','$device_type','$name','$serial','$assign_date',NULL,'assigned',NOW())");
+            }
+        }
+
         echo json_encode(['success' => true, 'message' => 'Customer updated successfully!']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Error: ' . $con->error]);

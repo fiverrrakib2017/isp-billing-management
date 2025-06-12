@@ -450,17 +450,51 @@ if (isset($_GET['clid'])) {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="row mb-3">
-                                                        <label for="txtCreditCardNumber" class="col-lg-3 col-form-label">Onu Type</label>
-                                                        <div class="col-lg-9">
-                                                            <select id="customer_onu_type" class="form-select" style="width: 100%;">
-                                                                <option value="">---Select---</option>
-                                                                 <option value="customer" <?= ($onu_type == 'customer') ? 'selected' : '' ?>>Customer</option>
-                                                                 <option value="company" <?= ($onu_type == 'company') ? 'selected' : '' ?>>Company</option>
-                                                            </select>
+                                             <div class="row">
+                                                <div class="col-md-12">
+                                                   <div id="liability_device_table" class="mt-3" <?= ($liablities == 0) ? 'style="display: none;"' : '' ?>>
+                                                        <h6>Device Information</h6>
+                                                        <div class="table-responsive">
+                                                            <table class="table table-bordered" id="device_table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Device Type</th>
+                                                                        <th>Name</th>
+                                                                        <th>Serial No</th>
+                                                                        <th>Assign Date</th>
+                                                                        <th>Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php
+                                                                    $query = $con->query("SELECT * FROM customer_devices WHERE customer_id = $clid AND status='assigned'");
+                                                                    if ($query && $query->num_rows > 0) {
+                                                                        while ($row = $query->fetch_assoc()) {
+                                                                    ?>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <select class="form-select" name="device_type[]" style="width: 100%;">
+                                                                                <option>---Select---</option>
+                                                                                <option value="router" <?= $row['device_type'] == 'router' ? 'selected' : '' ?>>Router</option>
+                                                                                <option value="onu" <?= $row['device_type'] == 'onu' ? 'selected' : '' ?>>Onu</option>
+                                                                                <option value="fiber" <?= $row['device_type'] == 'fiber' ? 'selected' : '' ?>>Fiber</option>
+                                                                                <option value="other" <?= $row['device_type'] == 'other' ? 'selected' : '' ?>>Others</option>
+                                                                            </select>
+                                                                        </td>
+                                                                        <td><input type="text" class="form-control" name="device_name[]" value="<?= htmlspecialchars($row['device_name']) ?>"></td>
+                                                                        <td><input type="text" class="form-control" name="serial_no[]" value="<?= htmlspecialchars($row['serial_number']) ?>"></td>
+                                                                        <td><input type="date" class="form-control" name="assign_date[]" value="<?= date('Y-m-d', strtotime($row['assigned_date'])) ?>"></td>
+                                                                        <td><button type="button" class="btn btn-danger btn-sm remove-row">Remove</button></td>
+                                                                    </tr>
+                                                                    <?php
+                                                                        }
+                                                                    }
+                                                                    ?>
+
+                                                                </tbody>
+                                                            </table>
                                                         </div>
+                                                        <button type="button" class="btn btn-primary btn-sm" id="add_row">+ Add Row</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -563,7 +597,39 @@ if (isset($_GET['clid'])) {
             //$('#customer_house_id').removeClass('d-none');
         });
 
+        // $(document).on('change', '#customer_liablities', function() {
+        //     if ($(this).val() === '1') {
+        //         $('#liability_device_table').show();
+        //     } else {
+        //         $('#liability_device_table').hide();
+        //     }
+        // });
+        // /* Add new row For Include Device*/
+        // $(document).on('click', '#add_row', function() {
+        //     var newRow = `
+        //         <tr>
+        //             <td>
+        //                 <select class="form-select" name="device_type[]" style="width: 100%;">
+        //                     <option >---Select---</option>
+        //                     <option value="router">Router</option>
+        //                     <option value="onu">Onu</option>
+        //                     <option value="fiber">Fiber</option>
+        //                     <option value="other">Others</option>
+        //                 </select>
+        //             </td>
+        //             <td><input type="text" class="form-control" placeholder="Enter Device Name" name="device_name[]"></td>
+        //             <td><input type="text" class="form-control" placeholder="Example: K5453110" name="serial_no[]"></td>
+        //             <td><input type="date" class="form-control" name="assign_date[]"></td>
+        //             <td><button type="button" class="btn btn-danger btn-sm remove-row">Remove</button></td>
+        //         </tr>
+        //     `;
+        //     $('#device_table tbody').append(newRow);
+        // });
 
+        // // Remove row
+        // $(document).on('click', '.remove-row', function () {
+        //     $(this).closest('tr').remove();
+        // });
 
         $("#customer_update_btn").click(function() {
             var customer_id = $("#customer_id").val();
@@ -584,8 +650,23 @@ if (isset($_GET['clid'])) {
             var liablities = $("#customer_liablities").val();
             var customer_houseno = $("#customer_house_id").val();
             var customer_connection_type = $("#customer_connection_type").val();
-            var customer_onu_type = $("#customer_onu_type").val();
             var user_type = 1;
+            /* Device data arrays*/
+            var device_types = $("select[name='device_type[]']").map(function() {
+                return $(this).val();
+            }).get();
+
+            var device_names = $("input[name='device_name[]']").map(function() {
+                return $(this).val();
+            }).get();
+
+            var serial_nos = $("input[name='serial_no[]']").map(function() {
+                return $(this).val();
+            }).get();
+
+            var assign_dates = $("input[name='assign_date[]']").map(function() {
+                return $(this).val();
+            }).get();
 
             if (fullname.length == 0) {
                 toastr.error("Customer name is require");
@@ -646,7 +727,10 @@ if (isset($_GET['clid'])) {
                     status: status,
                     user_type: user_type,
                     customer_connection_type:customer_connection_type,
-                    onu_type:customer_onu_type,
+                    device_types: device_types,
+                    device_names: device_names,
+                    serial_nos: serial_nos,
+                    assign_dates: assign_dates
                 },
                 success: function(response) {
                     if (response.success == true) {
