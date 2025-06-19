@@ -96,7 +96,7 @@ if (file_exists($users_right_path)) {
 
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="area" class="form-label">Area <span class="text-danger">*</span></label>
+                                <label for="area" class="form-label">Area</label>
                                 <select name="area" id="area" class="form-select" style="width: 100%;">
                                     <option>---Select---</option> 
                                 </select>
@@ -105,8 +105,8 @@ if (file_exists($users_right_path)) {
 
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="customer_status" class="form-label">Status <span class="text-danger">*</span></label>
-                                <select name="customer_status" id="customer_status" class="form-select" style="width: 100%;" required>
+                                <label for="customer_status" class="form-label">Status </label>
+                                <select name="customer_status" id="customer_status" class="form-select" style="width: 100%;" >
                                     <option value="">---Select---</option>
                                     <option value="online">Online</option>
                                     <option value="offline">Offline</option>
@@ -117,6 +117,13 @@ if (file_exists($users_right_path)) {
                                     <option value="active">Active</option>
                                     <option value="disabled">Disabled</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="" class="form-label">Expire Date  <span class="text-danger">*</span></label>
+                                <input type="date" name="customer_expire_date" id="customer_expire_date" class="form-control" required>
+                                    
                             </div>
                         </div>
 
@@ -305,6 +312,7 @@ if (file_exists($users_right_path)) {
                 var pop_id = $("#pop_id").val();
                 var area_id = $("#area").val();
                 var customer_status = $("#customer_status").val();
+                var customer_expire_date = $("#customer_expire_date").val() || '';
                 if ( $.fn.DataTable.isDataTable("#datatable1") ) {
                     $("#datatable1").DataTable().destroy();
                 }
@@ -313,7 +321,7 @@ if (file_exists($users_right_path)) {
                     url: url,
                     type: 'GET',
                     dataType: 'json',
-                    data: {pop_id: pop_id, area_id: area_id, customer_status: customer_status},
+                    data: {pop_id: pop_id, area_id: area_id, customer_status: customer_status, customer_expire_date:customer_expire_date},
                     success: function(response) {
                         if(response.success==true){
                             

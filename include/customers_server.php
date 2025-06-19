@@ -741,6 +741,7 @@ if (isset($_GET['get_customer_data_for_message']) && $_SERVER['REQUEST_METHOD'] 
     $pop_id = null;
     $area_id = null;
     $customer_status = null;
+    $customer_expire_date=null; 
 
     if (isset($_GET['pop_id']) && is_numeric($_GET['pop_id']) && (int)$_GET['pop_id'] > 0) {
        $pop_id = (int)$_GET['pop_id'];
@@ -756,8 +757,11 @@ if (isset($_GET['get_customer_data_for_message']) && $_SERVER['REQUEST_METHOD'] 
     if (isset($_GET['customer_status']) && $_GET['customer_status'] !== '---Select---') {
         $customer_status = $_GET['customer_status'];
     }
+    if (isset($_GET['customer_expire_date'])) {
+        $customer_expire_date = $_GET['customer_expire_date'] ?? null;;
+    }
 
-    function get_filtered_customerssssss($status, $area_id = null, $pop_id = null, $con) {
+    function get_filtered_customerssssss($status, $area_id = null, $pop_id = null, $customer_expire_date=null, $con) {
         $condition = [];
 
         if (!is_null($area_id)) {
@@ -766,6 +770,9 @@ if (isset($_GET['get_customer_data_for_message']) && $_SERVER['REQUEST_METHOD'] 
 
         if (!is_null($pop_id)) {
             $condition[] = "pop = '" . (int)$pop_id . "'";
+        }
+        if (!is_null($customer_expire_date)) {
+            $condition[] = "expiredate = '" . $customer_expire_date . "'";
         }
 
         if (!is_null($status)) {
@@ -825,7 +832,7 @@ if (isset($_GET['get_customer_data_for_message']) && $_SERVER['REQUEST_METHOD'] 
         return $customers;
     }
 
-    $response = get_filtered_customerssssss($customer_status, $area_id, $pop_id, $con);
+    $response = get_filtered_customerssssss($customer_status, $area_id, $pop_id, $customer_expire_date, $con);
     if (count($response) > 0) {
         $html = '';
         foreach ($response as $row) {
@@ -851,6 +858,10 @@ if (isset($_GET['get_customer_data_for_message']) && $_SERVER['REQUEST_METHOD'] 
     }
     exit;
 }
+
+
+
+
 /*  Customer Device Return  */
 if (isset($_POST['customer_device_return']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
