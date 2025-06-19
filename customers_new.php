@@ -3,6 +3,76 @@ include 'include/security_token.php';
 include 'include/db_connect.php';
 include 'include/pop_security.php';
 include 'include/users_right.php';
+require "routeros/routeros_api.class.php";
+
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'customer_disable') {
+    $customers = json_decode($_POST['customers'], true);
+    
+    if (empty($customers)) {
+        echo json_encode(['success' => false, 'message' => 'No customers selected.']);
+        exit;
+    }
+    foreach ($customers as $customer_id) {
+        $customer_id = intval($customer_id);
+        $cust = $con->query("SELECT * FROM customers WHERE id=$customer_id")->fetch_assoc();
+        $username = $cust['username'] ?? '';
+    
+
+        // if (!$username) continue;
+
+        $onlineusr = $con->query(
+            "SELECT * FROM radacct WHERE radacct.acctstoptime IS NULL AND username='$username'"
+        );
+        $onlineusr->num_rows;
+
+        // NAS Info
+        $rowacct = $onlineusr->fetch_assoc();
+
+        $nasipaddress = $rowacct["nasipaddress"] ?? "";
+
+        $CNRT = $con->query("SELECT * FROM nas WHERE nasname='$nasipaddress' LIMIT 1");
+        
+        while ($nas_rows = $CNRT->fetch_array()) {
+          
+            $api_usr = $nas_rows["api_user"];
+            $api_pswd = $nas_rows["api_password"];
+            $api_server = $nas_rows["api_ip"];
+            $api_port =  $nas_rows["ports"];
+        }
+        
+      
+    
+        // Disconnect from RT
+        $API = new RouterosAPI();
+        $API->debug = false;
+        if ($API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
+            $API->write("/ppp/active/print", false);
+            $API->write("?name=" . $username, false);
+            $API->write("=.proplist=.id");
+            $ARRAYS = $API->read();
+            $API->write("/ppp/active/remove", false);
+            $API->write("=.id=" . $ARRAYS[0][".id"]);
+            $READ = $API->read();
+            $API->disconnect();
+            
+            $con->query("UPDATE customers SET status='0' WHERE id='$customer_id'");
+            $con->query("DELETE FROM radcheck WHERE username='$username'");
+            $con->query("DELETE FROM radreply WHERE username='$username'");
+        }
+      
+    }
+
+    echo json_encode(['success' => true, 'message' => 'Disabled successfully.']);
+    exit;
+}
+
+
+
+
 ?>
 
 <!doctype html>
@@ -55,25 +125,25 @@ include 'include/users_right.php';
                                             <p class="text-primary mb-0 hover-cursor">&nbsp;/&nbsp;Dashboard&nbsp;/&nbsp;
                                             </p>
                                             <p class="text-primary mb-0 hover-cursor">Customers</p>
-                                            <?php if($_GET['new_customer_month']):?>
+                                            <?php if(isset($_GET['new_customer_month'])):?>
                                                 <p class="text-primary mb-0 hover-cursor">/&nbsp;New Customers</p>
                                             <?php endif; ?>
-                                            <?php if($_GET['expire_customer_month']):?>
+                                            <?php if(isset($_GET['expire_customer_month'])):?>
                                                 <p class="text-primary mb-0 hover-cursor">/&nbsp; Monthly Expired Customers</p>
                                             <?php endif; ?>
-                                            <?php if($_GET['online']):?>
+                                            <?php if(isset($_GET['online'])):?>
                                                 <p class="text-primary mb-0 hover-cursor">/&nbsp;Online Customers</p>
                                             <?php endif; ?>
-                                            <?php if($_GET['offline']):?>
+                                            <?php if(isset($_GET['offline'])):?>
                                                 <p class="text-primary mb-0 hover-cursor">/&nbsp;Offline Customers</p>
                                             <?php endif; ?>
-                                            <?php if($_GET['active']):?>
+                                            <?php if(isset($_GET['active'])):?>
                                                 <p class="text-primary mb-0 hover-cursor">/&nbsp;Active Customers</p>
                                             <?php endif; ?>
-                                            <?php if($_GET['expired']):?>
+                                            <?php if(isset($_GET['expired'])):?>
                                                 <p class="text-primary mb-0 hover-cursor">/&nbsp;Expired Customers</p>
                                             <?php endif; ?>
-                                            <?php if($_GET['disabled']):?>
+                                            <?php if(isset($_GET['disabled'])):?>
                                                 <p class="text-primary mb-0 hover-cursor">/&nbsp;Disabled Customers</p>
                                             <?php endif; ?>
                                         </div>
@@ -160,6 +230,10 @@ include 'include/users_right.php';
                                     <button type="button" class="btn btn-success mb-2" name="pop_change_btn">
                                         <i class="fas fa-angle-double-right"></i>&nbsp;Change POP/Branch
                                     </button>
+                                    <button type="button" class="btn btn-danger mb-2" name="disable_btn">
+                                        <i class="fas fa-ban"></i>&nbsp; Disable
+                                    </button>
+
                                 </div>
 
                             </div>
@@ -1242,7 +1316,51 @@ include 'include/users_right.php';
                     $button.html('<i class="mdi mdi-update"></i> Change Now');
                 }
             });
+        });  
+        /************************** Customer Disable Section **************************/
+        $(document).on('click', 'button[name="disable_btn"]', function(e) {
+        e.preventDefault();
+
+        var $button = $(this);
+        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Processing...');
+
+        var customers = [];
+        $(".checkSingle:checked").each(function() {
+            customers.push($(this).val());
         });
+
+        if (customers.length === 0) {
+            toastr.error("Please select at least one customer");
+            $button.prop('disabled', false).html('<i class="fas fa-ban"></i>&nbsp; Disable');
+            return;
+        }
+
+        $.ajax({
+            url: "",
+            method: 'POST',
+            data: {
+                action: 'customer_disable',
+                customers: JSON.stringify(customers)
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    toastr.success(response.message);
+                    $('#customers_table').DataTable().ajax.reload();
+                } else {
+                    toastr.error(response.message);
+                }
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+                toastr.error("Request failed.");
+            },
+            complete: function() {
+                $button.prop('disabled', false).html('<i class="fas fa-ban"></i>&nbsp; Disable');
+            }
+        });
+    });
+
     </script>
 </body>
 

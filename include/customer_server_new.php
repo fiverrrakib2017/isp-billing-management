@@ -521,5 +521,64 @@
             ]);
             exit();
           }
+    }  
+    /************************** Customer Disable Section **************************/    
+    if (isset($_GET['customer_disable']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $customers = json_decode($_POST['customers']);
+    
+    if (empty($customers)) {
+        echo json_encode(['success' => false, 'message' => 'Customer required.']);
+        exit();
     }
+
+    require_once('routeros/routeros_api.class.php');
+
+    foreach ($customers as $customer_id) {
+        $customer_id = intval($customer_id);
+
+        $customer_row = $con->query("SELECT * FROM customers WHERE id = $customer_id")->fetch_assoc();
+        $username = $customer_row['username'] ?? '';
+        
+        if (!$username) continue;
+
+        $onlineusr = $con->query("SELECT * FROM radacct WHERE acctstoptime IS NULL AND username = '$username'");
+        if ($onlineusr->num_rows > 0) {
+            $rowacct = $onlineusr->fetch_assoc();
+            $nasipaddress = $rowacct["nasipaddress"] ?? "";
+           
+            $CNRT = $con->query("SELECT * FROM nas WHERE nasname = '$nasipaddress' LIMIT 1");
+            $nas_rows = $CNRT->fetch_assoc();
+           
+            $NASname = $nas_rows["shortname"];
+            $nasname = $nas_rows["nasname"];
+            $api_usr = $nas_rows["api_user"];
+            $api_pswd = $nas_rows["api_password"];
+            $api_server = $nas_rows["api_ip"];
+            $api_port = $nas_rows["ports"];
+
+            $API = new RouterosAPI();
+            $API->debug = true; 
+           
+            if ($API->connect($api_server, $api_usr, $api_pswd, $api_port)) {
+                $API->write("/ppp/active/print", false);
+                $API->write("?name=" . $username, false);
+                $API->write("=.proplist=.id");
+                $ARRAYS = $API->read();
+                $API->write("/ppp/active/remove", false);
+                $API->write("=.id=" . $ARRAYS[0][".id"]);
+                $READ = $API->read();
+                $API->disconnect();
+                
+                $con->query("UPDATE customers SET status='0' WHERE id='$customer_id'");
+                $con->query("DELETE FROM radcheck WHERE username='$username'");
+                $con->query("DELETE FROM radreply WHERE username='$username'");
+            }
+        }
+     
+    }
+
+    echo json_encode(['success' => true, 'message' => 'Customers disabled successfully.']);
+    exit();
+}
+ 
 ?>
