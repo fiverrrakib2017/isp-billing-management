@@ -103,8 +103,12 @@ include 'include/users_right.php';
                                             style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                             <thead>
                                                 <tr>
-                                                    <th><input type="checkbox" id="checkedAll" name="checkedAll"
-                                                            class="form-check-input"></th>
+                                                    <th>
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" id="checkedAll" name="checkedAll"  class="form-check-input">
+                                                              <label class="custom-control-label" for="customer_select_all"></label>
+                                                        </div>
+                                                    </th>
                                                     <th>ID</th>
                                                     <th>Name</th>
                                                     <th>Package</th>
@@ -543,12 +547,12 @@ include 'include/users_right.php';
                     [0, "desc"]
                 ],
                 "lengthChange": true,
-                "processing": false,
-                "serverSide": false,
+                "processing": true,
+                "serverSide": true,
                 columnDefs: [{
                     orderable: false,
                     className: 'select-checkbox',
-                    targets: 10,
+                    targets: 0,
                 }],
                 lengthMenu: [
                     [10, 25, 50, -1],
@@ -562,6 +566,7 @@ include 'include/users_right.php';
                 "ajax": {
                     url: "include/customer_server_new.php?get_customers_data=true",
                     type: 'GET',
+                    cache: true,
                     data: function(d) {
 
                         /********************Filter For Active Customer*******************************/
