@@ -344,6 +344,10 @@ if (isset($_GET['send_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 //*************************** Bulk Message **********************************************/
 if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start(); 
+    }
+   // print_r($_SESSION['user_pop']);exit; 
     /*Load required files*/
     include "functions.php";
     include "db_connect.php";
@@ -372,9 +376,17 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     /* SMS API details */
-    $url = "http://bulksmsbd.net/api/smsapimany";
-    $api_key = "WC1N6AFA4gVRZLtyf8z9";
-    $senderid = "SR WiFi";
+    if(!empty($_SESSION['user_pop'])){
+        $url = "http://bulksmsbd.net/api/smsapimany";
+        $api_key = "mELq5E6XzS1wt7M6kh80";
+        $senderid = "Star WiFi";
+    }
+    if(empty($_SESSION['user_pop'])){
+        $url = "http://bulksmsbd.net/api/smsapimany";
+        $api_key = "WC1N6AFA4gVRZLtyf8z9";
+        $senderid = "SR WiFi";
+    }
+  
 
     /* Prepare data */
     $messages = [];
@@ -417,9 +429,9 @@ if (isset($_GET['bulk_message']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
     /* Prepare data for SMS API */
     $data = [
-        "api_key" => $api_key,
-        "senderid" => $senderid,
-        "messages" => $messagesJson
+        "api_key" => trim($api_key),
+        "senderid" => trim($senderid),
+        "messages" => trim($messagesJson)
     ];
 
     /* Initialize cURL */

@@ -364,6 +364,8 @@ if (file_exists($users_right_path)) {
         });
         $(document).on('click', 'button[name="send_message_btn"]', function(e) { 
             e.preventDefault();
+             var $button = $(this);
+            $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Processing...');
             var selectedCustomers = [];
             $(".checkSingle:checked").each(function() {
                 selectedCustomers.push($(this).val());
@@ -384,10 +386,16 @@ if (file_exists($users_right_path)) {
                         toastr.success(response.message);
                         $('#sendMessageModal').modal('hide');
                         //$('#customers_table').DataTable().ajax.reload();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
                     }
                 },
                 error: function(xhr, status, error) {
                     toastr.error("An error occurred: " + error);
+                },
+                complete: function() {
+                    $button.prop('disabled', false).html('Send Message');
                 }
             });
         });
