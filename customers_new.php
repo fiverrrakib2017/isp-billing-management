@@ -69,6 +69,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     echo json_encode(['success' => true, 'message' => 'Disabled successfully.']);
     exit;
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'customer_enable') {
+    $customers = json_decode($_POST['customers'], true);
+    
+    if (empty($customers)) {
+        echo json_encode(['success' => false, 'message' => 'No customers selected.']);
+        exit;
+    }
+    foreach ($customers as $customer_id) {
+        $customer_id = intval($customer_id);
+        $cust = $con->query("SELECT * FROM customers WHERE id=$customer_id")->fetch_assoc();
+        $username = $cust['username'] ?? '';
+        $password = $cust['password'] ?? '';
+        $packagename = $cust['package_name'] ?? '';
+        $con->query("UPDATE customers SET status='1' WHERE id='$customer_id'");
+        $con->query("INSERT INTO radcheck(username,value,attribute,op) VALUES('$username','$password','Cleartext-Password',':=')");
+     
+        $con->query("INSERT INTO radreply(username,attribute,op,value) VALUES('$username','MikroTik-Group',':=','$packagename')");      
+    }
+    echo json_encode(['success' => true, 'message' => 'Enabled successfully.']);
+    exit;
+}
 
 
 
@@ -232,6 +253,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                                     </button>
                                     <button type="button" class="btn btn-danger mb-2" name="disable_btn">
                                         <i class="fas fa-ban"></i>&nbsp; Disable
+                                    </button>
+                                    <button type="button" class="btn btn-success mb-2" name="enable_btn">
+                                        <i class="fas fa-check"></i>&nbsp; Enable
                                     </button>
 
                                 </div>
@@ -1319,47 +1343,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         });  
         /************************** Customer Disable Section **************************/
         $(document).on('click', 'button[name="disable_btn"]', function(e) {
-        e.preventDefault();
+            e.preventDefault();
 
-        var $button = $(this);
-        $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Processing...');
+            var $button = $(this);
+            $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Processing...');
 
-        var customers = [];
-        $(".checkSingle:checked").each(function() {
-            customers.push($(this).val());
-        });
+            var customers = [];
+            $(".checkSingle:checked").each(function() {
+                customers.push($(this).val());
+            });
 
-        if (customers.length === 0) {
-            toastr.error("Please select at least one customer");
-            $button.prop('disabled', false).html('<i class="fas fa-ban"></i>&nbsp; Disable');
-            return;
-        }
-
-        $.ajax({
-            url: "",
-            method: 'POST',
-            data: {
-                action: 'customer_disable',
-                customers: JSON.stringify(customers)
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    toastr.success(response.message);
-                    $('#customers_table').DataTable().ajax.reload();
-                } else {
-                    toastr.error(response.message);
-                }
-            },
-            error: function(xhr) {
-                console.log(xhr.responseText);
-                toastr.error("Request failed.");
-            },
-            complete: function() {
+            if (customers.length === 0) {
+                toastr.error("Please select at least one customer");
                 $button.prop('disabled', false).html('<i class="fas fa-ban"></i>&nbsp; Disable');
+                return;
             }
+
+            $.ajax({
+                url: "",
+                method: 'POST',
+                data: {
+                    action: 'customer_disable',
+                    customers: JSON.stringify(customers)
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#customers_table').DataTable().ajax.reload();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                    toastr.error("Request failed.");
+                },
+                complete: function() {
+                    $button.prop('disabled', false).html('<i class="fas fa-ban"></i>&nbsp; Disable');
+                }
+            });
         });
-    });
+        /************************** Customer Disable Section **************************/
+        $(document).on('click', 'button[name="enable_btn"]', function(e) {
+            e.preventDefault();
+
+            var $button = $(this);
+            $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Processing...');
+
+            var customers = [];
+            $(".checkSingle:checked").each(function() {
+                customers.push($(this).val());
+            });
+
+            if (customers.length === 0) {
+                toastr.error("Please select at least one customer");
+                $button.prop('disabled', false).html('<i class="fas fa-ban"></i>&nbsp; Disable');
+                return;
+            }
+
+            $.ajax({
+                url: "",
+                method: 'POST',
+                data: {
+                    action: 'customer_enable',
+                    customers: JSON.stringify(customers)
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        $('#customers_table').DataTable().ajax.reload();
+                    } else {
+                        toastr.error(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                    toastr.error("Request failed.");
+                },
+                complete: function() {
+                    $button.prop('disabled', false).html('<i class="fas fa-ban"></i>&nbsp; Enable');
+                }
+            });
+        });
 
     </script>
 </body>
