@@ -203,27 +203,20 @@ require 'routeros/routeros_api.class.php';
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group mb-2">
-                                            <label>NAS Name</label>
-                                            <input name="nas_name" type="text" class="form-control "
-                                                placeholder="Enter Nas Name" />
+                                            <label>Short Name</label>
+                                            <input name="short_name" type="text" class="form-control "
+                                                placeholder="Enter Short Name" />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-2">
-                                            <label>Short Name</label>
-                                            <input name="short_name" type="text" class="form-control "
-                                                placeholder="Enter Your IP" />
+                                            <label>NAS IP</label>
+                                            <input name="nas_name" type="text" class="form-control "
+                                                placeholder="Enter NAS IP" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Type</label>
-                                            <input name="type" type="text"class="form-control "
-                                                placeholder="Enter Type" />
-                                        </div>
-                                    </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-2">
                                             <label>Port</label>
@@ -231,8 +224,6 @@ require 'routeros/routeros_api.class.php';
                                                 placeholder="Enter Port" />
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-md-6 ">
                                         <div class="form-group mb-2">
                                             <label>Secret</label>
@@ -240,6 +231,9 @@ require 'routeros/routeros_api.class.php';
                                                 placeholder="Enter API Secret" />
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row">
+                                    
                                     <div class="col-md-6 ">
                                         <div class="form-group mb-2">
                                             <label>API User</label>
@@ -247,8 +241,6 @@ require 'routeros/routeros_api.class.php';
                                                 placeholder="Enter API User" />
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group mb-2">
                                             <label>API Password</label>
@@ -256,20 +248,14 @@ require 'routeros/routeros_api.class.php';
                                                 placeholder="Enter API Password" />
                                         </div>
                                     </div>
+                                </div>
+                                <div class="row">
+                                    
                                     <div class="col-md-6">
                                         <div class="form-group mb-2">
                                             <label>Api IP</label>
                                             <input name="api_ip" type="text" class="form-control"
                                                 placeholder="Enter Api IP" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-2">
-                                            <label>Server</label>
-                                            <input name="server" type="text" class="form-control"
-                                                placeholder="Enter Server" />
                                         </div>
                                     </div>
                                     <div class="col-md-6">
