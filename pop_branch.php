@@ -43,6 +43,28 @@ if (isset($_GET['inactive'])) {
     }
 }
 
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete_pop_branch') {
+    $delete_pop_id = isset($_POST['data']['id']) ? $_POST['data']['id'] : [];
+    if (empty($delete_pop_id)) {
+        echo json_encode(['success' => false, 'message' => 'Invalid request.']);
+        exit;
+    }
+    $delete_pop_id = intval($delete_pop_id);
+    $delete_pop_query = "DELETE FROM add_pop WHERE id = $delete_pop_id";
+    if (!$con->query($delete_pop_query)) {
+        echo json_encode(['success' => false, 'message' => 'Failed to delete POP/Branch.']);
+        exit;
+    }
+    $delete_pop_transaction_query = "DELETE FROM pop_transaction WHERE pop_id = $delete_pop_id";
+    if (!$con->query($delete_pop_transaction_query)) {
+        echo json_encode(['success' => false, 'message' => 'Failed to delete POP/Branch transactions.']);
+        exit;
+    }   
+    echo json_encode(['success' => true, 'message' => 'Delete successfully.']);
+    exit;
+}
+
 ?>
 
 
@@ -382,6 +404,14 @@ if (isset($_GET['inactive'])) {
                                                         <a class="btn-sm btn btn-info"
                                                             href="pop_edit.php?id=<?php echo $rows['id']; ?>"><i
                                                                 class="fas fa-edit"></i></a>
+                                                        <?php 
+                                                        if($pop_usr->num_rows > 0) {
+                                                            echo '<button class="btn-sm btn btn-secondary" disabled><i class="fas fa-ban"></i></button>';
+                                                        } else {
+                                                            echo '<button class="btn-sm btn btn-danger" data-id="' . $rows['id'] . '" name="delete_btn"><i class="fas fa-trash"></i></button>';
+                                                        }
+                                                        
+                                                        ?>
                                                     </td>
                                                 </tr>
 
@@ -493,6 +523,46 @@ if (isset($_GET['inactive'])) {
             //         }
             //     }
             // });
+        });
+
+
+
+        /************************** Customer Disable Section **************************/
+        $(document).on('click', 'button[name="delete_btn"]', function(e) {
+            e.preventDefault();
+            if (!confirm("Are you sure you want to delete this POP/Branch? This action cannot be undone.")) {
+                return;
+            }
+
+            var $button = $(this);
+            $button.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Processing...');
+
+            $.ajax({
+                url: "",
+                method: 'POST',
+                data: {
+                    action: 'delete_pop_branch',
+                    data:{
+                        id: $button.data('id')
+                    }
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    }
+                },
+                error: function(xhr) {
+                    console.log(xhr.responseText);
+                    toastr.error("Request failed.");
+                },
+                complete: function() {
+                    $button.prop('disabled', false).html('<i class="fas fa-trash"></i>');
+                }
+            });
         });
     </script>
 </body>
