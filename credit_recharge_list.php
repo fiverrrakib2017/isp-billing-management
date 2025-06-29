@@ -79,37 +79,48 @@ include 'include/users_right.php';
 
                                     <div class="table-responsive ">
                                       <table id="customers_table" class="table table-bordered dt-responsive nowrap"
-    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-    <thead>
-        <tr>
-            <th>Customer Username</th>
-            <th>Phone Number</th>
-            <th>Recharged</th>
-            <th>Total Paid</th>
-            <th>Total Due</th>
-            <th>Month</th> 
-        </tr>
-    </thead>
+                                        style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>Customer Username</th>
+                                                <th>POP/Branch</th>
+                                                <th>Area</th>
+                                                <th>Phone Number</th>
+                                                <th>Recharged</th>
+                                                <th>Total Paid</th>
+                                                <th>Total Due</th>
+                                                <th>Month</th> 
+                                            </tr>
+                                        </thead>
     <?php
     $sql = "SELECT 
-                c.id AS customer_id, 
-                c.username, 
-                c.mobile, 
-                COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
-                COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
-                (
-                    COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
-                    COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)
-                ) AS total_due,
-                DATE_FORMAT(DATE_SUB(MAX(cr.datetm), INTERVAL 1 MONTH), '%m') AS recharge_month
-            FROM 
-                customers c
-            LEFT JOIN 
-                customer_rechrg cr ON c.id = cr.customer_id
-            GROUP BY 
-                c.id
-            HAVING 
-                total_due > 0";
+    c.id AS customer_id, 
+    c.pop AS pop_id, 
+    c.area AS area_id, 
+    c.username, 
+    p.pop AS pop_name,
+    a.name AS area_name, 
+    c.mobile, 
+    COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) AS total_recharge,
+    COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0) AS total_paid,
+    (
+        COALESCE(SUM(CASE WHEN cr.type != '4' THEN cr.purchase_price ELSE 0 END), 0) - 
+        COALESCE(SUM(CASE WHEN cr.type != '0' THEN cr.purchase_price ELSE 0 END), 0)
+    ) AS total_due,
+    DATE_FORMAT(DATE_SUB(MAX(cr.datetm), INTERVAL 1 MONTH), '%m') AS recharge_month
+FROM 
+    customers c
+LEFT JOIN 
+    customer_rechrg cr ON c.id = cr.customer_id
+LEFT JOIN 
+    add_pop p ON c.pop = p.id
+LEFT JOIN 
+    area_list a ON c.area = a.id
+GROUP BY 
+    c.id
+HAVING 
+    total_due > 0
+";
 
     $result = $con->query($sql);
 
@@ -120,6 +131,9 @@ include 'include/users_right.php';
 
             echo "<tr>
                     <td><a href='profile.php?clid={$row['customer_id']}'>{$row['username']}</a></td>
+                
+                    <td>{$row['pop_name']}</td>
+                    <td>{$row['area_name']}</td>
                     <td>{$row['mobile']}</td>
                     <td>{$row['total_recharge']}</td>
                     <td>{$row['total_paid']}</td>
