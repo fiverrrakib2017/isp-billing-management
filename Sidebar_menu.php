@@ -16,6 +16,25 @@
                                 <?php endif; ?>
 
                             </li> 
+                         
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Supports'): ?>  
+                                  <li>
+                                        <a href="con_request.php">Connection Request 
+                                            <?php 
+                                                if ($allCstmr=$con->query("SELECT * FROM customer_request WHERE status=0")) {
+                                                    if ($allCstmr->num_rows > 0) {
+                                                        echo '<span class="badge rounded-pill bg-danger float-end">'.$allCstmr->num_rows.'<span>';
+                                                    }else{
+
+                                                    }
+                                                }
+
+
+
+                                                 ?>
+                                        </a>
+                                    </li>
+                            <?php endif; ?>
                             <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff'): ?>  
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
