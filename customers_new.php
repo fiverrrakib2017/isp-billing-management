@@ -238,10 +238,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                                     <button type="button" onclick="printSelectedRows()" class="btn btn-danger mb-2">
                                         <i class="fas fa-print"></i>&nbsp;
                                     </button>
-
-                                    <button type="button" class="btn btn-info mb-2" name="recharge_btn">
-                                        <i class="mdi mdi-battery-charging-20"></i>&nbsp;
-                                    </button>
+                                      <?php 
+                                        if ($_SESSION['details']['role'] != 'Supports') {
+                                        ?>
+                                            <!-- Recharge Now -->
+                                            <button type="button" class="btn btn-info mb-2" name="recharge_btn">
+                                                <i class="mdi mdi-battery-charging-20"></i>&nbsp;
+                                            </button>
+                                        <?php 
+                                        }
+                                        ?>           
+                                    
 
                                     <!-- <button type="button" class="btn btn-info mb-2"data-bs-toggle="modal"
                                         data-bs-target="#ticketModal">

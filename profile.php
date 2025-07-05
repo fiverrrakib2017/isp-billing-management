@@ -7,6 +7,13 @@ require "routeros/routeros_api.class.php";
 // ini_set('display_errors', 1);
 // ini_set('display_startup_errors', 1);
 // error_reporting(E_ALL);
+
+/* Redirect Back URL */
+if ($_SESSION['details']['role'] == 'Supports' || $_SESSION['details']['role'] == 'Support Manager') {
+    echo '<script>window.history.back();</script>';
+    exit;
+}
+
 $nasipaddress = "Not connected!";
 $RouterPortID = "Not Found!";
 $DeviceMAC = "Not Found!";

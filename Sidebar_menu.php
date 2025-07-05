@@ -11,12 +11,12 @@
                             </li>
                             <li >
                                 
-                                <?php if (!(isset($page_title) && $page_title === 'Tickets') && isset($_SESSION['details']['role']) && ($_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role'] == 'Staff' || $_SESSION['details']['role'] == 'Supports')): ?>
+                                <?php if (!(isset($page_title) && $page_title === 'Tickets') && isset($_SESSION['details']['role']) && ($_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role'] == 'Staff')): ?>
                                     <select name="menu_select_box" id="menu_select_box" class="form-select"></select>
                                 <?php endif; ?>
 
                             </li> 
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff' || $_SESSION['details']['role']=='Supports'): ?>  
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Staff'): ?>  
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-account-check"></i>
@@ -51,7 +51,7 @@
                                 </ul>
                             </li>
                             <?php endif; ?>
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Supports'): ?>  
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?>  
                            
                                 <li>
                                     <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -65,7 +65,7 @@
                                     </ul>
                                 </li>
                             <?php endif; ?>
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Supports'): ?>  
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?>  
                            
                                 <li>
                                     <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -79,7 +79,7 @@
                                     </ul>
                                 </li>
                             <?php endif; ?>
-                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin' || $_SESSION['details']['role']=='Supports'): ?>     
+                            <?php if (isset($_SESSION['details']['role']) && $_SESSION['details']['role'] == 'Super Admin'): ?>     
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow waves-effect">
                                     <i class="mdi mdi-account-plus-outline"></i>

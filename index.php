@@ -72,12 +72,19 @@ include 'include/functions.php';
                             <button type="button" data-bs-toggle="modal" data-bs-target="#addCustomerModal"
                                 class=" btn btn-success mb-1">  <i class="fas fa-user-plus"></i> Add
                                 Customer</button>
-
-                            <!-- Recharge Now -->
-                            <button type="button" data-bs-toggle="modal" data-bs-target="#addRechargeModal"
-                                class="btn btn-primary mb-1">
-                                <i class="fas fa-bolt"></i> Recharge Now
-                            </button>
+                            <?php 
+                                if ($_SESSION['details']['role'] != 'Supports') {
+                                ?>
+                                    <!-- Recharge Now -->
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#addRechargeModal"
+                                        class="btn btn-primary mb-1">
+                                        <i class="fas fa-bolt"></i> Recharge Now
+                                    </button>
+                                <?php 
+                                }
+                                ?>
+  
+                          
 
                            
                             <button type="button" data-bs-toggle="modal" data-bs-target="#ticketModal"
